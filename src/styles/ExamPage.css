@@ -37,12 +37,13 @@
   gap: 20px;
   overflow: hidden;
   padding: 20px;
+  height: calc(100vh - 170px); /* Adjust height to avoid overflow */
 }
 
 .exam-left {
   flex: 1;
   overflow: hidden;
-  height: calc(100vh - 170px);
+  height: calc(100vh - 170px); /* Adjust height for the header/footer */
 }
 
 .exam-right {
@@ -121,12 +122,29 @@
   font-weight: bold;
   border-radius: 6px;
   margin-bottom: 10px;
+  position: fixed;
+  top: 60px; /* Place it just below the header */
+  left: 0;
+  width: 100%;
+  z-index: 20;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.time-warning .close-btn {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
 }
 
 @media (max-width: 768px) {
   .exam-main-layout {
     flex-direction: column;
     gap: 10px;
+    height: calc(100dvh - 170px); /* Ensure proper mobile height calculation */
   }
 
   .exam-right {
@@ -138,6 +156,7 @@
     z-index: 99;
     border-radius: 16px 16px 0 0;
     transform: translateY(100%);
+    transition: transform 0.3s ease-in-out;
   }
 
   .exam-right.open {
@@ -161,18 +180,14 @@
   .exam-footer button {
     width: 100%;
   }
-  .exam-main-layout {
-  height: calc(100dvh - 170px);
 }
-}
-
 
 .fullscreen-btn-container {
   display: flex;
   justify-content: center;
   align-items: center;
   position: absolute;
-  right: 10px; /* Position it on the right side */
+  right: 10px;
   top: 50%;
   transform: translateY(-50%);
 }

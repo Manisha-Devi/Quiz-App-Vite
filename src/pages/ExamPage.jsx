@@ -6,10 +6,10 @@ import QuestionViewer from '../components/QuestionViewer';
 import QuestionNavigator from '../components/QuestionNavigator';
 import '../styles/ExamPage.css';
 import DrawingOverlay from '../components/DrawingOverlay';
+
 function ExamPage() {
   const navigate = useNavigate();
   const [isFullscreen, setIsFullscreen] = useState(false); // Track fullscreen state
-  // Fullscreen Toggle Handler
   const toggleFullscreen = () => {
     if (isFullscreen) {
       document.exitFullscreen();
@@ -18,6 +18,7 @@ function ExamPage() {
     }
     setIsFullscreen(!isFullscreen);
   };
+
   const quizTimeRaw = localStorage.getItem('quizTime');
   if (!quizTimeRaw) throw new Error("❌ quizTime not found in localStorage.");
   const quizTimeMinutes = Number(quizTimeRaw);
@@ -43,6 +44,7 @@ function ExamPage() {
   );
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
+  const [showTimeWarning, setShowTimeWarning] = useState(timeLeft <= 300); // Track visibility of the warning
 
   useEffect(() => {
     if (!meta.startedAt) {
@@ -135,74 +137,74 @@ function ExamPage() {
     navigate('/result');
   };
 
+  const closeTimeWarning = () => {
+    setShowTimeWarning(false); // Only hide the warning
+  };
+
   if (!questions.length) return <div className="exam-ui">Loading exam…</div>;
 
   return (
     <>
-      
-    <div className={`exam-ui ${isFullscreen ? 'fullscreen' : ''}`}>
-    <MathJaxContext config={mathConfig}>
-      <div className="exam-ui">
-        <header className="exam-header">
-          <div className="section-name">{q.section || 'General'}</div>
-          <div className="d-flex align-items-center gap-2">
-            <div className="timer-box">{formatTime(timeLeft)}</div>
-            <button className="toggle-btn" onClick={() => setIsSidebarOpen(o => !o)}>
-              {isMobile ? (isSidebarOpen ? '⬇️' : '⬆️') : (isSidebarOpen ? '⬅️' : '➡️')}
-            </button>
-          </div>
-        
-        </header>
+      <div className={`exam-ui ${isFullscreen ? 'fullscreen' : ''}`}>
+        <MathJaxContext config={mathConfig}>
+          <div className="exam-ui">
+            <header className="exam-header">
+              <div className="section-name">{q.section || 'General'}</div>
+              <div className="d-flex align-items-center gap-2">
+                <div className="timer-box">{formatTime(timeLeft)}</div>
+                <button className="toggle-btn" onClick={() => setIsSidebarOpen(o => !o)}>
+                  {isMobile ? (isSidebarOpen ? '⬇️' : '⬆️') : (isSidebarOpen ? '⬅️' : '➡️')}
+                </button>
+              </div>
+            </header>
 
-        {timeLeft <= 300 && (
-          <div className="time-warning">⚠️ Only 5 minutes left. Please finish up!</div>
-        )}
+            {showTimeWarning && timeLeft <= 300 && (
+              <div className="time-warning">
+                ⚠️ Only 5 minutes left. Please finish up!
+                <button className="close-btn" onClick={closeTimeWarning}>✖️</button>
+              </div>
+            )}
 
-        <div className="exam-main-layout">
-          <div className="exam-left" {...swipeHandlers}>
-            <QuestionViewer
-              question={q}
-              currentIndex={current}
-              answer={answers[current]}
-              reviewMarked={review[current]}
-              onOptionClick={handleOption}
-              onToggleReview={toggleReview}
-              injectImageSources={injectImageSources}
-              hasMath={hasMath}
-            />
-          </div>
+            <div className="exam-main-layout">
+              <div className="exam-left" {...swipeHandlers}>
+                <QuestionViewer
+                  question={q}
+                  currentIndex={current}
+                  answer={answers[current]}
+                  reviewMarked={review[current]}
+                  onOptionClick={handleOption}
+                  onToggleReview={toggleReview}
+                  injectImageSources={injectImageSources}
+                  hasMath={hasMath}
+                />
+              </div>
 
-          <div className={`exam-right ${isSidebarOpen ? 'open' : 'closed'}`}>
-            <QuestionNavigator
-              totalQuestions={questions.length}
-              current={current}
-              answers={answers}
-              review={review}
-              onJump={(i) => setCurrent(i)}
-            />
-          </div>
-        </div>
+              <div className={`exam-right ${isSidebarOpen ? 'open' : 'closed'}`}>
+                <QuestionNavigator
+                  totalQuestions={questions.length}
+                  current={current}
+                  answers={answers}
+                  review={review}
+                  onJump={(i) => setCurrent(i)}
+                />
+              </div>
+            </div>
 
-        <footer className="exam-footer">
-          <div className="footer-left">
-            <button onClick={handleClear}>Clear Response</button>
-            <button onClick={handleNext} className="primary">Save & Next</button>
+            <footer className="exam-footer">
+              <div className="footer-left">
+                <button onClick={handleClear}>Clear Response</button>
+                <button onClick={handleNext} className="primary">Save & Next</button>
+              </div>
+              <div className="footer-right">
+                <button onClick={() => handleSubmit(false)} className="submit">Submit Test</button>
+              </div>
+            </footer>
           </div>
-          <div className="footer-right">
-            <button onClick={() => handleSubmit(false)} className="submit">Submit Test</button>
-          </div>
-        </footer>
-      </div>
-    </MathJaxContext>
-    <DrawingOverlay />
-    {/* Fullscreen Button on Right Side */}
+        </MathJaxContext>
+        <DrawingOverlay />
         <div className="fullscreen-btn-container">
           <button className="fullscreen-btn" onClick={toggleFullscreen}>
-            {/* Only show the enter fullscreen icon when not in fullscreen */}
-            {!isFullscreen && (
-              <span className="fullscreen-icon">⛶</span> // Enter fullscreen icon
-            )}
-            {/* Nothing displayed when in fullscreen */}
+            {!isFullscreen && <span className="fullscreen-icon">⛶</span>}
           </button>
         </div>
       </div>
