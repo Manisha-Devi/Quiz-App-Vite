@@ -1,0 +1,176 @@
+.score-banner {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  }
+  
+  .score-banner h2 {
+    font-size: 28px;
+    color: #4b3ee6;
+    margin-bottom: 8px;
+  }
+  
+  .score-banner p {
+    font-size: 20px;
+    font-weight: bold;
+  }
+  
+  .pass {
+    color: #28a745;
+  }
+  
+  .fail {
+    color: #dc3545;
+  }
+  
+.result-page {
+    font-family: 'Segoe UI', sans-serif;
+    background: #f2f5fa;
+    padding: 30px;
+    max-width: 1000px;
+    margin: auto;
+  }
+  
+  .result-page h1 {
+    color: #4b3ee6;
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 32px;
+  }
+  
+  .result-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    padding: 20px;
+    margin-bottom: 25px;
+    transition: transform 0.2s ease;
+  }
+  
+  .result-card:hover {
+    transform: translateY(-2px);
+  }
+  
+  .result-header {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    font-size: 16px;
+  }
+  
+  .result-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .option {
+    background: #f6f7fb;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 15px;
+    border-left: 4px solid transparent;
+  }
+  
+  .correct-opt {
+    background: #e7f9ef;
+    border-left: 4px solid #28a745;
+    color: #155724;
+  }
+  
+  .wrong-opt {
+    background: #fbeaea;
+    border-left: 4px solid #dc3545;
+    color: #842029;
+  }
+  
+  .marked {
+    margin-top: 10px;
+    font-weight: bold;
+    color: #ff9800;
+  }
+  
+  .badge {
+    font-size: 14px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: bold;
+  }
+  
+  .correct {
+    background: #d4edda;
+    color: #155724;
+  }
+  
+  .wrong {
+    background: #f8d7da;
+    color: #842029;
+  }
+  
+  .skip {
+    background: #ffeeba;
+    color: #856404;
+  }
+  
+  .retake-button {
+    display: block;
+    margin: 40px auto 0;
+    background: #4b3ee6;
+    color: white;
+    padding: 14px 30px;
+    font-size: 18px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .retake-button:hover {
+    background: #362cc2;
+  }
+  /* Redesigned explanation container */
+.explanation-container {
+  background-color: #e8f7e9;
+  padding: 15px;
+  margin-top: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid #d1e7d5;
+}
+
+.explanation-header {
+  font-size: 16px;
+  color: #388e3c;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.explanation-body {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.6;
+}
+
+.explanation-body p {
+  margin: 0;
+  font-weight: normal;
+}
+
+.explanation-container p {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #555;
+}
+
+/* Adding an icon to the explanation (optional) */
+.explanation-header:before {
+  content: '📝';
+  margin-right: 8px;
+  font-size: 18px;
+}

@@ -1,0 +1,99 @@
+/* Drawing pad container */
+#scratchpad {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 998;
+  width: 100vw;
+  height: 100vh;
+  background: transparent;
+}
+
+/* Floating control buttons */
+.drawing-toggle {
+  position: fixed;
+  top: 50%;
+  left: 5px;
+  transform: translateY(-50%);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.drawing-toggle > button {
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  padding: 8px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.15);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* Slide-in control panel for tool selection */
+.drawing-panel {
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: all 0.3s ease-in-out;
+  align-items: center;
+}
+
+.drawing-panel.open {
+  opacity: 1;
+  max-height: 300px;
+}
+
+.drawing-panel button {
+  background: white;
+  border: 1px solid #ccc;
+  padding: 6px;
+  border-radius: 50%;
+  font-size: 16px;
+  width: 36px;
+  height:36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.drawing-panel button:hover {
+  background: #eee;
+}
+
+/* Color picker buttons (only visible when pen is selected) */
+.color-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 4px 0;
+}
+
+.color-picker button {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid #aaa;
+  cursor: pointer;
+  padding: 0;
+}
+
+
+
+
+.drawing-panel.open {
+  opacity: 1;
+  max-height: 450px;
+}
+
+

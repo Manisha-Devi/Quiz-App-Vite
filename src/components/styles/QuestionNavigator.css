@@ -1,0 +1,92 @@
+.question-navigator {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* FILTER BUTTONS */
+.navigator-filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.navigator-filters button {
+  flex: 1;
+  padding: 6px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #f8f9fa;
+  transition: background 0.2s ease;
+}
+
+.navigator-filters button:hover {
+  background: #e2e6ea;
+}
+
+.navigator-filters .active-filter {
+  background: #4b3ee6;
+  color: white;
+  font-weight: bold;
+  border-color: #4b3ee6;
+}
+
+/* SCROLLABLE BUTTON GRID */
+.navigator-grid {
+  flex: auto;
+  overflow-y: auto;
+  min-height: 0;
+  padding-right: 4px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
+  gap: 8px;
+}
+
+.nav-dot {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 14px;
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.nav-dot:hover {
+  transform: scale(1.1);
+}
+
+.answered { background: #28a745; }
+.not-visited { background: #6c757d; }
+.review { background: #007bff; }
+.review-answered { background: #fd7e14; }
+.active { background: #6f42c1; }
+
+/* LEGEND PILL STYLES */
+.legend {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.legend-pill {
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-weight: 600;
+  color: white;
+  white-space: nowrap;
+  transition: background 0.2s ease;
+}
+
+.legend-pill.answered { background: #28a745; }
+.legend-pill.review { background: #007bff; }
+.legend-pill.review-answered { background: #fd7e14; }
+.legend-pill.not-visited { background: #6c757d; }
+.legend-pill.active { background: #6f42c1; }

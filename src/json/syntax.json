@@ -1,0 +1,2084 @@
+[
+  {
+    "id": 1,
+    "question": "In which tab can you find the 'Track Changes' feature?",
+    "options": [
+      "Insert Tab",
+      "Design Tab",
+      "Review Tab",
+      "View Tab"
+    ],
+    "answer": 2,
+    "level": 0,
+    "explanation": "The 'Track Changes' feature is found in the Review Tab and is used to keep track of changes made to a document."
+  },
+  {
+    "id": 2,
+    "question": "What can be changed in the Design Tab of MS Word?",
+    "options": [
+      "Document themes and effects",
+      "Document title",
+      "Print settings",
+      "Page orientation"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The Design Tab in MS Word includes themes to change colors, fonts, and effects for the entire document."
+  },
+  {
+    "id": 3,
+    "question": "What can you do in the 'References Tab'?",
+    "options": [
+      "Insert tables and pictures",
+      "Create footnotes and endnotes",
+      "Change document themes",
+      "Track document changes"
+    ],
+    "answer": 1,
+    "level": 0,
+    "explanation": "The References Tab is used for creating footnotes, endnotes, citations, and bibliographies."
+  },
+  {
+    "id": 4,
+    "question": "What can you do with the View Tab in Excel?",
+    "options": [
+      "Add new worksheets",
+      "Insert formulas",
+      "Change workbook views",
+      "Edit data"
+    ],
+    "answer": 2,
+    "level": 0,
+    "explanation": "The View tab allows you to change how the worksheet is displayed, such as normal view, page layout, and custom views."
+  },
+  {
+    "id": 5,
+    "question": "What does Alt + F do in MS Word?",
+    "options": [
+      "Open File Page",
+      "Open Home Tab",
+      "Open Insert Tab",
+      "Open Design Tab"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The shortcut Alt + F is used to open the File Page in MS Word."
+  },
+    {
+    "id": 6,
+    "question": "What does Alt + F5 do in MS Word?",
+    "options": [
+      "Restore the program window",
+      "Exit MS Word",
+      "Maximize the program window",
+      "Go to the next pane"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The shortcut Alt + F5 is used to restore the program window in MS Word."
+  },
+  {
+    "id": 7,
+    "question": "What does Alt + H do in MS Word?",
+    "options": [
+      "Open Home Tab",
+      "Open Help",
+      "Open Hyperlink",
+      "Open Header"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The shortcut Alt + H is used to open the Home Tab in MS Word."
+  },
+  {
+    "id": 8,
+    "question": "What does Alt + W do in MS Word?",
+    "options": [
+      "Open View Tab",
+      "Open Home Tab",
+      "Open Insert Tab",
+      "Open Design Tab"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The shortcut Alt + W is used to open the View Tab in MS Word."
+  },
+  {
+    "id": 9,
+    "question": "What does 'Autofill' do in Excel?",
+    "options": [
+      "Formats text",
+      "Copies cell values based on a pattern",
+      "Inserts charts",
+      "Protects cells"
+    ],
+    "answer": 1,
+    "level": 0,
+    "explanation": "'Autofill' allows users to quickly fill a series of cells based on patterns or previous cell content."
+  },
+  {
+    "id": 10,
+    "question": "What is the keyboard shortcut for 'Copy' in MS Word?",
+    "options": [
+      "Ctrl + C",
+      "Ctrl + V",
+      "Ctrl + X",
+      "Ctrl + Z"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "Ctrl + C is the shortcut used to copy selected text or objects in MS Word."
+  },
+  {
+    "id": 11,
+    "question": "What does Ctrl + P do in MS Word?",
+    "options": [
+      "Print the document",
+      "Open the document",
+      "Paste the copied content",
+      "Save the document"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "Ctrl + P is the shortcut to open the print dialog and print the current document."
+  },
+  {
+    "id": 12,
+    "question": "What does Ctrl + Z do in MS Word?",
+    "options": [
+      "Undo the last action",
+      "Redo the last action",
+      "Zoom in on the document",
+      "Save the document"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "Ctrl + Z is the shortcut for undoing the last action in MS Word."
+  },
+  {
+    "id": 13,
+    "question": "What does Ctrl + Y do in MS Word?",
+    "options": [
+      "Redo the last action",
+      "Undo the last action",
+      "Paste content",
+      "Open a new document"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "Ctrl + Y is the shortcut to redo the last action that was undone."
+  },
+  {
+    "id": 14,
+    "question": "How can you insert a page break in MS Word?",
+    "options": [
+      "Ctrl + Enter",
+      "Ctrl + Shift + P",
+      "Ctrl + Shift + E",
+      "Alt + P"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To insert a page break, press Ctrl + Enter in MS Word."
+  },
+  {
+    "id": 15,
+    "question": "What is the purpose of the 'Find and Replace' feature in MS Word?",
+    "options": [
+      "To search for a specific word and replace it with another word",
+      "To format text",
+      "To add page numbers",
+      "To insert hyperlinks"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Find and Replace' feature allows you to search for specific words or phrases in the document and replace them with new content."
+  },
+  {
+    "id": 16,
+    "question": "Which tab in MS Word allows you to insert tables?",
+    "options": [
+      "Insert Tab",
+      "Design Tab",
+      "Layout Tab",
+      "Review Tab"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Insert Tab' in MS Word provides the option to insert tables, pictures, charts, and other objects."
+  },
+  {
+    "id": 17,
+    "question": "How can you add a hyperlink in MS Word?",
+    "options": [
+      "Ctrl + K",
+      "Ctrl + L",
+      "Ctrl + H",
+      "Ctrl + I"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To add a hyperlink in MS Word, select the text and press Ctrl + K."
+  },
+  {
+    "id": 18,
+    "question": "What does the 'Track Changes' feature in MS Word do?",
+    "options": [
+      "Tracks the changes made by different users to a document",
+      "Displays all revisions made to a document",
+      "Inserts comments into the document",
+      "All of the above"
+    ],
+    "answer": 3,
+    "level": 0,
+    "explanation": "The 'Track Changes' feature in MS Word shows all edits and comments made by users, allowing for document revisions to be easily reviewed."
+  },
+  {
+    "id": 19,
+    "question": "What does the 'SmartArt' feature in MS Word allow you to do?",
+    "options": [
+      "Create diagrams and flowcharts",
+      "Insert tables",
+      "Insert shapes",
+      "Format text"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'SmartArt' feature allows you to create diagrams and flowcharts to visually represent information in your document."
+  },
+  {
+    "id": 20,
+    "question": "How can you insert a page number in MS Word?",
+    "options": [
+      "Insert Tab > Page Number",
+      "Design Tab > Page Number",
+      "Layout Tab > Page Number",
+      "Review Tab > Page Number"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To insert page numbers in MS Word, go to the 'Insert Tab' and select 'Page Number.'"
+  },
+    {
+    "id": 21,
+    "question": "What is the shortcut key for 'Paste' in MS Word?",
+    "options": [
+      "Ctrl + P",
+      "Ctrl + V",
+      "Ctrl + X",
+      "Ctrl + Z"
+    ],
+    "answer": 1,
+    "level": 0,
+    "explanation": "Ctrl + V is the shortcut used to paste copied content in MS Word."
+  },
+  {
+    "id": 22,
+    "question": "What is the purpose of the 'Page Layout' tab in MS Word?",
+    "options": [
+      "To insert pictures and shapes",
+      "To change the document's page setup, including margins and orientation",
+      "To track document changes",
+      "To save the document"
+    ],
+    "answer": 1,
+    "level": 0,
+    "explanation": "The 'Page Layout' tab allows you to change settings like margins, orientation, size, and other page-related elements."
+  },
+  {
+    "id": 23,
+    "question": "Which of the following is used to open the Find and Replace dialog box in MS Word?",
+    "options": [
+      "Ctrl + F",
+      "Ctrl + R",
+      "Ctrl + H",
+      "Ctrl + G"
+    ],
+    "answer": 2,
+    "level": 0,
+    "explanation": "Ctrl + H opens the Find and Replace dialog box in MS Word, allowing you to search and replace content."
+  },
+  {
+    "id": 24,
+    "question": "How can you insert a footnote in MS Word?",
+    "options": [
+      "Insert Tab > Footnote",
+      "References Tab > Footnote",
+      "Layout Tab > Footnote",
+      "Design Tab > Footnote"
+    ],
+    "answer": 1,
+    "level": 0,
+    "explanation": "You can insert a footnote by going to the 'References Tab' and selecting 'Insert Footnote.'"
+  },
+  {
+    "id": 25,
+    "question": "What is the keyboard shortcut for 'Undo' in MS Word?",
+    "options": [
+      "Ctrl + U",
+      "Ctrl + Z",
+      "Ctrl + X",
+      "Ctrl + C"
+    ],
+    "answer": 1,
+    "level": 0,
+    "explanation": "Ctrl + Z is the shortcut for undoing the last action in MS Word."
+  },
+  {
+    "id": 26,
+    "question": "Which tab is used to add tables in MS Word?",
+    "options": [
+      "Insert Tab",
+      "Home Tab",
+      "Design Tab",
+      "View Tab"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Insert Tab' is used to add tables, shapes, images, and other elements to your document."
+  },
+  {
+    "id": 27,
+    "question": "What is the primary use of the 'Insert' tab in MS Word?",
+    "options": [
+      "To format text",
+      "To change the layout of the document",
+      "To insert various elements such as tables, pictures, and text boxes",
+      "To save the document"
+    ],
+    "answer": 2,
+    "level": 0,
+    "explanation": "The 'Insert' tab allows you to insert various elements like tables, charts, pictures, shapes, and text boxes into the document."
+  },
+  {
+    "id": 28,
+    "question": "Which of the following is the function of the 'Page Number' option in MS Word?",
+    "options": [
+      "To add a page number to the document",
+      "To change the font size",
+      "To insert a table",
+      "To track document changes"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Page Number' option in MS Word allows you to insert page numbers into the document."
+  },
+  {
+    "id": 29,
+    "question": "Which shortcut key is used to open the 'Find' dialog box in MS Word?",
+    "options": [
+      "Ctrl + F",
+      "Ctrl + H",
+      "Ctrl + P",
+      "Ctrl + E"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "Ctrl + F is used to open the 'Find' dialog box in MS Word to search for specific content in the document."
+  },
+  {
+    "id": 30,
+    "question": "How do you change the text alignment in MS Word?",
+    "options": [
+      "Home Tab > Alignment",
+      "Insert Tab > Alignment",
+      "View Tab > Alignment",
+      "Design Tab > Alignment"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "You can change text alignment using the options in the 'Home Tab,' where you can align text to the left, center, right, or justify."
+  },
+  {
+    "id": 31,
+    "question": "What is the function of the 'Bold' button in MS Word?",
+    "options": [
+      "To change the font size",
+      "To highlight text",
+      "To make text bold",
+      "To change text color"
+    ],
+    "answer": 2,
+    "level": 0,
+    "explanation": "The 'Bold' button is used to make selected text bold, helping it stand out in the document."
+  },
+  {
+    "id": 32,
+    "question": "What is the primary function of the 'Design' tab in MS Word?",
+    "options": [
+      "To insert elements like tables and pictures",
+      "To format text styles and document themes",
+      "To track changes in the document",
+      "To add footnotes"
+    ],
+    "answer": 1,
+    "level": 0,
+    "explanation": "The 'Design' tab is used for applying document themes, modifying text styles, and adjusting page formatting."
+  },
+  {
+    "id": 33,
+    "question": "What is the function of 'Spell Check' in MS Word?",
+    "options": [
+      "To automatically correct spelling errors",
+      "To search for specific words",
+      "To highlight grammatical errors",
+      "To count the words in the document"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Spell Check' feature automatically detects and suggests corrections for spelling errors in the document."
+  },
+  {
+    "id": 34,
+    "question": "Which option is used to change the document orientation in MS Word?",
+    "options": [
+      "Page Layout Tab > Orientation",
+      "Design Tab > Layout",
+      "Insert Tab > Page Layout",
+      "View Tab > Orientation"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To change document orientation between portrait and landscape, go to the 'Page Layout Tab' and select 'Orientation.'"
+  },
+  {
+    "id": 35,
+    "question": "What is the shortcut to select all text in a document in MS Word?",
+    "options": [
+      "Ctrl + A",
+      "Ctrl + S",
+      "Ctrl + X",
+      "Ctrl + Z"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "Ctrl + A is the shortcut to select all text in the document."
+  },
+  {
+    "id": 36,
+    "question": "How do you insert a picture in MS Word?",
+    "options": [
+      "Insert Tab > Picture",
+      "Design Tab > Picture",
+      "Page Layout Tab > Picture",
+      "Home Tab > Picture"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To insert a picture, go to the 'Insert Tab' and select 'Picture' to insert an image from your computer."
+  },
+  {
+    "id": 37,
+    "question": "How do you adjust the page margins in MS Word?",
+    "options": [
+      "Page Layout Tab > Margins",
+      "Insert Tab > Margins",
+      "Design Tab > Margins",
+      "Home Tab > Margins"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To adjust page margins, go to the 'Page Layout Tab' and select 'Margins' to set the desired margin size."
+  },
+  {
+    "id": 38,
+    "question": "What is the function of the 'Columns' option in MS Word?",
+    "options": [
+      "To divide text into multiple sections",
+      "To add footnotes",
+      "To change the page layout",
+      "To insert headers"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Columns' option divides the text into multiple columns, similar to how text is formatted in newspapers."
+  },
+  {
+    "id": 39,
+    "question": "How do you change the font size in MS Word?",
+    "options": [
+      "Home Tab > Font Size",
+      "Insert Tab > Font Size",
+      "Design Tab > Font Size",
+      "View Tab > Font Size"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "You can change the font size by selecting the text and adjusting the font size in the 'Home Tab.'"
+  },
+  {
+    "id": 40,
+    "question": "How do you add page numbers in MS Word?",
+    "options": [
+      "Insert Tab > Page Number",
+      "Design Tab > Page Number",
+      "Layout Tab > Page Number",
+      "Review Tab > Page Number"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To add page numbers, go to the 'Insert Tab' and select 'Page Number' from the options."
+  },
+    {
+    "id": 41,
+    "question": "Which tab is used to add a table of contents in MS Word?",
+    "options": [
+      "Insert Tab",
+      "References Tab",
+      "Design Tab",
+      "View Tab"
+    ],
+    "answer": 1,
+    "level": 0,
+    "explanation": "The 'References Tab' is used to add a table of contents in MS Word, along with footnotes, citations, and bibliographies."
+  },
+  {
+    "id": 42,
+    "question": "What is the purpose of the 'Shape' option in MS Word?",
+    "options": [
+      "To format text",
+      "To insert pre-designed shapes like rectangles, circles, and arrows",
+      "To insert page numbers",
+      "To track changes"
+    ],
+    "answer": 1,
+    "level": 0,
+    "explanation": "The 'Shape' option allows you to insert pre-designed shapes such as rectangles, circles, and arrows into your document."
+  },
+  {
+    "id": 43,
+    "question": "How can you quickly jump to the next page in MS Word?",
+    "options": [
+      "Ctrl + Page Down",
+      "Ctrl + Page Up",
+      "Alt + Down Arrow",
+      "Alt + Up Arrow"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "Ctrl + Page Down is the shortcut to move to the next page in a document in MS Word."
+  },
+  {
+    "id": 44,
+    "question": "What does 'Text Wrapping' in MS Word do?",
+    "options": [
+      "Allows text to flow around objects like pictures or shapes",
+      "Saves the document",
+      "Changes the font style",
+      "Changes the text color"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "Text wrapping allows text to flow around inserted objects like pictures or shapes, improving document layout."
+  },
+  {
+    "id": 45,
+    "question": "How can you insert a comment in MS Word?",
+    "options": [
+      "Review Tab > New Comment",
+      "Insert Tab > New Comment",
+      "Home Tab > New Comment",
+      "Design Tab > New Comment"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "You can insert a comment in MS Word by going to the 'Review Tab' and selecting 'New Comment.'"
+  },
+  {
+    "id": 46,
+    "question": "Which of the following allows you to adjust the spacing between lines in MS Word?",
+    "options": [
+      "Page Layout Tab",
+      "Home Tab",
+      "Design Tab",
+      "View Tab"
+    ],
+    "answer": 1,
+    "level": 0,
+    "explanation": "The 'Home Tab' in MS Word includes options for adjusting line spacing, including single, double, and custom spacing."
+  },
+  {
+    "id": 47,
+    "question": "Which key combination is used to insert a hyperlink in MS Word?",
+    "options": [
+      "Ctrl + K",
+      "Ctrl + H",
+      "Ctrl + L",
+      "Ctrl + P"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "Ctrl + K is the shortcut to insert a hyperlink in MS Word, allowing you to link text to a web page or document."
+  },
+  {
+    "id": 48,
+    "question": "What is the purpose of the 'Find' feature in MS Word?",
+    "options": [
+      "To locate a specific word or phrase in the document",
+      "To check spelling",
+      "To replace text",
+      "To insert a table"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Find' feature in MS Word helps you quickly locate specific words or phrases within the document."
+  },
+  {
+    "id": 49,
+    "question": "What does the 'Format Painter' button do in MS Word?",
+    "options": [
+      "Copies formatting from one part of the document to another",
+      "Changes the font size",
+      "Inserts shapes",
+      "Formats tables"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Format Painter' button copies the formatting from one part of the document and allows you to apply it to another part."
+  },
+  {
+    "id": 50,
+    "question": "How can you insert a header in MS Word?",
+    "options": [
+      "Insert Tab > Header",
+      "Design Tab > Header",
+      "Layout Tab > Header",
+      "Page Layout Tab > Header"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "You can insert a header by going to the 'Insert Tab' and selecting 'Header,' where you can choose from different styles."
+  },
+  {
+    "id": 51,
+    "question": "How can you insert a table in MS Word?",
+    "options": [
+      "Insert Tab > Table",
+      "Design Tab > Table",
+      "Home Tab > Table",
+      "Layout Tab > Table"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "You can insert a table by going to the 'Insert Tab' and selecting 'Table,' where you can choose the number of rows and columns."
+  },
+  {
+    "id": 52,
+    "question": "What does the 'Insert Footnote' option do in MS Word?",
+    "options": [
+      "Adds a footnote at the bottom of the page",
+      "Inserts a page number",
+      "Inserts a comment",
+      "Inserts a hyperlink"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Insert Footnote' option adds a footnote at the bottom of the page, often used for citations or additional information."
+  },
+  {
+    "id": 53,
+    "question": "Which option would you use to change the document's page orientation?",
+    "options": [
+      "Page Layout Tab > Orientation",
+      "Insert Tab > Orientation",
+      "Design Tab > Layout",
+      "Home Tab > Layout"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To change the document's page orientation (portrait or landscape), go to the 'Page Layout Tab' and select 'Orientation.'"
+  },
+  {
+    "id": 54,
+    "question": "What is the purpose of the 'Page Break' feature in MS Word?",
+    "options": [
+      "To start a new page within the document",
+      "To change the font size",
+      "To insert a table",
+      "To track changes"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Page Break' feature inserts a break and starts a new page, allowing you to organize content more effectively."
+  },
+  {
+    "id": 55,
+    "question": "Which of the following shortcuts can you use to open the 'Save As' dialog box in MS Word?",
+    "options": [
+      "Ctrl + S",
+      "Ctrl + P",
+      "Ctrl + F12",
+      "Ctrl + Shift + S"
+    ],
+    "answer": 3,
+    "level": 0,
+    "explanation": "Ctrl + Shift + S opens the 'Save As' dialog box, allowing you to save the document with a new name or in a different format."
+  },
+  {
+    "id": 56,
+    "question": "Which tab is used to add comments in MS Word?",
+    "options": [
+      "Review Tab",
+      "Home Tab",
+      "Insert Tab",
+      "Design Tab"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Review Tab' is used to insert and manage comments in the document, facilitating collaboration and feedback."
+  },
+  {
+    "id": 57,
+    "question": "What does the 'Insert Table of Contents' option do?",
+    "options": [
+      "Generates a list of page numbers",
+      "Inserts a pre-formatted table of contents",
+      "Inserts a table with editable rows and columns",
+      "Inserts a hyperlink to each section"
+    ],
+    "answer": 1,
+    "level": 0,
+    "explanation": "The 'Insert Table of Contents' option automatically generates a table of contents based on the headings in the document."
+  },
+  {
+    "id": 58,
+    "question": "Which of the following is the shortcut for 'Bold' in MS Word?",
+    "options": [
+      "Ctrl + B",
+      "Ctrl + I",
+      "Ctrl + U",
+      "Ctrl + E"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "Ctrl + B is the shortcut key for bolding selected text in MS Word."
+  },
+  {
+    "id": 59,
+    "question": "How do you insert a comment in MS Word?",
+    "options": [
+      "Review Tab > New Comment",
+      "Insert Tab > New Comment",
+      "Home Tab > New Comment",
+      "Page Layout Tab > New Comment"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "You can insert a comment in MS Word by going to the 'Review Tab' and selecting 'New Comment.'"
+  },
+  {
+    "id": 60,
+    "question": "Which of the following is used to insert a bookmark in MS Word?",
+    "options": [
+      "Insert Tab > Bookmark",
+      "Design Tab > Bookmark",
+      "Review Tab > Bookmark",
+      "Page Layout Tab > Bookmark"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To insert a bookmark, go to the 'Insert Tab' and select 'Bookmark,' allowing you to quickly navigate to specific sections of the document."
+  },
+    {
+    "id": 61,
+    "question": "What is the shortcut to insert a page number in MS Word?",
+    "options": [
+      "Alt + P",
+      "Ctrl + N",
+      "Insert Tab > Page Number",
+      "Page Layout Tab > Page Number"
+    ],
+    "answer": 2,
+    "level": 0,
+    "explanation": "To insert page numbers in MS Word, go to the 'Insert Tab' and select 'Page Number.'"
+  },
+  {
+    "id": 62,
+    "question": "How can you open a new document in MS Word?",
+    "options": [
+      "Ctrl + O",
+      "Ctrl + N",
+      "Ctrl + P",
+      "Ctrl + A"
+    ],
+    "answer": 1,
+    "level": 0,
+    "explanation": "Ctrl + N is the shortcut to open a new document in MS Word."
+  },
+  {
+    "id": 63,
+    "question": "Which tab would you use to change the document margins in MS Word?",
+    "options": [
+      "Insert Tab",
+      "Page Layout Tab",
+      "Design Tab",
+      "Home Tab"
+    ],
+    "answer": 1,
+    "level": 0,
+    "explanation": "The 'Page Layout Tab' allows you to adjust the document's margins, orientation, and page size."
+  },
+  {
+    "id": 64,
+    "question": "What is the function of the 'Align Text Left' button in MS Word?",
+    "options": [
+      "To center the text",
+      "To align the text to the left margin",
+      "To justify the text",
+      "To align the text to the right margin"
+    ],
+    "answer": 1,
+    "level": 0,
+    "explanation": "The 'Align Text Left' button aligns the selected text to the left margin of the document."
+  },
+  {
+    "id": 65,
+    "question": "Which of the following is used to create a bulleted list in MS Word?",
+    "options": [
+      "Home Tab > Bullets",
+      "Insert Tab > Bullets",
+      "Design Tab > Bullets",
+      "View Tab > Bullets"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To create a bulleted list in MS Word, go to the 'Home Tab' and select 'Bullets.'"
+  },
+  {
+    "id": 66,
+    "question": "How do you change the page orientation in MS Word?",
+    "options": [
+      "Insert Tab > Orientation",
+      "Page Layout Tab > Orientation",
+      "Design Tab > Layout",
+      "View Tab > Orientation"
+    ],
+    "answer": 1,
+    "level": 0,
+    "explanation": "To change the page orientation, go to the 'Page Layout Tab' and select 'Orientation.' You can choose between portrait and landscape."
+  },
+  {
+    "id": 67,
+    "question": "Which option would you use to insert a table in MS Word?",
+    "options": [
+      "Insert Tab > Table",
+      "Home Tab > Table",
+      "Layout Tab > Table",
+      "Design Tab > Table"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To insert a table in MS Word, go to the 'Insert Tab' and select 'Table.'"
+  },
+  {
+    "id": 68,
+    "question": "What does the 'Insert Picture' option do in MS Word?",
+    "options": [
+      "Inserts an image from your computer into the document",
+      "Inserts a hyperlink",
+      "Inserts a new page",
+      "Inserts a table"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Insert Picture' option allows you to insert images from your computer into the document."
+  },
+  {
+    "id": 69,
+    "question": "How can you change the font color in MS Word?",
+    "options": [
+      "Home Tab > Font Color",
+      "Design Tab > Font Color",
+      "Page Layout Tab > Font Color",
+      "Insert Tab > Font Color"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To change the font color, go to the 'Home Tab' and click on the 'Font Color' button."
+  },
+  {
+    "id": 70,
+    "question": "Which of the following is used to highlight text in MS Word?",
+    "options": [
+      "Font Color",
+      "Text Highlight Color",
+      "Underline",
+      "Bold"
+    ],
+    "answer": 1,
+    "level": 0,
+    "explanation": "The 'Text Highlight Color' option is used to highlight text in MS Word."
+  },
+  {
+    "id": 71,
+    "question": "What does the 'Undo' button do in MS Word?",
+    "options": [
+      "Redo the last action",
+      "Undo the last action",
+      "Save the document",
+      "Insert a new page"
+    ],
+    "answer": 1,
+    "level": 0,
+    "explanation": "The 'Undo' button is used to reverse the last action in MS Word."
+  },
+  {
+    "id": 72,
+    "question": "How can you insert a hyperlink in MS Word?",
+    "options": [
+      "Ctrl + K",
+      "Ctrl + H",
+      "Ctrl + L",
+      "Ctrl + V"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To insert a hyperlink in MS Word, select the text and press Ctrl + K."
+  },
+  {
+    "id": 73,
+    "question": "Which option is used to change the line spacing in MS Word?",
+    "options": [
+      "Home Tab > Line Spacing",
+      "Page Layout Tab > Line Spacing",
+      "Insert Tab > Line Spacing",
+      "View Tab > Line Spacing"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To change line spacing, go to the 'Home Tab' and adjust the spacing under the 'Paragraph' section."
+  },
+  {
+    "id": 74,
+    "question": "Which shortcut is used to cut text in MS Word?",
+    "options": [
+      "Ctrl + C",
+      "Ctrl + V",
+      "Ctrl + X",
+      "Ctrl + Z"
+    ],
+    "answer": 2,
+    "level": 0,
+    "explanation": "Ctrl + X is the shortcut to cut the selected text in MS Word."
+  },
+  {
+    "id": 75,
+    "question": "What is the function of the 'Insert Caption' option in MS Word?",
+    "options": [
+      "To add a caption to a picture or table",
+      "To insert a page number",
+      "To insert a hyperlink",
+      "To create a new page"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Insert Caption' option is used to add a caption to objects such as pictures or tables in the document."
+  },
+  {
+    "id": 76,
+    "question": "What does the 'Insert Footer' option do in MS Word?",
+    "options": [
+      "Inserts content at the top of each page",
+      "Inserts content at the bottom of each page",
+      "Inserts a new page",
+      "Changes the page layout"
+    ],
+    "answer": 1,
+    "level": 0,
+    "explanation": "The 'Insert Footer' option is used to add content at the bottom of each page, such as page numbers or document information."
+  },
+  {
+    "id": 77,
+    "question": "Which option is used to insert a page border in MS Word?",
+    "options": [
+      "Design Tab > Page Borders",
+      "Insert Tab > Page Borders",
+      "Layout Tab > Page Borders",
+      "Review Tab > Page Borders"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To insert a page border, go to the 'Design Tab' and select 'Page Borders.'"
+  },
+  {
+    "id": 78,
+    "question": "What is the function of the 'Insert Text Box' option?",
+    "options": [
+      "To add a box to contain text in a specific area",
+      "To insert a table",
+      "To add a shape",
+      "To add a comment"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Insert Text Box' option allows you to insert a box that can contain text in a specific area of the page."
+  },
+  {
+    "id": 79,
+    "question": "How can you insert a table of contents in MS Word?",
+    "options": [
+      "Insert Tab > Table of Contents",
+      "References Tab > Table of Contents",
+      "Design Tab > Table of Contents",
+      "Home Tab > Table of Contents"
+    ],
+    "answer": 1,
+    "level": 0,
+    "explanation": "To insert a table of contents, go to the 'References Tab' and select 'Table of Contents.'"
+  },
+  {
+    "id": 80,
+    "question": "What does the 'Insert Header' option do in MS Word?",
+    "options": [
+      "Adds content to the top of each page",
+      "Adds content to the bottom of each page",
+      "Inserts a table",
+      "Changes the font style"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Insert Header' option is used to add content at the top of each page, such as document title or chapter names."
+  },
+    {
+    "id": 81,
+    "question": "What is the shortcut key for 'Paste' in MS Word?",
+    "options": [
+      "Ctrl + P",
+      "Ctrl + V",
+      "Ctrl + X",
+      "Ctrl + C"
+    ],
+    "answer": 1,
+    "level": 0,
+    "explanation": "Ctrl + V is the shortcut used to paste copied content in MS Word."
+  },
+  {
+    "id": 82,
+    "question": "What does the 'Insert Equation' option in MS Word do?",
+    "options": [
+      "Inserts a pre-designed equation",
+      "Inserts a table",
+      "Inserts an image",
+      "Inserts a comment"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Insert Equation' option allows you to insert mathematical equations into your document."
+  },
+  {
+    "id": 83,
+    "question": "Which of the following is used to change the line spacing in MS Word?",
+    "options": [
+      "Home Tab > Line Spacing",
+      "Insert Tab > Line Spacing",
+      "Page Layout Tab > Line Spacing",
+      "View Tab > Line Spacing"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To adjust line spacing, go to the 'Home Tab' and select 'Line Spacing' in the Paragraph group."
+  },
+  {
+    "id": 84,
+    "question": "What is the function of the 'Find and Replace' feature in MS Word?",
+    "options": [
+      "To search and replace text in the document",
+      "To format text",
+      "To add page numbers",
+      "To change the font size"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Find and Replace' feature allows you to search for specific words or phrases and replace them with others."
+  },
+  {
+    "id": 85,
+    "question": "How do you add a page border in MS Word?",
+    "options": [
+      "Insert Tab > Page Borders",
+      "Design Tab > Page Borders",
+      "Page Layout Tab > Page Borders",
+      "Review Tab > Page Borders"
+    ],
+    "answer": 1,
+    "level": 0,
+    "explanation": "To add a page border, go to the 'Design Tab' and select 'Page Borders.'"
+  },
+  {
+    "id": 86,
+    "question": "What is the purpose of the 'Clear Formatting' option in MS Word?",
+    "options": [
+      "To remove all text formatting",
+      "To delete the entire document",
+      "To reset the page layout",
+      "To copy the formatting"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Clear Formatting' option removes all text formatting, returning the text to the default font style."
+  },
+  {
+    "id": 87,
+    "question": "Which of the following is used to insert a chart in MS Word?",
+    "options": [
+      "Insert Tab > Chart",
+      "Design Tab > Chart",
+      "Page Layout Tab > Chart",
+      "Insert Tab > Picture"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Insert Tab' allows you to insert charts to visually represent data in MS Word."
+  },
+  {
+    "id": 88,
+    "question": "How can you insert a page break in MS Word?",
+    "options": [
+      "Ctrl + Enter",
+      "Ctrl + Shift + P",
+      "Ctrl + Shift + E",
+      "Alt + P"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To insert a page break in MS Word, press Ctrl + Enter."
+  },
+  {
+    "id": 89,
+    "question": "Which of the following is the shortcut for 'Bold' in MS Word?",
+    "options": [
+      "Ctrl + B",
+      "Ctrl + I",
+      "Ctrl + U",
+      "Ctrl + E"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "Ctrl + B is the shortcut key to apply bold formatting to the selected text in MS Word."
+  },
+  {
+    "id": 90,
+    "question": "Which tab in MS Word allows you to insert a table?",
+    "options": [
+      "Insert Tab",
+      "Home Tab",
+      "Design Tab",
+      "View Tab"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To insert a table, go to the 'Insert Tab' and select 'Table.'"
+  },
+  {
+    "id": 91,
+    "question": "What does the 'Find' feature in MS Word do?",
+    "options": [
+      "Finds and highlights specific words in the document",
+      "Replaces words in the document",
+      "Inserts a table",
+      "Adds a page number"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Find' feature allows you to search for specific words or phrases in the document."
+  },
+  {
+    "id": 92,
+    "question": "What is the function of the 'Insert Shape' option in MS Word?",
+    "options": [
+      "To add shapes like rectangles, circles, and arrows",
+      "To insert pictures",
+      "To create a table",
+      "To track document changes"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Insert Shape' option allows you to add various shapes, such as rectangles, circles, and arrows, to your document."
+  },
+  {
+    "id": 93,
+    "question": "How do you add a header in MS Word?",
+    "options": [
+      "Insert Tab > Header",
+      "Design Tab > Header",
+      "Layout Tab > Header",
+      "Page Layout Tab > Header"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To add a header, go to the 'Insert Tab' and select 'Header.'"
+  },
+  {
+    "id": 94,
+    "question": "What does the 'Insert Comment' option do in MS Word?",
+    "options": [
+      "Inserts a comment in the document",
+      "Inserts a hyperlink",
+      "Inserts a table",
+      "Inserts a page number"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Insert Comment' option adds a comment to the document, which can be used for collaboration and feedback."
+  },
+  {
+    "id": 95,
+    "question": "How can you change the text alignment in MS Word?",
+    "options": [
+      "Home Tab > Alignment",
+      "Insert Tab > Alignment",
+      "Page Layout Tab > Alignment",
+      "Design Tab > Alignment"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To change the text alignment (left, center, right, justify), go to the 'Home Tab' and select the desired alignment option."
+  },
+  {
+    "id": 96,
+    "question": "Which option is used to insert a footer in MS Word?",
+    "options": [
+      "Insert Tab > Footer",
+      "Page Layout Tab > Footer",
+      "Review Tab > Footer",
+      "Insert Tab > Page Numbers"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To insert a footer, go to the 'Insert Tab' and select 'Footer.'"
+  },
+  {
+    "id": 97,
+    "question": "How do you change the document's font in MS Word?",
+    "options": [
+      "Home Tab > Font",
+      "Design Tab > Font",
+      "Insert Tab > Font",
+      "Page Layout Tab > Font"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Home Tab' allows you to change the font style and size of the text in your document."
+  },
+  {
+    "id": 98,
+    "question": "What is the shortcut for 'Underline' in MS Word?",
+    "options": [
+      "Ctrl + B",
+      "Ctrl + U",
+      "Ctrl + I",
+      "Ctrl + E"
+    ],
+    "answer": 1,
+    "level": 0,
+    "explanation": "Ctrl + U is the shortcut key to underline selected text in MS Word."
+  },
+  {
+    "id": 99,
+    "question": "What is the function of the 'Insert Text Box' option in MS Word?",
+    "options": [
+      "To add a box for inserting text",
+      "To add a page break",
+      "To add a hyperlink",
+      "To add an image"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Insert Text Box' option allows you to add a box for inserting text in specific areas of the page."
+  },
+  {
+    "id": 100,
+    "question": "Which option is used to add a page number in MS Word?",
+    "options": [
+      "Insert Tab > Page Number",
+      "Page Layout Tab > Page Number",
+      "Design Tab > Page Number",
+      "Review Tab > Page Number"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To add page numbers in MS Word, go to the 'Insert Tab' and select 'Page Number.'"
+  },
+    {
+    "id": 101,
+    "question": "What is the shortcut to select all text in a document in MS Word?",
+    "options": [
+      "Ctrl + S",
+      "Ctrl + A",
+      "Ctrl + X",
+      "Ctrl + C"
+    ],
+    "answer": 1,
+    "level": 0,
+    "explanation": "Ctrl + A is the shortcut to select all the text in the document in MS Word."
+  },
+  {
+    "id": 102,
+    "question": "Which tab in MS Word allows you to change the margins of the document?",
+    "options": [
+      "Insert Tab",
+      "Design Tab",
+      "Page Layout Tab",
+      "View Tab"
+    ],
+    "answer": 2,
+    "level": 0,
+    "explanation": "The 'Page Layout Tab' in MS Word is used to change the margins, orientation, and size of the document."
+  },
+  {
+    "id": 103,
+    "question": "What does the 'Clear Formatting' option do in MS Word?",
+    "options": [
+      "Removes all text formatting",
+      "Deletes all text",
+      "Saves the document",
+      "Inserts a page break"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Clear Formatting' option removes all the applied formatting (such as font size, color, and styles) from the selected text."
+  },
+  {
+    "id": 104,
+    "question": "Which of the following can you add using the 'Insert' tab in MS Word?",
+    "options": [
+      "Page borders",
+      "Tables",
+      "Headers",
+      "All of the above"
+    ],
+    "answer": 3,
+    "level": 0,
+    "explanation": "The 'Insert' tab allows you to insert tables, page borders, headers, and many other elements into the document."
+  },
+  {
+    "id": 105,
+    "question": "How do you insert a new page in MS Word?",
+    "options": [
+      "Insert Tab > Blank Page",
+      "Home Tab > New Page",
+      "Page Layout Tab > Insert Page",
+      "Design Tab > New Page"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To insert a new blank page in MS Word, go to the 'Insert Tab' and select 'Blank Page.'"
+  },
+  {
+    "id": 106,
+    "question": "What does the 'Header & Footer' option do in MS Word?",
+    "options": [
+      "Adds page numbers",
+      "Adds content to the top or bottom of each page",
+      "Inserts a table",
+      "Tracks document changes"
+    ],
+    "answer": 1,
+    "level": 0,
+    "explanation": "The 'Header & Footer' option is used to add content such as page numbers, document title, or date to the top or bottom of each page."
+  },
+  {
+    "id": 107,
+    "question": "Which of the following allows you to create a bullet point list in MS Word?",
+    "options": [
+      "Home Tab > Bullets",
+      "Insert Tab > Bullets",
+      "Design Tab > Bullets",
+      "View Tab > Bullets"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Bullets' button in the 'Home Tab' is used to create bulleted lists in MS Word."
+  },
+  {
+    "id": 108,
+    "question": "How do you add a footnote in MS Word?",
+    "options": [
+      "Insert Tab > Footnote",
+      "References Tab > Footnote",
+      "Page Layout Tab > Footnote",
+      "Home Tab > Footnote"
+    ],
+    "answer": 1,
+    "level": 0,
+    "explanation": "To insert a footnote, go to the 'References Tab' and select 'Insert Footnote.'"
+  },
+  {
+    "id": 109,
+    "question": "What is the function of the 'Indent' button in MS Word?",
+    "options": [
+      "To move text to the left",
+      "To move text to the right",
+      "To increase the font size",
+      "To underline text"
+    ],
+    "answer": 1,
+    "level": 0,
+    "explanation": "The 'Indent' button moves the selected text to the right, adjusting the indentation in the paragraph."
+  },
+  {
+    "id": 110,
+    "question": "How do you insert a table in MS Word?",
+    "options": [
+      "Insert Tab > Table",
+      "Design Tab > Table",
+      "Page Layout Tab > Table",
+      "Review Tab > Table"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To insert a table, go to the 'Insert Tab' and select 'Table.'"
+  },
+  {
+    "id": 111,
+    "question": "What is the purpose of the 'Page Setup' group in MS Word?",
+    "options": [
+      "To change the page's orientation and size",
+      "To insert hyperlinks",
+      "To format text",
+      "To save the document"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Page Setup' group in MS Word allows you to change page settings such as size, margins, and orientation."
+  },
+  {
+    "id": 112,
+    "question": "What does the 'Insert Comment' option do in MS Word?",
+    "options": [
+      "Adds a comment to the document for feedback or review",
+      "Inserts a table",
+      "Inserts a page break",
+      "Inserts a picture"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Insert Comment' option adds a comment for review or feedback in the document."
+  },
+  {
+    "id": 113,
+    "question": "What is the purpose of the 'Page Break' feature in MS Word?",
+    "options": [
+      "To end a page and start a new one",
+      "To insert a footer",
+      "To insert a comment",
+      "To insert a hyperlink"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Page Break' feature allows you to end the current page and start a new one, useful for organizing content."
+  },
+  {
+    "id": 114,
+    "question": "Which tab in MS Word allows you to insert pictures?",
+    "options": [
+      "Insert Tab",
+      "Design Tab",
+      "Home Tab",
+      "Page Layout Tab"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To insert a picture, go to the 'Insert Tab' and select 'Pictures.'"
+  },
+  {
+    "id": 115,
+    "question": "What does the 'Insert Hyperlink' option do?",
+    "options": [
+      "Links selected text to a website or document",
+      "Inserts a table",
+      "Changes the text font",
+      "Inserts a comment"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Insert Hyperlink' option links the selected text to a URL or another document."
+  },
+  {
+    "id": 116,
+    "question": "Which option would you use to change the font style in MS Word?",
+    "options": [
+      "Home Tab > Font",
+      "Design Tab > Font",
+      "Insert Tab > Font",
+      "Page Layout Tab > Font"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To change the font style, go to the 'Home Tab' and adjust the settings in the 'Font' group."
+  },
+  {
+    "id": 117,
+    "question": "How do you change the background color in MS Word?",
+    "options": [
+      "Page Layout Tab > Page Color",
+      "Insert Tab > Background Color",
+      "Design Tab > Background",
+      "View Tab > Background Color"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To change the background color, go to the 'Page Layout Tab' and select 'Page Color.'"
+  },
+  {
+    "id": 118,
+    "question": "What does the 'Clear All Formatting' button do in MS Word?",
+    "options": [
+      "Removes all formatting from the selected text",
+      "Inserts a new paragraph",
+      "Boldens selected text",
+      "Changes font size"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Clear All Formatting' button removes all applied formatting from the selected text, returning it to the default style."
+  },
+  {
+    "id": 119,
+    "question": "How can you change the line spacing in MS Word?",
+    "options": [
+      "Home Tab > Line Spacing",
+      "Page Layout Tab > Line Spacing",
+      "Design Tab > Line Spacing",
+      "Insert Tab > Line Spacing"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To adjust the line spacing, go to the 'Home Tab' and select 'Line Spacing' in the Paragraph group."
+  },
+  {
+    "id": 120,
+    "question": "What does the 'Insert Table of Contents' option do?",
+    "options": [
+      "Generates a table of contents based on document headings",
+      "Inserts a new page",
+      "Inserts a page number",
+      "Inserts a comment"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Insert Table of Contents' option automatically generates a table of contents based on the document's headings."
+  },
+    {
+    "id": 121,
+    "question": "What is the shortcut for 'Redo' in MS Word?",
+    "options": [
+      "Ctrl + Z",
+      "Ctrl + Y",
+      "Ctrl + X",
+      "Ctrl + V"
+    ],
+    "answer": 1,
+    "level": 0,
+    "explanation": "Ctrl + Y is the shortcut for 'Redo' in MS Word, allowing you to redo the last action undone by Ctrl + Z."
+  },
+  {
+    "id": 122,
+    "question": "What is the purpose of the 'Insert Comment' feature in MS Word?",
+    "options": [
+      "To add a comment for feedback or review",
+      "To insert a hyperlink",
+      "To create a new page",
+      "To track changes"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Insert Comment' feature allows you to add comments to the document, useful for reviewing or providing feedback."
+  },
+  {
+    "id": 123,
+    "question": "Which option would you use to apply bold formatting in MS Word?",
+    "options": [
+      "Ctrl + B",
+      "Ctrl + I",
+      "Ctrl + U",
+      "Ctrl + E"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "Ctrl + B is the shortcut key to apply bold formatting to selected text in MS Word."
+  },
+  {
+    "id": 124,
+    "question": "What does the 'Insert Page Number' option do?",
+    "options": [
+      "Inserts a page number at the top or bottom of the page",
+      "Inserts a table",
+      "Inserts a comment",
+      "Inserts a hyperlink"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Insert Page Number' option is used to add page numbers to the top or bottom of the page in MS Word."
+  },
+  {
+    "id": 125,
+    "question": "How can you add a table of contents in MS Word?",
+    "options": [
+      "Insert Tab > Table of Contents",
+      "Design Tab > Table of Contents",
+      "References Tab > Table of Contents",
+      "Page Layout Tab > Table of Contents"
+    ],
+    "answer": 2,
+    "level": 0,
+    "explanation": "To insert a table of contents, go to the 'References Tab' and select 'Table of Contents.'"
+  },
+  {
+    "id": 126,
+    "question": "What is the function of the 'Insert Table of Contents' option?",
+    "options": [
+      "Generates a list of headings from the document",
+      "Inserts a page break",
+      "Inserts a header",
+      "Inserts an image"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Insert Table of Contents' option automatically generates a table of contents based on the document's headings."
+  },
+  {
+    "id": 127,
+    "question": "Which tab is used to insert symbols in MS Word?",
+    "options": [
+      "Insert Tab",
+      "Home Tab",
+      "Design Tab",
+      "Page Layout Tab"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Insert Tab' is used to insert symbols, special characters, and other objects into the document."
+  },
+  {
+    "id": 128,
+    "question": "What does the 'Insert Picture' option do?",
+    "options": [
+      "Inserts an image from your computer into the document",
+      "Inserts a table",
+      "Inserts a page break",
+      "Inserts a comment"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Insert Picture' option allows you to insert images from your computer into the document."
+  },
+  {
+    "id": 129,
+    "question": "What is the shortcut to open the 'Find' dialog box in MS Word?",
+    "options": [
+      "Ctrl + F",
+      "Ctrl + H",
+      "Ctrl + P",
+      "Ctrl + S"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "Ctrl + F opens the 'Find' dialog box, allowing you to search for specific text in the document."
+  },
+  {
+    "id": 130,
+    "question": "Which option is used to track changes in MS Word?",
+    "options": [
+      "Review Tab > Track Changes",
+      "Insert Tab > Track Changes",
+      "Page Layout Tab > Track Changes",
+      "Home Tab > Track Changes"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Track Changes' option in the 'Review Tab' is used to track all the changes made to a document by different users."
+  },
+  {
+    "id": 131,
+    "question": "What is the function of the 'Insert Text Box' option in MS Word?",
+    "options": [
+      "To add a box containing text in a specific area",
+      "To insert a comment",
+      "To change the page layout",
+      "To insert a picture"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Insert Text Box' option allows you to add a box containing text in a specific area of the page."
+  },
+  {
+    "id": 132,
+    "question": "What is the shortcut key for 'Italic' in MS Word?",
+    "options": [
+      "Ctrl + B",
+      "Ctrl + I",
+      "Ctrl + U",
+      "Ctrl + E"
+    ],
+    "answer": 1,
+    "level": 0,
+    "explanation": "Ctrl + I is the shortcut key to apply italic formatting to selected text in MS Word."
+  },
+  {
+    "id": 133,
+    "question": "How can you change the document's font size in MS Word?",
+    "options": [
+      "Home Tab > Font Size",
+      "Insert Tab > Font Size",
+      "Design Tab > Font Size",
+      "Page Layout Tab > Font Size"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To change the font size, go to the 'Home Tab' and adjust the font size in the 'Font' group."
+  },
+  {
+    "id": 134,
+    "question": "How do you add a page number in MS Word?",
+    "options": [
+      "Insert Tab > Page Number",
+      "Home Tab > Page Number",
+      "Page Layout Tab > Page Number",
+      "View Tab > Page Number"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To add page numbers in MS Word, go to the 'Insert Tab' and select 'Page Number.'"
+  },
+  {
+    "id": 135,
+    "question": "What is the function of the 'Insert Hyperlink' feature in MS Word?",
+    "options": [
+      "Links selected text to a website or another document",
+      "Inserts a table",
+      "Inserts a page break",
+      "Inserts a picture"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Insert Hyperlink' option links the selected text to a website or another document."
+  },
+  {
+    "id": 136,
+    "question": "How can you remove the header or footer in MS Word?",
+    "options": [
+      "Insert Tab > Remove Header/Footer",
+      "Design Tab > Remove Header/Footer",
+      "Page Layout Tab > Remove Header/Footer",
+      "Review Tab > Remove Header/Footer"
+    ],
+    "answer": 1,
+    "level": 0,
+    "explanation": "To remove the header or footer, go to the 'Design Tab' and select 'Remove Header' or 'Remove Footer.'"
+  },
+  {
+    "id": 137,
+    "question": "What is the purpose of the 'SmartArt' feature in MS Word?",
+    "options": [
+      "To create diagrams and flowcharts",
+      "To format text",
+      "To add pictures",
+      "To change the page layout"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'SmartArt' feature allows you to create diagrams, flowcharts, and other visual representations of data."
+  },
+  {
+    "id": 138,
+    "question": "Which option is used to add a new blank page in MS Word?",
+    "options": [
+      "Insert Tab > Blank Page",
+      "Design Tab > Blank Page",
+      "Page Layout Tab > Blank Page",
+      "Home Tab > Blank Page"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To insert a new blank page, go to the 'Insert Tab' and select 'Blank Page.'"
+  },
+  {
+    "id": 139,
+    "question": "How do you insert a comment in MS Word?",
+    "options": [
+      "Review Tab > New Comment",
+      "Insert Tab > New Comment",
+      "Page Layout Tab > New Comment",
+      "Home Tab > New Comment"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "You can insert a comment by going to the 'Review Tab' and selecting 'New Comment.'"
+  },
+  {
+    "id": 140,
+    "question": "What does the 'Insert Footnote' option do in MS Word?",
+    "options": [
+      "Inserts a footnote at the bottom of the page",
+      "Inserts a page number",
+      "Inserts a picture",
+      "Inserts a page break"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Insert Footnote' option is used to insert a footnote at the bottom of the page, typically for citations or references."
+  },
+    {
+    "id": 141,
+    "question": "What is the shortcut key for 'Italic' in MS Word?",
+    "options": [
+      "Ctrl + I",
+      "Ctrl + B",
+      "Ctrl + U",
+      "Ctrl + A"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "Ctrl + I is the shortcut to apply italic formatting to selected text in MS Word."
+  },
+  {
+    "id": 142,
+    "question": "How can you insert a table in MS Word?",
+    "options": [
+      "Insert Tab > Table",
+      "Home Tab > Table",
+      "Page Layout Tab > Table",
+      "Review Tab > Table"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "You can insert a table by going to the 'Insert Tab' and selecting 'Table.'"
+  },
+  {
+    "id": 143,
+    "question": "What is the function of the 'Text Highlight Color' option?",
+    "options": [
+      "To apply a background color to text",
+      "To change the text color",
+      "To underline the text",
+      "To change the font size"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Text Highlight Color' option allows you to highlight selected text with a color."
+  },
+  {
+    "id": 144,
+    "question": "How do you change the page orientation in MS Word?",
+    "options": [
+      "Page Layout Tab > Orientation",
+      "Insert Tab > Orientation",
+      "Design Tab > Orientation",
+      "Home Tab > Orientation"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To change the page orientation between portrait and landscape, go to the 'Page Layout Tab' and select 'Orientation.'"
+  },
+  {
+    "id": 145,
+    "question": "Which tab is used to add a page break in MS Word?",
+    "options": [
+      "Insert Tab",
+      "Design Tab",
+      "Page Layout Tab",
+      "Home Tab"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To insert a page break, go to the 'Insert Tab' and select 'Page Break.'"
+  },
+  {
+    "id": 146,
+    "question": "What does the 'Insert Footnote' option do in MS Word?",
+    "options": [
+      "Inserts a footnote at the bottom of the page",
+      "Inserts a page number",
+      "Inserts a hyperlink",
+      "Inserts a table"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Insert Footnote' option is used to insert a footnote at the bottom of the page, often used for citations."
+  },
+  {
+    "id": 147,
+    "question": "How do you remove formatting from selected text in MS Word?",
+    "options": [
+      "Home Tab > Clear Formatting",
+      "Insert Tab > Clear Formatting",
+      "Page Layout Tab > Clear Formatting",
+      "Review Tab > Clear Formatting"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Clear Formatting' option in the 'Home Tab' removes all applied formatting, returning text to default settings."
+  },
+  {
+    "id": 148,
+    "question": "How do you add page numbers in MS Word?",
+    "options": [
+      "Insert Tab > Page Number",
+      "Page Layout Tab > Page Number",
+      "Design Tab > Page Number",
+      "Home Tab > Page Number"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To add page numbers, go to the 'Insert Tab' and select 'Page Number.'"
+  },
+  {
+    "id": 149,
+    "question": "What is the purpose of the 'Header & Footer' option in MS Word?",
+    "options": [
+      "Adds content to the top or bottom of each page",
+      "Inserts a page number",
+      "Changes the document's layout",
+      "Inserts a new section"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Header & Footer' option is used to add content such as page numbers or document information to the top or bottom of each page."
+  },
+  {
+    "id": 150,
+    "question": "What is the shortcut to undo an action in MS Word?",
+    "options": [
+      "Ctrl + Z",
+      "Ctrl + Y",
+      "Ctrl + X",
+      "Ctrl + P"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "Ctrl + Z is the shortcut to undo the last action in MS Word."
+  },
+  {
+    "id": 151,
+    "question": "What does the 'Insert Shape' option do?",
+    "options": [
+      "Inserts predefined shapes like rectangles, circles, and arrows",
+      "Inserts a table",
+      "Inserts a page break",
+      "Inserts an image"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Insert Shape' option allows you to insert predefined shapes such as rectangles, circles, and arrows into the document."
+  },
+  {
+    "id": 152,
+    "question": "How do you insert a new blank page in MS Word?",
+    "options": [
+      "Insert Tab > Blank Page",
+      "Home Tab > Blank Page",
+      "Page Layout Tab > Blank Page",
+      "Review Tab > Blank Page"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To insert a blank page, go to the 'Insert Tab' and select 'Blank Page.'"
+  },
+  {
+    "id": 153,
+    "question": "How do you insert a table in MS Word?",
+    "options": [
+      "Insert Tab > Table",
+      "Page Layout Tab > Table",
+      "Design Tab > Table",
+      "Home Tab > Table"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To insert a table, go to the 'Insert Tab' and select 'Table.'"
+  },
+  {
+    "id": 154,
+    "question": "What is the shortcut key to italicize text in MS Word?",
+    "options": [
+      "Ctrl + B",
+      "Ctrl + I",
+      "Ctrl + U",
+      "Ctrl + A"
+    ],
+    "answer": 1,
+    "level": 0,
+    "explanation": "Ctrl + I is the shortcut key to italicize selected text in MS Word."
+  },
+  {
+    "id": 155,
+    "question": "What does the 'Text Wrapping' feature do in MS Word?",
+    "options": [
+      "Allows text to flow around objects like pictures or shapes",
+      "Changes the font size",
+      "Inserts a page break",
+      "Changes the text color"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Text Wrapping' feature allows text to flow around inserted objects such as pictures or shapes in the document."
+  },
+  {
+    "id": 156,
+    "question": "How do you apply bullet points to a list in MS Word?",
+    "options": [
+      "Home Tab > Bullets",
+      "Insert Tab > Bullets",
+      "Design Tab > Bullets",
+      "Page Layout Tab > Bullets"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To create a bulleted list, go to the 'Home Tab' and select the 'Bullets' option."
+  },
+  {
+    "id": 157,
+    "question": "What does the 'Insert Page Break' option do in MS Word?",
+    "options": [
+      "Starts a new page in the document",
+      "Inserts a hyperlink",
+      "Changes the font style",
+      "Changes the document layout"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Insert Page Break' option starts a new page within the document, helping organize content."
+  },
+  {
+    "id": 158,
+    "question": "What is the function of the 'Change Case' option in MS Word?",
+    "options": [
+      "To change the case of selected text",
+      "To insert a table",
+      "To add a page number",
+      "To apply bold formatting"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Change Case' option allows you to change the case of the selected text, such as from uppercase to lowercase or vice versa."
+  },
+  {
+    "id": 159,
+    "question": "Which tab is used to add page borders in MS Word?",
+    "options": [
+      "Design Tab",
+      "Insert Tab",
+      "Page Layout Tab",
+      "Home Tab"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "The 'Design Tab' is used to add page borders to your document for decoration or emphasis."
+  },
+  {
+    "id": 160,
+    "question": "How can you check for spelling mistakes in MS Word?",
+    "options": [
+      "Review Tab > Spelling & Grammar",
+      "Insert Tab > Spelling & Grammar",
+      "Home Tab > Spelling & Grammar",
+      "Page Layout Tab > Spelling & Grammar"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "To check for spelling mistakes, go to the 'Review Tab' and select 'Spelling & Grammar.'"
+  },
+  
+
+]
