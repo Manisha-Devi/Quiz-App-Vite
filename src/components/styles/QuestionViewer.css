@@ -1,14 +1,52 @@
 /* Wrapper */
 .question-box {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  height: 100%;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.06);
-  overflow: hidden;
-  height: 100%;
-  width: 100%;
-  transition: box-shadow 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark-mode .question-box {
+  background: #2d2d30;
+  color: #e0e0e0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .q-header {
+  background: #404040;
+  color: #e0e0e0;
+}
+
+.dark-mode .mark-review {
+  color: #e0e0e0;
+}
+
+.dark-mode .mark-review:hover {
+  background: #555;
+}
+
+.dark-mode .q-text {
+  color: #e0e0e0;
+}
+
+.dark-mode .option {
+  background: #404040;
+  border: 1px solid #555;
+  color: #e0e0e0;
+}
+
+.dark-mode .option:hover {
+  background: #4a4a4a;
+}
+
+.dark-mode .option.active {
+  background: #5a4fcf;
+  border-color: #5a4fcf;
+  color: white;
 }
 
 /* Scrollable question content */
@@ -27,32 +65,54 @@
 
 /* Header */
 .q-header {
+  background: transparent;
+  color: #333;
+  padding: 10px 15px;
+  font-weight: bold;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark-mode .q-header {
+  background: transparent;
+  color: #e0e0e0;
 }
 
 .q-number {
   font-size: 18px;
   font-weight: 700;
-  color: #4b3ee6;
+  color: #333;
+}
+
+.dark-mode .q-number {
+  color: white;
 }
 
 .mark-review {
-  font-size: 14px;
-  color: #ff9800;
-  background: #fff3cd;
-  padding: 4px 10px;
-  border-radius: 8px;
-  font-weight: 600;
+  background: transparent;
+  color: #333;
+  border: 1px solid #333;
+  padding: 6px 12px;
+  border-radius: 6px;
   cursor: pointer;
-  border: 1px solid #ffeeba;
-  transition: background 0.3s ease;
+  font-size: 12px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.dark-mode .mark-review {
+  color: white;
+  border: 1px solid white;
 }
 
 .mark-review:hover {
-  background: #ffeeba;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode .mark-review:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 /* Question Text */

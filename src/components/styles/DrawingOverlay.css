@@ -19,6 +19,41 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark-mode .drawing-toggle button {
+  background: #404040;
+  color: #e0e0e0;
+  border: 1px solid #555;
+}
+
+.dark-mode .drawing-toggle button:hover {
+  background: #4a4a4a;
+}
+
+.dark-mode .drawing-panel {
+  background: #2d2d30;
+  border: 1px solid #555;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .drawing-panel button {
+  background: #404040;
+  color: #e0e0e0;
+  border: 1px solid #555;
+}
+
+.dark-mode .drawing-panel button:hover {
+  background: #4a4a4a;
+}
+
+.dark-mode .color-picker button {
+  border: 2px solid #555;
+}
+
+.dark-mode #scratchpad {
+  background: transparent;
 }
 
 .drawing-toggle > button {
@@ -95,5 +130,3 @@
   opacity: 1;
   max-height: 450px;
 }
-
-

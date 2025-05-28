@@ -10,6 +10,10 @@ import DrawingOverlay from '../components/DrawingOverlay';
 function ExamPage() {
   const navigate = useNavigate();
   const [isFullscreen, setIsFullscreen] = useState(false); // Track fullscreen state
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    return localStorage.getItem('darkMode') === 'true';
+  });
+
   const toggleFullscreen = () => {
     if (isFullscreen) {
       document.exitFullscreen();
@@ -17,6 +21,12 @@ function ExamPage() {
       document.documentElement.requestFullscreen();
     }
     setIsFullscreen(!isFullscreen);
+  };
+
+  const toggleDarkMode = () => {
+    const newDarkMode = !isDarkMode;
+    setIsDarkMode(newDarkMode);
+    localStorage.setItem('darkMode', newDarkMode.toString());
   };
 
   const quizTimeRaw = localStorage.getItem('quizTime');
@@ -145,13 +155,16 @@ function ExamPage() {
 
   return (
     <>
-      <div className={`exam-ui ${isFullscreen ? 'fullscreen' : ''}`}>
+      <div className={`exam-ui ${isFullscreen ? 'fullscreen' : ''} ${isDarkMode ? 'dark-mode' : ''}`}>
         <MathJaxContext config={mathConfig}>
           <div className="exam-ui">
             <header className="exam-header">
               <div className="section-name">{q.section || 'General'}</div>
               <div className="d-flex align-items-center gap-2">
                 <div className="timer-box">{formatTime(timeLeft)}</div>
+                <button className="theme-toggle-btn" onClick={toggleDarkMode} title="Toggle Dark Mode">
+                  {isDarkMode ? '☀️' : '🌙'}
+                </button>
                 <button className="toggle-btn" onClick={() => setIsSidebarOpen(o => !o)}>
                   {isMobile ? (isSidebarOpen ? '⬇️' : '⬆️') : (isSidebarOpen ? '⬅️' : '➡️')}
                 </button>
