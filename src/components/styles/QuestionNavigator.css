@@ -55,44 +55,28 @@
   color: white;
   white-space: nowrap;
   transition: background 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
 }
 
 .legend-pill.answered { background: #28a745; }
 .legend-pill.review { background: #007bff; }
 .legend-pill.review-answered { background: #fd7e14; }
 .legend-pill.not-visited { background: #6c757d; }
-.legend-pill.active { background: #6f42c1; }
+.legend-pill.active { background: #6f42c1; cursor: default; }
 
-/* CHECKBOX SECTION STYLES */
-.legend-checkboxes {
-  margin-top: 8px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.legend-checkbox {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+.legend-pill input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
   cursor: pointer;
-  user-select: none;
-  font-size: 12px;
-  font-weight: 500;
-  color: #333;
+  accent-color: white;
+  margin: 0;
 }
 
-.legend-checkbox input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  cursor: pointer;
-  accent-color: #4b3ee6;
-}
-
-.legend-checkbox span {
-  white-space: nowrap;
-}
-
-.legend-checkbox:hover {
+.legend-pill:hover:not(.active) {
   opacity: 0.8;
+  transform: scale(1.02);
 }

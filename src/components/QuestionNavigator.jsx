@@ -82,47 +82,41 @@ function QuestionNavigator({ totalQuestions, current, answers, review, onJump })
 
       <div className="legend">
         <span className="legend-pill active">Current</span>
-        <span className="legend-pill answered">Answered ({counts.answered})</span>
-        <span className="legend-pill review">Review ({counts.reviewOnly})</span>
-        <span className="legend-pill review-answered">Review + Answered ({counts.reviewAnswered})</span>
-        <span className="legend-pill not-visited">Not Visited ({counts.notVisited})</span>
-      </div>
-      
-      <div className="legend-checkboxes">
-        <label className="legend-checkbox">
+        
+        <label className="legend-pill answered">
           <input
             type="checkbox"
             checked={selectedTypes.includes('answered')}
             onChange={() => handleTypeToggle('answered')}
           />
-          <span>Answered</span>
+          Answered ({counts.answered})
         </label>
         
-        <label className="legend-checkbox">
+        <label className="legend-pill review">
           <input
             type="checkbox"
             checked={selectedTypes.includes('review')}
             onChange={() => handleTypeToggle('review')}
           />
-          <span>Review</span>
+          Review ({counts.reviewOnly})
         </label>
         
-        <label className="legend-checkbox">
+        <label className="legend-pill review-answered">
           <input
             type="checkbox"
             checked={selectedTypes.includes('review-answered')}
             onChange={() => handleTypeToggle('review-answered')}
           />
-          <span>Review + Answered</span>
+          Review + Answered ({counts.reviewAnswered})
         </label>
         
-        <label className="legend-checkbox">
+        <label className="legend-pill not-visited">
           <input
             type="checkbox"
             checked={selectedTypes.includes('not-visited')}
             onChange={() => handleTypeToggle('not-visited')}
           />
-          <span>Not Visited</span>
+          Not Visited ({counts.notVisited})
         </label>
       </div>
     </div>
