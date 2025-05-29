@@ -63,13 +63,23 @@
 .legend-pill.not-visited { background: #6c757d; }
 .legend-pill.active { background: #6f42c1; }
 
-/* CHECKBOX LEGEND STYLES */
+/* CHECKBOX SECTION STYLES */
+.legend-checkboxes {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 .legend-checkbox {
   display: flex;
   align-items: center;
   gap: 6px;
   cursor: pointer;
   user-select: none;
+  font-size: 12px;
+  font-weight: 500;
+  color: #333;
 }
 
 .legend-checkbox input[type="checkbox"] {
@@ -79,7 +89,10 @@
   accent-color: #4b3ee6;
 }
 
-.legend-checkbox:hover .legend-pill {
+.legend-checkbox span {
+  white-space: nowrap;
+}
+
+.legend-checkbox:hover {
   opacity: 0.8;
-  transform: scale(1.02);
 }

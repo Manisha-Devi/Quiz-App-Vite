@@ -81,15 +81,21 @@ function QuestionNavigator({ totalQuestions, current, answers, review, onJump })
       </div>
 
       <div className="legend">
-        <span className="legend-pill active">🎯 Current</span>
-        
+        <span className="legend-pill active">Current</span>
+        <span className="legend-pill answered">Answered ({counts.answered})</span>
+        <span className="legend-pill review">Review ({counts.reviewOnly})</span>
+        <span className="legend-pill review-answered">Review + Answered ({counts.reviewAnswered})</span>
+        <span className="legend-pill not-visited">Not Visited ({counts.notVisited})</span>
+      </div>
+      
+      <div className="legend-checkboxes">
         <label className="legend-checkbox">
           <input
             type="checkbox"
             checked={selectedTypes.includes('answered')}
             onChange={() => handleTypeToggle('answered')}
           />
-          <span className="legend-pill answered">✅ Answered ({counts.answered})</span>
+          <span>Answered</span>
         </label>
         
         <label className="legend-checkbox">
@@ -98,7 +104,7 @@ function QuestionNavigator({ totalQuestions, current, answers, review, onJump })
             checked={selectedTypes.includes('review')}
             onChange={() => handleTypeToggle('review')}
           />
-          <span className="legend-pill review">⭐ Review ({counts.reviewOnly})</span>
+          <span>Review</span>
         </label>
         
         <label className="legend-checkbox">
@@ -107,7 +113,7 @@ function QuestionNavigator({ totalQuestions, current, answers, review, onJump })
             checked={selectedTypes.includes('review-answered')}
             onChange={() => handleTypeToggle('review-answered')}
           />
-          <span className="legend-pill review-answered">⭐✅ Review + Answered ({counts.reviewAnswered})</span>
+          <span>Review + Answered</span>
         </label>
         
         <label className="legend-checkbox">
@@ -116,7 +122,7 @@ function QuestionNavigator({ totalQuestions, current, answers, review, onJump })
             checked={selectedTypes.includes('not-visited')}
             onChange={() => handleTypeToggle('not-visited')}
           />
-          <span className="legend-pill not-visited">Not Visited ({counts.notVisited})</span>
+          <span>Not Visited</span>
         </label>
       </div>
     </div>
