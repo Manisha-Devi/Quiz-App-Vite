@@ -1,9 +1,10 @@
+
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import './styles/QuestionNavigator.css';
 
 function QuestionNavigator({ totalQuestions, current, answers, review, onJump }) {
-  const [filter, setFilter] = useState('all');
+  const [selectedTypes, setSelectedTypes] = useState([]);
 
   const getStatus = (i) => {
     if (i === current) return 'active';
@@ -38,37 +39,33 @@ function QuestionNavigator({ totalQuestions, current, answers, review, onJump })
 
   const counts = countStatus();
 
+  const handleTypeToggle = (type) => {
+    setSelectedTypes(prev => {
+      if (prev.includes(type)) {
+        return prev.filter(t => t !== type);
+      } else {
+        return [...prev, type];
+      }
+    });
+  };
+
   const filteredIndexes = Array.from({ length: totalQuestions }, (_, i) => i).filter(i => {
     const status = getStatus(i);
-    if (filter === 'all') return true;
-    if (filter === 'review') return status === 'review' || status === 'review-answered';
-    if (filter === 'unanswered') return status === 'not-visited';
-    return true;
+    
+    // If no checkboxes are selected, show all questions
+    if (selectedTypes.length === 0) return true;
+    
+    // Show only selected types
+    if (selectedTypes.includes('answered') && status === 'answered') return true;
+    if (selectedTypes.includes('review') && status === 'review') return true;
+    if (selectedTypes.includes('review-answered') && status === 'review-answered') return true;
+    if (selectedTypes.includes('not-visited') && status === 'not-visited') return true;
+    
+    return false;
   });
 
   return (
     <div className="question-navigator">
-      <div className="navigator-filters">
-        <button
-          onClick={() => setFilter('all')}
-          className={filter === 'all' ? 'active-filter' : ''}
-        >
-          All
-        </button>
-        <button
-          onClick={() => setFilter('review')}
-          className={filter === 'review' ? 'active-filter' : ''}
-        >
-          Review
-        </button>
-        <button
-          onClick={() => setFilter('unanswered')}
-          className={filter === 'unanswered' ? 'active-filter' : ''}
-        >
-          Unanswered
-        </button>
-      </div>
-
       <div className="navigator-grid">
         {filteredIndexes.map(i => (
           <button
@@ -85,10 +82,42 @@ function QuestionNavigator({ totalQuestions, current, answers, review, onJump })
 
       <div className="legend">
         <span className="legend-pill active">🎯 Current</span>
-        <span className="legend-pill answered">✅ Answered ({counts.answered})</span>
-        <span className="legend-pill review">⭐ Review ({counts.reviewOnly})</span>
-        <span className="legend-pill review-answered">⭐✅ Review + Answered ({counts.reviewAnswered})</span>
-        <span className="legend-pill not-visited">Not Visited ({counts.notVisited})</span>
+        
+        <label className="legend-checkbox">
+          <input
+            type="checkbox"
+            checked={selectedTypes.includes('answered')}
+            onChange={() => handleTypeToggle('answered')}
+          />
+          <span className="legend-pill answered">✅ Answered ({counts.answered})</span>
+        </label>
+        
+        <label className="legend-checkbox">
+          <input
+            type="checkbox"
+            checked={selectedTypes.includes('review')}
+            onChange={() => handleTypeToggle('review')}
+          />
+          <span className="legend-pill review">⭐ Review ({counts.reviewOnly})</span>
+        </label>
+        
+        <label className="legend-checkbox">
+          <input
+            type="checkbox"
+            checked={selectedTypes.includes('review-answered')}
+            onChange={() => handleTypeToggle('review-answered')}
+          />
+          <span className="legend-pill review-answered">⭐✅ Review + Answered ({counts.reviewAnswered})</span>
+        </label>
+        
+        <label className="legend-checkbox">
+          <input
+            type="checkbox"
+            checked={selectedTypes.includes('not-visited')}
+            onChange={() => handleTypeToggle('not-visited')}
+          />
+          <span className="legend-pill not-visited">Not Visited ({counts.notVisited})</span>
+        </label>
       </div>
     </div>
   );
