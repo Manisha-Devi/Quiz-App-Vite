@@ -32,7 +32,7 @@
   border: 2px solid #404040 !important;
   color: #e0e0e0 !important;
   overflow: hidden !important;
-  max-height: 100% !important;
+  max-height: calc(100vh - 120px) !important;
 }
 
 .exam-ui.dark-mode .exam-footer {
@@ -155,7 +155,8 @@
   gap: 20px;
   overflow: hidden;
   padding: 20px;
-  height: calc(100vh - 120px); /* Header + Footer height */
+  padding-bottom: 80px; /* Add space for fixed footer */
+  height: calc(100vh - 120px); /* Adjust height for fixed footer */
   max-height: calc(100vh - 120px);
   transition: background-color 0.3s ease;
 }
@@ -168,10 +169,8 @@
 
 .exam-left {
   flex: 1;
-  overflow-y: auto; /* Make it scrollable */
-  overflow-x: hidden;
-  height: 100%; /* Use full height of parent */
-  max-height: 100%;
+  overflow: hidden;
+  height: calc(100vh - 120px); /* Adjust height for fixed footer */
 }
 
 .exam-right {
@@ -184,8 +183,8 @@
   flex-direction: column;
   border: 2px solid #e0e0e0;
   transition: all 0.3s ease-in-out;
-  height: 100%; /* Use full height of parent */
-  max-height: 100%;
+  height: calc(100vh - 120px);
+  max-height: calc(100vh - 120px);
   overflow: hidden;
 }
 
