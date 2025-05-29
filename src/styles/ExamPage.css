@@ -1,3 +1,4 @@
+
 .exam-ui {
   background: #f0f2f7;
   min-height: 100vh;
@@ -32,7 +33,6 @@
   border: 2px solid #404040 !important;
   color: #e0e0e0 !important;
   overflow: hidden !important;
-  max-height: 100% !important;
 }
 
 .exam-ui.dark-mode .exam-footer {
@@ -70,6 +70,11 @@
   border: 1px solid #666633 !important;
 }
 
+.exam-ui.dark-mode .exam-main-layout {
+  background: #1a1a1a !important;
+}
+
+/* Header - 8% of screen height */
 .exam-header {
   background: #4b3ee6;
   color: white;
@@ -83,6 +88,9 @@
   position: sticky;
   top: 0;
   z-index: 10;
+  height: 8vh; /* Fixed 8% of viewport height */
+  min-height: 50px;
+  max-height: 60px;
 }
 
 .section-name {
@@ -149,31 +157,32 @@
   }
 }
 
+/* Header to Layout Gap - 2% of screen height */
+.header-gap {
+  height: 2vh;
+  min-height: 10px;
+  max-height: 20px;
+}
+
+/* Main Layout - 78% of screen height */
 .exam-main-layout {
   flex: 1;
   display: flex;
   gap: 20px;
   overflow: hidden;
-  padding: 20px;
-  padding-bottom: 20px; /* Normal bottom padding */
-  height: calc(100vh - 160px); /* Header (60px) + Footer (60px) + gaps */
-  max-height: calc(100vh - 160px);
+  padding: 0 20px;
+  height: 78vh; /* Fixed 78% of viewport height */
+  max-height: 78vh;
   transition: background-color 0.3s ease;
-  margin-bottom: 20px; /* Gap between layout and footer */
-}
-
-.exam-ui.dark-mode .exam-main-layout {
-  background: #1a1a1a !important;
-  overflow: hidden !important;
-  max-height: calc(100vh - 160px) !important;
 }
 
 .exam-left {
   flex: 1;
-  overflow-y: auto; /* Enable scrolling */
+  overflow-y: auto;
   overflow-x: hidden;
-  height: 100%; /* Use full height of parent */
+  height: 100%;
   max-height: 100%;
+  padding: 10px 0;
 }
 
 .exam-right {
@@ -186,7 +195,7 @@
   flex-direction: column;
   border: 2px solid #e0e0e0;
   transition: all 0.3s ease-in-out;
-  height: 100%; /* Use full height of parent */
+  height: 100%;
   max-height: 100%;
   overflow: hidden;
 }
@@ -200,6 +209,14 @@
   opacity: 0;
 }
 
+/* Layout to Footer Gap - 2% of screen height */
+.layout-footer-gap {
+  height: 2vh;
+  min-height: 10px;
+  max-height: 20px;
+}
+
+/* Footer - 10% of screen height */
 .exam-footer {
   background: white;
   padding: 12px 24px;
@@ -212,6 +229,9 @@
   left: 0;
   right: 0;
   z-index: 10;
+  height: 10vh; /* Fixed 10% of viewport height */
+  min-height: 60px;
+  max-height: 80px;
 }
 
 .footer-left {
@@ -275,11 +295,12 @@
   border-radius: 6px;
   margin-bottom: 10px;
   position: fixed;
-  top: 60px; /* Place it just below the header */
+  top: 8vh; /* Place it just below the header */
   left: 0;
   width: 100%;
   z-index: 20;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  height: 50px;
 }
 
 .time-warning .close-btn {
@@ -296,7 +317,7 @@
   .exam-main-layout {
     flex-direction: column;
     gap: 10px;
-    height: calc(100dvh - 170px); /* Ensure proper mobile height calculation */
+    padding: 0 10px;
   }
 
   .exam-right {
@@ -318,6 +339,7 @@
   .exam-footer {
     flex-direction: column;
     align-items: center;
+    height: 12vh; /* Slightly more on mobile */
   }
 
   .footer-left,
