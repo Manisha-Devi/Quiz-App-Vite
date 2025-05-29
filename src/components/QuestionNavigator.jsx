@@ -81,7 +81,7 @@ function QuestionNavigator({ totalQuestions, current, answers, review, onJump })
       </div>
 
       <div className="legend">
-        <span className="legend-pill active">Current</span>
+        <span className="legend-pill current">Current</span>
         
         <label className="legend-pill answered">
           <input

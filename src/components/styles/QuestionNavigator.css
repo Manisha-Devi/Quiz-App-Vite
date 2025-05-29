@@ -66,6 +66,7 @@
 .legend-pill.review { background: #007bff; }
 .legend-pill.review-answered { background: #fd7e14; }
 .legend-pill.not-visited { background: #6c757d; }
+.legend-pill.current { background: #6f42c1; cursor: default; }
 .legend-pill.active { background: #6f42c1; cursor: default; }
 
 .legend-pill input[type="checkbox"] {
