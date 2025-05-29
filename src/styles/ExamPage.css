@@ -174,6 +174,8 @@
   height: 78vh;
   /* Fixed 78% of viewport height */
   max-height: 78vh;
+  margin-bottom: 12vh;
+  /* Add margin to prevent footer overlap */
   transition: background-color 0.3s ease;
 }
 
@@ -225,15 +227,14 @@
   justify-content: space-between;
   align-items: center;
   border-top: 1px solid #ccc;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  position: relative;
   z-index: 10;
   height: 10vh;
   /* Fixed 10% of viewport height */
   min-height: 60px;
   max-height: 80px;
+  margin-top: auto;
+  flex-shrink: 0;
 }
 
 .footer-left {
