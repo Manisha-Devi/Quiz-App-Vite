@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/ResultPage.css';
 
@@ -14,11 +14,15 @@ function ResultPage() {
   const [showPerformanceChart, setShowPerformanceChart] = useState(false);
   const navigate = useNavigate();
 
-  const toggleDarkMode = () => {
+  const toggleDarkMode = useCallback(() => {
     const newDarkMode = !isDarkMode;
     setIsDarkMode(newDarkMode);
     localStorage.setItem('darkMode', newDarkMode.toString());
-  };
+  }, [isDarkMode]);
+
+  const handlePerformanceToggle = useCallback(() => {
+    setShowPerformanceChart(prev => !prev);
+  }, []);
 
   useEffect(() => {
     const q = JSON.parse(localStorage.getItem('finalQuiz') || '[]');
@@ -295,7 +299,7 @@ function ResultPage() {
         <div className="performance-chart-toggle">
           <div className="toggle-slider-container">
             <span className="toggle-label">📊 Performance Analytics</span>
-            <div className="slider-toggle" onClick={() => setShowPerformanceChart(!showPerformanceChart)}>
+            <div className="slider-toggle" onClick={handlePerformanceToggle}>
               <div className={`slider-thumb ${showPerformanceChart ? 'active' : ''}`}>
                 <span className="slider-icon">{showPerformanceChart ? '📈' : '📊'}</span>
               </div>
