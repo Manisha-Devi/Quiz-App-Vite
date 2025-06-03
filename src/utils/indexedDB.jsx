@@ -67,6 +67,20 @@ export const storeData = async (storeName, data) => {
   return store.put(data);
 };
 
+// Store text content in IndexedDB texts store
+export const storeText = async (content, key) => {
+  const db = await openDb();
+  const transaction = db.transaction("texts", "readwrite");
+  const store = transaction.objectStore("texts");
+  
+  const textData = {
+    id: key,
+    content: content
+  };
+  
+  return store.put(textData);
+};
+
 // Get data from IndexedDB
 export const getData = async (storeName, key) => {
   const db = await openDb();

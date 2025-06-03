@@ -4,7 +4,7 @@ import { storeImage } from '../utils/indexedDB';
 import useOfflineStorage from '../hooks/useOfflineStorage';
 import LocalQuizLibrary from '../components/LocalQuizLibrary';
 import '../styles/UploadPage.css';
-import { openDb, storeText, clearDatabase ,deleteDatabase } from '../utils/indexedDB';  // Import the functions
+import { openDb, storeText, clearDatabase, deleteDatabase } from '../utils/indexedDB';  // Import the functions
 
 function UploadPage() {
   const [files, setFiles] = useState([]);
