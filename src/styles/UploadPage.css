@@ -234,6 +234,18 @@
   box-shadow: 0 5px 15px rgba(75, 62, 230, 0.2);
 }
 
+.file-input-label.drag-over {
+  border-color: #4CAF50 !important;
+  background: linear-gradient(145deg, #e8f5e8, #d4f4d4) !important;
+  transform: scale(1.02);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3) !important;
+}
+
+.upload-page.dark-mode .file-input-label.drag-over {
+  background: linear-gradient(145deg, #2d4a2d, #3d5a3d) !important;
+  border-color: #4CAF50 !important;
+}
+
 .file-input-icon {
   font-size: 48px;
   margin-bottom: 15px;

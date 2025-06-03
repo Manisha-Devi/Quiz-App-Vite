@@ -43,14 +43,40 @@ function UploadPage() {
 
   const handleFileChange = async (e) => {
     const selected = Array.from(e.target.files);
-    const valid = selected.filter(file =>
-      file.type === 'application/json' && file.size <= 2 * 1024 * 1024
-    );
+    const newErrors = [];
+    
+    // Validate file types and sizes
+    const valid = selected.filter(file => {
+      if (file.type !== 'application/json') {
+        newErrors.push(`❌ ${file.name} is not a JSON file`);
+        return false;
+      }
+      if (file.size > 2 * 1024 * 1024) {
+        newErrors.push(`❌ ${file.name} is too large (max 2MB)`);
+        return false;
+      }
+      return true;
+    });
 
-    const newFileNames = new Set(files.map(f => f.name));
-    const newFiles = valid.filter(f => !newFileNames.has(f.name));
-    setFiles(prev => [...prev, ...newFiles]);
-    setErrors([]);
+    // Check for duplicates
+    const existingNames = new Set(files.map(f => f.name));
+    const newFiles = valid.filter(file => {
+      if (existingNames.has(file.name)) {
+        newErrors.push(`⚠️ ${file.name} already uploaded`);
+        return false;
+      }
+      return true;
+    });
+
+    if (newErrors.length > 0) {
+      setErrors(newErrors);
+    } else {
+      setErrors([]);
+    }
+    
+    if (newFiles.length > 0) {
+      setFiles(prev => [...prev, ...newFiles]);
+    }
   };
 
   const removeFile = (filename) => {
@@ -109,19 +135,51 @@ function UploadPage() {
     try {
       for (const file of files) {
         const text = await file.text();
-        const data = JSON.parse(text);
+        let data;
+        
+        try {
+          data = JSON.parse(text);
+        } catch (parseError) {
+          setErrors(prev => [...prev, `❌ Invalid JSON format in: ${file.name}`]);
+          setLoading(false);
+          return;
+        }
 
-        if (
-          !Array.isArray(data) ||
-          !data.every(q =>
-            typeof q.question === 'string' &&
-            Array.isArray(q.options) &&
-            q.options.length === 4 &&
-            typeof q.answer !== 'undefined' &&
-            typeof q.level !== 'undefined'
-          )
-        ) {
-          setErrors(prev => [...prev, `❌ Invalid structure in file: ${file.name}`]);
+        // Detailed validation
+        if (!Array.isArray(data)) {
+          setErrors(prev => [...prev, `❌ ${file.name} must contain an array of questions`]);
+          setLoading(false);
+          return;
+        }
+
+        if (data.length === 0) {
+          setErrors(prev => [...prev, `❌ ${file.name} is empty`]);
+          setLoading(false);
+          return;
+        }
+
+        // Validate each question
+        const invalidQuestions = [];
+        data.forEach((q, index) => {
+          if (typeof q.question !== 'string' || q.question.trim() === '') {
+            invalidQuestions.push(`Question ${index + 1}: Missing or invalid question text`);
+          }
+          if (!Array.isArray(q.options) || q.options.length !== 4) {
+            invalidQuestions.push(`Question ${index + 1}: Must have exactly 4 options`);
+          }
+          if (typeof q.answer === 'undefined' || q.answer < 0 || q.answer > 3) {
+            invalidQuestions.push(`Question ${index + 1}: Invalid answer (must be 0-3)`);
+          }
+          if (typeof q.level === 'undefined' || ![0, 1, 2].includes(q.level)) {
+            invalidQuestions.push(`Question ${index + 1}: Invalid level (must be 0, 1, or 2)`);
+          }
+        });
+
+        if (invalidQuestions.length > 0) {
+          setErrors(prev => [...prev, `❌ ${file.name} has issues:`, ...invalidQuestions.slice(0, 5)]);
+          if (invalidQuestions.length > 5) {
+            setErrors(prev => [...prev, `... and ${invalidQuestions.length - 5} more issues`]);
+          }
           setLoading(false);
           return;
         }
@@ -208,7 +266,23 @@ function UploadPage() {
             {/* File Upload Area */}
             <div className="upload-area">
               <div className="file-input-container">
-                <label className="file-input-label">
+                <label 
+                  className="file-input-label"
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.currentTarget.classList.add('drag-over');
+                  }}
+                  onDragLeave={(e) => {
+                    e.currentTarget.classList.remove('drag-over');
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    e.currentTarget.classList.remove('drag-over');
+                    const files = Array.from(e.dataTransfer.files);
+                    const event = { target: { files } };
+                    handleFileChange(event);
+                  }}
+                >
                   <div className="file-input-icon">📄</div>
                   <div className="file-input-text">
                     <span className="primary-text">Choose JSON Files</span>

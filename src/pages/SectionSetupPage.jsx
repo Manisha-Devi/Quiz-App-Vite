@@ -10,6 +10,8 @@ function SectionSetupPage() {
   const [showModal, setShowModal] = useState(false);
   const [modalImages, setModalImages] = useState([]);
   const [modalIndex, setModalIndex] = useState(0);
+  const [showQuestionModal, setShowQuestionModal] = useState(false);
+  const [previewQuestions, setPreviewQuestions] = useState([]);
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return localStorage.getItem('darkMode') === 'true';
   });
@@ -83,6 +85,16 @@ function SectionSetupPage() {
     setModalIndex(0);
   };
 
+  const previewQuestions = (questions) => {
+    setPreviewQuestions(questions);
+    setShowQuestionModal(true);
+  };
+
+  const closeQuestionModal = () => {
+    setShowQuestionModal(false);
+    setPreviewQuestions([]);
+  };
+
   const getTotalSelected = () => {
     return Object.values(questionCounts).reduce((total, counts) => 
       total + Object.values(counts).reduce((sum, count) => sum + count, 0), 0
@@ -135,18 +147,32 @@ function SectionSetupPage() {
                     <div className="section-stats">
                       <span className="total-questions">{file.questions.length} total</span>
                       <span className="selected-count">{selectedTotal} selected</span>
+                      <div className="level-breakdown">
+                        <span className="level-stat easy">🟢 {levelCounts[0]}</span>
+                        <span className="level-stat medium">🟠 {levelCounts[1]}</span>
+                        <span className="level-stat hard">🔴 {levelCounts[2]}</span>
+                      </div>
                     </div>
                   </div>
                   
-                  {images.length > 0 && (
+                  <div className="section-actions">
                     <button
-                      className="preview-images-btn"
-                      onClick={() => openImageModal(images)}
-                      title={`Preview ${images.length} images`}
+                      className="preview-questions-btn"
+                      onClick={() => previewQuestions(file.questions.slice(0, 3))}
+                      title="Preview questions"
                     >
-                      🖼️ {images.length}
+                      👁️ Preview
                     </button>
-                  )}
+                    {images.length > 0 && (
+                      <button
+                        className="preview-images-btn"
+                        onClick={() => openImageModal(images)}
+                        title={`Preview ${images.length} images`}
+                      >
+                        🖼️ {images.length}
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 <div className="difficulty-controls">
@@ -258,6 +284,51 @@ function SectionSetupPage() {
                   Next ➡️
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Question Preview Modal */}
+      {showQuestionModal && (
+        <div className="modal-overlay" onClick={closeQuestionModal}>
+          <div className="modal-content question-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3 className="modal-title">📝 Question Preview</h3>
+              <button className="modal-close-btn" onClick={closeQuestionModal}>×</button>
+            </div>
+            
+            <div className="modal-body question-preview-body">
+              {previewQuestions.map((question, index) => {
+                const difficultyLabels = ['Easy', 'Medium', 'Hard'];
+                const difficultyIcons = ['🟢', '🟠', '🔴'];
+                
+                return (
+                  <div key={index} className="preview-question-card">
+                    <div className="question-header">
+                      <span className="question-number">Q{index + 1}</span>
+                      <span className="question-difficulty">
+                        {difficultyIcons[question.level]} {difficultyLabels[question.level]}
+                      </span>
+                    </div>
+                    
+                    <div className="question-text">{question.question}</div>
+                    
+                    <div className="question-options">
+                      {question.options.map((option, optIndex) => (
+                        <div 
+                          key={optIndex} 
+                          className={`option ${optIndex === question.answer ? 'correct' : ''}`}
+                        >
+                          <span className="option-letter">{String.fromCharCode(65 + optIndex)}</span>
+                          <span className="option-text">{option}</span>
+                          {optIndex === question.answer && <span className="correct-indicator">✓</span>}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
