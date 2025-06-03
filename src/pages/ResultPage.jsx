@@ -8,7 +8,6 @@ function ResultPage() {
   const [answers, setAnswers] = useState({});
   const [reviewMarks, setReviewMarks] = useState({});
   const [currentFilter, setCurrentFilter] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
   const navigate = useNavigate();
 
@@ -50,13 +49,6 @@ function ResultPage() {
     // Filter by status
     const status = getQuestionStatus(idx);
     if (currentFilter !== 'all' && status !== currentFilter) return false;
-    
-    // Filter by search query
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      return q.question.toLowerCase().includes(query) ||
-             q.options.some(opt => opt.toLowerCase().includes(query));
-    }
     
     return true;
   });
@@ -125,55 +117,15 @@ function ResultPage() {
               <span className="score-percentage">{stats.percentage}%</span>
               <span className="score-text">Score</span>
             </div>
-            <button 
-              className="toggle-header-btn"
-              onClick={() => setIsHeaderCollapsed(!isHeaderCollapsed)}
-              aria-label={isHeaderCollapsed ? "Show details" : "Hide details"}
-            >
-              {isHeaderCollapsed ? '📊 Show Stats' : '🔼 Hide Stats'}
-            </button>
+            
           </div>
         </div>
         
-        {/* Collapsible Score Summary */}
-        <div className={`score-summary ${isHeaderCollapsed ? 'collapsed' : 'expanded'}`}>
-          <div className="score-card main-score">
-            <div className="score-value">{stats.percentage}%</div>
-            <div className="score-label">Overall Score</div>
-          </div>
-          <div className="stats-grid">
-            <div className="stat-item correct">
-              <div className="stat-number">{stats.correct}</div>
-              <div className="stat-label">Correct</div>
-            </div>
-            <div className="stat-item incorrect">
-              <div className="stat-number">{stats.incorrect}</div>
-              <div className="stat-label">Incorrect</div>
-            </div>
-            <div className="stat-item skipped">
-              <div className="stat-number">{stats.skipped}</div>
-              <div className="stat-label">Skipped</div>
-            </div>
-            <div className="stat-item total">
-              <div className="stat-number">{stats.total}</div>
-              <div className="stat-label">Total</div>
-            </div>
-          </div>
-        </div>
+        
       </div>
 
       {/* Fixed Controls Section */}
       <div className="fixed-controls">
-        <div className="search-box">
-          <input
-            type="text"
-            placeholder="🔍 Search questions..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="search-input"
-          />
-        </div>
-        
         <div className="filter-tabs">
           {[
             { key: 'all', label: 'All', count: stats.total },
