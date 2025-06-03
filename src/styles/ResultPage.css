@@ -3,7 +3,7 @@
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   background-attachment: fixed;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  padding: 20px;
+  padding: 0;
   position: relative;
   overflow-x: hidden;
   transition: background-color 0.3s ease, color 0.3s ease;
@@ -52,6 +52,8 @@
   z-index: 100;
   height: 8vh;
   flex-shrink: 0;
+  margin: 0;
+  width: 100%;
 }
 
 /* Dark mode for result header */
@@ -144,10 +146,11 @@
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(15px);
   padding: 12px 20px;
-  margin-bottom: 0;
+  margin: 0;
   box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: center;
+  width: 100%;
 }
 
 /* Dark mode for fixed controls */
@@ -252,7 +255,7 @@
 /* Main Content Area */
 .main-content {
   flex: 1;
-  padding: 0 20px 20px 20px;
+  padding: 20px;
 }
 
 /* Questions Container */
@@ -683,6 +686,7 @@
   .result-header {
     padding: 8px 15px;
     font-size: 16px;
+    width: 100%;
   }
 
   .section-name {
@@ -709,33 +713,35 @@
 
   .fixed-controls {
     padding: 8px 15px;
+    width: 100%;
   }
 
   .main-content {
     padding: 15px;
   }
+
+  .result-page {
+    padding: 0;
+  }
 }
 
 @media (max-width: 480px) {
+  .result-page {
+    padding: 0;
+  }
+
   .result-header {
     padding: 8px 12px;
+    width: 100%;
+    margin: 0;
   }
 
-  .header-top {
-    flex-direction: row;
-    gap: 10px;
+  .section-name {
+    font-size: 16px;
+    max-width: 60%;
   }
 
-  .result-header h1 {
-    font-size: 1.2rem;
-    flex: 1;
-  }
-
-  .header-controls {
-    gap: 10px;
-  }
-
-  .score-compact {
+  .score-box {
     padding: 6px 10px;
     gap: 6px;
   }
@@ -748,6 +754,17 @@
     font-size: 0.65rem;
   }
 
+  .theme-toggle-btn {
+    padding: 4px 8px;
+    font-size: 14px;
+  }
+
+  .fixed-controls {
+    padding: 8px 12px;
+    width: 100%;
+    margin: 0;
+  }
+
   .filter-tabs {
     width: 100%;
     justify-content: flex-start;
@@ -756,6 +773,10 @@
   .filter-tab {
     padding: 6px 10px;
     font-size: 0.8rem;
+  }
+
+  .main-content {
+    padding: 15px 12px;
   }
 
   .question-text {
