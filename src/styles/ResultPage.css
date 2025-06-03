@@ -533,6 +533,117 @@
   background: #ff9800;
 }
 
+/* Interactive Question Slider */
+.question-slider-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  min-width: 300px;
+}
+
+.slider-title {
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+}
+
+.result-page.dark-mode .slider-title {
+  color: #e0e0e0 !important;
+}
+
+.slider-track {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.result-page.dark-mode .slider-track {
+  background: #404040 !important;
+}
+
+.slider-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 2px solid transparent;
+}
+
+.slider-dot:hover {
+  transform: scale(1.15);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.slider-dot.correct {
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+}
+
+.slider-dot.incorrect {
+  background: linear-gradient(135deg, #f44336, #d32f2f);
+  color: white;
+}
+
+.slider-dot.skipped {
+  background: linear-gradient(135deg, #ff9800, #f57c00);
+  color: white;
+}
+
+.dot-number {
+  font-size: 11px;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.slider-legend {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.slider-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #666;
+}
+
+.result-page.dark-mode .slider-legend-item {
+  color: #b0b0b0 !important;
+}
+
+.slider-legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.slider-legend-dot.correct {
+  background: #4CAF50;
+}
+
+.slider-legend-dot.incorrect {
+  background: #f44336;
+}
+
+.slider-legend-dot.skipped {
+  background: #ff9800;
+}
+
 /* Responsive Design for Performance Dashboard */
 @media (max-width: 768px) {
   .performance-charts {
@@ -553,6 +664,23 @@
   .breakdown-legend {
     justify-content: center;
   }
+
+  .question-slider-container {
+    min-width: auto;
+  }
+
+  .slider-track {
+    padding: 8px;
+  }
+
+  .slider-dot {
+    width: 28px;
+    height: 28px;
+  }
+
+  .dot-number {
+    font-size: 10px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -572,6 +700,24 @@
   .breakdown-legend {
     flex-direction: column;
     align-items: center;
+  }
+
+  .slider-track {
+    gap: 6px;
+    padding: 6px;
+  }
+
+  .slider-dot {
+    width: 26px;
+    height: 26px;
+  }
+
+  .dot-number {
+    font-size: 9px;
+  }
+
+  .slider-legend {
+    gap: 15px;
   }
 }
 
