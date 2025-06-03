@@ -31,9 +31,11 @@
 
 /* Fixed Header Section */
 .fixed-header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  position: fixed;
+  top: 60px;
+  left: 0;
+  right: 0;
+  z-index: 95;
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(25px);
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
@@ -42,7 +44,7 @@
     0 8px 32px rgba(0, 0, 0, 0.1),
     0 2px 8px rgba(0, 0, 0, 0.05),
     inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  margin-bottom: 15px;
+  margin-bottom: 0;
   border-radius: 0 0 20px 20px;
   animation: slideDown 0.6s ease-out;
 }
@@ -154,14 +156,14 @@
 /* Fixed Controls Section */
 .fixed-controls {
   position: fixed;
-  top: 75px;
+  top: 0;
   left: 0;
   right: 0;
-  z-index: 90;
+  z-index: 100;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(15px);
-  padding: 8px 20px;
-  margin-bottom: 15px;
+  padding: 12px 20px;
+  margin-bottom: 0;
   box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: center;
@@ -245,7 +247,7 @@
 /* Questions Container */
 .questions-container {
   max-width: 1200px;
-  margin: 80px auto 0;
+  margin: 160px auto 0;
   display: grid;
   gap: 25px;
   padding-top: 20px;
@@ -668,12 +670,17 @@
   }
   
   .fixed-controls {
-    top: 65px;
-    padding: 6px 15px;
+    top: 0;
+    padding: 8px 15px;
+  }
+  
+  .fixed-header {
+    top: 50px;
+    padding: 10px 15px;
   }
   
   .questions-container {
-    margin-top: 70px;
+    margin-top: 130px;
   }
   
   .filter-tabs {
@@ -741,8 +748,13 @@
   }
   
   .fixed-controls {
-    top: 55px;
-    padding: 5px 12px;
+    top: 0;
+    padding: 6px 12px;
+  }
+  
+  .fixed-header {
+    top: 45px;
+    padding: 8px 12px;
   }
   
   .filter-tabs {
@@ -756,7 +768,7 @@
   }
   
   .questions-container {
-    margin-top: 65px;
+    margin-top: 110px;
   }
   
   .question-text {
