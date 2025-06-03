@@ -11,24 +11,12 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%, #ff6b6b 200%);
-  padding: 20px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  margin-bottom: 20px;
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  animation: headerSlideIn 0.6s ease-out;
-}
-
-@keyframes headerSlideIn {
-  from {
-    transform: translateY(-100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 12px 20px;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+  margin-bottom: 15px;
 }
 
 .header-top {
@@ -37,151 +25,54 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 20px;
-  position: relative;
-}
-
-.header-top::before {
-  content: '';
-  position: absolute;
-  top: -20px;
-  left: -20px;
-  right: -20px;
-  bottom: -20px;
-  background: 
-    radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
-  pointer-events: none;
-  z-index: -1;
+  gap: 15px;
 }
 
 .header-controls {
   display: flex;
   align-items: center;
-  gap: 20px;
-  animation: slideInRight 0.8s ease-out;
-}
-
-@keyframes slideInRight {
-  from {
-    transform: translateX(50px);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
+  gap: 15px;
 }
 
 .score-compact {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  background: rgba(255, 255, 255, 0.2);
-  padding: 12px 20px;
-  border-radius: 20px;
-  backdrop-filter: blur(15px);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-}
-
-.score-compact::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.6s;
-}
-
-.score-compact:hover::before {
-  left: 100%;
+  gap: 10px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 12px;
+  box-shadow: 0 3px 15px rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
 }
 
 .score-compact:hover {
-  transform: translateY(-3px) scale(1.05);
-  background: rgba(255, 255, 255, 0.25);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
 }
 
 .score-percentage {
-  font-size: 1.8rem;
-  font-weight: 800;
-  color: white;
+  font-size: 1.4rem;
+  font-weight: 700;
   line-height: 1;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  animation: scoreCountUp 1s ease-out 0.5s both;
-}
-
-@keyframes scoreCountUp {
-  from {
-    transform: scale(0.5);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
 }
 
 .score-text {
-  font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.95);
-  font-weight: 600;
+  font-size: 0.75rem;
+  opacity: 0.9;
+  font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-top: 2px;
 }
-
-
 
 .fixed-header h1 {
-  color: white;
-  font-size: 2.2rem;
+  color: #2c3e50;
+  font-size: 1.6rem;
   margin: 0;
-  font-weight: 800;
-  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-  background: linear-gradient(45deg, #ffffff, #f0f0f0, #ffffff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: slideInLeft 0.8s ease-out;
-  position: relative;
-}
-
-@keyframes slideInLeft {
-  from {
-    transform: translateX(-50px);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-.fixed-header h1::after {
-  content: '';
-  position: absolute;
-  bottom: -5px;
-  left: 0;
-  width: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb);
-  animation: underlineExpand 1.5s ease-out 1s both;
-}
-
-@keyframes underlineExpand {
-  to {
-    width: 100%;
-  }
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 
@@ -189,13 +80,13 @@
 /* Fixed Controls Section */
 .fixed-controls {
   position: sticky;
-  top: 120px;
+  top: 65px;
   z-index: 90;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
-  padding: 15px 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 10px 20px;
+  margin-bottom: 15px;
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.05);
   display: flex;
   justify-content: center;
 }
@@ -496,33 +387,33 @@
   }
   
   .fixed-header {
-    padding: 15px;
+    padding: 10px 15px;
   }
   
   .fixed-header h1 {
-    font-size: 1.8rem;
+    font-size: 1.4rem;
   }
   
   .header-top {
-    gap: 15px;
+    gap: 12px;
   }
   
   .score-compact {
-    padding: 10px 16px;
+    padding: 6px 12px;
+    gap: 8px;
   }
   
   .score-percentage {
-    font-size: 1.6rem;
+    font-size: 1.2rem;
   }
   
-  .toggle-header-btn {
-    padding: 10px 16px;
-    font-size: 0.85rem;
+  .score-text {
+    font-size: 0.7rem;
   }
   
   .fixed-controls {
-    top: 75px;
-    padding: 10px 15px;
+    top: 55px;
+    padding: 8px 15px;
   }
   
   .filter-tabs {
@@ -558,46 +449,34 @@
 
 @media (max-width: 480px) {
   .fixed-header {
-    padding: 12px;
+    padding: 8px 12px;
   }
   
   .header-top {
-    flex-direction: column;
-    text-align: center;
-    gap: 12px;
+    flex-direction: row;
+    gap: 10px;
   }
   
   .fixed-header h1 {
-    font-size: 1.6rem;
-    order: 2;
+    font-size: 1.2rem;
+    flex: 1;
   }
   
   .header-controls {
-    order: 1;
-    width: 100%;
-    justify-content: space-between;
-    gap: 12px;
-  }
-  
-  .toggle-header-btn {
-    padding: 8px 14px;
-    font-size: 0.8rem;
-    flex: 1;
-    max-width: 140px;
+    gap: 10px;
   }
   
   .score-compact {
-    padding: 8px 14px;
-    flex: 1;
-    max-width: 140px;
+    padding: 6px 10px;
+    gap: 6px;
   }
   
   .score-percentage {
-    font-size: 1.4rem;
+    font-size: 1.1rem;
   }
   
   .score-text {
-    font-size: 0.75rem;
+    font-size: 0.65rem;
   }
   
   .filter-tabs {
