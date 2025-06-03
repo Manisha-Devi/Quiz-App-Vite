@@ -79,7 +79,7 @@ function QuestionViewer({
         {showAnswer && question.explanation && (
           <div className="explanation-section">
             <div className="explanation-header">
-              <strong>📝 Explanation:</strong>
+              <strong>Explanation:</strong>
             </div>
             <div className="explanation-content">
               {hasMath(question.explanation) ? (
