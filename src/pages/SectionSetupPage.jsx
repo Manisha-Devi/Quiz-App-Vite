@@ -85,7 +85,7 @@ function SectionSetupPage() {
     setModalIndex(0);
   };
 
-  const previewQuestions = (questions) => {
+  const showQuestionPreview = (questions) => {
     setPreviewQuestions(questions);
     setShowQuestionModal(true);
   };
@@ -158,7 +158,7 @@ function SectionSetupPage() {
                   <div className="section-actions">
                     <button
                       className="preview-questions-btn"
-                      onClick={() => previewQuestions(file.questions.slice(0, 3))}
+                      onClick={() => showQuestionPreview(file.questions.slice(0, 3))}
                       title="Preview questions"
                     >
                       👁️ Preview
