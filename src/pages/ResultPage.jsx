@@ -8,8 +8,16 @@ function ResultPage() {
   const [answers, setAnswers] = useState({});
   const [reviewMarks, setReviewMarks] = useState({});
   const [currentFilter, setCurrentFilter] = useState('all');
-  const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    return localStorage.getItem('darkMode') === 'true';
+  });
   const navigate = useNavigate();
+
+  const toggleDarkMode = () => {
+    const newDarkMode = !isDarkMode;
+    setIsDarkMode(newDarkMode);
+    localStorage.setItem('darkMode', newDarkMode.toString());
+  };
 
   useEffect(() => {
     const q = JSON.parse(localStorage.getItem('finalQuiz') || '[]');
@@ -107,22 +115,20 @@ function ResultPage() {
   };
 
   return (
-    <div className="result-page">
-      {/* Fixed Header Section */}
-      <div className="fixed-header">
-        <div className="header-top">
-          <h1>📊 Quiz Results</h1>
-          <div className="header-controls">
-            <div className="score-compact">
-              <span className="score-percentage">{stats.percentage}%</span>
-              <span className="score-text">Score</span>
-            </div>
-            
+    <div className={`result-page ${isDarkMode ? 'dark-mode' : ''}`}>
+      {/* Top Header Bar similar to ExamPage */}
+      <header className="result-header">
+        <div className="section-name">📊 Quiz Results</div>
+        <div className="d-flex align-items-center gap-2">
+          <div className="score-box">
+            <span className="score-percentage">{stats.percentage}%</span>
+            <span className="score-text">Score</span>
           </div>
+          <button className="theme-toggle-btn" onClick={toggleDarkMode} title="Toggle Dark Mode">
+            {isDarkMode ? '☀️' : '🌙'}
+          </button>
         </div>
-        
-        
-      </div>
+      </header>
 
       {/* Fixed Controls Section */}
       <div className="fixed-controls">
@@ -144,42 +150,43 @@ function ResultPage() {
         </div>
       </div>
 
-      
+      {/* Main Content Area */}
+      <div className="main-content">
+        {/* Questions List */}
+        <div className="questions-container">
+          {filteredQuestions.length > 0 ? (
+            filteredQuestions.map((q, originalIdx) => {
+              const actualIndex = questions.findIndex(question => question === q);
+              return (
+                <QuestionCard
+                  key={actualIndex}
+                  question={q}
+                  index={actualIndex}
+                  userAnswer={answers[actualIndex]}
+                  reviewMarked={reviewMarks[actualIndex]}
+                />
+              );
+            })
+          ) : (
+            <div className="no-results">
+              <div className="no-results-icon">🔍</div>
+              <div className="no-results-text">No questions found matching your criteria</div>
+            </div>
+          )}
+        </div>
 
-      {/* Questions List */}
-      <div className="questions-container">
-        {filteredQuestions.length > 0 ? (
-          filteredQuestions.map((q, originalIdx) => {
-            const actualIndex = questions.findIndex(question => question === q);
-            return (
-              <QuestionCard
-                key={actualIndex}
-                question={q}
-                index={actualIndex}
-                userAnswer={answers[actualIndex]}
-                reviewMarked={reviewMarks[actualIndex]}
-              />
-            );
-          })
-        ) : (
-          <div className="no-results">
-            <div className="no-results-icon">🔍</div>
-            <div className="no-results-text">No questions found matching your criteria</div>
-          </div>
-        )}
-      </div>
-
-      {/* Action Buttons */}
-      <div className="action-buttons">
-        <button className="btn-secondary" onClick={() => navigate('/')}>
-          🏠 Home
-        </button>
-        <button className="btn-primary" onClick={() => {
-          localStorage.clear();
-          navigate('/');
-        }}>
-          🔄 Retake Quiz
-        </button>
+        {/* Action Buttons */}
+        <div className="action-buttons">
+          <button className="btn-secondary" onClick={() => navigate('/')}>
+            🏠 Home
+          </button>
+          <button className="btn-primary" onClick={() => {
+            localStorage.clear();
+            navigate('/');
+          }}>
+            🔄 Retake Quiz
+          </button>
+        </div>
       </div>
     </div>
   );

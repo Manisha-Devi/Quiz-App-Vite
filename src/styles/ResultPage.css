@@ -1,4 +1,3 @@
-
 .result-page {
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -29,143 +28,102 @@
   z-index: 1;
 }
 
-/* Fixed Header Section */
-.fixed-header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(25px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  padding: 12px 20px;
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.1),
-    0 2px 8px rgba(0, 0, 0, 0.05),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  margin-bottom: 15px;
-  border-radius: 0 0 20px 20px;
-  animation: slideDown 0.6s ease-out;
-}
-
-@keyframes slideDown {
-  from {
-    transform: translateY(-100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-.header-top {
-  max-width: 1200px;
-  margin: 0 auto;
+/* Result Header - similar to exam header */
+.result-header {
+  background: #4b3ee6;
+  color: white;
+  padding: 10px 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 15px;
-}
-
-.header-controls {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.score-compact {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: white;
-  padding: 8px 16px;
-  border-radius: 12px;
-  box-shadow: 
-    0 3px 15px rgba(102, 126, 234, 0.3),
-    0 1px 3px rgba(0, 0, 0, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.score-compact::before {
-  content: '';
-  position: absolute;
+  font-size: 18px;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  position: sticky;
   top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s ease;
+  z-index: 100;
+  height: 8vh;
+  flex-shrink: 0;
 }
 
-.score-compact:hover::before {
-  left: 100%;
+.section-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 60%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
-.score-compact:hover {
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 
-    0 8px 25px rgba(102, 126, 234, 0.4),
-    0 3px 10px rgba(0, 0, 0, 0.15);
-}
-
-.score-percentage {
-  font-size: 1.4rem;
-  font-weight: 700;
-  line-height: 1;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  animation: pulseScore 2s ease-in-out infinite;
-}
-
-@keyframes pulseScore {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-}
-
-.score-percentage {
-  font-size: 1.4rem;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.score-text {
-  font-size: 0.75rem;
-  opacity: 0.9;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.fixed-header h1 {
-  color: #2c3e50;
-  font-size: 1.6rem;
-  margin: 0;
-  font-weight: 700;
+.score-box {
+  background: white;
+  color: #4b3ee6;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 14px;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
+.score-percentage {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
 
+.score-text {
+  font-size: 0.7rem;
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.gap-2 {
+  gap: 8px;
+}
+
+.theme-toggle-btn {
+  background: white;
+  color: #4b3ee6;
+  font-weight: bold;
+  padding: 6px 10px;
+  border: 1px solid #4b3ee6;
+  border-radius: 6px;
+  margin-left: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.theme-toggle-btn:hover {
+  background: #f0f0f0;
+  transform: scale(1.05);
+}
 
 /* Fixed Controls Section */
 .fixed-controls {
   position: sticky;
-  top: 65px;
+  top: 8vh;
   z-index: 90;
   background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  padding: 6px 20px;
-  margin-bottom: 15px;
-  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(15px);
+  padding: 12px 20px;
+  margin-bottom: 0;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: center;
 }
-
-
 
 .filter-tabs {
   display: flex;
@@ -237,7 +195,11 @@
   opacity: 0;
 }
 
-
+/* Main Content Area */
+.main-content {
+  flex: 1;
+  padding: 20px;
+}
 
 /* Questions Container */
 .questions-container {
@@ -245,6 +207,7 @@
   margin: 20px auto 0;
   display: grid;
   gap: 25px;
+  padding-top: 0;
 }
 
 /* Question Card */
@@ -610,122 +573,92 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .result-page {
-    padding: 0;
+  .result-header {
+    padding: 8px 15px;
+    font-size: 16px;
   }
-  
-  .fixed-header {
-    padding: 10px 15px;
+
+  .section-name {
+    max-width: 50%;
   }
-  
-  .fixed-header h1 {
-    font-size: 1.4rem;
+
+  .score-box {
+    padding: 4px 10px;
+    font-size: 12px;
   }
-  
-  .header-top {
-    gap: 12px;
-  }
-  
-  .score-compact {
-    padding: 6px 12px;
-    gap: 8px;
-  }
-  
+
   .score-percentage {
-    font-size: 1.2rem;
+    font-size: 1rem;
   }
-  
+
   .score-text {
-    font-size: 0.7rem;
+    font-size: 0.6rem;
   }
-  
+
+  .theme-toggle-btn {
+    padding: 4px 8px;
+    font-size: 14px;
+  }
+
   .fixed-controls {
-    top: 55px;
-    padding: 5px 15px;
+    padding: 8px 15px;
   }
-  
-  .filter-tabs {
-    width: 100%;
-    justify-content: flex-start;
-  }
-  
-  .filter-tab {
-    padding: 8px 12px;
-    font-size: 0.85rem;
-  }
-  
-  .question-card {
-    padding: 20px;
-  }
-  
-  .question-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 15px;
-  }
-  
-  .action-buttons {
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .btn-primary, .btn-secondary {
-    width: 100%;
-    max-width: 300px;
-    justify-content: center;
+
+  .main-content {
+    padding: 15px;
   }
 }
 
 @media (max-width: 480px) {
-  .fixed-header {
+  .result-header {
     padding: 8px 12px;
   }
-  
+
   .header-top {
     flex-direction: row;
     gap: 10px;
   }
-  
-  .fixed-header h1 {
+
+  .result-header h1 {
     font-size: 1.2rem;
     flex: 1;
   }
-  
+
   .header-controls {
     gap: 10px;
   }
-  
+
   .score-compact {
     padding: 6px 10px;
     gap: 6px;
   }
-  
+
   .score-percentage {
     font-size: 1.1rem;
   }
-  
+
   .score-text {
     font-size: 0.65rem;
   }
-  
+
   .filter-tabs {
     width: 100%;
     justify-content: flex-start;
   }
-  
+
   .filter-tab {
     padding: 6px 10px;
     font-size: 0.8rem;
   }
-  
+
   .question-text {
     font-size: 1.1rem;
   }
-  
+
   .option {
     padding: 12px 15px;
   }
-  
+
   .option-text {
     font-size: 0.95rem;
   }
