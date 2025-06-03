@@ -9,6 +9,7 @@ function ResultPage() {
   const [reviewMarks, setReviewMarks] = useState({});
   const [currentFilter, setCurrentFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -115,12 +116,27 @@ function ResultPage() {
 
   return (
     <div className="result-page">
-      {/* Header Section */}
-      <div className="result-header">
-        <h1>📊 Quiz Results</h1>
+      {/* Fixed Header Section */}
+      <div className="fixed-header">
+        <div className="header-top">
+          <h1>📊 Quiz Results</h1>
+          <div className="header-controls">
+            <div className="score-compact">
+              <span className="score-percentage">{stats.percentage}%</span>
+              <span className="score-text">Score</span>
+            </div>
+            <button 
+              className="toggle-header-btn"
+              onClick={() => setIsHeaderCollapsed(!isHeaderCollapsed)}
+              aria-label={isHeaderCollapsed ? "Show details" : "Hide details"}
+            >
+              {isHeaderCollapsed ? '📊 Show Stats' : '🔼 Hide Stats'}
+            </button>
+          </div>
+        </div>
         
-        {/* Score Summary */}
-        <div className="score-summary">
+        {/* Collapsible Score Summary */}
+        <div className={`score-summary ${isHeaderCollapsed ? 'collapsed' : 'expanded'}`}>
           <div className="score-card main-score">
             <div className="score-value">{stats.percentage}%</div>
             <div className="score-label">Overall Score</div>
@@ -146,8 +162,8 @@ function ResultPage() {
         </div>
       </div>
 
-      {/* Filters and Search */}
-      <div className="controls-section">
+      {/* Fixed Controls Section */}
+      <div className="fixed-controls">
         <div className="search-box">
           <input
             type="text"
