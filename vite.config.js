@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     allowedHosts: [
       "03eba55e-d242-4045-a19c-cd64d8fd31a6-00-3tp4wr24lokel.pike.replit.dev",
-      "7acf9296-3260-40a4-8f1e-9adf4cba8021-00-1ku2bxq8ygi2x.pike.replit.dev",
+      "0717a734-836f-41fc-a426-0ee412264c53-00-1jm7npgqnno8g.sisko.replit.dev",
       // Add any other hosts you want to allow here
     ],
   },
