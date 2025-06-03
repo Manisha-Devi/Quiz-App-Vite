@@ -173,45 +173,6 @@ function ResultPage() {
               </div>
             </div>
           </div>
-
-          {/* Interactive Question Slider */}
-          <div className="question-slider-container">
-            <div className="slider-title">Question Navigator</div>
-            <div className="slider-track">
-              {questions.map((_, index) => {
-                const status = getQuestionStatus(index);
-                return (
-                  <div
-                    key={index}
-                    className={`slider-dot ${status}`}
-                    title={`Q${index + 1} - ${status.charAt(0).toUpperCase() + status.slice(1)}`}
-                    onClick={() => {
-                      const questionElement = document.querySelector(`.question-card:nth-child(${filteredQuestions.findIndex(q => questions.indexOf(q) === index) + 1})`);
-                      if (questionElement) {
-                        questionElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                      }
-                    }}
-                  >
-                    <span className="dot-number">{index + 1}</span>
-                  </div>
-                );
-              })}
-            </div>
-            <div className="slider-legend">
-              <div className="slider-legend-item">
-                <div className="slider-legend-dot correct"></div>
-                <span>Correct</span>
-              </div>
-              <div className="slider-legend-item">
-                <div className="slider-legend-dot incorrect"></div>
-                <span>Incorrect</span>
-              </div>
-              <div className="slider-legend-item">
-                <div className="slider-legend-dot skipped"></div>
-                <span>Skipped</span>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     );
