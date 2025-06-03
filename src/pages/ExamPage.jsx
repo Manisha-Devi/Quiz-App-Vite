@@ -55,7 +55,6 @@ function ExamPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
   const [showTimeWarning, setShowTimeWarning] = useState(timeLeft <= 300); // Track visibility of the warning
-  const [showShortcuts, setShowShortcuts] = useState(false);
 
   useEffect(() => {
     if (!meta.startedAt) {
@@ -94,29 +93,12 @@ function ExamPage() {
 
   useEffect(() => {
     const handler = (e) => {
-      // Prevent shortcuts when typing in input fields
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-      
-      // Number keys 1-4 for options
       if (e.key >= '1' && e.key <= '4') handleOption(Number(e.key) - 1);
-      
-      // Letter keys A-D for options
-      const letter = e.key.toLowerCase();
-      if (letter >= 'a' && letter <= 'd') {
-        handleOption(letter.charCodeAt(0) - 97); // Convert a-d to 0-3
-      }
-      
-      // Other shortcuts
       if (e.key === '0') toggleReview();
-      if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'n') goNext();
-      if (e.key === 'ArrowLeft' || e.key.toLowerCase() === 'p') goPrev();
+      if (e.key === 'ArrowRight') goNext();
+      if (e.key === 'ArrowLeft') goPrev();
       if (e.key.toLowerCase() === 'r') toggleReview();
       if (e.key.toLowerCase() === 'c') handleClear();
-      if (e.key === ' ') { // Spacebar to show/hide answer
-        e.preventDefault();
-        const eyeButton = document.querySelector('.show-answer');
-        if (eyeButton) eyeButton.click();
-      }
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
@@ -177,13 +159,7 @@ function ExamPage() {
         <MathJaxContext config={mathConfig}>
           <div className="exam-ui">
             <header className="exam-header">
-              <div className="header-left">
-                <div className="section-name">{q.section || 'General'}</div>
-                <div className="progress-info">
-                  <span className="question-counter">{current + 1}/{questions.length}</span>
-                  <span className="answered-count">Answered: {Object.keys(answers).length}</span>
-                </div>
-              </div>
+              <div className="section-name">{q.section || 'General'}</div>
               <div className="d-flex align-items-center gap-2">
                 <div className="timer-box">{formatTime(timeLeft)}</div>
                 <button className="theme-toggle-btn" onClick={toggleDarkMode} title="Toggle Dark Mode">
@@ -231,31 +207,11 @@ function ExamPage() {
               <div className="footer-left">
                 <button onClick={handleClear}>Clear Response</button>
                 <button onClick={handleNext} className="primary">Save & Next</button>
-                <button onClick={() => setShowShortcuts(!showShortcuts)} className="shortcuts-btn" title="Show Keyboard Shortcuts">
-                  ⌨️ {showShortcuts ? 'Hide' : 'Show'} Shortcuts
-                </button>
               </div>
               <div className="footer-right">
                 <button onClick={() => handleSubmit(false)} className="submit">Submit Test</button>
               </div>
             </footer>
-
-            {showShortcuts && (
-              <div className="shortcuts-overlay" onClick={() => setShowShortcuts(false)}>
-                <div className="shortcuts-modal" onClick={e => e.stopPropagation()}>
-                  <h3>⌨️ Keyboard Shortcuts</h3>
-                  <div className="shortcuts-grid">
-                    <div><kbd>A-D</kbd> or <kbd>1-4</kbd> Select option</div>
-                    <div><kbd>→</kbd> or <kbd>N</kbd> Next question</div>
-                    <div><kbd>←</kbd> or <kbd>P</kbd> Previous question</div>
-                    <div><kbd>R</kbd> Toggle review</div>
-                    <div><kbd>C</kbd> Clear response</div>
-                    <div><kbd>Space</kbd> Show/Hide answer</div>
-                  </div>
-                  <button onClick={() => setShowShortcuts(false)} className="close-shortcuts">Close</button>
-                </div>
-              </div>
-            )}
           </div>
         </MathJaxContext>
         <DrawingOverlay />

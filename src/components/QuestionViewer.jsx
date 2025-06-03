@@ -29,8 +29,8 @@ function QuestionViewer({
         <div className="q-header">
           <div className="q-number">Q{currentIndex + 1}</div>
           <div className="header-actions">
-            <div className={`show-answer ${showAnswer ? 'answer-visible' : 'answer-hidden'}`} onClick={handleShowAnswer} title={showAnswer ? "Hide Answer & Explanation" : "Show Answer & Explanation"}>
-              {showAnswer ? '🔴👁️' : '👁️'}
+            <div className="show-answer" onClick={handleShowAnswer} title="Show/Hide Answer">
+              {showAnswer ? '🙈' : '👁️'}
             </div>
             <div className="mark-review" onClick={onToggleReview}>
               Mark for Review: {reviewMarked ? '⭐' : '☆'}
@@ -52,8 +52,7 @@ function QuestionViewer({
           {question.options?.map((opt, idx) => {
             const isUserAnswer = answer === idx;
             const isCorrectAnswer = showAnswer && question.answer === idx;
-            const isWrongAnswer = showAnswer && isUserAnswer && !isCorrectAnswer;
-            const optionClass = `option ${isUserAnswer ? 'active' : ''} ${isCorrectAnswer ? 'correct-answer' : ''} ${isWrongAnswer ? 'wrong-answer' : ''}`;
+            const optionClass = `option ${isUserAnswer ? 'active' : ''} ${isCorrectAnswer ? 'correct-answer' : ''}`;
             
             return (
               <div
@@ -71,9 +70,7 @@ function QuestionViewer({
                 ) : (
                   <span dangerouslySetInnerHTML={{ __html: injectImageSources(opt) }} />
                 )}
-                {showAnswer && isCorrectAnswer && <span className="correct-indicator"> ✅ Correct Answer</span>}
-                {showAnswer && isWrongAnswer && <span className="wrong-indicator"> ❌ Your Answer</span>}
-                {showAnswer && isUserAnswer && isCorrectAnswer && <span className="both-indicator"> ✅ Your Correct Answer</span>}
+                {isCorrectAnswer && <span className="correct-indicator"> ✅ Correct Answer</span>}
               </div>
             );
           })}
