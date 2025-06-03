@@ -6,6 +6,14 @@
   padding: 20px;
   position: relative;
   overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark mode for result page */
+.result-page.dark-mode {
+  background: #1a1a1a !important;
+  color: #e0e0e0 !important;
+  min-height: 100vh !important;
 }
 
 .result-page::before {
@@ -44,6 +52,23 @@
   z-index: 100;
   height: 8vh;
   flex-shrink: 0;
+}
+
+/* Dark mode for result header */
+.result-page.dark-mode .result-header {
+  background: #2d2d30 !important;
+  border-bottom: 1px solid #404040 !important;
+}
+
+.result-page.dark-mode .score-box {
+  background: #e0e0e0 !important;
+  color: #2d2d30 !important;
+}
+
+.result-page.dark-mode .theme-toggle-btn {
+  background: #404040 !important;
+  color: #e0e0e0 !important;
+  border: 1px solid #555 !important;
 }
 
 .section-name {
@@ -125,6 +150,13 @@
   justify-content: center;
 }
 
+/* Dark mode for fixed controls */
+.result-page.dark-mode .fixed-controls {
+  background: rgba(45, 45, 48, 0.95) !important;
+  backdrop-filter: blur(15px);
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3) !important;
+}
+
 .filter-tabs {
   display: flex;
   background: white;
@@ -139,6 +171,28 @@
   -ms-overflow-style: none;
   gap: 3px;
   position: relative;
+}
+
+/* Dark mode for filter tabs */
+.result-page.dark-mode .filter-tabs {
+  background: #404040 !important;
+  box-shadow: 
+    0 8px 25px rgba(0, 0, 0, 0.3),
+    0 2px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+.result-page.dark-mode .filter-tab {
+  color: #e0e0e0 !important;
+}
+
+.result-page.dark-mode .filter-tab:hover {
+  color: #f0f0f0 !important;
+}
+
+.result-page.dark-mode .filter-tab.active {
+  background: linear-gradient(135deg, #5a4fcf, #4a3bb8) !important;
+  color: white !important;
 }
 
 .filter-tabs::-webkit-scrollbar {
@@ -198,16 +252,16 @@
 /* Main Content Area */
 .main-content {
   flex: 1;
-  padding: 20px;
+  padding: 0 20px 20px 20px;
 }
 
 /* Questions Container */
 .questions-container {
   max-width: 1200px;
-  margin: 20px auto 0;
+  margin: 0 auto;
   display: grid;
   gap: 25px;
-  padding-top: 0;
+  padding-top: 20px;
 }
 
 /* Question Card */
@@ -226,6 +280,59 @@
   animation: fadeInUp 0.6s ease-out forwards;
   opacity: 0;
   transform: translateY(20px);
+}
+
+/* Dark mode for question cards */
+.result-page.dark-mode .question-card {
+  background: #2d2d30 !important;
+  color: #e0e0e0 !important;
+  box-shadow: 
+    0 8px 25px rgba(0, 0, 0, 0.3),
+    0 3px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.result-page.dark-mode .question-text {
+  color: #e0e0e0 !important;
+}
+
+.result-page.dark-mode .option {
+  background: #404040 !important;
+  color: #e0e0e0 !important;
+}
+
+.result-page.dark-mode .option-text {
+  color: #e0e0e0 !important;
+}
+
+.result-page.dark-mode .no-results {
+  background: #2d2d30 !important;
+  color: #e0e0e0 !important;
+}
+
+.result-page.dark-mode .no-results-text {
+  color: #b0b0b0 !important;
+}
+
+.result-page.dark-mode .explanation {
+  background: linear-gradient(135deg, #1a4d4d, #2a5555) !important;
+  border: 2px solid #4a8080 !important;
+  color: #e0e0e0 !important;
+}
+
+.result-page.dark-mode .explanation-header {
+  color: #6db3f2 !important;
+}
+
+.result-page.dark-mode .explanation-text {
+  color: #e0e0e0 !important;
+}
+
+.result-page.dark-mode .review-note {
+  background: linear-gradient(135deg, #4a3d1a, #5a4d2a) !important;
+  border: 2px solid #8a7a3a !important;
+  color: #f0e0a0 !important;
 }
 
 .question-card:nth-child(1) { animation-delay: 0.1s; }
