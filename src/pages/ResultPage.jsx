@@ -144,10 +144,7 @@ function ResultPage() {
         </div>
       </div>
 
-      {/* Results Counter */}
-      <div className="results-counter">
-        Showing {filteredQuestions.length} of {stats.total} questions
-      </div>
+      
 
       {/* Questions List */}
       <div className="questions-container">
