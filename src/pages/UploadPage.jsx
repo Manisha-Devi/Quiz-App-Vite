@@ -1,10 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { storeImage } from '../utils/indexedDB';
 import useOfflineStorage from '../hooks/useOfflineStorage';
 import LocalQuizLibrary from '../components/LocalQuizLibrary';
 import '../styles/UploadPage.css';
-import { openDb, storeText, clearDatabase, deleteDatabase } from '../utils/indexedDB';  // Import the functions
+import { openDb, storeText, clearDatabase, deleteDatabase } from '../utils/indexedDB';
 
 function UploadPage() {
   const [files, setFiles] = useState([]);
@@ -12,6 +13,9 @@ function UploadPage() {
   const [quizTime, setQuizTime] = useState(60);
   const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    return localStorage.getItem('darkMode') === 'true';
+  });
   const navigate = useNavigate();
   const [showLocalLibrary, setShowLocalLibrary] = useState(false);
   const { isOnline } = useOfflineStorage();
@@ -27,10 +31,15 @@ function UploadPage() {
     'fileImageMap'
   ];
 
-
   useEffect(() => {
     KEYS_TO_CLEAR.forEach(key => localStorage.removeItem(key));
   }, []);
+
+  const toggleDarkMode = () => {
+    const newDarkMode = !isDarkMode;
+    setIsDarkMode(newDarkMode);
+    localStorage.setItem('darkMode', newDarkMode.toString());
+  };
 
   const handleFileChange = async (e) => {
     const selected = Array.from(e.target.files);
@@ -41,6 +50,7 @@ function UploadPage() {
     const newFileNames = new Set(files.map(f => f.name));
     const newFiles = valid.filter(f => !newFileNames.has(f.name));
     setFiles(prev => [...prev, ...newFiles]);
+    setErrors([]);
   };
 
   const removeFile = (filename) => {
@@ -57,13 +67,12 @@ function UploadPage() {
 
   const handleImageUpload = (filename, selectedFiles) => {
     const validTypes = ['image/png', 'image/jpeg'];
-
     const filtered = Array.from(selectedFiles).filter(file =>
       validTypes.includes(file.type)
     );
 
     if (filtered.length < selectedFiles.length) {
-      alert('❌ Only PNG and JPEG images are allowed.');
+      setErrors(prev => [...prev, '❌ Only PNG and JPEG images are allowed.']);
     }
 
     const imagePromises = filtered.map(file => {
@@ -87,16 +96,14 @@ function UploadPage() {
     });
   };
 
-
-
-
   const handleNext = async () => {
     if (files.length === 0) {
-      alert('⚠️ Please upload at least one JSON file.');
+      setErrors(['⚠️ Please upload at least one JSON file.']);
       return;
     }
 
     setLoading(true);
+    setErrors([]);
     const allData = [];
 
     try {
@@ -125,25 +132,16 @@ function UploadPage() {
         });
       }
 
-      // Open the IndexedDB and store the parsed JSON data
       const db = await openDb();
-      const transaction = db.transaction("texts", "readwrite");
-      const store = transaction.objectStore("texts");
-
-      // Store `quizData` (JSON content) in IndexedDB
       allData.forEach(item => {
-        storeText(item.questions, item.name);  // Store JSON data (questions)
+        storeText(item.questions, item.name);
       });
 
-      // Store `quizTime` (as a string) in IndexedDB
-      storeText(String(quizTime), "quizTime");  // Store quizTime as text
+      storeText(String(quizTime), "quizTime");
+      storeText(JSON.stringify(fileImageMap), "fileImageMap");
 
-      // Store `fileImageMap` (as a string) in IndexedDB
-      storeText(JSON.stringify(fileImageMap), "fileImageMap");  // Store image map as text
-
-      // Store images related to each file in IndexedDB
       for (const [filename, images] of Object.entries(fileImageMap)) {
-        images.forEach(image => storeImage(image.data, filename));  // Store image data
+        images.forEach(image => storeImage(image.data, filename));
       }
 
       localStorage.setItem('quizData', JSON.stringify(allData));
@@ -153,7 +151,7 @@ function UploadPage() {
       navigate('/sections');
     } catch (err) {
       console.error(err);
-      setErrors(prev => [...prev, '❌ Unexpected error while processing files.']);
+      setErrors(['❌ Unexpected error while processing files.']);
     } finally {
       setLoading(false);
     }
@@ -167,83 +165,165 @@ function UploadPage() {
   };
 
   return (
-    <div className="page">
-      <div className="upload-header">
-        <h1>📂 Upload Your Quiz Files</h1>
+    <div className={`upload-page ${isDarkMode ? 'dark-mode' : ''}`}>
+      {/* Header similar to exam page */}
+      <header className="upload-header">
+        <div className="page-title">
+          <span className="title-icon">📂</span>
+          <span className="title-text">Quiz Setup</span>
+        </div>
         <div className="header-controls">
-          <div className="status-info">
-            <span className={`connection-status ${isOnline ? 'online' : 'offline'}`}>
-              {isOnline ? '🟢 Online' : '🔴 Offline Mode'}
-            </span>
+          <div className="connection-indicator">
+            <div className={`status-dot ${isOnline ? 'online' : 'offline'}`}></div>
+            <span className="status-text">{isOnline ? 'Online' : 'Offline'}</span>
           </div>
+          <button className="theme-toggle-btn" onClick={toggleDarkMode} title="Toggle Dark Mode">
+            {isDarkMode ? '☀️' : '🌙'}
+          </button>
           <button 
-            className="toggle-library-btn"
+            className={`library-toggle-btn ${showLocalLibrary ? 'active' : ''}`}
             onClick={() => setShowLocalLibrary(!showLocalLibrary)}
           >
-            {showLocalLibrary ? '📁 Upload New' : '📚 Saved Quizzes'}
+            {showLocalLibrary ? '📁' : '📚'}
           </button>
         </div>
-      </div>
+      </header>
 
-      {showLocalLibrary ? (
-        <LocalQuizLibrary onQuizSelect={handleLocalQuizSelect} />
-      ) : (
-        <div className="upload-section">
+      <div className="upload-content">
+        {showLocalLibrary ? (
+          <div className="library-section">
+            <div className="section-header">
+              <h2>📚 Saved Quiz Library</h2>
+              <p>Select from your previously saved quizzes</p>
+            </div>
+            <LocalQuizLibrary onQuizSelect={handleLocalQuizSelect} />
+          </div>
+        ) : (
+          <div className="upload-section">
+            <div className="section-header">
+              <h2>📁 Upload Quiz Files</h2>
+              <p>Upload JSON files and configure your quiz settings</p>
+            </div>
 
-      <div className="form-group">
-        <label>Select JSON Files:</label>
-        <input type="file" multiple accept=".json" onChange={handleFileChange} />
-        {files.length > 0 && (
-          <ul>
-            {files.map((file, idx) => (
-              <li key={idx} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span>{file.name}</span>
-                <button
-                  onClick={() => removeFile(file.name)}
-                  title="Remove this file"
-                  style={{
-                    background: 'transparent',
-                    color: 'red',
-                    border: 'none',
-                    fontSize: '18px',
-                    cursor: 'pointer'
-                  }}
-                >❌</button>
-                <label title="Upload images for this file" style={{ cursor: 'pointer' }}>
-                  🖼️
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    style={{ display: 'none' }}
-                    onChange={(e) => handleImageUpload(file.name, e.target.files)}
+            {/* File Upload Area */}
+            <div className="upload-area">
+              <div className="file-input-container">
+                <label className="file-input-label">
+                  <div className="file-input-icon">📄</div>
+                  <div className="file-input-text">
+                    <span className="primary-text">Choose JSON Files</span>
+                    <span className="secondary-text">or drag and drop here</span>
+                  </div>
+                  <input 
+                    type="file" 
+                    multiple 
+                    accept=".json" 
+                    onChange={handleFileChange}
+                    className="file-input-hidden"
                   />
                 </label>
-              </li>
-            ))}
-          </ul>
+              </div>
+
+              {/* File List */}
+              {files.length > 0 && (
+                <div className="file-list">
+                  <h3>📋 Uploaded Files ({files.length})</h3>
+                  <div className="file-items">
+                    {files.map((file, idx) => (
+                      <div key={idx} className="file-item">
+                        <div className="file-info">
+                          <div className="file-icon">📄</div>
+                          <div className="file-details">
+                            <div className="file-name">{file.name}</div>
+                            <div className="file-size">{(file.size / 1024).toFixed(1)} KB</div>
+                          </div>
+                        </div>
+                        <div className="file-actions">
+                          <label className="image-upload-btn" title="Add images for this file">
+                            🖼️
+                            <input
+                              type="file"
+                              accept="image/*"
+                              multiple
+                              style={{ display: 'none' }}
+                              onChange={(e) => handleImageUpload(file.name, e.target.files)}
+                            />
+                          </label>
+                          {fileImageMap[file.name] && (
+                            <span className="image-count">{fileImageMap[file.name].length}</span>
+                          )}
+                          <button
+                            onClick={() => removeFile(file.name)}
+                            className="remove-file-btn"
+                            title="Remove this file"
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Quiz Settings */}
+            <div className="settings-section">
+              <h3>⚙️ Quiz Settings</h3>
+              <div className="time-setting">
+                <label className="time-label">
+                  <span className="label-icon">⏱️</span>
+                  <span className="label-text">Quiz Duration (minutes)</span>
+                </label>
+                <div className="time-input-container">
+                  <input
+                    type="number"
+                    min="1"
+                    max="300"
+                    value={quizTime}
+                    onChange={e => setQuizTime(Number(e.target.value))}
+                    className="time-input"
+                  />
+                  <div className="time-display">{quizTime} min</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Error Messages */}
+            {errors.length > 0 && (
+              <div className="error-section">
+                {errors.map((err, idx) => (
+                  <div key={idx} className="error-message">
+                    <span className="error-icon">⚠️</span>
+                    <span className="error-text">{err}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Action Button */}
+            <div className="action-section">
+              <button 
+                className={`next-btn ${loading ? 'loading' : ''}`} 
+                onClick={handleNext} 
+                disabled={loading || files.length === 0}
+              >
+                {loading ? (
+                  <>
+                    <span className="loading-spinner"></span>
+                    <span>Processing...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Continue</span>
+                    <span className="btn-icon">➡️</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
         )}
       </div>
-
-      <div className="form-group">
-        <label>Total Quiz Time (in minutes):</label>
-        <input
-          type="number"
-          min="1"
-          value={quizTime}
-          onChange={e => setQuizTime(Number(e.target.value))}
-        />
-      </div>
-
-      <button className="primary-button" onClick={handleNext} disabled={loading}>
-        {loading ? 'Processing…' : 'Next ➡️'}
-      </button>
-
-      {errors.map((err, idx) => (
-        <p key={idx} style={{ color: 'red' }}>{err}</p>
-      ))}
-    </div>
-      )}
     </div>
   );
 }
