@@ -533,6 +533,143 @@
   background: #ff9800;
 }
 
+/* Performance Chart Toggle Slider */
+.performance-chart-toggle {
+  max-width: 1200px;
+  margin: 40px auto;
+  display: flex;
+  justify-content: center;
+  padding: 0 20px;
+}
+
+.toggle-slider-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: white;
+  padding: 15px 25px;
+  border-radius: 25px;
+  box-shadow: 
+    0 8px 25px rgba(0, 0, 0, 0.08),
+    0 3px 8px rgba(0, 0, 0, 0.03),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.result-page.dark-mode .toggle-slider-container {
+  background: #2d2d30 !important;
+  color: #e0e0e0 !important;
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.3),
+    0 3px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+.toggle-slider-container:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 12px 30px rgba(0, 0, 0, 0.12),
+    0 6px 12px rgba(0, 0, 0, 0.05);
+}
+
+.result-page.dark-mode .toggle-slider-container:hover {
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.4),
+    0 6px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+.toggle-label {
+  font-weight: 600;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.result-page.dark-mode .toggle-label {
+  color: #e0e0e0 !important;
+}
+
+.slider-toggle {
+  position: relative;
+  width: 60px;
+  height: 30px;
+  background: linear-gradient(135deg, #e0e0e0, #f0f0f0);
+  border-radius: 25px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.result-page.dark-mode .slider-toggle {
+  background: linear-gradient(135deg, #404040, #505050) !important;
+}
+
+.slider-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  background: white;
+  border-radius: 50%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.result-page.dark-mode .slider-thumb {
+  background: #f0f0f0 !important;
+}
+
+.slider-thumb.active {
+  transform: translateX(30px);
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+}
+
+.result-page.dark-mode .slider-thumb.active {
+  background: linear-gradient(135deg, #66bb6a, #4caf50) !important;
+}
+
+.slider-icon {
+  font-size: 10px;
+  color: #666;
+}
+
+.slider-thumb.active .slider-icon {
+  color: white;
+}
+
+.toggle-status {
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 500;
+  min-width: 40px;
+}
+
+.result-page.dark-mode .toggle-status {
+  color: #b0b0b0 !important;
+}
+
+/* Performance Dashboard Wrapper with Animation */
+.performance-dashboard-wrapper {
+  animation: slideInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: top;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 /* Responsive Design for Performance Dashboard */
 @media (max-width: 768px) {
   .performance-charts {
@@ -553,6 +690,30 @@
   .breakdown-legend {
     justify-content: center;
   }
+
+  .toggle-slider-container {
+    padding: 12px 20px;
+    gap: 12px;
+  }
+
+  .toggle-label {
+    font-size: 1rem;
+  }
+
+  .slider-toggle {
+    width: 50px;
+    height: 26px;
+  }
+
+  .slider-thumb {
+    width: 20px;
+    height: 20px;
+    top: 3px;
+  }
+
+  .slider-thumb.active {
+    transform: translateX(24px);
+  }
 }
 
 @media (max-width: 480px) {
@@ -572,6 +733,40 @@
   .breakdown-legend {
     flex-direction: column;
     align-items: center;
+  }
+
+  .performance-chart-toggle {
+    padding: 0 15px;
+    margin: 30px auto;
+  }
+
+  .toggle-slider-container {
+    padding: 10px 15px;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .toggle-label {
+    font-size: 0.9rem;
+  }
+
+  .slider-toggle {
+    width: 45px;
+    height: 24px;
+  }
+
+  .slider-thumb {
+    width: 18px;
+    height: 18px;
+  }
+
+  .slider-thumb.active {
+    transform: translateX(21px);
+  }
+
+  .toggle-status {
+    font-size: 0.8rem;
   }
 }
 

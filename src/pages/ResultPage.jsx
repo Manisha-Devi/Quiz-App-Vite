@@ -11,6 +11,7 @@ function ResultPage() {
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return localStorage.getItem('darkMode') === 'true';
   });
+  const [showPerformanceChart, setShowPerformanceChart] = useState(false);
   const navigate = useNavigate();
 
   const toggleDarkMode = () => {
@@ -267,9 +268,6 @@ function ResultPage() {
 
       {/* Main Content Area */}
       <div className="main-content">
-        {/* Performance Dashboard */}
-        <PerformanceChart />
-
         {/* Questions List */}
         <div className="questions-container">
           {filteredQuestions.length > 0 ? (
@@ -292,6 +290,26 @@ function ResultPage() {
             </div>
           )}
         </div>
+
+        {/* Performance Chart Toggle Slider */}
+        <div className="performance-chart-toggle">
+          <div className="toggle-slider-container">
+            <span className="toggle-label">📊 Performance Analytics</span>
+            <div className="slider-toggle" onClick={() => setShowPerformanceChart(!showPerformanceChart)}>
+              <div className={`slider-thumb ${showPerformanceChart ? 'active' : ''}`}>
+                <span className="slider-icon">{showPerformanceChart ? '📈' : '📊'}</span>
+              </div>
+            </div>
+            <span className="toggle-status">{showPerformanceChart ? 'Hide' : 'Show'}</span>
+          </div>
+        </div>
+
+        {/* Performance Dashboard - Conditional */}
+        {showPerformanceChart && (
+          <div className="performance-dashboard-wrapper">
+            <PerformanceChart />
+          </div>
+        )}
 
         {/* Action Buttons */}
         <div className="action-buttons">
