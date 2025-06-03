@@ -30,7 +30,7 @@ function QuestionViewer({
           <div className="q-number">Q{currentIndex + 1}</div>
           <div className="header-actions">
             <div className="show-answer" onClick={handleShowAnswer} title="Show/Hide Answer">
-              👁️ {showAnswer ? 'Hide' : 'Show'} Answer
+              👁️
             </div>
             <div className="mark-review" onClick={onToggleReview}>
               Mark for Review: {reviewMarked ? '⭐' : '☆'}
