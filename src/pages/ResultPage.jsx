@@ -63,6 +63,121 @@ function ResultPage() {
 
   const stats = calculateStats();
 
+  const PerformanceChart = () => {
+    const radius = 60;
+    const circumference = 2 * Math.PI * radius;
+    const strokeDasharray = circumference;
+    const strokeDashoffset = circumference - (stats.percentage / 100) * circumference;
+
+    return (
+      <div className="performance-dashboard">
+        <div className="performance-charts">
+          {/* Circular Progress Chart */}
+          <div className="circular-progress-container">
+            <div className="circular-progress">
+              <svg width="140" height="140" className="progress-ring">
+                <circle
+                  cx="70"
+                  cy="70"
+                  r={radius}
+                  stroke="#e0e0e0"
+                  strokeWidth="8"
+                  fill="transparent"
+                  className="progress-ring-background"
+                />
+                <circle
+                  cx="70"
+                  cy="70"
+                  r={radius}
+                  stroke="#4CAF50"
+                  strokeWidth="8"
+                  fill="transparent"
+                  strokeDasharray={strokeDasharray}
+                  strokeDashoffset={strokeDashoffset}
+                  className="progress-ring-progress"
+                  transform="rotate(-90 70 70)"
+                />
+              </svg>
+              <div className="progress-text">
+                <span className="progress-percentage">{stats.percentage}%</span>
+                <span className="progress-label">Score</span>
+              </div>
+            </div>
+            <div className="progress-title">Overall Performance</div>
+          </div>
+
+          {/* Performance Statistics */}
+          <div className="performance-stats">
+            <div className="stat-item correct-stat">
+              <div className="stat-icon">✅</div>
+              <div className="stat-content">
+                <div className="stat-number">{stats.correct}</div>
+                <div className="stat-label">Correct</div>
+              </div>
+            </div>
+            <div className="stat-item incorrect-stat">
+              <div className="stat-icon">❌</div>
+              <div className="stat-content">
+                <div className="stat-number">{stats.incorrect}</div>
+                <div className="stat-label">Incorrect</div>
+              </div>
+            </div>
+            <div className="stat-item skipped-stat">
+              <div className="stat-icon">⏭️</div>
+              <div className="stat-content">
+                <div className="stat-number">{stats.skipped}</div>
+                <div className="stat-label">Skipped</div>
+              </div>
+            </div>
+            <div className="stat-item total-stat">
+              <div className="stat-icon">📊</div>
+              <div className="stat-content">
+                <div className="stat-number">{stats.total}</div>
+                <div className="stat-label">Total</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Visual Breakdown Bar */}
+          <div className="breakdown-bar-container">
+            <div className="breakdown-title">Question Breakdown</div>
+            <div className="breakdown-bar">
+              <div 
+                className="breakdown-segment correct-segment" 
+                style={{ width: `${(stats.correct / stats.total) * 100}%` }}
+                title={`${stats.correct} Correct (${Math.round((stats.correct / stats.total) * 100)}%)`}
+              ></div>
+              <div 
+                className="breakdown-segment incorrect-segment" 
+                style={{ width: `${(stats.incorrect / stats.total) * 100}%` }}
+                title={`${stats.incorrect} Incorrect (${Math.round((stats.incorrect / stats.total) * 100)}%)`}
+              ></div>
+              <div 
+                className="breakdown-segment skipped-segment" 
+                style={{ width: `${(stats.skipped / stats.total) * 100}%` }}
+                title={`${stats.skipped} Skipped (${Math.round((stats.skipped / stats.total) * 100)}%)`}
+              ></div>
+            </div>
+            <div className="breakdown-legend">
+              <div className="legend-item">
+                <div className="legend-color correct-color"></div>
+                <span>Correct ({Math.round((stats.correct / stats.total) * 100)}%)</span>
+              </div>
+              <div className="legend-item">
+                <div className="legend-color incorrect-color"></div>
+                <span>Incorrect ({Math.round((stats.incorrect / stats.total) * 100)}%)</span>
+              </div>
+              <div className="legend-item">
+                <div className="legend-color skipped-color"></div>
+                <span>Skipped ({Math.round((stats.skipped / stats.total) * 100)}%)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const QuestionCard = ({ question, index, userAnswer, reviewMarked }) => {
     const isCorrect = userAnswer === question.answer;
     const isSkipped = userAnswer === undefined;
@@ -152,6 +267,9 @@ function ResultPage() {
 
       {/* Main Content Area */}
       <div className="main-content">
+        {/* Performance Dashboard */}
+        <PerformanceChart />
+
         {/* Questions List */}
         <div className="questions-container">
           {filteredQuestions.length > 0 ? (

@@ -256,6 +256,325 @@
   padding: 20px;
 }
 
+/* Performance Dashboard */
+.performance-dashboard {
+  max-width: 1200px;
+  margin: 0 auto 40px;
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 
+    0 8px 25px rgba(0, 0, 0, 0.08),
+    0 3px 8px rgba(0, 0, 0, 0.03),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Dark mode for performance dashboard */
+.result-page.dark-mode .performance-dashboard {
+  background: #2d2d30 !important;
+  color: #e0e0e0 !important;
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.3),
+    0 3px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+.performance-charts {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 40px;
+  align-items: center;
+}
+
+/* Circular Progress Chart */
+.circular-progress-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.circular-progress {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-ring {
+  transform: rotate(-90deg);
+}
+
+.progress-ring-background {
+  opacity: 0.2;
+}
+
+.result-page.dark-mode .progress-ring-background {
+  stroke: #555 !important;
+}
+
+.progress-ring-progress {
+  transition: stroke-dashoffset 2s cubic-bezier(0.4, 0, 0.2, 1);
+  stroke-linecap: round;
+}
+
+.progress-text {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-percentage {
+  font-size: 24px;
+  font-weight: 700;
+  color: #4CAF50;
+}
+
+.result-page.dark-mode .progress-percentage {
+  color: #66bb6a !important;
+}
+
+.progress-label {
+  font-size: 12px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.result-page.dark-mode .progress-label {
+  color: #b0b0b0 !important;
+}
+
+.progress-title {
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+}
+
+.result-page.dark-mode .progress-title {
+  color: #e0e0e0 !important;
+}
+
+/* Performance Statistics */
+.performance-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  min-width: 200px;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.correct-stat {
+  background: linear-gradient(135deg, #e8f5e8, #d4f6d4);
+}
+
+.incorrect-stat {
+  background: linear-gradient(135deg, #ffeaea, #fdd4d4);
+}
+
+.skipped-stat {
+  background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+}
+
+.total-stat {
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+}
+
+/* Dark mode for stat items */
+.result-page.dark-mode .correct-stat {
+  background: linear-gradient(135deg, #1a4d1a, #2a5a2a) !important;
+}
+
+.result-page.dark-mode .incorrect-stat {
+  background: linear-gradient(135deg, #4d1a1a, #5a2a2a) !important;
+}
+
+.result-page.dark-mode .skipped-stat {
+  background: linear-gradient(135deg, #4d3a1a, #5a4a2a) !important;
+}
+
+.result-page.dark-mode .total-stat {
+  background: linear-gradient(135deg, #1a3a4d, #2a4a5a) !important;
+}
+
+.stat-icon {
+  font-size: 20px;
+  opacity: 0.8;
+}
+
+.stat-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-number {
+  font-size: 18px;
+  font-weight: 700;
+  color: #333;
+}
+
+.result-page.dark-mode .stat-number {
+  color: #e0e0e0 !important;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.result-page.dark-mode .stat-label {
+  color: #b0b0b0 !important;
+}
+
+/* Breakdown Bar */
+.breakdown-bar-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  min-width: 300px;
+}
+
+.breakdown-title {
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+}
+
+.result-page.dark-mode .breakdown-title {
+  color: #e0e0e0 !important;
+}
+
+.breakdown-bar {
+  height: 12px;
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  background: #f0f0f0;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.result-page.dark-mode .breakdown-bar {
+  background: #404040 !important;
+}
+
+.breakdown-segment {
+  height: 100%;
+  transition: all 0.3s ease;
+}
+
+.breakdown-segment:hover {
+  filter: brightness(1.1);
+}
+
+.correct-segment {
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+}
+
+.incorrect-segment {
+  background: linear-gradient(135deg, #f44336, #d32f2f);
+}
+
+.skipped-segment {
+  background: linear-gradient(135deg, #ff9800, #f57c00);
+}
+
+.breakdown-legend {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #666;
+}
+
+.result-page.dark-mode .legend-item {
+  color: #b0b0b0 !important;
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+}
+
+.correct-color {
+  background: #4CAF50;
+}
+
+.incorrect-color {
+  background: #f44336;
+}
+
+.skipped-color {
+  background: #ff9800;
+}
+
+/* Responsive Design for Performance Dashboard */
+@media (max-width: 768px) {
+  .performance-charts {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    text-align: center;
+  }
+  
+  .performance-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+  
+  .breakdown-bar-container {
+    min-width: auto;
+  }
+  
+  .breakdown-legend {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .performance-dashboard {
+    padding: 20px 15px;
+  }
+  
+  .performance-stats {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .stat-item {
+    padding: 12px;
+  }
+  
+  .breakdown-legend {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
 /* Questions Container */
 .questions-container {
   max-width: 1200px;
