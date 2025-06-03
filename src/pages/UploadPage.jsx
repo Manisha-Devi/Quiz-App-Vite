@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { storeImage } from '../utils/indexedDB';
+import useOfflineStorage from '../hooks/useOfflineStorage';
+import LocalQuizLibrary from '../components/LocalQuizLibrary';
 import '../styles/UploadPage.css';
-import { openDb, storeImage, storeText, clearDatabase ,deleteDatabase } from '../utils/indexedDB';  // Import the functions
+import { openDb, storeText, clearDatabase ,deleteDatabase } from '../utils/indexedDB';  // Import the functions
 
 function UploadPage() {
   const [files, setFiles] = useState([]);
@@ -10,6 +13,8 @@ function UploadPage() {
   const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [showLocalLibrary, setShowLocalLibrary] = useState(false);
+  const { isOnline } = useOfflineStorage();
 
   const KEYS_TO_CLEAR = [
     'quizData',
@@ -22,7 +27,7 @@ function UploadPage() {
     'fileImageMap'
   ];
 
-  
+
   useEffect(() => {
     KEYS_TO_CLEAR.forEach(key => localStorage.removeItem(key));
   }, []);
@@ -52,15 +57,15 @@ function UploadPage() {
 
   const handleImageUpload = (filename, selectedFiles) => {
     const validTypes = ['image/png', 'image/jpeg'];
-  
+
     const filtered = Array.from(selectedFiles).filter(file =>
       validTypes.includes(file.type)
     );
-  
+
     if (filtered.length < selectedFiles.length) {
       alert('❌ Only PNG and JPEG images are allowed.');
     }
-  
+
     const imagePromises = filtered.map(file => {
       return new Promise(resolve => {
         const reader = new FileReader();
@@ -71,7 +76,7 @@ function UploadPage() {
         reader.readAsDataURL(file);
       });
     });
-  
+
     Promise.all(imagePromises).then(images => {
       const updated = {
         ...fileImageMap,
@@ -81,9 +86,9 @@ function UploadPage() {
       localStorage.setItem('fileImageMap', JSON.stringify(updated));
     });
   };
-  
-  
-  
+
+
+
 
   const handleNext = async () => {
     if (files.length === 0) {
@@ -119,7 +124,7 @@ function UploadPage() {
           questions: data
         });
       }
-      
+
       // Open the IndexedDB and store the parsed JSON data
       const db = await openDb();
       const transaction = db.transaction("texts", "readwrite");
@@ -154,9 +159,36 @@ function UploadPage() {
     }
   };
 
+  const handleLocalQuizSelect = (quiz) => {
+    localStorage.setItem('quizData', JSON.stringify(quiz.data));
+    localStorage.setItem('quizTime', String(quizTime));
+    localStorage.setItem('fileImageMap', JSON.stringify({}));
+    navigate('/sections');
+  };
+
   return (
     <div className="page">
-      <h1>📂 Upload Your Quiz Files</h1>
+      <div className="upload-header">
+        <h1>📂 Upload Your Quiz Files</h1>
+        <div className="header-controls">
+          <div className="status-info">
+            <span className={`connection-status ${isOnline ? 'online' : 'offline'}`}>
+              {isOnline ? '🟢 Online' : '🔴 Offline Mode'}
+            </span>
+          </div>
+          <button 
+            className="toggle-library-btn"
+            onClick={() => setShowLocalLibrary(!showLocalLibrary)}
+          >
+            {showLocalLibrary ? '📁 Upload New' : '📚 Saved Quizzes'}
+          </button>
+        </div>
+      </div>
+
+      {showLocalLibrary ? (
+        <LocalQuizLibrary onQuizSelect={handleLocalQuizSelect} />
+      ) : (
+        <div className="upload-section">
 
       <div className="form-group">
         <label>Select JSON Files:</label>
@@ -210,6 +242,8 @@ function UploadPage() {
       {errors.map((err, idx) => (
         <p key={idx} style={{ color: 'red' }}>{err}</p>
       ))}
+    </div>
+      )}
     </div>
   );
 }
