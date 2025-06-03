@@ -56,12 +56,6 @@ function ExamPage() {
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
   const [showTimeWarning, setShowTimeWarning] = useState(timeLeft <= 300); // Track visibility of the warning
   const [showShortcuts, setShowShortcuts] = useState(false);
-  const [bookmarks, setBookmarks] = useState(saved.bookmarks ?? {});
-  const [questionTimes, setQuestionTimes] = useState(saved.questionTimes ?? {});
-  const [questionStartTime, setQuestionStartTime] = useState(Date.now());
-  const [confidenceLevels, setConfidenceLevels] = useState(saved.confidenceLevels ?? {});
-  const [practiceMode, setPracticeMode] = useState(false);
-  const [difficultyMarks, setDifficultyMarks] = useState(saved.difficultyMarks ?? {});
 
   useEffect(() => {
     if (!meta.startedAt) {
@@ -90,46 +84,12 @@ function ExamPage() {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('examState', JSON.stringify({ 
-      answers, review, current, bookmarks, questionTimes, confidenceLevels, difficultyMarks 
-    }));
-  }, [answers, review, current, bookmarks, questionTimes, confidenceLevels, difficultyMarks]);
+    localStorage.setItem('examState', JSON.stringify({ answers, review, current }));
+  }, [answers, review, current]);
 
   const handleClear = () => {
     setAnswers(a => { const c = { ...a }; delete c[current]; return c; });
     setReview(r => { const c = { ...r }; delete c[current]; return c; });
-    setConfidenceLevels(c => { const copy = { ...c }; delete copy[current]; return copy; });
-  };
-
-  const calculateAvgTime = () => {
-    const times = Object.values(questionTimes);
-    if (times.length === 0) return 0;
-    const avg = times.reduce((a, b) => a + b, 0) / times.length;
-    return Math.round(avg / 1000); // Convert to seconds
-  };
-
-  const toggleBookmark = () => {
-    setBookmarks(b => ({ ...b, [current]: !b[current] }));
-    // Haptic feedback for mobile
-    if (navigator.vibrate && window.DeviceMotionEvent) {
-      navigator.vibrate(100);
-    }
-  };
-
-  const setConfidence = (level) => {
-    setConfidenceLevels(c => ({ ...c, [current]: level }));
-    // Auto-mark for review if unsure
-    if (level === 'unsure') {
-      setReview(r => ({ ...r, [current]: true }));
-    }
-  };
-
-  const autoMarkDifficult = () => {
-    const currentTime = Date.now() - questionStartTime;
-    if (currentTime > 120000) { // 2 minutes
-      setDifficultyMarks(d => ({ ...d, [current]: true }));
-      setReview(r => ({ ...r, [current]: true }));
-    }
   };
 
   useEffect(() => {
@@ -152,8 +112,6 @@ function ExamPage() {
       if (e.key === 'ArrowLeft' || e.key.toLowerCase() === 'p') goPrev();
       if (e.key.toLowerCase() === 'r') toggleReview();
       if (e.key.toLowerCase() === 'c') handleClear();
-      if (e.key.toLowerCase() === 'b') toggleBookmark();
-      if (e.key.toLowerCase() === 'm') setPracticeMode(!practiceMode);
       if (e.key === ' ') { // Spacebar to show/hide answer
         e.preventDefault();
         const eyeButton = document.querySelector('.show-answer');
@@ -177,23 +135,8 @@ function ExamPage() {
     });
   };
 
-  const goNext = useCallback(() => {
-    // Save time spent on current question
-    const timeSpent = Date.now() - questionStartTime;
-    setQuestionTimes(qt => ({ ...qt, [current]: timeSpent }));
-    autoMarkDifficult();
-    
-    setCurrent(c => (c + 1) % questions.length);
-    setQuestionStartTime(Date.now());
-  }, [questions.length, questionStartTime, current]);
-  
-  const goPrev = useCallback(() => {
-    const timeSpent = Date.now() - questionStartTime;
-    setQuestionTimes(qt => ({ ...qt, [current]: timeSpent }));
-    
-    setCurrent(c => (c - 1 + questions.length) % questions.length);
-    setQuestionStartTime(Date.now());
-  }, [questions.length, questionStartTime, current]);
+  const goNext = useCallback(() => setCurrent(c => (c + 1) % questions.length), [questions.length]);
+  const goPrev = useCallback(() => setCurrent(c => (c - 1 + questions.length) % questions.length), [questions.length]);
 
   const swipeHandlers = useSwipeable({
     onSwipedLeft: goNext,
@@ -238,10 +181,7 @@ function ExamPage() {
                 <div className="section-name">{q.section || 'General'}</div>
                 <div className="progress-info">
                   <span className="question-counter">{current + 1}/{questions.length}</span>
-                  <div className="smart-features">
-                    <span className="time-analytics">⏱️ Avg: {calculateAvgTime()}s</span>
-                    <span className="bookmarks">📚 {Object.keys(bookmarks).length}</span>
-                  </div>
+                  <span className="answered-count">Answered: {Object.keys(answers).length}</span>
                 </div>
               </div>
               <div className="d-flex align-items-center gap-2">
@@ -269,13 +209,8 @@ function ExamPage() {
                   currentIndex={current}
                   answer={answers[current]}
                   reviewMarked={review[current]}
-                  bookmarked={bookmarks[current]}
-                  confidence={confidenceLevels[current]}
-                  practiceMode={practiceMode}
                   onOptionClick={handleOption}
                   onToggleReview={toggleReview}
-                  onToggleBookmark={toggleBookmark}
-                  onSetConfidence={setConfidence}
                   injectImageSources={injectImageSources}
                   hasMath={hasMath}
                 />
@@ -295,34 +230,12 @@ function ExamPage() {
             <footer className="exam-footer">
               <div className="footer-left">
                 <button onClick={handleClear}>Clear Response</button>
-                <button onClick={toggleBookmark} className={bookmarks[current] ? 'bookmarked' : ''}>
-                  {bookmarks[current] ? '📚' : '📖'} Bookmark
-                </button>
-                <div className="confidence-buttons">
-                  <button 
-                    onClick={() => setConfidence('sure')} 
-                    className={`confidence ${confidenceLevels[current] === 'sure' ? 'active' : ''}`}
-                    title="I'm confident"
-                  >
-                    😊
-                  </button>
-                  <button 
-                    onClick={() => setConfidence('unsure')} 
-                    className={`confidence ${confidenceLevels[current] === 'unsure' ? 'active' : ''}`}
-                    title="I'm unsure"
-                  >
-                    😐
-                  </button>
-                </div>
                 <button onClick={handleNext} className="primary">Save & Next</button>
+                <button onClick={() => setShowShortcuts(!showShortcuts)} className="shortcuts-btn" title="Show Keyboard Shortcuts">
+                  ⌨️ {showShortcuts ? 'Hide' : 'Show'} Shortcuts
+                </button>
               </div>
               <div className="footer-right">
-                <button onClick={() => setPracticeMode(!practiceMode)} className={practiceMode ? 'practice-active' : 'practice-btn'}>
-                  {practiceMode ? '🎯 Exit Practice' : '📝 Practice Mode'}
-                </button>
-                <button onClick={() => setShowShortcuts(!showShortcuts)} className="shortcuts-btn" title="Show Keyboard Shortcuts">
-                  ⌨️
-                </button>
                 <button onClick={() => handleSubmit(false)} className="submit">Submit Test</button>
               </div>
             </footer>
@@ -337,8 +250,6 @@ function ExamPage() {
                     <div><kbd>←</kbd> or <kbd>P</kbd> Previous question</div>
                     <div><kbd>R</kbd> Toggle review</div>
                     <div><kbd>C</kbd> Clear response</div>
-                    <div><kbd>B</kbd> Toggle bookmark</div>
-                    <div><kbd>M</kbd> Practice mode</div>
                     <div><kbd>Space</kbd> Show/Hide answer</div>
                   </div>
                   <button onClick={() => setShowShortcuts(false)} className="close-shortcuts">Close</button>
