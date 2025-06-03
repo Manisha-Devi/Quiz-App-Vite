@@ -265,6 +265,11 @@ function UploadPage() {
 
             {/* File Upload Area */}
             <div className="upload-area">
+              <div className="upload-instructions">
+                <h3>📁 Upload Quiz Files</h3>
+                <p>Select or drag your JSON quiz files to get started</p>
+              </div>
+              
               <div className="file-input-container">
                 <label 
                   className="file-input-label"
@@ -286,7 +291,8 @@ function UploadPage() {
                   <div className="file-input-icon">📄</div>
                   <div className="file-input-text">
                     <span className="primary-text">Choose JSON Files</span>
-                    <span className="secondary-text">or drag and drop here</span>
+                    <span className="secondary-text">Tap here to browse or drag files</span>
+                    <span className="helper-text">Supports multiple files (max 2MB each)</span>
                   </div>
                   <input 
                     type="file" 
@@ -343,22 +349,41 @@ function UploadPage() {
 
             {/* Quiz Settings */}
             <div className="settings-section">
-              <h3>⚙️ Quiz Settings</h3>
-              <div className="time-setting">
-                <label className="time-label">
-                  <span className="label-icon">⏱️</span>
-                  <span className="label-text">Quiz Duration (minutes)</span>
-                </label>
-                <div className="time-input-container">
-                  <input
-                    type="number"
-                    min="1"
-                    max="300"
-                    value={quizTime}
-                    onChange={e => setQuizTime(Number(e.target.value))}
-                    className="time-input"
-                  />
-                  <div className="time-display">{quizTime} min</div>
+              <div className="settings-header">
+                <h3>⚙️ Quiz Configuration</h3>
+                <p>Set up your quiz preferences</p>
+              </div>
+              
+              <div className="settings-grid">
+                <div className="setting-item">
+                  <label className="setting-label">
+                    <span className="label-icon">⏱️</span>
+                    <div className="label-content">
+                      <span className="label-title">Quiz Duration</span>
+                      <span className="label-subtitle">Time limit for the entire quiz</span>
+                    </div>
+                  </label>
+                  <div className="time-input-container">
+                    <input
+                      type="number"
+                      min="1"
+                      max="300"
+                      value={quizTime}
+                      onChange={e => setQuizTime(Number(e.target.value))}
+                      className="time-input"
+                      placeholder="60"
+                    />
+                    <div className="time-unit">minutes</div>
+                  </div>
+                </div>
+                
+                <div className="setting-info">
+                  <div className="info-card">
+                    <span className="info-icon">💡</span>
+                    <div className="info-content">
+                      <strong>Tip:</strong> Recommended 1-2 minutes per question
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

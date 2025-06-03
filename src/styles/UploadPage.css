@@ -756,6 +756,39 @@
   transition: all 0.3s ease;
 }
 
+/* Upload Instructions */
+.upload-instructions {
+  text-align: center;
+  margin-bottom: 24px;
+  padding: 16px;
+}
+
+.upload-instructions h3 {
+  color: #667eea;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.upload-page.dark-mode .upload-instructions h3 {
+  color: #8892f0;
+}
+
+.upload-instructions p {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+  font-weight: 500;
+}
+
+.upload-page.dark-mode .upload-instructions p {
+  color: #a0a0a0;
+}
+
 .upload-page.dark-mode .upload-section {
   background: rgba(26, 26, 46, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -854,10 +887,23 @@
   color: #666;
   text-align: center;
   line-height: 1.5;
+  margin-bottom: 8px;
 }
 
 .upload-page.dark-mode .secondary-text {
   color: #a0a0a0;
+}
+
+.helper-text {
+  font-size: 12px;
+  color: #999;
+  text-align: center;
+  font-style: italic;
+  margin-top: 4px;
+}
+
+.upload-page.dark-mode .helper-text {
+  color: #777;
 }
 
 .file-input {
@@ -867,9 +913,9 @@
 /* Settings Section */
 .settings-section {
   margin-bottom: 32px;
-  padding: 24px;
+  padding: 28px;
   background: linear-gradient(145deg, #f8f9ff, #e8ebff);
-  border-radius: 16px;
+  border-radius: 20px;
   border: 1px solid rgba(102, 126, 234, 0.1);
   backdrop-filter: blur(10px);
 }
@@ -879,58 +925,117 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.settings-section h3 {
-  margin: 0 0 24px 0;
+.settings-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.settings-header h3 {
   color: #667eea;
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
+  margin-bottom: 8px;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 12px;
 }
 
-.upload-page.dark-mode .settings-section h3 {
+.upload-page.dark-mode .settings-header h3 {
   color: #8892f0;
 }
 
-.time-setting {
+.settings-header p {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+  font-weight: 500;
+}
+
+.upload-page.dark-mode .settings-header p {
+  color: #a0a0a0;
+}
+
+.settings-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.setting-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 20px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 16px;
+  border: 1px solid rgba(102, 126, 234, 0.1);
+  transition: all 0.3s ease;
 }
 
-.time-label {
+.upload-page.dark-mode .setting-item {
+  background: rgba(26, 26, 46, 0.8);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.setting-item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.15);
+}
+
+.setting-label {
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-weight: 600;
+  gap: 16px;
+  flex: 1;
+  cursor: pointer;
+}
+
+.label-icon {
+  font-size: 28px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  flex-shrink: 0;
+}
+
+.label-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.label-title {
+  font-weight: 700;
   color: #333;
   font-size: 16px;
 }
 
-.upload-page.dark-mode .time-label {
-  color: #e0e0e0;
+.upload-page.dark-mode .label-title {
+  color: #f0f0f0;
 }
 
-.label-icon {
-  font-size: 24px;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+.label-subtitle {
+  font-size: 13px;
+  color: #666;
+  font-weight: 400;
+}
+
+.upload-page.dark-mode .label-subtitle {
+  color: #a0a0a0;
 }
 
 .time-input-container {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-shrink: 0;
 }
 
 .time-input {
-  padding: 12px 18px;
+  padding: 14px 18px;
   border: 2px solid rgba(102, 126, 234, 0.2);
   border-radius: 12px;
   font-size: 18px;
-  width: 100px;
+  width: 80px;
   text-align: center;
   font-weight: 600;
   transition: all 0.3s ease;
@@ -948,7 +1053,55 @@
   outline: none;
   border-color: #667eea;
   box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-  transform: scale(1.02);
+  transform: scale(1.05);
+}
+
+.time-unit {
+  font-size: 14px;
+  color: #667eea;
+  font-weight: 600;
+  padding: 8px 12px;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 8px;
+}
+
+.upload-page.dark-mode .time-unit {
+  color: #8892f0;
+  background: rgba(136, 146, 240, 0.2);
+}
+
+.setting-info {
+  margin-top: 16px;
+}
+
+.info-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(67, 160, 71, 0.05));
+  border: 1px solid rgba(76, 175, 80, 0.2);
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+.upload-page.dark-mode .info-card {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.15), rgba(67, 160, 71, 0.1));
+  border-color: rgba(76, 175, 80, 0.3);
+}
+
+.info-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.info-content {
+  color: #2e7d32;
+  line-height: 1.4;
+}
+
+.upload-page.dark-mode .info-content {
+  color: #81c784;
 }
 
 /* File List */
@@ -1147,12 +1300,12 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .upload-content {
-    padding: 24px 16px;
+    padding: 20px 16px;
   }
   
   .upload-section,
   .library-section {
-    padding: 24px;
+    padding: 24px 20px;
     border-radius: 20px;
   }
   
@@ -1168,14 +1321,86 @@
     font-size: 28px;
   }
   
-  .time-setting {
+  .section-header p {
+    font-size: 15px;
+  }
+
+  /* Upload Instructions Mobile */
+  .upload-instructions {
+    padding: 12px;
+    margin-bottom: 20px;
+  }
+
+  .upload-instructions h3 {
+    font-size: 18px;
+  }
+
+  .upload-instructions p {
+    font-size: 13px;
+  }
+
+  /* Settings Section Mobile */
+  .settings-section {
+    padding: 20px;
+    margin-bottom: 24px;
+  }
+
+  .settings-header h3 {
+    font-size: 20px;
+  }
+
+  .settings-header p {
+    font-size: 13px;
+  }
+
+  .setting-item {
     flex-direction: column;
-    align-items: stretch;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px 16px;
+  }
+
+  .setting-label {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .label-icon {
+    font-size: 24px;
+  }
+
+  .label-title {
+    font-size: 15px;
+  }
+
+  .label-subtitle {
+    font-size: 12px;
+  }
+
+  .time-input-container {
+    width: 100%;
+    justify-content: center;
     gap: 16px;
   }
-  
-  .time-input-container {
-    justify-content: center;
+
+  .time-input {
+    width: 100px;
+    font-size: 16px;
+    padding: 12px 16px;
+  }
+
+  .time-unit {
+    font-size: 13px;
+    padding: 8px 16px;
+  }
+
+  .info-card {
+    padding: 14px 16px;
+    font-size: 13px;
+  }
+
+  .info-icon {
+    font-size: 18px;
   }
   
   .file-item {
@@ -1183,6 +1408,7 @@
     gap: 16px;
     align-items: stretch;
     text-align: center;
+    padding: 16px;
   }
   
   .file-actions {
@@ -1190,11 +1416,29 @@
   }
 
   .file-input-label {
-    padding: 36px 24px;
+    padding: 32px 20px;
+  }
+
+  .file-input-icon {
+    font-size: 40px;
+  }
+
+  .primary-text {
+    font-size: 18px;
+  }
+
+  .secondary-text {
+    font-size: 14px;
+  }
+
+  .helper-text {
+    font-size: 11px;
   }
 
   .next-btn {
     width: 100%;
+    padding: 16px 24px;
+    font-size: 16px;
   }
 }
 
@@ -1252,7 +1496,7 @@
 
 @media (max-width: 480px) {
   .upload-header {
-    padding: 10px 15px;
+    padding: 12px 16px;
   }
   
   .header-controls {
@@ -1261,32 +1505,143 @@
   
   .theme-toggle-btn,
   .library-toggle-btn {
-    padding: 6px 10px;
+    padding: 8px 10px;
     font-size: 14px;
+    min-width: 36px;
+    min-height: 36px;
   }
   
   .connection-indicator {
-    padding: 4px 8px;
+    padding: 6px 10px;
+    font-size: 12px;
   }
   
   .status-text {
     display: none;
   }
-  
+
+  .upload-content {
+    padding: 16px 12px;
+  }
+
+  .upload-section,
+  .library-section {
+    padding: 20px 16px;
+    border-radius: 16px;
+  }
+
+  .section-header h2 {
+    font-size: 24px;
+  }
+
+  .section-header p {
+    font-size: 14px;
+  }
+
+  /* Ultra-mobile upload instructions */
+  .upload-instructions h3 {
+    font-size: 16px;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .upload-instructions p {
+    font-size: 12px;
+  }
+
+  /* Ultra-mobile file input */
   .file-input-label {
-    padding: 30px 15px;
+    padding: 28px 16px;
   }
   
   .file-input-icon {
-    font-size: 36px;
+    font-size: 32px;
+    margin-bottom: 12px;
   }
   
   .primary-text {
     font-size: 16px;
   }
+
+  .secondary-text {
+    font-size: 13px;
+  }
+
+  .helper-text {
+    font-size: 10px;
+  }
+
+  /* Ultra-mobile settings */
+  .settings-section {
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+
+  .settings-header h3 {
+    font-size: 18px;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .settings-header p {
+    font-size: 12px;
+  }
+
+  .setting-item {
+    padding: 16px 12px;
+    gap: 12px;
+  }
+
+  .label-icon {
+    font-size: 20px;
+  }
+
+  .label-title {
+    font-size: 14px;
+  }
+
+  .label-subtitle {
+    font-size: 11px;
+  }
+
+  .time-input {
+    width: 80px;
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+
+  .time-unit {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+
+  .info-card {
+    padding: 12px 14px;
+    font-size: 12px;
+    gap: 8px;
+  }
+
+  .info-icon {
+    font-size: 16px;
+  }
   
   .next-btn {
-    padding: 12px 25px;
+    padding: 14px 20px;
+    font-size: 15px;
+    border-radius: 12px;
+  }
+
+  /* File items ultra-mobile */
+  .file-item {
+    padding: 14px 12px;
+    border-radius: 12px;
+  }
+
+  .file-name {
     font-size: 14px;
+  }
+
+  .file-size {
+    font-size: 11px;
   }
 }
