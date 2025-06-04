@@ -12,9 +12,7 @@ function QuestionViewer({
   onToggleReview,
   injectImageSources,
   hasMath,
-  isDarkMode,
-  allQuestions,
-  onJumpToSection
+  isDarkMode
 }) {
   const [showAnswer, setShowAnswer] = React.useState(false);
 
@@ -26,72 +24,8 @@ function QuestionViewer({
   const handleShowAnswer = () => {
     setShowAnswer(!showAnswer);
   };
-
-  // Get all unique sections with their question ranges
-  const getSections = () => {
-    if (!allQuestions || allQuestions.length === 0) return [];
-    
-    const sections = [];
-    let currentSection = null;
-    let startIndex = 0;
-    
-    allQuestions.forEach((q, index) => {
-      const sectionName = q.section || 'General Section';
-      
-      if (currentSection !== sectionName) {
-        if (currentSection !== null) {
-          sections.push({
-            name: currentSection,
-            startIndex,
-            endIndex: index - 1,
-            questionCount: index - startIndex
-          });
-        }
-        currentSection = sectionName;
-        startIndex = index;
-      }
-      
-      // Last section
-      if (index === allQuestions.length - 1) {
-        sections.push({
-          name: currentSection,
-          startIndex,
-          endIndex: index,
-          questionCount: index - startIndex + 1
-        });
-      }
-    });
-    
-    return sections;
-  };
-
-  const sections = getSections();
-  const currentSection = question.section || 'General Section';
-
   return (
     <div className="question-box">
-      {sections.length > 1 && (
-        <div className="sections-navigation">
-          <div className="sections-scroll">
-            {sections.map((section, index) => {
-              const isActive = section.name === currentSection;
-              return (
-                <div
-                  key={index}
-                  className={`section-tab ${isActive ? 'active' : ''}`}
-                  onClick={() => onJumpToSection && onJumpToSection(section.startIndex)}
-                  title={`${section.name} (Q${section.startIndex + 1}-Q${section.endIndex + 1})`}
-                >
-                  <span className="section-tab-name">{section.name}</span>
-                  <span className="section-tab-count">
-                    Q{section.startIndex + 1}-{section.endIndex + 1}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
       <div className="section-name-display">
         <span className="current-section-name">
           📚 {question.section || 'General Section'}
@@ -178,9 +112,7 @@ QuestionViewer.propTypes = {
   onToggleReview: PropTypes.func.isRequired,
   injectImageSources: PropTypes.func.isRequired,
   hasMath: PropTypes.func.isRequired,
-  isDarkMode: PropTypes.bool,
-  allQuestions: PropTypes.array,
-  onJumpToSection: PropTypes.func
+  isDarkMode: PropTypes.bool
 };
 
 export default QuestionViewer;

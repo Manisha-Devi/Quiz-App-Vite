@@ -190,8 +190,6 @@ function ExamPage() {
                   injectImageSources={injectImageSources}
                   hasMath={hasMath}
                   isDarkMode={isDarkMode}
-                  allQuestions={questions}
-                  onJumpToSection={(index) => setCurrent(index)}
                 />
               </div>
 
