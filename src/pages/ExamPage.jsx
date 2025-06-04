@@ -189,6 +189,7 @@ function ExamPage() {
                   onToggleReview={toggleReview}
                   injectImageSources={injectImageSources}
                   hasMath={hasMath}
+                  isDarkMode={isDarkMode}
                 />
               </div>
 

@@ -53,7 +53,7 @@ function QuestionViewer({
             const isUserAnswer = answer === idx;
             const isCorrectAnswer = showAnswer && question.answer === idx;
             const optionClass = `option ${isUserAnswer ? 'active' : ''} ${isCorrectAnswer ? 'correct-answer' : ''}`;
-            
+
             return (
               <div
                 key={idx}
