@@ -97,13 +97,17 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  max-width: 15%;
+  max-width: 60%;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
-
+.section-name:before {
+  content: '📚';
+  font-size: 20px;
+  flex-shrink: 0;
+}
 
 @media (max-width: 768px) {
   .section-name {

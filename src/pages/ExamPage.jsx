@@ -60,7 +60,7 @@ function ExamPage() {
   const [sections] = useState(() => {
     const sectionMap = new Map();
     let currentIndex = 0;
-    
+
     questions.forEach((question, index) => {
       const sectionName = question.section || 'General';
       if (!sectionMap.has(sectionName)) {
@@ -76,7 +76,7 @@ function ExamPage() {
       section.questions.push(index);
       currentIndex++;
     });
-    
+
     return Array.from(sectionMap.values());
   });
 
@@ -95,18 +95,12 @@ function ExamPage() {
     }
   };
 
-  // Expose to window for QuestionViewer access
+  // Make functions available globally for QuestionViewer
   useEffect(() => {
     window.sections = sections;
     window.getCurrentSection = getCurrentSection;
     window.jumpToSection = jumpToSection;
-    
-    return () => {
-      delete window.sections;
-      delete window.getCurrentSection;
-      delete window.jumpToSection;
-    };
-  }, [sections, current]);
+  }, [sections, getCurrentSection, jumpToSection]);
 
   useEffect(() => {
     if (!meta.startedAt) {
