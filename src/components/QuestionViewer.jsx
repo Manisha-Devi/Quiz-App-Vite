@@ -11,7 +11,8 @@ function QuestionViewer({
   onOptionClick,
   onToggleReview,
   injectImageSources,
-  hasMath
+  hasMath,
+  isDarkMode
 }) {
   const [showAnswer, setShowAnswer] = React.useState(false);
 
@@ -24,8 +25,14 @@ function QuestionViewer({
     setShowAnswer(!showAnswer);
   };
   return (
-    <div className="question-box">
-      <div className="question-scroll">
+    <div className={`question-viewer ${isDarkMode ? 'dark-mode' : ''}`}>
+      <div className="question-box">
+        <div className="section-name-display">
+          <span className="current-section-name">
+            📚 {question.section || 'General Section'}
+          </span>
+        </div>
+        <div className="question-scroll">
         <div className="q-header">
           <div className="q-number">Q{currentIndex + 1}</div>
           <div className="header-actions">
@@ -94,6 +101,7 @@ function QuestionViewer({
         )}
       </div>
     </div>
+    </div>
   );
 }
 
@@ -105,7 +113,8 @@ QuestionViewer.propTypes = {
   onOptionClick: PropTypes.func.isRequired,
   onToggleReview: PropTypes.func.isRequired,
   injectImageSources: PropTypes.func.isRequired,
-  hasMath: PropTypes.func.isRequired
+  hasMath: PropTypes.func.isRequired,
+  isDarkMode: PropTypes.bool
 };
 
 export default QuestionViewer;
