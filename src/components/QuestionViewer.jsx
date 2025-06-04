@@ -27,9 +27,7 @@ function QuestionViewer({
   return (
     <div className="question-box">
       <div className="section-name-display">
-        <span className="current-section-name">
-          📚 {question.section || 'General Section'}
-        </span>
+        <div className="section-placeholder"></div>
         <div className="section-navigation-horizontal">
           {window.sections && window.sections.map((section, index) => {
             const isActive = window.getCurrentSection && window.getCurrentSection()?.name === section.name;

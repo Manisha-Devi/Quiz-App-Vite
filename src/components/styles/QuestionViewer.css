@@ -360,21 +360,14 @@
 }
 }
 
-.current-section-name {
-  font-size: 14px;
-  font-weight: 600;
-  color: #4b3ee6;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+.section-placeholder {
+  height: 24px;
+  width: 100%;
+  background: transparent;
 }
 
 /* Dark mode styles */
 .dark-mode .section-name-display {
   background: #3a3a3d;
   border-bottom-color: #555;
-}
-
-.dark-mode .current-section-name {
-  color: #7c71e6;
 }
