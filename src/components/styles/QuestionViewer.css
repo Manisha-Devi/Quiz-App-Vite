@@ -341,9 +341,9 @@
 }
 
 .dark-mode .section-nav-item-horizontal.active {
-  background: #4dabf7;
+  background: #007bff;
   color: white;
-  border-color: #4dabf7;
+  border-color: #007bff;
 }
 }
 
