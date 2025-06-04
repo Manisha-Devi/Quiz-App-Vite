@@ -95,6 +95,19 @@ function ExamPage() {
     }
   };
 
+  // Expose to window for QuestionViewer access
+  useEffect(() => {
+    window.sections = sections;
+    window.getCurrentSection = getCurrentSection;
+    window.jumpToSection = jumpToSection;
+    
+    return () => {
+      delete window.sections;
+      delete window.getCurrentSection;
+      delete window.jumpToSection;
+    };
+  }, [sections, current]);
+
   useEffect(() => {
     if (!meta.startedAt) {
       localStorage.setItem('examMeta', JSON.stringify({ startedAt: Date.now() }));
@@ -199,25 +212,6 @@ function ExamPage() {
           <div className="exam-ui">
             <header className="exam-header">
               <div className="section-name">Exam Page</div>
-              <div className="section-navigation">
-                {sections.map((section, index) => {
-                  const isActive = getCurrentSection()?.name === section.name;
-                  const startNum = section.questions.length > 0 ? section.questions[0] + 1 : 1;
-                  const endNum = section.questions.length > 0 ? section.questions[section.questions.length - 1] + 1 : 1;
-                  
-                  return (
-                    <button
-                      key={index}
-                      className={`section-nav-item ${isActive ? 'active' : ''}`}
-                      onClick={() => jumpToSection(index)}
-                      title={`${section.name} (Q${startNum}-${endNum})`}
-                    >
-                      <span className="section-nav-name">{section.name}</span>
-                      <span className="section-nav-range">{startNum}-{endNum}</span>
-                    </button>
-                  );
-                })}
-              </div>
               <div className="d-flex align-items-center gap-2">
                 <div className="timer-box">{formatTime(timeLeft)}</div>
                 <button className="theme-toggle-btn" onClick={toggleDarkMode} title="Toggle Dark Mode">

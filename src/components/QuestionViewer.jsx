@@ -30,6 +30,25 @@ function QuestionViewer({
         <span className="current-section-name">
           📚 {question.section || 'General Section'}
         </span>
+        <div className="section-navigation-horizontal">
+          {window.sections && window.sections.map((section, index) => {
+            const isActive = window.getCurrentSection && window.getCurrentSection()?.name === section.name;
+            const startNum = section.questions.length > 0 ? section.questions[0] + 1 : 1;
+            const endNum = section.questions.length > 0 ? section.questions[section.questions.length - 1] + 1 : 1;
+            
+            return (
+              <button
+                key={index}
+                className={`section-nav-item-horizontal ${isActive ? 'active' : ''}`}
+                onClick={() => window.jumpToSection && window.jumpToSection(index)}
+                title={`${section.name} (Q${startNum}-${endNum})`}
+              >
+                <span className="section-nav-name">{section.name}</span>
+                <span className="section-nav-range">{startNum}-{endNum}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
       <div className="question-scroll">
         <div className="q-header">

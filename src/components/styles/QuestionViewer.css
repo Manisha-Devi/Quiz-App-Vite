@@ -258,6 +258,106 @@
   padding: 8px 28px;
   border-bottom: 1px solid #b8c4ff;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.section-navigation-horizontal {
+  overflow-x: auto;
+  overflow-y: hidden;
+  display: flex;
+  gap: 8px;
+  padding: 4px 0;
+  scrollbar-width: thin;
+  scrollbar-color: #4b3ee6 transparent;
+}
+
+.section-navigation-horizontal::-webkit-scrollbar {
+  height: 4px;
+}
+
+.section-navigation-horizontal::-webkit-scrollbar-track {
+  background: rgba(75, 62, 230, 0.1);
+  border-radius: 2px;
+}
+
+.section-navigation-horizontal::-webkit-scrollbar-thumb {
+  background: rgba(75, 62, 230, 0.3);
+  border-radius: 2px;
+}
+
+.section-navigation-horizontal::-webkit-scrollbar-thumb:hover {
+  background: rgba(75, 62, 230, 0.5);
+}
+
+.section-nav-item-horizontal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 12px;
+  background: rgba(75, 62, 230, 0.1);
+  border: 1px solid rgba(75, 62, 230, 0.2);
+  border-radius: 8px;
+  color: #4b3ee6;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 80px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.section-nav-item-horizontal:hover {
+  background: rgba(75, 62, 230, 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(75, 62, 230, 0.1);
+}
+
+.section-nav-item-horizontal.active {
+  background: rgba(75, 62, 230, 0.25);
+  border-color: rgba(75, 62, 230, 0.4);
+  box-shadow: 0 2px 8px rgba(75, 62, 230, 0.2);
+  font-weight: 600;
+}
+
+.section-nav-item-horizontal .section-nav-name {
+  font-weight: 600;
+  font-size: 10px;
+  line-height: 1.2;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.section-nav-item-horizontal .section-nav-range {
+  font-size: 9px;
+  opacity: 0.8;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+/* Dark mode styles */
+.dark-mode .section-name-display {
+  background: #2d2d30 !important;
+  border-bottom-color: #404040 !important;
+  color: #e0e0e0 !important;
+}
+
+.dark-mode .section-nav-item-horizontal {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: #e0e0e0 !important;
+}
+
+.dark-mode .section-nav-item-horizontal:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+.dark-mode .section-nav-item-horizontal.active {
+  background: rgba(255, 255, 255, 0.25) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+}
 }
 
 .current-section-name {
