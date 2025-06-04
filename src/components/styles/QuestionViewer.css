@@ -10,6 +10,108 @@
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* Sections Navigation */
+.sections-navigation {
+  background: #f8f9ff;
+  border-bottom: 1px solid #e0e4ff;
+  padding: 8px 0;
+}
+
+.sections-scroll {
+  display: flex;
+  overflow-x: auto;
+  gap: 8px;
+  padding: 0 16px;
+  scrollbar-width: thin;
+  scrollbar-color: #c0c4ff #f0f2ff;
+}
+
+.sections-scroll::-webkit-scrollbar {
+  height: 4px;
+}
+
+.sections-scroll::-webkit-scrollbar-track {
+  background: #f0f2ff;
+  border-radius: 2px;
+}
+
+.sections-scroll::-webkit-scrollbar-thumb {
+  background: #c0c4ff;
+  border-radius: 2px;
+}
+
+.sections-scroll::-webkit-scrollbar-thumb:hover {
+  background: #a0a8ff;
+}
+
+.section-tab {
+  background: #ffffff;
+  border: 1px solid #d0d4ff;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+  text-align: center;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.section-tab:hover {
+  background: #f0f2ff;
+  border-color: #b8c4ff;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.section-tab.active {
+  background: linear-gradient(135deg, #4b3ee6, #6366f1);
+  border-color: #4b3ee6;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(75, 62, 230, 0.3);
+}
+
+.section-tab-name {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.section-tab-count {
+  display: block;
+  font-size: 10px;
+  opacity: 0.8;
+  font-weight: 500;
+}
+
+/* Dark mode styles for sections */
+.dark-mode .sections-navigation {
+  background: #3a3a3d;
+  border-bottom-color: #555;
+}
+
+.dark-mode .section-tab {
+  background: #2d2d30;
+  border-color: #555;
+  color: #e0e0e0;
+}
+
+.dark-mode .section-tab:hover {
+  background: #404040;
+  border-color: #666;
+}
+
+.dark-mode .section-tab.active {
+  background: linear-gradient(135deg, #6366f1, #7c71e6);
+  border-color: #6366f1;
+  color: white;
+}
+
 .dark-mode .question-box {
   background: #2d2d30;
   color: #e0e0e0;
