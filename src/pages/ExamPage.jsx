@@ -55,7 +55,6 @@ function ExamPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
   const [showTimeWarning, setShowTimeWarning] = useState(timeLeft <= 300); // Track visibility of the warning
-  const [sectionNavOpen, setSectionNavOpen] = useState(false);
 
   useEffect(() => {
     if (!meta.startedAt) {
@@ -86,18 +85,6 @@ function ExamPage() {
   useEffect(() => {
     localStorage.setItem('examState', JSON.stringify({ answers, review, current }));
   }, [answers, review, current]);
-
-  // Close section dropdown on outside click
-  useEffect(() => {
-    const handleOutsideClick = (e) => {
-      if (sectionNavOpen && !e.target.closest('.section-name') && !e.target.closest('.section-dropdown')) {
-        setSectionNavOpen(false);
-      }
-    };
-    
-    document.addEventListener('click', handleOutsideClick);
-    return () => document.removeEventListener('click', handleOutsideClick);
-  }, [sectionNavOpen]);
 
   const handleClear = () => {
     setAnswers(a => { const c = { ...a }; delete c[current]; return c; });
@@ -153,46 +140,6 @@ function ExamPage() {
   const toggleReview = () => setReview(r => ({ ...r, [current]: !r[current] }));
   const handleNext = () => current < questions.length - 1 && setCurrent(current + 1);
 
-  // Get sections with their question ranges
-  const getSections = () => {
-    const sections = {};
-    let questionCount = 0;
-    
-    questions.forEach((q, index) => {
-      const sectionName = q.section || 'General';
-      if (!sections[sectionName]) {
-        sections[sectionName] = {
-          name: sectionName,
-          startIndex: questionCount,
-          questions: []
-        };
-      }
-      sections[sectionName].questions.push({ ...q, globalIndex: index });
-      questionCount++;
-    });
-
-    // Set end index for each section
-    const sectionList = Object.values(sections);
-    sectionList.forEach((section, idx) => {
-      section.endIndex = section.startIndex + section.questions.length - 1;
-      if (idx < sectionList.length - 1) {
-        sectionList[idx + 1].startIndex = section.endIndex + 1;
-      }
-    });
-
-    return sectionList;
-  };
-
-  const sections = getSections();
-  const currentSection = sections.find(section => 
-    current >= section.startIndex && current <= section.endIndex
-  );
-
-  const jumpToSection = (section) => {
-    setCurrent(section.startIndex);
-    setSectionNavOpen(false);
-  };
-
   const handleSubmit = (auto = false) => {
     if (!auto && !window.confirm("Are you sure you want to submit the test?")) return;
     localStorage.setItem('examAnswers', JSON.stringify(answers));
@@ -212,10 +159,7 @@ function ExamPage() {
         <MathJaxContext config={mathConfig}>
           <div className="exam-ui">
             <header className="exam-header">
-              <div className="section-name" onClick={() => setSectionNavOpen(!sectionNavOpen)}>
-                📚 {currentSection?.name || 'Exam Page'}
-                <span className="section-toggle">⬇️</span>
-              </div>
+              <div className="section-name">Exam Page</div>
               <div className="d-flex align-items-center gap-2">
                 <div className="timer-box">{formatTime(timeLeft)}</div>
                 <button className="theme-toggle-btn" onClick={toggleDarkMode} title="Toggle Dark Mode">
@@ -226,31 +170,6 @@ function ExamPage() {
                 </button>
               </div>
             </header>
-
-            {/* Section Navigation Dropdown */}
-            {sectionNavOpen && (
-              <div className="section-dropdown">
-                <div className="section-list">
-                  {sections.map((section, index) => (
-                    <div
-                      key={index}
-                      className={`section-item ${currentSection?.name === section.name ? 'active' : ''}`}
-                      onClick={() => jumpToSection(section)}
-                    >
-                      <div className="section-info">
-                        <div className="section-title">{section.name}</div>
-                        <div className="section-range">
-                          Q{section.startIndex + 1} - Q{section.endIndex + 1}
-                        </div>
-                      </div>
-                      <div className="section-progress">
-                        {section.questions.filter(q => answers[q.globalIndex] !== undefined).length}/{section.questions.length}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
 
             {showTimeWarning && timeLeft <= 300 && (
               <div className="time-warning">
