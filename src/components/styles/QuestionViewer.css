@@ -108,7 +108,7 @@
 .question-scroll {
   flex: 1;
   overflow-y: auto;
-  padding: 20px 28px 28px 28px;
+  padding: 8px 28px 28px 28px;
   animation: fadeIn 0.3s ease;
   scroll-behavior: smooth;
 }
@@ -255,7 +255,7 @@
 
 .section-name-display {
   background: #f8f9ff;
-  padding: 12px 28px;
+  padding: 8px 28px;
   border-bottom: 1px solid #e0e4ff;
 }
 
