@@ -56,28 +56,40 @@ function ExamPage() {
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
   const [showTimeWarning, setShowTimeWarning] = useState(timeLeft <= 300); // Track visibility of the warning
 
-  // Generate sections with proper numbering
+  // Generate sections with proper numbering and grouping
   const [sections] = useState(() => {
-    const sectionMap = new Map();
-    let currentIndex = 0;
-
+    // First, group questions by section
+    const sectionGroups = {};
     questions.forEach((question, index) => {
       const sectionName = question.section || 'General';
-      if (!sectionMap.has(sectionName)) {
-        sectionMap.set(sectionName, {
-          name: sectionName,
-          startIndex: currentIndex,
-          endIndex: currentIndex,
-          questions: []
-        });
+      if (!sectionGroups[sectionName]) {
+        sectionGroups[sectionName] = [];
       }
-      const section = sectionMap.get(sectionName);
-      section.endIndex = currentIndex;
-      section.questions.push(index);
-      currentIndex++;
+      sectionGroups[sectionName].push({ ...question, originalIndex: index });
     });
 
-    return Array.from(sectionMap.values());
+    // Create sections with continuous numbering
+    const sectionsArray = [];
+    let globalQuestionIndex = 0;
+
+    Object.keys(sectionGroups).forEach(sectionName => {
+      const sectionQuestions = sectionGroups[sectionName];
+      const questionIndices = [];
+      
+      for (let i = 0; i < sectionQuestions.length; i++) {
+        questionIndices.push(globalQuestionIndex);
+        globalQuestionIndex++;
+      }
+
+      sectionsArray.push({
+        name: sectionName,
+        startIndex: questionIndices[0],
+        endIndex: questionIndices[questionIndices.length - 1],
+        questions: questionIndices
+      });
+    });
+
+    return sectionsArray;
   });
 
   // Get current section

@@ -53,14 +53,21 @@ function SectionSetupPage() {
   const handleStartExam = () => {
     const selectedQuestions = [];
 
+    // Group questions by section to maintain section integrity
     quizData.forEach((file, fileIndex) => {
+      const sectionQuestions = [];
+      
       [0, 1, 2].forEach(level => {
         const count = questionCounts[fileIndex][level] || 0;
         const filtered = file.questions.filter(q => q.level === level);
         shuffleArray(filtered);
         const picked = filtered.slice(0, count).map(q => ({ ...q, section: file.name }));
-        selectedQuestions.push(...picked);
+        sectionQuestions.push(...picked);
       });
+      
+      // Shuffle within section only
+      shuffleArray(sectionQuestions);
+      selectedQuestions.push(...sectionQuestions);
     });
 
     if (selectedQuestions.length === 0) {
@@ -68,7 +75,7 @@ function SectionSetupPage() {
       return;
     }
 
-    shuffleArray(selectedQuestions);
+    // Don't shuffle the final array to maintain section grouping
     localStorage.setItem('finalQuiz', JSON.stringify(selectedQuestions));
     navigate('/exam');
   };
