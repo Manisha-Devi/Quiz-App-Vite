@@ -254,9 +254,10 @@
 }
 
 .section-name-display {
-  background: #e6ebff;
+  background: #d6dfff;
   padding: 8px 28px;
-  border-bottom: 1px solid #c5d0ff;
+  border-bottom: 1px solid #b8c4ff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .current-section-name {
