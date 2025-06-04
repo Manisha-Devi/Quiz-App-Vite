@@ -29,7 +29,7 @@ function QuestionViewer({
       <div className="question-box">
         <div className="section-name-display">
           <span className="current-section-name">
-            📚 {question.section || 'General Section'}
+            🎯 {question.section || 'General Section'}
           </span>
         </div>
         <div className="question-scroll">
@@ -37,10 +37,10 @@ function QuestionViewer({
           <div className="q-number">Q{currentIndex + 1}</div>
           <div className="header-actions">
             <div className="show-answer" onClick={handleShowAnswer} title="Show/Hide Answer">
-              {showAnswer ? '🙈' : '👁️'}
+              {showAnswer ? '🙈 Hide Answer' : '👁️ Show Answer'}
             </div>
             <div className="mark-review" onClick={onToggleReview}>
-              Mark for Review: {reviewMarked ? '⭐' : '☆'}
+              {reviewMarked ? '⭐ Marked' : '☆ Mark Review'}
             </div>
           </div>
         </div>
