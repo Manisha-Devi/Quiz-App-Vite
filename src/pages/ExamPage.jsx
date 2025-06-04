@@ -56,6 +56,45 @@ function ExamPage() {
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
   const [showTimeWarning, setShowTimeWarning] = useState(timeLeft <= 300); // Track visibility of the warning
 
+  // Generate sections with proper numbering
+  const [sections] = useState(() => {
+    const sectionMap = new Map();
+    let currentIndex = 0;
+    
+    questions.forEach((question, index) => {
+      const sectionName = question.section || 'General';
+      if (!sectionMap.has(sectionName)) {
+        sectionMap.set(sectionName, {
+          name: sectionName,
+          startIndex: currentIndex,
+          endIndex: currentIndex,
+          questions: []
+        });
+      }
+      const section = sectionMap.get(sectionName);
+      section.endIndex = currentIndex;
+      section.questions.push(index);
+      currentIndex++;
+    });
+    
+    return Array.from(sectionMap.values());
+  });
+
+  // Get current section
+  const getCurrentSection = () => {
+    return sections.find(section => 
+      section.questions.includes(current)
+    ) || sections[0];
+  };
+
+  // Jump to section's first question
+  const jumpToSection = (sectionIndex) => {
+    const section = sections[sectionIndex];
+    if (section && section.questions.length > 0) {
+      setCurrent(section.questions[0]);
+    }
+  };
+
   useEffect(() => {
     if (!meta.startedAt) {
       localStorage.setItem('examMeta', JSON.stringify({ startedAt: Date.now() }));
@@ -160,6 +199,25 @@ function ExamPage() {
           <div className="exam-ui">
             <header className="exam-header">
               <div className="section-name">Exam Page</div>
+              <div className="section-navigation">
+                {sections.map((section, index) => {
+                  const isActive = getCurrentSection()?.name === section.name;
+                  const startNum = section.questions.length > 0 ? section.questions[0] + 1 : 1;
+                  const endNum = section.questions.length > 0 ? section.questions[section.questions.length - 1] + 1 : 1;
+                  
+                  return (
+                    <button
+                      key={index}
+                      className={`section-nav-item ${isActive ? 'active' : ''}`}
+                      onClick={() => jumpToSection(index)}
+                      title={`${section.name} (Q${startNum}-${endNum})`}
+                    >
+                      <span className="section-nav-name">{section.name}</span>
+                      <span className="section-nav-range">{startNum}-{endNum}</span>
+                    </button>
+                  );
+                })}
+              </div>
               <div className="d-flex align-items-center gap-2">
                 <div className="timer-box">{formatTime(timeLeft)}</div>
                 <button className="theme-toggle-btn" onClick={toggleDarkMode} title="Toggle Dark Mode">
