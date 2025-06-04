@@ -93,7 +93,7 @@
   max-height: 60px; */
 }
 
-.section-name {
+.section-name-display {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -101,139 +101,225 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 6px;
-  transition: background-color 0.2s;
 }
 
-.section-name:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.section-toggle {
-  font-size: 12px;
-  margin-left: 4px;
-  transition: transform 0.2s;
-}
-
-.section-dropdown {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: white;
-  border: 1px solid #e0e0e0;
-  border-top: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.exam-ui.dark-mode .section-dropdown {
-  background: #2a2a2a;
-  border-color: #555;
-}
-
-.section-list {
-  padding: 8px 0;
-}
-
-.section-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 16px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  border-left: 4px solid transparent;
-}
-
-.section-item:hover {
-  background: #f5f5f5;
-}
-
-.exam-ui.dark-mode .section-item:hover {
-  background: #3a3a3a;
-}
-
-.section-item.active {
-  background: #e3f2fd;
-  border-left-color: #4b3ee6;
+.section-name-title {
+  font-size: 18px;
   font-weight: 600;
 }
 
-.exam-ui.dark-mode .section-item.active {
-  background: #1a237e;
-  color: #fff;
-}
-
-.section-info {
+/* Horizontal Section Navigation */
+.section-navigation {
+  position: sticky;
+  top: 8vh;
+  z-index: 90;
+  backdrop-filter: blur(15px);
+  padding: 12px 20px;
+  margin: 0;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  justify-content: center;
+  width: 100%;
 }
 
-.section-title {
-  font-size: 14px;
-  font-weight: 500;
+.exam-ui.dark-mode .section-navigation {
+  backdrop-filter: blur(15px);
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3) !important;
+}
+
+.section-tabs {
+  display: flex;
+  background: white;
+  border-radius: 25px;
+  padding: 4px;
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.1),
+    0 2px 8px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  gap: 3px;
+  position: relative;
+}
+
+.exam-ui.dark-mode .section-tabs {
+  background: #404040 !important;
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.3),
+    0 2px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+.section-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.section-tab {
+  padding: 10px 18px;
+  border: none;
+  background: transparent;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #666;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-size: 0.9rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.exam-ui.dark-mode .section-tab {
+  color: #e0e0e0 !important;
+}
+
+.section-tab::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.section-tab:hover::before {
+  opacity: 1;
+}
+
+.section-tab:hover {
+  transform: translateY(-1px);
   color: #333;
 }
 
-.exam-ui.dark-mode .section-title {
-  color: #e0e0e0;
+.exam-ui.dark-mode .section-tab:hover {
+  color: #f0f0f0 !important;
 }
 
-.section-range {
-  font-size: 12px;
-  color: #666;
+.section-tab.active {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  box-shadow:
+    0 4px 15px rgba(102, 126, 234, 0.3),
+    0 1px 3px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
 }
 
-.exam-ui.dark-mode .section-range {
-  color: #aaa;
+.exam-ui.dark-mode .section-tab.active {
+  background: linear-gradient(135deg, #5a4fcf, #4a3bb8) !important;
+  color: white !important;
 }
 
-.section-progress {
-  font-size: 12px;
-  color: #4b3ee6;
+.section-tab.active::before {
+  opacity: 0;
+}
+
+.section-tab-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.section-tab-name {
+  font-size: 14px;
   font-weight: 600;
-  background: #f0f0ff;
-  padding: 2px 8px;
-  border-radius: 12px;
 }
 
-.exam-ui.dark-mode .section-progress {
-  background: #333;
-  color: #8bc34a;
+.section-tab-range {
+  font-size: 11px;
+  opacity: 0.8;
+}
+
+.section-tab-progress {
+  font-size: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 1px 6px;
+  border-radius: 8px;
+  opacity: 0.9;
+}
+
+.section-tab.active .section-tab-progress {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 @media (max-width: 768px) {
-  .section-name {
+  .section-name-display {
     max-width: 50%;
   }
   
-  .section-dropdown {
-    max-height: 250px;
+  .section-navigation {
+    padding: 8px 15px;
   }
   
-  .section-item {
-    padding: 10px 12px;
+  .section-tabs {
+    gap: 6px;
+    padding: 6px;
   }
   
-  .section-title {
-    font-size: 13px;
+  .section-tab {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    min-width: 100px;
   }
   
-  .section-range {
-    font-size: 11px;
+  .section-tab-content {
+    gap: 1px;
+  }
+  
+  .section-tab-name {
+    font-size: 12px;
+  }
+  
+  .section-tab-range {
+    font-size: 10px;
+  }
+  
+  .section-tab-progress {
+    font-size: 9px;
+    padding: 1px 4px;
   }
 }
 
 @media (max-width: 480px) {
-  .section-name {
+  .section-name-display {
     max-width: 40%;
+  }
+  
+  .section-name-title {
     font-size: 16px;
+  }
+  
+  .section-navigation {
+    padding: 6px 12px;
+  }
+  
+  .section-tabs {
+    padding: 4px;
+    gap: 4px;
+  }
+  
+  .section-tab {
+    padding: 6px 10px;
+    font-size: 0.7rem;
+    min-width: 80px;
+  }
+  
+  .section-tab-name {
+    font-size: 11px;
+  }
+  
+  .section-tab-range {
+    font-size: 9px;
+  }
+  
+  .section-tab-progress {
+    font-size: 8px;
+    padding: 1px 3px;
   }
 }
 
@@ -279,17 +365,16 @@
   max-height: 20px;
 }
 
-/* Main Layout - 78% of screen height */
+/* Main Layout - 70% of screen height (reduced for section navigation) */
 .exam-main-layout {
   flex: 1;
   display: flex;
   gap: 20px;
   overflow: hidden;
   padding: 0 20px;
-  height: 80vh;
-  /* Fixed 78% of viewport height */
-  /* max-height: 78vh; */
-  margin-top:1vh;
+  height: 70vh;
+  /* Fixed 70% of viewport height */
+  margin-top: 1vh;
   margin-bottom: 1vh;
   /* Add margin to prevent footer overlap */
   transition: background-color 0.3s ease;
