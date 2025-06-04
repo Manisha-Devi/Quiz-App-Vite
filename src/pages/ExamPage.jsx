@@ -212,8 +212,9 @@ function ExamPage() {
         <MathJaxContext config={mathConfig}>
           <div className="exam-ui">
             <header className="exam-header">
-              <div className="section-name-display">
-                <div className="section-name-title">📚 Exam Page</div>
+              <div className="section-name" onClick={() => setSectionNavOpen(!sectionNavOpen)}>
+                📚 {currentSection?.name || 'Exam Page'}
+                <span className="section-toggle">⬇️</span>
               </div>
               <div className="d-flex align-items-center gap-2">
                 <div className="timer-box">{formatTime(timeLeft)}</div>
@@ -226,26 +227,30 @@ function ExamPage() {
               </div>
             </header>
 
-            {/* Horizontal Section Navigation */}
-            <div className="section-navigation">
-              <div className="section-tabs">
-                {sections.map((section, index) => (
-                  <button
-                    key={index}
-                    className={`section-tab ${currentSection?.name === section.name ? 'active' : ''}`}
-                    onClick={() => jumpToSection(section)}
-                  >
-                    <div className="section-tab-content">
-                      <span className="section-tab-name">{section.name}</span>
-                      <span className="section-tab-range">Q{section.startIndex + 1}-{section.endIndex + 1}</span>
-                      <span className="section-tab-progress">
+            {/* Section Navigation Dropdown */}
+            {sectionNavOpen && (
+              <div className="section-dropdown">
+                <div className="section-list">
+                  {sections.map((section, index) => (
+                    <div
+                      key={index}
+                      className={`section-item ${currentSection?.name === section.name ? 'active' : ''}`}
+                      onClick={() => jumpToSection(section)}
+                    >
+                      <div className="section-info">
+                        <div className="section-title">{section.name}</div>
+                        <div className="section-range">
+                          Q{section.startIndex + 1} - Q{section.endIndex + 1}
+                        </div>
+                      </div>
+                      <div className="section-progress">
                         {section.questions.filter(q => answers[q.globalIndex] !== undefined).length}/{section.questions.length}
-                      </span>
+                      </div>
                     </div>
-                  </button>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {showTimeWarning && timeLeft <= 300 && (
               <div className="time-warning">
