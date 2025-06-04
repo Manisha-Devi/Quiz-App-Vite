@@ -159,7 +159,7 @@ function ExamPage() {
         <MathJaxContext config={mathConfig}>
           <div className="exam-ui">
             <header className="exam-header">
-              <div className="section-name">{q.section || 'General'}</div>
+              <div className="section-name">Exam Page</div>
               <div className="d-flex align-items-center gap-2">
                 <div className="timer-box">{formatTime(timeLeft)}</div>
                 <button className="theme-toggle-btn" onClick={toggleDarkMode} title="Toggle Dark Mode">
