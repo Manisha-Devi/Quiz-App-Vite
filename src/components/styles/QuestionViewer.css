@@ -254,76 +254,90 @@
 }
 
 .section-name-display {
-  background: #d6dfff;
-  padding: 8px 28px;
-  border-bottom: 1px solid #b8c4ff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 90;
+  backdrop-filter: blur(15px);
+  padding: 12px 20px;
+  margin: 0;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  justify-content: center;
+  width: 100%;
 }
 
 .section-navigation-horizontal {
-  overflow-x: auto;
-  overflow-y: hidden;
   display: flex;
-  gap: 8px;
-  padding: 4px 0;
-  scrollbar-width: thin;
-  scrollbar-color: #4b3ee6 transparent;
+  background: white;
+  border-radius: 25px;
+  padding: 4px;
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.1),
+    0 2px 8px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  gap: 3px;
+  position: relative;
 }
 
 .section-navigation-horizontal::-webkit-scrollbar {
-  height: 4px;
-}
-
-.section-navigation-horizontal::-webkit-scrollbar-track {
-  background: rgba(75, 62, 230, 0.1);
-  border-radius: 2px;
-}
-
-.section-navigation-horizontal::-webkit-scrollbar-thumb {
-  background: rgba(75, 62, 230, 0.3);
-  border-radius: 2px;
-}
-
-.section-navigation-horizontal::-webkit-scrollbar-thumb:hover {
-  background: rgba(75, 62, 230, 0.5);
+  display: none;
 }
 
 .section-nav-item-horizontal {
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  border-radius: 20px;
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-width: 100px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 6px 12px;
-  background: rgba(75, 62, 230, 0.1);
-  border: 1px solid rgba(75, 62, 230, 0.2);
-  border-radius: 8px;
-  color: #4b3ee6;
-  font-size: 11px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  min-width: 80px;
-  white-space: nowrap;
-  flex-shrink: 0;
+  gap: 2px;
+  position: relative;
+  overflow: hidden;
 }
 
 .section-nav-item-horizontal:hover {
-  background: rgba(75, 62, 230, 0.2);
+  color: #374151;
+  background: rgba(0, 0, 0, 0.05);
   transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(75, 62, 230, 0.1);
 }
 
 .section-nav-item-horizontal.active {
-  background: rgba(75, 62, 230, 0.25);
-  border-color: rgba(75, 62, 230, 0.4);
-  box-shadow: 0 2px 8px rgba(75, 62, 230, 0.2);
+  background: linear-gradient(135deg, #4b3ee6, #3b2fd6);
+  color: white;
   font-weight: 600;
+  box-shadow: 
+    0 4px 15px rgba(75, 62, 230, 0.3),
+    0 2px 8px rgba(75, 62, 230, 0.2);
+  transform: translateY(-2px);
+}
+
+.section-nav-item-horizontal.active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+  border-radius: 20px;
+  pointer-events: none;
 }
 
 .section-nav-item-horizontal .section-nav-name {
   font-weight: 600;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.2;
   max-width: 100%;
   overflow: hidden;
@@ -331,32 +345,37 @@
 }
 
 .section-nav-item-horizontal .section-nav-range {
-  font-size: 9px;
+  font-size: 10px;
   opacity: 0.8;
   font-weight: 500;
-  margin-top: 2px;
 }
 
 /* Dark mode styles */
 .dark-mode .section-name-display {
-  background: #2d2d30 !important;
-  border-bottom-color: #404040 !important;
-  color: #e0e0e0 !important;
+  backdrop-filter: blur(15px);
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3) !important;
+}
+
+.dark-mode .section-navigation-horizontal {
+  background: #404040 !important;
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.3),
+    0 2px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
 }
 
 .dark-mode .section-nav-item-horizontal {
-  background: rgba(255, 255, 255, 0.1) !important;
-  border-color: rgba(255, 255, 255, 0.2) !important;
   color: #e0e0e0 !important;
 }
 
 .dark-mode .section-nav-item-horizontal:hover {
-  background: rgba(255, 255, 255, 0.2) !important;
+  color: #f0f0f0 !important;
+  background: rgba(255, 255, 255, 0.1) !important;
 }
 
 .dark-mode .section-nav-item-horizontal.active {
-  background: rgba(255, 255, 255, 0.25) !important;
-  border-color: rgba(255, 255, 255, 0.4) !important;
+  background: linear-gradient(135deg, #5a4fcf, #4a3bb8) !important;
+  color: white !important;
 }
 }
 
