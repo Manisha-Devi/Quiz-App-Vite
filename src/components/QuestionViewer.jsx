@@ -25,14 +25,13 @@ function QuestionViewer({
     setShowAnswer(!showAnswer);
   };
   return (
-    <div className={`question-viewer ${isDarkMode ? 'dark-mode' : ''}`}>
-      <div className="question-box">
-        <div className="section-name-display">
-          <span className="current-section-name">
-            📚 {question.section || 'General Section'}
-          </span>
-        </div>
-        <div className="question-scroll">
+    <div className="question-box">
+      <div className="section-name-display">
+        <span className="current-section-name">
+          📚 {question.section || 'General Section'}
+        </span>
+      </div>
+      <div className="question-scroll">
         <div className="q-header">
           <div className="q-number">Q{currentIndex + 1}</div>
           <div className="header-actions">
@@ -100,7 +99,6 @@ function QuestionViewer({
           </div>
         )}
       </div>
-    </div>
     </div>
   );
 }
