@@ -11,8 +11,6 @@ function SectionSetupPage() {
   const [showModal, setShowModal] = useState(false);
   const [modalImages, setModalImages] = useState([]);
   const [modalIndex, setModalIndex] = useState(0);
-  const [showQuestionModal, setShowQuestionModal] = useState(false);
-  const [previewQuestions, setPreviewQuestions] = useState([]);
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return localStorage.getItem('darkMode') === 'true';
   });
@@ -114,16 +112,6 @@ function SectionSetupPage() {
     setModalIndex(0);
   };
 
-  const showQuestionPreview = (questions) => {
-    setPreviewQuestions(questions);
-    setShowQuestionModal(true);
-  };
-
-  const closeQuestionModal = () => {
-    setShowQuestionModal(false);
-    setPreviewQuestions([]);
-  };
-
   const getTotalSelected = () => {
     return Object.values(questionCounts).reduce((total, counts) => 
       total + Object.values(counts).reduce((sum, count) => sum + count, 0), 0
@@ -185,13 +173,6 @@ function SectionSetupPage() {
                   </div>
                   
                   <div className="section-actions">
-                    <button
-                      className="preview-questions-btn"
-                      onClick={() => showQuestionPreview(file.questions.slice(0, 3))}
-                      title="Preview questions"
-                    >
-                      👁️ Preview
-                    </button>
                     {images.length > 0 && (
                       <button
                         className="preview-images-btn"
@@ -219,31 +200,35 @@ function SectionSetupPage() {
                           <span className="available-count">max {maxAvailable}</span>
                         </div>
                         
-                        <div className="input-container">
+                        <div className="slider-container">
                           <button 
-                            className="quantity-btn minus"
+                            className="slider-btn left"
                             onClick={() => handleInputChange(fileIndex, level, Math.max(0, currentValue - 1))}
                             disabled={currentValue <= 0}
+                            title="Decrease"
                           >
-                            −
+                            ◀
                           </button>
                           
-                          <input
-                            type="number"
-                            min="0"
-                            max={maxAvailable}
-                            value={currentValue || ''}
-                            onChange={(e) => handleInputChange(fileIndex, level, e.target.value)}
-                            className="quantity-input"
-                            placeholder="0"
-                          />
+                          <div className="slider-wrapper">
+                            <input
+                              type="range"
+                              min="0"
+                              max={maxAvailable}
+                              value={currentValue || 0}
+                              onChange={(e) => handleInputChange(fileIndex, level, e.target.value)}
+                              className="question-slider"
+                            />
+                            <div className="slider-value">{currentValue || 0}</div>
+                          </div>
                           
                           <button 
-                            className="quantity-btn plus"
+                            className="slider-btn right"
                             onClick={() => handleInputChange(fileIndex, level, Math.min(maxAvailable, currentValue + 1))}
                             disabled={currentValue >= maxAvailable}
+                            title="Increase"
                           >
-                            +
+                            ▶
                           </button>
                         </div>
 
@@ -318,51 +303,7 @@ function SectionSetupPage() {
         </div>
       )}
 
-      {/* Question Preview Modal */}
-      {showQuestionModal && (
-        <div className="modal-overlay" onClick={closeQuestionModal}>
-          <div className="modal-content question-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3 className="modal-title">📝 Question Preview</h3>
-              <button className="modal-close-btn" onClick={closeQuestionModal}>×</button>
-            </div>
-            
-            <div className="modal-body question-preview-body">
-              {previewQuestions.map((question, index) => {
-                const difficultyLabels = ['Easy', 'Medium', 'Hard'];
-                const difficultyIcons = ['🟢', '🟠', '🔴'];
-                
-                return (
-                  <div key={index} className="preview-question-card">
-                    <div className="question-header">
-                      <span className="question-number">Q{index + 1}</span>
-                      <span className="question-difficulty">
-                        {difficultyIcons[question.level]} {difficultyLabels[question.level]}
-                      </span>
-                    </div>
-                    
-                    <div className="question-text">{question.question}</div>
-                    
-                    <div className="question-options">
-                      {question.options.map((option, optIndex) => (
-                        <div 
-                          key={optIndex} 
-                          className={`option ${optIndex === question.answer ? 'correct' : ''}`}
-                        >
-                          <span className="option-letter">{String.fromCharCode(65 + optIndex)}</span>
-                          <span className="option-text">{option}</span>
-                          {optIndex === question.answer && <span className="correct-indicator">✓</span>}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+      </div>
   );
 }
 
