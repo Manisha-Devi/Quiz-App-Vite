@@ -1,0 +1,42 @@
+
+[
+  {
+    "id": 1,
+    "question": "What is the value of π (pi) approximately?",
+    "options": [
+      "3.14159",
+      "2.71828",
+      "1.41421",
+      "1.73205"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "π (pi) is approximately 3.14159, representing the ratio of a circle's circumference to its diameter."
+  },
+  {
+    "id": 2,
+    "question": "What is the derivative of x²?",
+    "options": [
+      "x",
+      "2x",
+      "x²",
+      "2"
+    ],
+    "answer": 1,
+    "level": 1,
+    "explanation": "The derivative of x² is 2x, using the power rule of differentiation."
+  },
+  {
+    "id": 3,
+    "question": "What is 7 × 8?",
+    "options": [
+      "54",
+      "56",
+      "58",
+      "64"
+    ],
+    "answer": 1,
+    "level": 0,
+    "explanation": "7 × 8 = 56"
+  }
+]

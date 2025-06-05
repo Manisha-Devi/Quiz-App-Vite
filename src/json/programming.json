@@ -1,0 +1,42 @@
+
+[
+  {
+    "id": 1,
+    "question": "What does HTML stand for?",
+    "options": [
+      "Hyper Text Markup Language",
+      "High Tech Modern Language",
+      "Home Tool Markup Language",
+      "Hyperlink and Text Markup Language"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "HTML stands for Hyper Text Markup Language, which is used to create web pages."
+  },
+  {
+    "id": 2,
+    "question": "Which of the following is a JavaScript framework?",
+    "options": [
+      "React",
+      "Django",
+      "Laravel",
+      "Flask"
+    ],
+    "answer": 0,
+    "level": 0,
+    "explanation": "React is a JavaScript library/framework for building user interfaces, while the others are backend frameworks."
+  },
+  {
+    "id": 3,
+    "question": "What does CSS stand for?",
+    "options": [
+      "Computer Style Sheets",
+      "Cascading Style Sheets",
+      "Creative Style Sheets",
+      "Colorful Style Sheets"
+    ],
+    "answer": 1,
+    "level": 0,
+    "explanation": "CSS stands for Cascading Style Sheets, used for styling web pages."
+  }
+]
