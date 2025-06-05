@@ -197,7 +197,6 @@ function SectionSetupPage() {
                         <div className="difficulty-header">
                           <span className="difficulty-icon">{icons[level]}</span>
                           <span className="difficulty-name">{labels[level]}</span>
-                          <span className="available-count">max {maxAvailable}</span>
                         </div>
                         
                         <div className="slider-container">
@@ -210,17 +209,16 @@ function SectionSetupPage() {
                             ◀
                           </button>
                           
-                          <div className="slider-wrapper">
-                            <input
-                              type="range"
-                              min="0"
-                              max={maxAvailable}
-                              value={currentValue || 0}
-                              onChange={(e) => handleInputChange(fileIndex, level, e.target.value)}
-                              className="question-slider"
-                            />
-                            <div className="slider-value">{currentValue || 0}</div>
-                          </div>
+                          <input
+                            type="range"
+                            min="0"
+                            max={maxAvailable}
+                            value={currentValue || 0}
+                            onChange={(e) => handleInputChange(fileIndex, level, e.target.value)}
+                            className="question-slider"
+                          />
+                          
+                          <div className="slider-value">{currentValue || 0}</div>
                           
                           <button 
                             className="slider-btn right"
@@ -230,13 +228,6 @@ function SectionSetupPage() {
                           >
                             ▶
                           </button>
-                        </div>
-
-                        <div className="progress-bar">
-                          <div 
-                            className="progress-fill"
-                            style={{ width: `${maxAvailable > 0 ? (currentValue / maxAvailable) * 100 : 0}%` }}
-                          ></div>
                         </div>
                       </div>
                     );
