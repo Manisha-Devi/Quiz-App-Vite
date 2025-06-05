@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAllJSONImages } from '../utils/indexedDB';
@@ -44,7 +43,7 @@ function SectionSetupPage() {
           console.log(`No images found for ${file.name}:`, error);
         }
       }
-      
+
       setFileImageMap(imageMap);
 
       const initialCounts = {};
@@ -76,7 +75,7 @@ function SectionSetupPage() {
     // Group questions by section to maintain section integrity
     quizData.forEach((file, fileIndex) => {
       const sectionQuestions = [];
-      
+
       [0, 1, 2].forEach(level => {
         const count = questionCounts[fileIndex][level] || 0;
         const filtered = file.questions.filter(q => q.level === level);
@@ -84,7 +83,7 @@ function SectionSetupPage() {
         const picked = filtered.slice(0, count).map(q => ({ ...q, section: file.name }));
         sectionQuestions.push(...picked);
       });
-      
+
       // Shuffle within section only
       shuffleArray(sectionQuestions);
       selectedQuestions.push(...sectionQuestions);
@@ -171,7 +170,7 @@ function SectionSetupPage() {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="section-actions">
                     {images.length > 0 && (
                       <button
@@ -191,15 +190,17 @@ function SectionSetupPage() {
                     const icons = ['🟢', '🟠', '🔴'];
                     const maxAvailable = levelCounts[level];
                     const currentValue = questionCounts[fileIndex]?.[level] || 0;
-                    
+
                     return (
                       <div className="difficulty-group" key={level}>
                         <div className="difficulty-header">
-                          <span className="difficulty-icon">{icons[level]}</span>
-                          <span className="difficulty-name">{labels[level]}</span>
+                          <div className="difficulty-info">
+                            <span className="difficulty-icon">{icons[level]}</span>
+                            <span className="difficulty-name">{labels[level]}</span>
+                          </div>
                           <span className="available-count">max {maxAvailable}</span>
                         </div>
-                        
+
                         <div className="slider-container">
                           <button 
                             className="slider-btn left"
@@ -207,9 +208,9 @@ function SectionSetupPage() {
                             disabled={currentValue <= 0}
                             title="Decrease"
                           >
-                            ◀
+                            ➖
                           </button>
-                          
+
                           <div className="slider-wrapper">
                             <input
                               type="range"
@@ -221,22 +222,15 @@ function SectionSetupPage() {
                             />
                             <div className="slider-value">{currentValue || 0}</div>
                           </div>
-                          
+
                           <button 
                             className="slider-btn right"
                             onClick={() => handleInputChange(fileIndex, level, Math.min(maxAvailable, currentValue + 1))}
                             disabled={currentValue >= maxAvailable}
                             title="Increase"
                           >
-                            ▶
+                            ➕
                           </button>
-                        </div>
-
-                        <div className="progress-bar">
-                          <div 
-                            className="progress-fill"
-                            style={{ width: `${maxAvailable > 0 ? (currentValue / maxAvailable) * 100 : 0}%` }}
-                          ></div>
                         </div>
                       </div>
                     );
@@ -267,7 +261,7 @@ function SectionSetupPage() {
               <h3 className="modal-title">{modalImages[modalIndex]?.name}</h3>
               <button className="modal-close-btn" onClick={closeModal}>×</button>
             </div>
-            
+
             <div className="modal-body">
               <img
                 src={modalImages[modalIndex]?.data}
@@ -275,7 +269,7 @@ function SectionSetupPage() {
                 className="modal-image"
               />
             </div>
-            
+
             <div className="modal-footer">
               <div className="image-navigation">
                 <button 
@@ -285,11 +279,11 @@ function SectionSetupPage() {
                 >
                   ⬅️ Previous
                 </button>
-                
+
                 <span className="image-counter">
                   {modalIndex + 1} of {modalImages.length}
                 </span>
-                
+
                 <button
                   className="nav-btn next-btn"
                   onClick={() => setModalIndex(i => Math.min(modalImages.length - 1, i + 1))}
