@@ -1,3 +1,4 @@
+
 [
   {
     "id": 1,
@@ -64,7 +65,7 @@
     "level": 0,
     "explanation": "The shortcut Alt + F is used to open the File Page in MS Word."
   },
-    {
+  {
     "id": 6,
     "question": "What does Alt + F5 do in MS Word?",
     "options": [
@@ -259,7 +260,7 @@
     "level": 0,
     "explanation": "To insert page numbers in MS Word, go to the 'Insert Tab' and select 'Page Number.'"
   },
-    {
+  {
     "id": 21,
     "question": "What is the shortcut key for 'Paste' in MS Word?",
     "options": [
@@ -519,7 +520,7 @@
     "level": 0,
     "explanation": "To add page numbers, go to the 'Insert Tab' and select 'Page Number' from the options."
   },
-    {
+  {
     "id": 41,
     "question": "Which tab is used to add a table of contents in MS Word?",
     "options": [
@@ -779,7 +780,7 @@
     "level": 0,
     "explanation": "To insert a bookmark, go to the 'Insert Tab' and select 'Bookmark,' allowing you to quickly navigate to specific sections of the document."
   },
-    {
+  {
     "id": 61,
     "question": "What is the shortcut to insert a page number in MS Word?",
     "options": [
@@ -1039,7 +1040,7 @@
     "level": 0,
     "explanation": "The 'Insert Header' option is used to add content at the top of each page, such as document title or chapter names."
   },
-    {
+  {
     "id": 81,
     "question": "What is the shortcut key for 'Paste' in MS Word?",
     "options": [
@@ -1299,7 +1300,7 @@
     "level": 0,
     "explanation": "To add page numbers in MS Word, go to the 'Insert Tab' and select 'Page Number.'"
   },
-    {
+  {
     "id": 101,
     "question": "What is the shortcut to select all text in a document in MS Word?",
     "options": [
@@ -1559,7 +1560,7 @@
     "level": 0,
     "explanation": "The 'Insert Table of Contents' option automatically generates a table of contents based on the document's headings."
   },
-    {
+  {
     "id": 121,
     "question": "What is the shortcut for 'Redo' in MS Word?",
     "options": [
@@ -1819,7 +1820,7 @@
     "level": 0,
     "explanation": "The 'Insert Footnote' option is used to insert a footnote at the bottom of the page, typically for citations or references."
   },
-    {
+  {
     "id": 141,
     "question": "What is the shortcut key for 'Italic' in MS Word?",
     "options": [
@@ -2078,7 +2079,5 @@
     "answer": 0,
     "level": 0,
     "explanation": "To check for spelling mistakes, go to the 'Review Tab' and select 'Spelling & Grammar.'"
-  },
-  
-
+  }
 ]
