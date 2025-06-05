@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getJSONImages } from '../utils/indexedDB';
+import { getAllJSONImages } from '../utils/indexedDB';
 import '../styles/SectionSetupPage.css';
 
 function SectionSetupPage() {
@@ -34,9 +34,13 @@ function SectionSetupPage() {
       const imageMap = {};
       for (const file of data) {
         try {
-          const images = await getJSONImages(file.name);
+          const images = await getAllJSONImages(file.name);
           if (images && images.length > 0) {
-            imageMap[`${file.name}.json`] = images;
+            // Convert to the expected format
+            imageMap[`${file.name}.json`] = images.map(img => ({
+              name: img.imageName,
+              data: img.imageData
+            }));
           }
         } catch (error) {
           console.log(`No images found for ${file.name}:`, error);

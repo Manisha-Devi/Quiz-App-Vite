@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { storeImage } from '../utils/indexedDB';
 import useOfflineStorage from '../hooks/useOfflineStorage';
 import LocalQuizLibrary from '../components/LocalQuizLibrary';
+import LocalJSONLibrary from '../components/LocalJSONLibrary';
 import '../styles/UploadPage.css';
 import { openDb, storeText, clearDatabase, deleteDatabase } from '../utils/indexedDB';
 
@@ -18,6 +19,7 @@ function UploadPage() {
   });
   const navigate = useNavigate();
   const [showLocalLibrary, setShowLocalLibrary] = useState(false);
+  const [showLocalJSON, setShowLocalJSON] = useState(false);
   const { isOnline } = useOfflineStorage();
 
   const KEYS_TO_CLEAR = [
@@ -222,6 +224,13 @@ function UploadPage() {
     navigate('/sections');
   };
 
+  const handleLocalJSONSelect = (jsonData) => {
+    localStorage.setItem('quizData', JSON.stringify(jsonData));
+    localStorage.setItem('quizTime', String(quizTime));
+    localStorage.setItem('fileImageMap', JSON.stringify({}));
+    navigate('/sections');
+  };
+
   return (
     <div className={`upload-page ${isDarkMode ? 'dark-mode' : ''}`}>
       {/* Header similar to exam page */}
@@ -239,16 +248,38 @@ function UploadPage() {
             {isDarkMode ? '☀️' : '🌙'}
           </button>
           <button 
-            className={`library-toggle-btn ${showLocalLibrary ? 'active' : ''}`}
-            onClick={() => setShowLocalLibrary(!showLocalLibrary)}
+            className={`library-toggle-btn ${showLocalJSON ? 'active' : ''}`}
+            onClick={() => {
+              setShowLocalJSON(!showLocalJSON);
+              setShowLocalLibrary(false);
+            }}
+            title="Local JSON Files"
           >
-            {showLocalLibrary ? '📁' : '📚'}
+            {showLocalJSON ? '📄' : '📁'}
+          </button>
+          <button 
+            className={`library-toggle-btn ${showLocalLibrary ? 'active' : ''}`}
+            onClick={() => {
+              setShowLocalLibrary(!showLocalLibrary);
+              setShowLocalJSON(false);
+            }}
+            title="Saved Quizzes"
+          >
+            {showLocalLibrary ? '📚' : '💾'}
           </button>
         </div>
       </header>
 
       <div className="upload-content">
-        {showLocalLibrary ? (
+        {showLocalJSON ? (
+          <div className="library-section">
+            <div className="section-header">
+              <h2>📁 Local JSON Files</h2>
+              <p>Select from JSON files automatically loaded from your project</p>
+            </div>
+            <LocalJSONLibrary onFileSelect={handleLocalJSONSelect} />
+          </div>
+        ) : showLocalLibrary ? (
           <div className="library-section">
             <div className="section-header">
               <h2>📚 Saved Quiz Library</h2>

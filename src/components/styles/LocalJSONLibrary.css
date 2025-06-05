@@ -1,0 +1,170 @@
+
+.local-json-library {
+  width: 100%;
+}
+
+.loading-state, .empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #f0f0f0;
+  border-top: 3px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+  color: var(--text-tertiary);
+  font-size: 0.9rem;
+}
+
+.files-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+  padding: 1rem 0;
+}
+
+.local-file-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.2s ease;
+}
+
+.local-file-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary-color);
+}
+
+.file-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.file-icon {
+  font-size: 2rem;
+  padding: 0.5rem;
+  background: var(--primary-light);
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.file-info {
+  flex: 1;
+}
+
+.file-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 0.5rem 0;
+}
+
+.file-stats {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin: 0 0 0.75rem 0;
+}
+
+.file-levels {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.level-stat {
+  font-size: 0.8rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.level-stat.easy { background: rgba(76, 175, 80, 0.1); color: #4CAF50; }
+.level-stat.medium { background: rgba(255, 152, 0, 0.1); color: #FF9800; }
+.level-stat.hard { background: rgba(244, 67, 54, 0.1); color: #F44336; }
+
+.file-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.select-file-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  max-width: 200px;
+  justify-content: center;
+}
+
+.select-file-btn:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.select-file-btn:active {
+  transform: translateY(0);
+}
+
+.btn-icon {
+  font-size: 0.9rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Dark mode styles */
+.dark-mode .local-file-card {
+  background: var(--card-bg-dark);
+  border-color: var(--border-color-dark);
+}
+
+.dark-mode .local-file-card:hover {
+  border-color: var(--primary-color);
+}
+
+.dark-mode .file-icon {
+  background: rgba(33, 150, 243, 0.1);
+}
+
+.dark-mode .level-stat {
+  background: rgba(255, 255, 255, 0.05);
+}

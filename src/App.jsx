@@ -27,7 +27,7 @@ function App() {
         <DrawingOverlay />
         <Routes>
           <Route path="/" element={<UploadPage />} />
-          <Route path="/setup" element={<SectionSetupPage />} />
+          <Route path="/sections" element={<SectionSetupPage />} />
           <Route path="/exam" element={<ExamPage />} />
           <Route path="/result" element={<ResultPage />} />
         </Routes>

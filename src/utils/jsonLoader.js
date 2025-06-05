@@ -46,7 +46,7 @@ export const getAvailableJSONFiles = () => {
 export const loadJSONImagesFromFolders = async () => {
   try {
     // Get all image files from all subfolders in json directory
-    const allImageModules = import.meta.glob('../json/**/*.(png|jpg|jpeg|gif|webp)', { eager: false });
+    const allImageModules = import.meta.glob('../json/**/*.{png,jpg,jpeg,gif,webp}', { eager: false });
     
     console.log('Found all image files:', Object.keys(allImageModules));
     
