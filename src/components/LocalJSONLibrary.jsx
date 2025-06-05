@@ -40,14 +40,7 @@ function LocalJSONLibrary({ onFileSelect }) {
     });
   };
 
-  const handleSelectAll = () => {
-    const filtered = getFilteredAndSortedFiles();
-    if (selectedFiles.length === filtered.length) {
-      setSelectedFiles([]);
-    } else {
-      setSelectedFiles(filtered);
-    }
-  };
+  
 
   const handleContinue = () => {
     if (selectedFiles.length === 0) {
@@ -126,25 +119,7 @@ function LocalJSONLibrary({ onFileSelect }) {
 
   return (
     <div className="local-json-library">
-      {/* Enhanced Header with Stats */}
-      <div className="library-stats">
-        <div className="stats-item">
-          <span className="stats-number">{localFiles.length}</span>
-          <span className="stats-label">Total Files</span>
-        </div>
-        <div className="stats-item">
-          <span className="stats-number">{selectedFiles.length}</span>
-          <span className="stats-label">Selected</span>
-        </div>
-        <div className="stats-item">
-          <span className="stats-number">
-            {selectedFiles.reduce((sum, file) => 
-              sum + (Array.isArray(file.data) ? file.data.length : 0), 0
-            )}
-          </span>
-          <span className="stats-label">Questions</span>
-        </div>
-      </div>
+      
 
       {/* Enhanced Search and Filters */}
       <div className="controls-section">
@@ -193,7 +168,7 @@ function LocalJSONLibrary({ onFileSelect }) {
               <option value="all">All Files</option>
               <option value="small">Small (≤20 questions)</option>
               <option value="medium">Medium (21-50 questions)</option>
-              <option value="large">Large (>50 questions)</option>
+              <option value="large">Large (&gt;50 questions)</option>
             </select>
           </div>
 
@@ -217,38 +192,14 @@ function LocalJSONLibrary({ onFileSelect }) {
         </div>
       </div>
 
-      {/* Quiz Time Setting */}
-      <div className="quiz-time-section">
-        <div className="time-setting">
-          <label className="time-label">
-            <span className="time-icon">⏱️</span>
-            <span className="time-text">Quiz Duration (minutes)</span>
-          </label>
-          <input
-            type="number"
-            min="1"
-            max="300"
-            value={quizTime}
-            onChange={(e) => setQuizTime(Number(e.target.value))}
-            className="time-input"
-          />
-        </div>
-      </div>
+      
 
-      {/* Enhanced Selection Summary */}
+      {/* Selection Summary */}
       <div className="selection-summary">
         <div className="selection-info">
           <span className="selection-count">
-            {selectedFiles.length} of {filteredFiles.length} files selected
+            {selectedFiles.length} files selected
           </span>
-          {filteredFiles.length > 0 && (
-            <button 
-              className="select-all-btn"
-              onClick={handleSelectAll}
-            >
-              {selectedFiles.length === filteredFiles.length ? 'Deselect All' : 'Select All'}
-            </button>
-          )}
         </div>
         {selectedFiles.length > 0 && (
           <button 
@@ -311,6 +262,24 @@ function LocalJSONLibrary({ onFileSelect }) {
             );
           })
         )}
+      </div>
+
+      {/* Quiz Time Setting */}
+      <div className="quiz-time-section">
+        <div className="time-setting">
+          <label className="time-label">
+            <span className="time-icon">⏱️</span>
+            <span className="time-text">Quiz Duration (minutes)</span>
+          </label>
+          <input
+            type="number"
+            min="1"
+            max="300"
+            value={quizTime}
+            onChange={(e) => setQuizTime(Number(e.target.value))}
+            className="time-input"
+          />
+        </div>
       </div>
 
       {/* Continue Button */}

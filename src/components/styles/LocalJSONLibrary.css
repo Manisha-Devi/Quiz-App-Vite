@@ -6,37 +6,7 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Library Stats */
-.library-stats {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 24px;
-  padding: 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 12px;
-  color: white;
-}
 
-.stats-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-.stats-number {
-  font-size: 28px;
-  font-weight: bold;
-  line-height: 1;
-}
-
-.stats-label {
-  font-size: 12px;
-  opacity: 0.9;
-  margin-top: 4px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
 
 /* Enhanced Controls Section */
 .controls-section {
@@ -577,13 +547,12 @@
     padding: 16px;
   }
   
-  .library-stats {
-    gap: 12px;
+  .controls-section {
     padding: 16px;
   }
   
-  .stats-number {
-    font-size: 24px;
+  .search-input-container {
+    max-width: 100%;
   }
   
   .files-container.grid {
@@ -594,17 +563,34 @@
   .filters-row {
     flex-direction: column;
     align-items: stretch;
-    gap: 12px;
+    gap: 16px;
   }
   
   .filter-group {
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  
+  .filter-select {
+    width: 100%;
+    padding: 10px 12px;
+  }
+  
+  .view-toggle {
+    align-self: center;
   }
   
   .time-setting {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
     gap: 10px;
+    text-align: left;
+  }
+  
+  .time-input {
+    width: 100%;
+    max-width: 120px;
   }
   
   .selection-summary {
@@ -619,15 +605,30 @@
 }
 
 @media (max-width: 480px) {
-  .library-stats {
-    flex-direction: column;
-    gap: 8px;
+  .controls-section {
+    padding: 12px;
   }
   
-  .stats-item {
-    flex-direction: row;
-    justify-content: space-between;
-    text-align: left;
+  .search-input {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+  
+  .filter-group {
+    gap: 6px;
+  }
+  
+  .filter-label {
+    font-size: 13px;
+  }
+  
+  .filter-select {
+    font-size: 14px;
+    padding: 8px 10px;
+  }
+  
+  .view-btn {
+    padding: 6px 10px;
+    font-size: 13px;
   }
   
   .file-card {
@@ -638,5 +639,17 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 4px;
+  }
+  
+  .time-setting {
+    gap: 8px;
+  }
+  
+  .time-label {
+    font-size: 14px;
+  }
+  
+  .time-input {
+    font-size: 16px; /* Prevent zoom on iOS */
   }
 }
