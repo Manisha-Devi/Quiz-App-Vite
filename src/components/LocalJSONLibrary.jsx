@@ -6,6 +6,9 @@ import '../components/styles/LocalJSONLibrary.css';
 function LocalJSONLibrary({ onFileSelect }) {
   const [localFiles, setLocalFiles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [quizTime, setQuizTime] = useState(60);
 
   useEffect(() => {
     loadLocalFiles();
@@ -23,13 +26,38 @@ function LocalJSONLibrary({ onFileSelect }) {
     }
   };
 
-  const handleFileSelect = (file) => {
-    const formattedData = [{
+  const handleFileToggle = (file) => {
+    setSelectedFiles(prev => {
+      const isSelected = prev.some(f => f.filename === file.filename);
+      if (isSelected) {
+        return prev.filter(f => f.filename !== file.filename);
+      } else {
+        return [...prev, file];
+      }
+    });
+  };
+
+  const handleContinue = () => {
+    if (selectedFiles.length === 0) {
+      alert('⚠️ Please select at least one file');
+      return;
+    }
+
+    const formattedData = selectedFiles.map(file => ({
       name: file.filename,
       questions: file.data
-    }];
+    }));
+
+    // Store quiz time in localStorage
+    localStorage.setItem('quizTime', String(quizTime));
+    localStorage.setItem('fileImageMap', JSON.stringify({}));
+
     onFileSelect(formattedData);
   };
+
+  const filteredFiles = localFiles.filter(file =>
+    file.filename.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   if (loading) {
     return (
@@ -56,44 +84,98 @@ function LocalJSONLibrary({ onFileSelect }) {
 
   return (
     <div className="local-json-library">
-      <div className="files-grid">
-        {localFiles.map((file, index) => {
-          const questionCount = file.data?.length || 0;
-          const levelCounts = { 0: 0, 1: 0, 2: 0 };
-          
-          if (file.data) {
-            file.data.forEach(q => {
-              if (q.level !== undefined) levelCounts[q.level]++;
-            });
-          }
+      {/* Search Bar */}
+      <div className="search-section">
+        <div className="search-input-container">
+          <span className="search-icon">🔍</span>
+          <input
+            type="text"
+            placeholder="Search files..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-input"
+          />
+        </div>
+      </div>
 
+      {/* Quiz Time Setting */}
+      <div className="quiz-time-section">
+        <div className="time-setting">
+          <label className="time-label">
+            <span className="time-icon">⏱️</span>
+            <span className="time-text">Quiz Duration (minutes)</span>
+          </label>
+          <input
+            type="number"
+            min="1"
+            max="300"
+            value={quizTime}
+            onChange={(e) => setQuizTime(Number(e.target.value))}
+            className="time-input"
+          />
+        </div>
+      </div>
+
+      {/* Selection Summary */}
+      <div className="selection-summary">
+        <span className="selection-count">
+          {selectedFiles.length} of {filteredFiles.length} files selected
+        </span>
+        {selectedFiles.length > 0 && (
+          <button 
+            className="clear-selection-btn"
+            onClick={() => setSelectedFiles([])}
+          >
+            Clear All
+          </button>
+        )}
+      </div>
+
+      {/* Files Grid */}
+      <div className="files-grid">
+        {filteredFiles.map((file, index) => {
+          const isSelected = selectedFiles.some(f => f.filename === file.filename);
+          
           return (
-            <div key={index} className="local-file-card">
-              <div className="file-header">
+            <div 
+              key={index} 
+              className={`local-file-card ${isSelected ? 'selected' : ''}`}
+              onClick={() => handleFileToggle(file)}
+            >
+              <div className="file-checkbox">
+                <input
+                  type="checkbox"
+                  checked={isSelected}
+                  onChange={() => handleFileToggle(file)}
+                  className="checkbox-input"
+                />
+              </div>
+              
+              <div className="file-content">
                 <div className="file-icon">📄</div>
                 <div className="file-info">
                   <h3 className="file-name">{file.filename}</h3>
-                  <p className="file-stats">{questionCount} questions</p>
-                  <div className="file-levels">
-                    <span className="level-stat easy">🟢 {levelCounts[0]}</span>
-                    <span className="level-stat medium">🟠 {levelCounts[1]}</span>
-                    <span className="level-stat hard">🔴 {levelCounts[2]}</span>
-                  </div>
                 </div>
               </div>
               
-              <div className="file-actions">
-                <button 
-                  className="select-file-btn"
-                  onClick={() => handleFileSelect(file)}
-                >
-                  <span>Select File</span>
-                  <span className="btn-icon">✓</span>
-                </button>
-              </div>
+              {isSelected && (
+                <div className="selected-indicator">✓</div>
+              )}
             </div>
           );
         })}
+      </div>
+
+      {/* Continue Button */}
+      <div className="action-section">
+        <button 
+          className={`continue-btn ${selectedFiles.length === 0 ? 'disabled' : ''}`}
+          onClick={handleContinue}
+          disabled={selectedFiles.length === 0}
+        >
+          <span>Continue with {selectedFiles.length} file{selectedFiles.length !== 1 ? 's' : ''}</span>
+          <span className="btn-icon">➡️</span>
+        </button>
       </div>
     </div>
   );
