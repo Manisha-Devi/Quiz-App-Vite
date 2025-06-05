@@ -1,9 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { storeImage } from '../utils/indexedDB';
 import useOfflineStorage from '../hooks/useOfflineStorage';
-import LocalQuizLibrary from '../components/LocalQuizLibrary';
 import LocalJSONLibrary from '../components/LocalJSONLibrary';
 import '../styles/UploadPage.css';
 import { openDb, storeText, clearDatabase, deleteDatabase } from '../utils/indexedDB';
@@ -18,7 +16,6 @@ function UploadPage() {
     return localStorage.getItem('darkMode') === 'true';
   });
   const navigate = useNavigate();
-  const [showLocalLibrary, setShowLocalLibrary] = useState(false);
   const [showLocalJSON, setShowLocalJSON] = useState(false);
   const { isOnline } = useOfflineStorage();
 
@@ -46,7 +43,7 @@ function UploadPage() {
   const handleFileChange = async (e) => {
     const selected = Array.from(e.target.files);
     const newErrors = [];
-    
+
     // Validate file types and sizes
     const valid = selected.filter(file => {
       if (file.type !== 'application/json') {
@@ -75,7 +72,7 @@ function UploadPage() {
     } else {
       setErrors([]);
     }
-    
+
     if (newFiles.length > 0) {
       setFiles(prev => [...prev, ...newFiles]);
     }
@@ -138,7 +135,7 @@ function UploadPage() {
       for (const file of files) {
         const text = await file.text();
         let data;
-        
+
         try {
           data = JSON.parse(text);
         } catch (parseError) {
@@ -217,13 +214,6 @@ function UploadPage() {
     }
   };
 
-  const handleLocalQuizSelect = (quiz) => {
-    localStorage.setItem('quizData', JSON.stringify(quiz.data));
-    localStorage.setItem('quizTime', String(quizTime));
-    localStorage.setItem('fileImageMap', JSON.stringify({}));
-    navigate('/sections');
-  };
-
   const handleLocalJSONSelect = (jsonData) => {
     localStorage.setItem('quizData', JSON.stringify(jsonData));
     localStorage.setItem('quizTime', String(quizTime));
@@ -249,23 +239,10 @@ function UploadPage() {
           </button>
           <button 
             className={`library-toggle-btn ${showLocalJSON ? 'active' : ''}`}
-            onClick={() => {
-              setShowLocalJSON(!showLocalJSON);
-              setShowLocalLibrary(false);
-            }}
+            onClick={() => setShowLocalJSON(!showLocalJSON)}
             title="Local JSON Files"
           >
             {showLocalJSON ? '📄' : '📁'}
-          </button>
-          <button 
-            className={`library-toggle-btn ${showLocalLibrary ? 'active' : ''}`}
-            onClick={() => {
-              setShowLocalLibrary(!showLocalLibrary);
-              setShowLocalJSON(false);
-            }}
-            title="Saved Quizzes"
-          >
-            {showLocalLibrary ? '📚' : '💾'}
           </button>
         </div>
       </header>
@@ -278,14 +255,6 @@ function UploadPage() {
               <p>Select from JSON files automatically loaded from your project</p>
             </div>
             <LocalJSONLibrary onFileSelect={handleLocalJSONSelect} />
-          </div>
-        ) : showLocalLibrary ? (
-          <div className="library-section">
-            <div className="section-header">
-              <h2>📚 Saved Quiz Library</h2>
-              <p>Select from your previously saved quizzes</p>
-            </div>
-            <LocalQuizLibrary onQuizSelect={handleLocalQuizSelect} />
           </div>
         ) : (
           <div className="upload-section">
@@ -300,7 +269,7 @@ function UploadPage() {
                 <h3>📁 Upload Quiz Files</h3>
                 <p>Select or drag your JSON quiz files to get started</p>
               </div>
-              
+
               <div className="file-input-container">
                 <label 
                   className="file-input-label"
@@ -384,7 +353,7 @@ function UploadPage() {
                 <h3>⚙️ Quiz Configuration</h3>
                 <p>Set up your quiz preferences</p>
               </div>
-              
+
               <div className="settings-grid">
                 <div className="setting-item">
                   <label className="setting-label">
@@ -407,7 +376,7 @@ function UploadPage() {
                     <div className="time-unit">minutes</div>
                   </div>
                 </div>
-                
+
                 <div className="setting-info">
                   <div className="info-card">
                     <span className="info-icon">💡</span>

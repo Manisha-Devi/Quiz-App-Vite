@@ -9,6 +9,9 @@ function LocalJSONLibrary({ onFileSelect }) {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [quizTime, setQuizTime] = useState(60);
+  const [sortBy, setSortBy] = useState('name');
+  const [filterBy, setFilterBy] = useState('all');
+  const [viewMode, setViewMode] = useState('grid');
 
   useEffect(() => {
     loadLocalFiles();
@@ -37,6 +40,15 @@ function LocalJSONLibrary({ onFileSelect }) {
     });
   };
 
+  const handleSelectAll = () => {
+    const filtered = getFilteredAndSortedFiles();
+    if (selectedFiles.length === filtered.length) {
+      setSelectedFiles([]);
+    } else {
+      setSelectedFiles(filtered);
+    }
+  };
+
   const handleContinue = () => {
     if (selectedFiles.length === 0) {
       alert('⚠️ Please select at least one file');
@@ -48,16 +60,46 @@ function LocalJSONLibrary({ onFileSelect }) {
       questions: file.data
     }));
 
-    // Store quiz time in localStorage
     localStorage.setItem('quizTime', String(quizTime));
     localStorage.setItem('fileImageMap', JSON.stringify({}));
 
     onFileSelect(formattedData);
   };
 
-  const filteredFiles = localFiles.filter(file =>
-    file.filename.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const getFilteredAndSortedFiles = () => {
+    let filtered = localFiles.filter(file => {
+      const matchesSearch = file.filename.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      if (filterBy === 'all') return matchesSearch;
+      
+      const questionCount = Array.isArray(file.data) ? file.data.length : 0;
+      if (filterBy === 'small') return matchesSearch && questionCount <= 20;
+      if (filterBy === 'medium') return matchesSearch && questionCount > 20 && questionCount <= 50;
+      if (filterBy === 'large') return matchesSearch && questionCount > 50;
+      
+      return matchesSearch;
+    });
+
+    // Sort files
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case 'name':
+          return a.filename.localeCompare(b.filename);
+        case 'size':
+          const aSize = Array.isArray(a.data) ? a.data.length : 0;
+          const bSize = Array.isArray(b.data) ? b.data.length : 0;
+          return bSize - aSize;
+        case 'recent':
+          return new Date(b.timestamp || 0) - new Date(a.timestamp || 0);
+        default:
+          return 0;
+      }
+    });
+
+    return filtered;
+  };
+
+  const filteredFiles = getFilteredAndSortedFiles();
 
   if (loading) {
     return (
@@ -84,17 +126,94 @@ function LocalJSONLibrary({ onFileSelect }) {
 
   return (
     <div className="local-json-library">
-      {/* Search Bar */}
-      <div className="search-section">
-        <div className="search-input-container">
-          <span className="search-icon">🔍</span>
-          <input
-            type="text"
-            placeholder="Search files..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input"
-          />
+      {/* Enhanced Header with Stats */}
+      <div className="library-stats">
+        <div className="stats-item">
+          <span className="stats-number">{localFiles.length}</span>
+          <span className="stats-label">Total Files</span>
+        </div>
+        <div className="stats-item">
+          <span className="stats-number">{selectedFiles.length}</span>
+          <span className="stats-label">Selected</span>
+        </div>
+        <div className="stats-item">
+          <span className="stats-number">
+            {selectedFiles.reduce((sum, file) => 
+              sum + (Array.isArray(file.data) ? file.data.length : 0), 0
+            )}
+          </span>
+          <span className="stats-label">Questions</span>
+        </div>
+      </div>
+
+      {/* Enhanced Search and Filters */}
+      <div className="controls-section">
+        <div className="search-row">
+          <div className="search-input-container">
+            <span className="search-icon">🔍</span>
+            <input
+              type="text"
+              placeholder="Search files by name..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input"
+            />
+            {searchTerm && (
+              <button 
+                className="clear-search"
+                onClick={() => setSearchTerm('')}
+              >
+                ✕
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="filters-row">
+          <div className="filter-group">
+            <label className="filter-label">Sort by:</label>
+            <select 
+              value={sortBy} 
+              onChange={(e) => setSortBy(e.target.value)}
+              className="filter-select"
+            >
+              <option value="name">Name (A-Z)</option>
+              <option value="size">Questions Count</option>
+              <option value="recent">Recently Added</option>
+            </select>
+          </div>
+
+          <div className="filter-group">
+            <label className="filter-label">Filter by size:</label>
+            <select 
+              value={filterBy} 
+              onChange={(e) => setFilterBy(e.target.value)}
+              className="filter-select"
+            >
+              <option value="all">All Files</option>
+              <option value="small">Small (≤20 questions)</option>
+              <option value="medium">Medium (21-50 questions)</option>
+              <option value="large">Large (>50 questions)</option>
+            </select>
+          </div>
+
+          <div className="filter-group">
+            <label className="filter-label">View:</label>
+            <div className="view-toggle">
+              <button 
+                className={`view-btn ${viewMode === 'grid' ? 'active' : ''}`}
+                onClick={() => setViewMode('grid')}
+              >
+                ⊞
+              </button>
+              <button 
+                className={`view-btn ${viewMode === 'list' ? 'active' : ''}`}
+                onClick={() => setViewMode('list')}
+              >
+                ☰
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -116,54 +235,82 @@ function LocalJSONLibrary({ onFileSelect }) {
         </div>
       </div>
 
-      {/* Selection Summary */}
+      {/* Enhanced Selection Summary */}
       <div className="selection-summary">
-        <span className="selection-count">
-          {selectedFiles.length} of {filteredFiles.length} files selected
-        </span>
+        <div className="selection-info">
+          <span className="selection-count">
+            {selectedFiles.length} of {filteredFiles.length} files selected
+          </span>
+          {filteredFiles.length > 0 && (
+            <button 
+              className="select-all-btn"
+              onClick={handleSelectAll}
+            >
+              {selectedFiles.length === filteredFiles.length ? 'Deselect All' : 'Select All'}
+            </button>
+          )}
+        </div>
         {selectedFiles.length > 0 && (
           <button 
             className="clear-selection-btn"
             onClick={() => setSelectedFiles([])}
           >
-            Clear All
+            Clear Selection
           </button>
         )}
       </div>
 
-      {/* Files Grid */}
-      <div className="files-grid">
-        {filteredFiles.map((file, index) => {
-          const isSelected = selectedFiles.some(f => f.filename === file.filename);
-          
-          return (
-            <div 
-              key={index} 
-              className={`local-file-card ${isSelected ? 'selected' : ''}`}
-              onClick={() => handleFileToggle(file)}
-            >
-              <div className="file-checkbox">
-                <input
-                  type="checkbox"
-                  checked={isSelected}
-                  onChange={() => handleFileToggle(file)}
-                  className="checkbox-input"
-                />
-              </div>
-              
-              <div className="file-content">
-                <div className="file-icon">📄</div>
-                <div className="file-info">
-                  <h3 className="file-name">{file.filename}</h3>
+      {/* Files Display */}
+      <div className={`files-container ${viewMode}`}>
+        {filteredFiles.length === 0 ? (
+          <div className="no-results">
+            <div className="no-results-icon">🔍</div>
+            <h3>No files match your search</h3>
+            <p>Try adjusting your search terms or filters</p>
+          </div>
+        ) : (
+          filteredFiles.map((file, index) => {
+            const isSelected = selectedFiles.some(f => f.filename === file.filename);
+            const questionCount = Array.isArray(file.data) ? file.data.length : 0;
+            
+            return (
+              <div 
+                key={index} 
+                className={`file-card ${isSelected ? 'selected' : ''} ${viewMode}`}
+                onClick={() => handleFileToggle(file)}
+              >
+                <div className="file-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={() => handleFileToggle(file)}
+                    className="checkbox-input"
+                  />
                 </div>
+                
+                <div className="file-content">
+                  <div className="file-icon">📄</div>
+                  <div className="file-info">
+                    <h3 className="file-name">{file.filename}</h3>
+                    <div className="file-meta">
+                      <span className="question-count">
+                        📝 {questionCount} questions
+                      </span>
+                      <span className="file-size">
+                        {questionCount <= 20 ? '🟢 Small' : 
+                         questionCount <= 50 ? '🟡 Medium' : '🔴 Large'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                
+                {isSelected && (
+                  <div className="selected-indicator">✓</div>
+                )}
               </div>
-              
-              {isSelected && (
-                <div className="selected-indicator">✓</div>
-              )}
-            </div>
-          );
-        })}
+            );
+          })
+        )}
       </div>
 
       {/* Continue Button */}
