@@ -6,13 +6,18 @@ import ExamPage from './pages/ExamPage';
 import ResultPage from './pages/ResultPage';
 import PWAInstaller from './components/PWAInstaller';
 import DrawingOverlay from './components/DrawingOverlay';
-import { loadJSONFilesToStorage } from './utils/jsonLoader';
+import { loadJSONFilesToStorage, loadJSONImagesFromFolders } from './utils/jsonLoader';
 import './App.css';
 
 function App() {
   useEffect(() => {
-    // Auto-load JSON files into IndexedDB when app starts
-    loadJSONFilesToStorage();
+    // Auto-load JSON files and their associated images into IndexedDB when app starts
+    const loadAllData = async () => {
+      await loadJSONFilesToStorage();
+      await loadJSONImagesFromFolders();
+    };
+    
+    loadAllData();
   }, []);
 
   return (

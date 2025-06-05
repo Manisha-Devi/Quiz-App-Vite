@@ -38,6 +38,11 @@ export const openDb = () => {
       // JSON files store - dedicated store for JSON files from json folder
       const jsonFilesStore = db.createObjectStore("jsonFiles", { keyPath: "filename" });
       jsonFilesStore.createIndex("by_filename", "filename", { unique: true });
+      
+      // JSON Images store - dedicated store for images associated with JSON files
+      const jsonImagesStore = db.createObjectStore("jsonImages", { keyPath: "id" });
+      jsonImagesStore.createIndex("by_json_file", "jsonFileName", { unique: false });
+      jsonImagesStore.createIndex("by_image_name", "imageName", { unique: false });
     };
   });
 };
@@ -191,6 +196,76 @@ export const clearJSONFiles = async () => {
   const db = await openDb();
   const transaction = db.transaction("jsonFiles", "readwrite");
   const store = transaction.objectStore("jsonFiles");
+  return store.clear();
+};
+
+// Store image associated with JSON file in dedicated jsonImages store
+export const storeJSONImage = async (jsonFileName, imageName, imageData) => {
+  const db = await openDb();
+  const transaction = db.transaction("jsonImages", "readwrite");
+  const store = transaction.objectStore("jsonImages");
+  
+  const imageRecord = {
+    id: `${jsonFileName}_${imageName}`,
+    jsonFileName: jsonFileName,
+    imageName: imageName,
+    imageData: imageData,
+    storedAt: new Date().toISOString()
+  };
+  
+  return store.put(imageRecord);
+};
+
+// Get image associated with JSON file from dedicated jsonImages store
+export const getJSONImage = async (jsonFileName, imageName) => {
+  const db = await openDb();
+  const transaction = db.transaction("jsonImages", "readonly");
+  const store = transaction.objectStore("jsonImages");
+  
+  return new Promise((resolve, reject) => {
+    const request = store.get(`${jsonFileName}_${imageName}`);
+    request.onsuccess = () => resolve(request.result?.imageData || null);
+    request.onerror = () => reject("Error fetching JSON image");
+  });
+};
+
+// Get all images for a specific JSON file
+export const getAllJSONImages = async (jsonFileName) => {
+  const db = await openDb();
+  const transaction = db.transaction("jsonImages", "readonly");
+  const store = transaction.objectStore("jsonImages");
+  const index = store.index("by_json_file");
+  
+  return new Promise((resolve, reject) => {
+    const request = index.getAll(jsonFileName);
+    request.onsuccess = () => resolve(request.result || []);
+    request.onerror = () => reject("Error fetching JSON images");
+  });
+};
+
+// Clear all images for a specific JSON file
+export const clearJSONImages = async (jsonFileName) => {
+  const db = await openDb();
+  const transaction = db.transaction("jsonImages", "readwrite");
+  const store = transaction.objectStore("jsonImages");
+  const index = store.index("by_json_file");
+  
+  return new Promise((resolve, reject) => {
+    const request = index.getAll(jsonFileName);
+    request.onsuccess = () => {
+      const images = request.result;
+      const deletePromises = images.map(image => store.delete(image.id));
+      Promise.all(deletePromises).then(() => resolve()).catch(reject);
+    };
+    request.onerror = () => reject("Error clearing JSON images");
+  });
+};
+
+// Clear all JSON images from dedicated jsonImages store
+export const clearAllJSONImages = async () => {
+  const db = await openDb();
+  const transaction = db.transaction("jsonImages", "readwrite");
+  const store = transaction.objectStore("jsonImages");
   return store.clear();
 };
 
