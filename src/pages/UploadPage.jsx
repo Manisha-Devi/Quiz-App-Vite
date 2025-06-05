@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { storeImage } from '../utils/indexedDB';
 import useOfflineStorage from '../hooks/useOfflineStorage';
 import LocalJSONLibrary from '../components/LocalJSONLibrary';
-import DrawingOverlay from '../components/DrawingOverlay';
 import '../styles/UploadPage.css';
 import { openDb, storeText, clearDatabase, deleteDatabase } from '../utils/indexedDB';
 
@@ -245,12 +244,6 @@ function UploadPage() {
           >
             {showLocalJSON ? '📄' : '📁'}
           </button>
-          <button 
-            className="theme-toggle-btn"
-            title="Drawing Tool"
-          >
-            ✍️
-          </button>
         </div>
       </header>
 
@@ -430,7 +423,6 @@ function UploadPage() {
           </div>
         )}
       </div>
-      <DrawingOverlay />
     </div>
   );
 }
