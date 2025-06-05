@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { storeImage } from '../utils/indexedDB';
+import { storeImage, openDb, storeText } from '../utils/indexedDB';
 import useOfflineStorage from '../hooks/useOfflineStorage';
 import LocalJSONLibrary from '../components/LocalJSONLibrary';
 import '../styles/UploadPage.css';
-import { openDb, storeText, clearDatabase, deleteDatabase } from '../utils/indexedDB';
 
 function UploadPage() {
   const [files, setFiles] = useState([]);
@@ -157,27 +156,38 @@ function UploadPage() {
           return;
         }
 
-        // Validate each question
+        // Validate each question with detailed checks
         const invalidQuestions = [];
         data.forEach((q, index) => {
           if (typeof q.question !== 'string' || q.question.trim() === '') {
-            invalidQuestions.push(`Question ${index + 1}: Missing or invalid question text`);
+            invalidQuestions.push(`❌ Question ${index + 1}: Missing or invalid question text`);
           }
           if (!Array.isArray(q.options) || q.options.length !== 4) {
-            invalidQuestions.push(`Question ${index + 1}: Must have exactly 4 options`);
+            invalidQuestions.push(`❌ Question ${index + 1}: Must have exactly 4 options`);
+          } else {
+            // Check if all options are non-empty strings
+            q.options.forEach((option, optIndex) => {
+              if (typeof option !== 'string' || option.trim() === '') {
+                invalidQuestions.push(`❌ Question ${index + 1}, Option ${optIndex + 1}: Empty or invalid option`);
+              }
+            });
           }
-          if (typeof q.answer === 'undefined' || q.answer < 0 || q.answer > 3) {
-            invalidQuestions.push(`Question ${index + 1}: Invalid answer (must be 0-3)`);
+          if (typeof q.answer === 'undefined' || !Number.isInteger(q.answer) || q.answer < 0 || q.answer > 3) {
+            invalidQuestions.push(`❌ Question ${index + 1}: Invalid answer (must be 0-3)`);
           }
           if (typeof q.level === 'undefined' || ![0, 1, 2].includes(q.level)) {
-            invalidQuestions.push(`Question ${index + 1}: Invalid level (must be 0, 1, or 2)`);
+            invalidQuestions.push(`❌ Question ${index + 1}: Invalid difficulty level (must be 0, 1, or 2)`);
           }
         });
 
         if (invalidQuestions.length > 0) {
-          setErrors(prev => [...prev, `❌ ${file.name} has issues:`, ...invalidQuestions.slice(0, 5)]);
-          if (invalidQuestions.length > 5) {
-            setErrors(prev => [...prev, `... and ${invalidQuestions.length - 5} more issues`]);
+          setErrors(prev => [
+            ...prev, 
+            `🚫 ${file.name} has validation issues:`, 
+            ...invalidQuestions.slice(0, 3)
+          ]);
+          if (invalidQuestions.length > 3) {
+            setErrors(prev => [...prev, `📋 ... and ${invalidQuestions.length - 3} more validation errors`]);
           }
           setLoading(false);
           return;
@@ -189,23 +199,41 @@ function UploadPage() {
         });
       }
 
-      const db = await openDb();
-      allData.forEach(item => {
-        storeText(item.questions, item.name);
-      });
+      try {
+        const db = await openDb();
+        
+        // Store all quiz data in IndexedDB
+        allData.forEach(item => {
+          storeText(item.questions, item.name);
+        });
 
-      storeText(String(quizTime), "quizTime");
-      storeText(JSON.stringify(fileImageMap), "fileImageMap");
+        storeText(String(quizTime), "quizTime");
+        storeText(JSON.stringify(fileImageMap), "fileImageMap");
 
-      for (const [filename, images] of Object.entries(fileImageMap)) {
-        images.forEach(image => storeImage(image.data, filename));
+        // Store images if any
+        for (const [filename, images] of Object.entries(fileImageMap)) {
+          images.forEach(image => storeImage(image.data, filename));
+        }
+
+        // Also store in localStorage as backup
+        localStorage.setItem('quizData', JSON.stringify(allData));
+        localStorage.setItem('quizTime', String(quizTime));
+        localStorage.setItem('fileImageMap', JSON.stringify(fileImageMap));
+
+        // Add a small delay to show success
+        setTimeout(() => {
+          navigate('/sections');
+        }, 500);
+
+      } catch (dbError) {
+        console.error('Database storage error:', dbError);
+        // Fallback to localStorage only
+        localStorage.setItem('quizData', JSON.stringify(allData));
+        localStorage.setItem('quizTime', String(quizTime));
+        localStorage.setItem('fileImageMap', JSON.stringify(fileImageMap));
+        
+        navigate('/sections');
       }
-
-      localStorage.setItem('quizData', JSON.stringify(allData));
-      localStorage.setItem('quizTime', String(quizTime));
-      localStorage.setItem('fileImageMap', JSON.stringify(fileImageMap));
-
-      navigate('/sections');
     } catch (err) {
       console.error(err);
       setErrors(['❌ Unexpected error while processing files.']);
@@ -290,14 +318,14 @@ function UploadPage() {
                 >
                   <div className="file-input-icon">📄</div>
                   <div className="file-input-text">
-                    <span className="primary-text">Choose JSON Files</span>
-                    <span className="secondary-text">Tap here to browse or drag files</span>
-                    <span className="helper-text">Supports multiple files (max 2MB each)</span>
+                    <span className="primary-text">Choose JSON Quiz Files</span>
+                    <span className="secondary-text">Select multiple .json files with quiz questions</span>
+                    <span className="helper-text">Max 2MB per file • Questions format: {question, options[4], answer, level}</span>
                   </div>
                   <input 
                     type="file" 
                     multiple 
-                    accept=".json" 
+                    accept=".json,application/json" 
                     onChange={handleFileChange}
                     className="file-input-hidden"
                   />
@@ -406,16 +434,17 @@ function UploadPage() {
                 className={`next-btn ${loading ? 'loading' : ''}`} 
                 onClick={handleNext} 
                 disabled={loading || files.length === 0}
+                title={files.length === 0 ? 'Please upload at least one JSON file' : `Process ${files.length} file(s) and continue`}
               >
                 {loading ? (
                   <>
                     <span className="loading-spinner"></span>
-                    <span>Processing...</span>
+                    <span>Processing {files.length} file{files.length !== 1 ? 's' : ''}...</span>
                   </>
                 ) : (
                   <>
-                    <span>Continue</span>
-                    <span className="btn-icon">➡️</span>
+                    <span>Start Quiz Setup</span>
+                    <span className="btn-icon">🚀</span>
                   </>
                 )}
               </button>
