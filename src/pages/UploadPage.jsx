@@ -17,6 +17,7 @@ function UploadPage() {
   });
   const navigate = useNavigate();
   const [showLocalJSON, setShowLocalJSON] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const { isOnline } = useOfflineStorage();
 
   const KEYS_TO_CLEAR = [
@@ -75,6 +76,8 @@ function UploadPage() {
 
     if (newFiles.length > 0) {
       setFiles(prev => [...prev, ...newFiles]);
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000);
     }
   };
 
@@ -301,6 +304,12 @@ function UploadPage() {
                     onChange={handleFileChange}
                     className="file-input-hidden"
                   />
+                  {files.length > 0 && (
+                    <div className="file-count-badge">
+                      <span className="count-number">{files.length}</span>
+                      <span className="count-text">files ready</span>
+                    </div>
+                  )}
                 </label>
               </div>
 
@@ -387,6 +396,16 @@ function UploadPage() {
                 </div>
               </div>
             </div>
+
+            {/* Success Message */}
+            {showSuccess && (
+              <div className="success-section">
+                <div className="success-message">
+                  <span className="success-icon">✅</span>
+                  <span className="success-text">Files uploaded successfully!</span>
+                </div>
+              </div>
+            )}
 
             {/* Error Messages */}
             {errors.length > 0 && (
