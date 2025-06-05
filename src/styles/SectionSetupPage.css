@@ -421,15 +421,8 @@
 .difficulty-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 8px;
   margin-bottom: 12px;
-}
-
-.difficulty-info {
-  display: flex;
-  align-items: center;
-  gap: 8px;
 }
 
 .difficulty-icon {
@@ -439,6 +432,7 @@
 .difficulty-name {
   font-weight: 500;
   color: #4a5568;
+  flex: 1;
   font-size: 14px;
 }
 
@@ -471,24 +465,24 @@
   background: #4c51bf;
   color: white;
   border: none;
-  padding: 8px 10px;
+  padding: 6px 8px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
   transition: all 0.2s ease;
-  border-radius: 8px;
-  min-width: 36px;
-  height: 36px;
+  border-radius: 6px;
+  min-width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .slider-btn:hover:not(:disabled) {
   background: #553c9a;
-  transform: translateY(-1px) scale(1.05);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
 .slider-btn:disabled {
@@ -497,7 +491,6 @@
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
-  opacity: 0.6;
 }
 
 .section-page.dark-mode .slider-btn:disabled {
@@ -506,11 +499,11 @@
 }
 
 .slider-btn.left {
-  border-radius: 8px;
+  border-radius: 6px 3px 3px 6px;
 }
 
 .slider-btn.right {
-  border-radius: 8px;
+  border-radius: 3px 6px 6px 3px;
 }
 
 .slider-wrapper {
