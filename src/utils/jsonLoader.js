@@ -45,6 +45,11 @@ export const getAvailableJSONFiles = () => {
 // Function to load images associated with JSON files
 export const loadJSONImagesFromFolders = async () => {
   try {
+    // Get all image files from all subfolders in json directory
+    const allImageModules = import.meta.glob('../json/**/*.(png|jpg|jpeg|gif|webp)', { eager: false });
+    
+    console.log('Found all image files:', Object.keys(allImageModules));
+    
     // Get all available JSON file names
     const jsonFiles = getAvailableJSONFiles();
     
@@ -52,40 +57,40 @@ export const loadJSONImagesFromFolders = async () => {
       // Create folder name by replacing spaces with underscores
       const folderName = jsonFileName.replace(/\s+/g, '_');
       
-      try {
-        // Try to import images from the corresponding folder
-        const imageModules = import.meta.glob(`../json/${folderName}/*.(png|jpg|jpeg|gif|webp)`, { eager: false });
-        
-        console.log(`Found images for ${jsonFileName}:`, Object.keys(imageModules));
-        
-        // Process each image file
-        for (const imagePath in imageModules) {
-          try {
-            // Get the image file name
-            const imageName = imagePath.split('/').pop();
-            
-            // Import the image as a URL
-            const imageModule = await imageModules[imagePath]();
-            const imageUrl = imageModule.default;
-            
-            // Convert image URL to blob data
-            const response = await fetch(imageUrl);
-            const blob = await response.blob();
-            const reader = new FileReader();
-            
-            reader.onload = async () => {
-              // Store image in jsonImages IndexedDB store
-              await storeJSONImage(jsonFileName, imageName, reader.result);
-              console.log(`Stored image ${imageName} for ${jsonFileName} in jsonImages store`);
-            };
-            
-            reader.readAsDataURL(blob);
-          } catch (error) {
-            console.error(`Error loading image ${imagePath}:`, error);
-          }
+      // Filter images that belong to this JSON file's folder
+      const jsonFolderImages = Object.keys(allImageModules).filter(path => {
+        const pathParts = path.split('/');
+        // Check if the path contains the folder name for this JSON file
+        return pathParts.includes(folderName);
+      });
+      
+      console.log(`Found images for ${jsonFileName} (${folderName}):`, jsonFolderImages);
+      
+      // Process each image file for this JSON
+      for (const imagePath of jsonFolderImages) {
+        try {
+          // Get the image file name
+          const imageName = imagePath.split('/').pop();
+          
+          // Import the image as a URL
+          const imageModule = await allImageModules[imagePath]();
+          const imageUrl = imageModule.default;
+          
+          // Convert image URL to blob data
+          const response = await fetch(imageUrl);
+          const blob = await response.blob();
+          const reader = new FileReader();
+          
+          reader.onload = async () => {
+            // Store image in jsonImages IndexedDB store
+            await storeJSONImage(jsonFileName, imageName, reader.result);
+            console.log(`Stored image ${imageName} for ${jsonFileName} in jsonImages store`);
+          };
+          
+          reader.readAsDataURL(blob);
+        } catch (error) {
+          console.error(`Error loading image ${imagePath}:`, error);
         }
-      } catch (error) {
-        console.log(`No images folder found for ${jsonFileName} (${folderName})`);
       }
     }
     
