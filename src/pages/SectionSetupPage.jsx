@@ -162,8 +162,6 @@ function SectionSetupPage() {
                   <div className="section-info">
                     <h3 className="section-name">{file.name}</h3>
                     <div className="section-stats">
-                      <span className="total-questions">{file.questions.length} total</span>
-                      <span className="selected-count">{selectedTotal} selected</span>
                       <div className="level-breakdown">
                         <span className="level-stat easy">🟢 {levelCounts[0]}</span>
                         <span className="level-stat medium">🟠 {levelCounts[1]}</span>
@@ -173,6 +171,11 @@ function SectionSetupPage() {
                   </div>
                   
                   <div className="section-actions">
+                    <div className="question-count-display">
+                      <div className="count-selected">{selectedTotal}</div>
+                      <div className="count-divider">/</div>
+                      <div className="count-total">{file.questions.length}</div>
+                    </div>
                     {images.length > 0 && (
                       <button
                         className="preview-images-btn"
@@ -232,12 +235,7 @@ function SectionSetupPage() {
                           </button>
                         </div>
 
-                        <div className="progress-bar">
-                          <div 
-                            className="progress-fill"
-                            style={{ width: `${maxAvailable > 0 ? (currentValue / maxAvailable) * 100 : 0}%` }}
-                          ></div>
-                        </div>
+                        
                       </div>
                     );
                   })}
