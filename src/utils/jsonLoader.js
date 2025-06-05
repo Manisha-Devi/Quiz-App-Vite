@@ -1,5 +1,5 @@
 
-import { storeText } from './indexedDB';
+import { storeJSONFile } from './indexedDB';
 
 // Function to dynamically import all JSON files from the json folder
 export const loadJSONFilesToStorage = async () => {
@@ -19,16 +19,16 @@ export const loadJSONFilesToStorage = async () => {
         const module = await jsonModules[path]();
         const jsonData = module.default;
         
-        // Store in IndexedDB
-        await storeText(jsonData, fileName);
+        // Store in dedicated jsonFiles IndexedDB store
+        await storeJSONFile(fileName, jsonData);
         
-        console.log(`Stored ${fileName} in IndexedDB`);
+        console.log(`Stored ${fileName} in jsonFiles IndexedDB store`);
       } catch (error) {
         console.error(`Error loading ${path}:`, error);
       }
     }
     
-    console.log('All JSON files loaded into IndexedDB');
+    console.log('All JSON files loaded into dedicated jsonFiles IndexedDB store');
   } catch (error) {
     console.error('Error loading JSON files:', error);
   }
@@ -40,4 +40,15 @@ export const getAvailableJSONFiles = () => {
   return Object.keys(jsonModules).map(path => 
     path.split('/').pop().replace('.json', '')
   );
+};
+
+// Function to get JSON file from dedicated jsonFiles store
+export const getJSONFileFromStore = async (filename) => {
+  try {
+    const { getJSONFile } = await import('./indexedDB');
+    return await getJSONFile(filename);
+  } catch (error) {
+    console.error(`Error fetching ${filename} from jsonFiles store:`, error);
+    return null;
+  }
 };

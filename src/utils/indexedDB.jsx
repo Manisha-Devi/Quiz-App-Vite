@@ -34,6 +34,10 @@ export const openDb = () => {
       
       // Offline quiz cache
       db.createObjectStore("quizCache", { keyPath: "id" });
+      
+      // JSON files store - dedicated store for JSON files from json folder
+      const jsonFilesStore = db.createObjectStore("jsonFiles", { keyPath: "filename" });
+      jsonFilesStore.createIndex("by_filename", "filename", { unique: true });
     };
   });
 };
@@ -139,6 +143,55 @@ export const clearDatabase = async () => {
 
   transaction.objectStore("images").clear(); // Clear images store
   transaction.objectStore("texts").clear(); // Clear texts store
+};
+
+// Store JSON file data in dedicated jsonFiles store
+export const storeJSONFile = async (filename, jsonData) => {
+  const db = await openDb();
+  const transaction = db.transaction("jsonFiles", "readwrite");
+  const store = transaction.objectStore("jsonFiles");
+  
+  const fileData = {
+    filename: filename,
+    data: jsonData,
+    storedAt: new Date().toISOString()
+  };
+  
+  return store.put(fileData);
+};
+
+// Get JSON file data from dedicated jsonFiles store
+export const getJSONFile = async (filename) => {
+  const db = await openDb();
+  const transaction = db.transaction("jsonFiles", "readonly");
+  const store = transaction.objectStore("jsonFiles");
+  
+  return new Promise((resolve, reject) => {
+    const request = store.get(filename);
+    request.onsuccess = () => resolve(request.result?.data || null);
+    request.onerror = () => reject("Error fetching JSON file");
+  });
+};
+
+// Get all JSON files from dedicated jsonFiles store
+export const getAllJSONFiles = async () => {
+  const db = await openDb();
+  const transaction = db.transaction("jsonFiles", "readonly");
+  const store = transaction.objectStore("jsonFiles");
+  
+  return new Promise((resolve, reject) => {
+    const request = store.getAll();
+    request.onsuccess = () => resolve(request.result || []);
+    request.onerror = () => reject("Error fetching all JSON files");
+  });
+};
+
+// Clear all JSON files from dedicated jsonFiles store
+export const clearJSONFiles = async () => {
+  const db = await openDb();
+  const transaction = db.transaction("jsonFiles", "readwrite");
+  const store = transaction.objectStore("jsonFiles");
+  return store.clear();
 };
 
 // Delete the IndexedDB database entirely

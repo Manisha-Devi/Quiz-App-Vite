@@ -1,6 +1,6 @@
 // src/hooks/useStorage.js
 import { useState, useEffect } from "react";
-import { openDb, storeData, getData } from "../utils/indexedDB"; // IndexedDB utils
+import { storeData, getData, getJSONFile } from "../utils/indexedDB"; // IndexedDB utils
 
 const useStorage = (key, storageType = "localStorage") => {
   const [data, setData] = useState(null);
