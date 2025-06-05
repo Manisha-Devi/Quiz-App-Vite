@@ -15,30 +15,30 @@ export const openDb = () => {
 
     request.onupgradeneeded = (event) => {
       const db = event.target.result;
-      
+
       // Images store
       const imageStore = db.createObjectStore("images", { keyPath: "id" });
       imageStore.createIndex("by_name", "name", { unique: true });
-      
+
       // Texts store
       db.createObjectStore("texts", { keyPath: "id" });
-      
+
       // Quiz results store
       const resultsStore = db.createObjectStore("quizResults", { keyPath: "id", autoIncrement: true });
       resultsStore.createIndex("by_date", "date", { unique: false });
       resultsStore.createIndex("by_score", "score", { unique: false });
-      
+
       // User progress store
       const progressStore = db.createObjectStore("userProgress", { keyPath: "id" });
       progressStore.createIndex("by_category", "category", { unique: false });
-      
+
       // Offline quiz cache
       db.createObjectStore("quizCache", { keyPath: "id" });
-      
+
       // JSON files store - dedicated store for JSON files from json folder
       const jsonFilesStore = db.createObjectStore("jsonFiles", { keyPath: "filename" });
       jsonFilesStore.createIndex("by_filename", "filename", { unique: true });
-      
+
       // JSON Images store - dedicated store for images associated with JSON files
       const jsonImagesStore = db.createObjectStore("jsonImages", { keyPath: "id" });
       jsonImagesStore.createIndex("by_json_file", "jsonFileName", { unique: false });
@@ -81,12 +81,12 @@ export const storeText = async (content, key) => {
   const db = await openDb();
   const transaction = db.transaction("texts", "readwrite");
   const store = transaction.objectStore("texts");
-  
+
   const textData = {
     id: key,
     content: content
   };
-  
+
   return store.put(textData);
 };
 
@@ -95,7 +95,7 @@ export const getData = async (storeName, key) => {
   const db = await openDb();
   const transaction = db.transaction(storeName, "readonly");
   const store = transaction.objectStore(storeName);
-  
+
   return new Promise((resolve, reject) => {
     const request = store.get(key);
     request.onsuccess = () => resolve(request.result?.content || null);
@@ -155,13 +155,13 @@ export const storeJSONFile = async (filename, jsonData) => {
   const db = await openDb();
   const transaction = db.transaction("jsonFiles", "readwrite");
   const store = transaction.objectStore("jsonFiles");
-  
+
   const fileData = {
     filename: filename,
     data: jsonData,
     storedAt: new Date().toISOString()
   };
-  
+
   return store.put(fileData);
 };
 
@@ -170,7 +170,7 @@ export const getJSONFile = async (filename) => {
   const db = await openDb();
   const transaction = db.transaction("jsonFiles", "readonly");
   const store = transaction.objectStore("jsonFiles");
-  
+
   return new Promise((resolve, reject) => {
     const request = store.get(filename);
     request.onsuccess = () => resolve(request.result?.data || null);
@@ -183,7 +183,7 @@ export const getAllJSONFiles = async () => {
   const db = await openDb();
   const transaction = db.transaction("jsonFiles", "readonly");
   const store = transaction.objectStore("jsonFiles");
-  
+
   return new Promise((resolve, reject) => {
     const request = store.getAll();
     request.onsuccess = () => resolve(request.result || []);
@@ -201,19 +201,43 @@ export const clearJSONFiles = async () => {
 
 // Store image associated with JSON file in dedicated jsonImages store
 export const storeJSONImage = async (jsonFileName, imageName, imageData) => {
-  const db = await openDb();
-  const transaction = db.transaction("jsonImages", "readwrite");
-  const store = transaction.objectStore("jsonImages");
-  
-  const imageRecord = {
-    id: `${jsonFileName}_${imageName}`,
-    jsonFileName: jsonFileName,
-    imageName: imageName,
-    imageData: imageData,
-    storedAt: new Date().toISOString()
-  };
-  
-  return store.put(imageRecord);
+  try {
+    const db = await openDb();
+    const transaction = db.transaction(['jsonImages'], 'readwrite');
+    const store = transaction.objectStore('jsonImages');
+
+    await store.put({
+      id: `${jsonFileName}_${imageName}`,
+      jsonFileName,
+      imageName,
+      imageData,
+      timestamp: Date.now()
+    });
+
+    console.log(`Image ${imageName} stored for ${jsonFileName}`);
+  } catch (error) {
+    console.error('Error storing JSON image:', error);
+  }
+};
+
+// Function to retrieve all images for a specific JSON file
+export const getJSONImages = async (jsonFileName) => {
+  try {
+    const db = await openDb();
+    const transaction = db.transaction(['jsonImages'], 'readonly');
+    const store = transaction.objectStore('jsonImages');
+    const index = store.index('by_json_file');
+
+    const images = await index.getAll(jsonFileName);
+
+    return images.map(image => ({
+      name: image.imageName,
+      data: image.imageData
+    }));
+  } catch (error) {
+    console.error('Error retrieving JSON images:', error);
+    return [];
+  }
 };
 
 // Get image associated with JSON file from dedicated jsonImages store
@@ -221,7 +245,7 @@ export const getJSONImage = async (jsonFileName, imageName) => {
   const db = await openDb();
   const transaction = db.transaction("jsonImages", "readonly");
   const store = transaction.objectStore("jsonImages");
-  
+
   return new Promise((resolve, reject) => {
     const request = store.get(`${jsonFileName}_${imageName}`);
     request.onsuccess = () => resolve(request.result?.imageData || null);
@@ -235,7 +259,7 @@ export const getAllJSONImages = async (jsonFileName) => {
   const transaction = db.transaction("jsonImages", "readonly");
   const store = transaction.objectStore("jsonImages");
   const index = store.index("by_json_file");
-  
+
   return new Promise((resolve, reject) => {
     const request = index.getAll(jsonFileName);
     request.onsuccess = () => resolve(request.result || []);
@@ -249,7 +273,7 @@ export const clearJSONImages = async (jsonFileName) => {
   const transaction = db.transaction("jsonImages", "readwrite");
   const store = transaction.objectStore("jsonImages");
   const index = store.index("by_json_file");
-  
+
   return new Promise((resolve, reject) => {
     const request = index.getAll(jsonFileName);
     request.onsuccess = () => {

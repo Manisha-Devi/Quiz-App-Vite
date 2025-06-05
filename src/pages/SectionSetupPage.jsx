@@ -1,6 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getJSONImages } from '../utils/indexedDB';
 import '../styles/SectionSetupPage.css';
 
 function SectionSetupPage() {
@@ -18,23 +19,40 @@ function SectionSetupPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem('quizData'));
-    const images = JSON.parse(localStorage.getItem('fileImageMap') || '{}');
+    const loadData = async () => {
+      const data = JSON.parse(localStorage.getItem('quizData'));
 
-    if (!data) {
-      alert("⚠️ No data found. Please upload files first.");
-      navigate('/');
-      return;
-    }
+      if (!data) {
+        alert("⚠️ No data found. Please upload files first.");
+        navigate('/');
+        return;
+      }
 
-    setQuizData(data);
-    setFileImageMap(images);
+      setQuizData(data);
 
-    const initialCounts = {};
-    data.forEach((file, index) => {
-      initialCounts[index] = { 0: 0, 1: 0, 2: 0 };
-    });
-    setQuestionCounts(initialCounts);
+      // Load images from IndexedDB for each JSON file
+      const imageMap = {};
+      for (const file of data) {
+        try {
+          const images = await getJSONImages(file.name);
+          if (images && images.length > 0) {
+            imageMap[`${file.name}.json`] = images;
+          }
+        } catch (error) {
+          console.log(`No images found for ${file.name}:`, error);
+        }
+      }
+      
+      setFileImageMap(imageMap);
+
+      const initialCounts = {};
+      data.forEach((file, index) => {
+        initialCounts[index] = { 0: 0, 1: 0, 2: 0 };
+      });
+      setQuestionCounts(initialCounts);
+    };
+
+    loadData();
   }, [navigate]);
 
   const toggleDarkMode = () => {
