@@ -32,7 +32,7 @@ function ExamPage() {
   const quizTimeRaw = localStorage.getItem('quizTime');
   const practiceMode = localStorage.getItem('practiceMode') === 'true';
   const enableDrawing = localStorage.getItem('enableDrawing') !== 'false';
-  
+
   if (!quizTimeRaw) throw new Error("❌ quizTime not found in localStorage.");
   const quizTimeMinutes = Number(quizTimeRaw);
   if (isNaN(quizTimeMinutes) || quizTimeMinutes <= 0) {
@@ -79,7 +79,7 @@ function ExamPage() {
     Object.keys(sectionGroups).forEach(sectionName => {
       const sectionQuestions = sectionGroups[sectionName];
       const questionIndices = [];
-      
+
       for (let i = 0; i < sectionQuestions.length; i++) {
         questionIndices.push(globalQuestionIndex);
         globalQuestionIndex++;
@@ -135,7 +135,7 @@ function ExamPage() {
 
   useEffect(() => {
     if (practiceMode) return;
-    
+
     const id = setInterval(() => {
       setTimeLeft(prev => {
         if (prev <= 1) {
@@ -223,7 +223,7 @@ function ExamPage() {
   return (
     <>
       <div className={`exam-ui ${isFullscreen ? 'fullscreen' : ''} ${isDarkMode ? 'dark-mode' : ''}`}>
-        <MathJaxContext config={mathConfig}>
+        
           <div className="exam-ui">
             <header className="exam-header">
               <div className="section-name">
@@ -286,7 +286,7 @@ function ExamPage() {
               </div>
             </footer>
           </div>
-        </MathJaxContext>
+        
         {enableDrawing && <DrawingOverlay />}
         <div className="fullscreen-btn-container">
           <button className="fullscreen-btn" onClick={toggleFullscreen}>

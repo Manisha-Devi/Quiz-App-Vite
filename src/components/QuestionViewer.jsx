@@ -1,6 +1,8 @@
+
 import React from 'react';
 import PropTypes from 'prop-types';
-import { MathJax } from 'better-react-mathjax';
+import { InlineMath, BlockMath } from 'react-katex';
+import 'katex/dist/katex.min.css';
 import './styles/QuestionViewer.css';
 
 function QuestionViewer({
@@ -51,6 +53,79 @@ function QuestionViewer({
   const handleShowAnswer = () => {
     setShowAnswer(!showAnswer);
   };
+
+  // Function to render text with both KaTeX math and HTML
+  const renderMathAndHTML = (text) => {
+    if (!text) return null;
+
+    // Process the text with image sources first
+    const processedText = injectImageSources(text);
+    
+    // Split by $ for inline math and $$ for display math
+    const parts = [];
+    let currentText = processedText;
+    let key = 0;
+
+    // Handle display math ($$...$$) first
+    while (currentText.includes('$$')) {
+      const startIndex = currentText.indexOf('$$');
+      const endIndex = currentText.indexOf('$$', startIndex + 2);
+      
+      if (endIndex === -1) break;
+      
+      // Add text before math
+      if (startIndex > 0) {
+        const beforeMath = currentText.substring(0, startIndex);
+        parts.push(
+          <span key={key++} dangerouslySetInnerHTML={{ __html: beforeMath }} />
+        );
+      }
+      
+      // Add display math
+      const mathContent = currentText.substring(startIndex + 2, endIndex);
+      parts.push(
+        <BlockMath key={key++} math={mathContent} />
+      );
+      
+      // Continue with remaining text
+      currentText = currentText.substring(endIndex + 2);
+    }
+
+    // Handle inline math ($...$)
+    while (currentText.includes('$')) {
+      const startIndex = currentText.indexOf('$');
+      const endIndex = currentText.indexOf('$', startIndex + 1);
+      
+      if (endIndex === -1) break;
+      
+      // Add text before math
+      if (startIndex > 0) {
+        const beforeMath = currentText.substring(0, startIndex);
+        parts.push(
+          <span key={key++} dangerouslySetInnerHTML={{ __html: beforeMath }} />
+        );
+      }
+      
+      // Add inline math
+      const mathContent = currentText.substring(startIndex + 1, endIndex);
+      parts.push(
+        <InlineMath key={key++} math={mathContent} />
+      );
+      
+      // Continue with remaining text
+      currentText = currentText.substring(endIndex + 1);
+    }
+
+    // Add any remaining text
+    if (currentText) {
+      parts.push(
+        <span key={key++} dangerouslySetInnerHTML={{ __html: currentText }} />
+      );
+    }
+
+    return parts.length > 0 ? parts : <span dangerouslySetInnerHTML={{ __html: processedText }} />;
+  };
+
   return (
     <div className="question-box">
       <div className="section-name-display">
@@ -77,6 +152,7 @@ function QuestionViewer({
           )}
         </div>
       </div>
+      
       <div className="question-scroll" {...swipeHandlers}>
         <div className="q-header">
           <div className="q-number">Q{currentIndex + 1}</div>
@@ -91,13 +167,7 @@ function QuestionViewer({
         </div>
 
         <div className="q-text">
-          {hasMath(question.question) ? (
-            <MathJax dynamic inline>
-              <div dangerouslySetInnerHTML={{ __html: injectImageSources(question.question) }} />
-            </MathJax>
-          ) : (
-            <div dangerouslySetInnerHTML={{ __html: injectImageSources(question.question) }} />
-          )}
+          {renderMathAndHTML(question.question)}
         </div>
 
         <div className="options">
@@ -115,13 +185,7 @@ function QuestionViewer({
                 style={{ cursor: showAnswer ? 'not-allowed' : 'pointer' }}
               >
                 <strong>{String.fromCharCode(65 + idx)}.</strong>{' '}
-                {hasMath(opt) ? (
-                  <MathJax dynamic inline>
-                    <span dangerouslySetInnerHTML={{ __html: injectImageSources(opt) }} />
-                  </MathJax>
-                ) : (
-                  <span dangerouslySetInnerHTML={{ __html: injectImageSources(opt) }} />
-                )}
+                {renderMathAndHTML(opt)}
                 {isCorrectAnswer && <span className="correct-indicator"> ✅ Correct Answer</span>}
               </div>
             );
@@ -134,13 +198,7 @@ function QuestionViewer({
               <strong>Explanation:</strong>
             </div>
             <div className="explanation-content">
-              {hasMath(question.explanation) ? (
-                <MathJax dynamic inline>
-                  <div dangerouslySetInnerHTML={{ __html: injectImageSources(question.explanation) }} />
-                </MathJax>
-              ) : (
-                <div dangerouslySetInnerHTML={{ __html: injectImageSources(question.explanation) }} />
-              )}
+              {renderMathAndHTML(question.explanation)}
             </div>
           </div>
         )}
