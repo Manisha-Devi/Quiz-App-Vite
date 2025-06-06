@@ -253,6 +253,34 @@ function UploadPage() {
     navigate("/sections");
   };
 
+  const handleRefreshData = async () => {
+    if (confirm("Are you sure you want to clear all data and refresh? This will remove all cached files, quiz data, and settings.")) {
+      try {
+        // Clear localStorage
+        localStorage.clear();
+        
+        // Clear IndexedDB
+        await clearDatabase();
+        
+        // Clear sessionStorage
+        sessionStorage.clear();
+        
+        // Reset component state
+        setFiles([]);
+        setFileImageMap({});
+        setQuizTime(60);
+        setErrors([]);
+        setShowSuccess(false);
+        
+        // Reload the page for fresh start
+        window.location.reload();
+      } catch (error) {
+        console.error("Error clearing data:", error);
+        setErrors(["❌ Error clearing data. Please try again."]);
+      }
+    }
+  };
+
   return (
     <div className={`upload-page ${isDarkMode ? "dark-mode" : ""}`}>
       {/* Header similar to exam page */}
@@ -270,6 +298,13 @@ function UploadPage() {
               {isOnline ? "Online" : "Offline"}
             </span>
           </div>
+          <button
+            className="refresh-data-btn"
+            onClick={handleRefreshData}
+            title="Clear All Data & Refresh"
+          >
+            🔄
+          </button>
           <button
             className="theme-toggle-btn"
             onClick={toggleDarkMode}
