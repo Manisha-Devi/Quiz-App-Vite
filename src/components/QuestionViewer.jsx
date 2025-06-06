@@ -16,11 +16,37 @@ function QuestionViewer({
   swipeHandlers
 }) {
   const [showAnswer, setShowAnswer] = React.useState(false);
+  const [sectionsReady, setSectionsReady] = React.useState(!!window.sections);
 
   // Reset showAnswer when question changes
   React.useEffect(() => {
     setShowAnswer(false);
   }, [currentIndex]);
+
+  // Check for sections availability
+  React.useEffect(() => {
+    const checkSections = () => {
+      if (window.sections && !sectionsReady) {
+        setSectionsReady(true);
+      }
+    };
+    
+    // Check immediately
+    checkSections();
+    
+    // Set up interval to check periodically
+    const interval = setInterval(checkSections, 100);
+    
+    // Clean up after 2 seconds
+    const timeout = setTimeout(() => {
+      clearInterval(interval);
+    }, 2000);
+    
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timeout);
+    };
+  }, [sectionsReady]);
 
   const handleShowAnswer = () => {
     setShowAnswer(!showAnswer);
@@ -30,7 +56,7 @@ function QuestionViewer({
       <div className="section-name-display">
         <div className="section-placeholder"></div>
         <div className="section-navigation-horizontal">
-          {window.sections && window.sections.map((section, index) => {
+          {sectionsReady && window.sections && window.sections.length > 0 ? window.sections.map((section, index) => {
             const isActive = window.getCurrentSection && window.getCurrentSection()?.name === section.name;
             const startNum = section.questions.length > 0 ? section.questions[0] + 1 : 1;
             const endNum = section.questions.length > 0 ? section.questions[section.questions.length - 1] + 1 : 1;
@@ -46,9 +72,11 @@ function QuestionViewer({
                 <span className="section-nav-range">{startNum}-{endNum}</span>
               </button>
             );
-          })}
+          }) : (
+            <div className="loading-sections">Loading sections...</div>
+          )}
         </div>
-      </div>
+      </div></div>
       <div className="question-scroll" {...swipeHandlers}>
         <div className="q-header">
           <div className="q-number">Q{currentIndex + 1}</div>

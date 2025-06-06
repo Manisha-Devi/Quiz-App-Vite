@@ -93,10 +93,8 @@ function ExamPage() {
       });
     });
 
-    // Set global variables immediately
-    setTimeout(() => {
-      window.sections = sectionsArray;
-    }, 0);
+    // Set global variables immediately and synchronously
+    window.sections = sectionsArray;
 
     return sectionsArray;
   });
@@ -121,7 +119,7 @@ function ExamPage() {
     window.sections = sections;
     window.getCurrentSection = getCurrentSection;
     window.jumpToSection = jumpToSection;
-  }, [sections]);
+  }, []);
 
   useEffect(() => {
     if (!meta.startedAt) {
