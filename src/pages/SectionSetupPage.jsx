@@ -17,7 +17,7 @@ function SectionSetupPage() {
     return Number(localStorage.getItem('quizTime')) || 60;
   });
   const [practiceMode, setPracticeMode] = useState(false);
-  const [enableDrawing, setEnableDrawing] = useState(true);
+  const [enableDrawing, setEnableDrawing] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
