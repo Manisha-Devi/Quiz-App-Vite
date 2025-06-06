@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { getAllJSONFiles } from '../utils/indexedDB';
 import '../components/styles/LocalJSONLibrary.css';
@@ -40,7 +39,7 @@ function LocalJSONLibrary({ onFileSelect }) {
     });
   };
 
-  
+
 
   const handleContinue = () => {
     if (selectedFiles.length === 0) {
@@ -62,14 +61,14 @@ function LocalJSONLibrary({ onFileSelect }) {
   const getFilteredAndSortedFiles = () => {
     let filtered = localFiles.filter(file => {
       const matchesSearch = file.filename.toLowerCase().includes(searchTerm.toLowerCase());
-      
+
       if (filterBy === 'all') return matchesSearch;
-      
+
       const questionCount = Array.isArray(file.data) ? file.data.length : 0;
       if (filterBy === 'small') return matchesSearch && questionCount <= 20;
       if (filterBy === 'medium') return matchesSearch && questionCount > 20 && questionCount <= 50;
       if (filterBy === 'large') return matchesSearch && questionCount > 50;
-      
+
       return matchesSearch;
     });
 
@@ -119,7 +118,7 @@ function LocalJSONLibrary({ onFileSelect }) {
 
   return (
     <div className="local-json-library">
-      
+
 
       {/* Enhanced Search and Filters */}
       <div className="controls-section">
@@ -192,7 +191,7 @@ function LocalJSONLibrary({ onFileSelect }) {
         </div>
       </div>
 
-      
+
 
       {/* Selection Summary */}
       <div className="selection-summary">
@@ -223,7 +222,7 @@ function LocalJSONLibrary({ onFileSelect }) {
           filteredFiles.map((file, index) => {
             const isSelected = selectedFiles.some(f => f.filename === file.filename);
             const questionCount = Array.isArray(file.data) ? file.data.length : 0;
-            
+
             return (
               <div 
                 key={index} 
@@ -238,7 +237,7 @@ function LocalJSONLibrary({ onFileSelect }) {
                     className="checkbox-input"
                   />
                 </div>
-                
+
                 <div className="file-content">
                   <div className="file-icon">📄</div>
                   <div className="file-info">
@@ -254,7 +253,7 @@ function LocalJSONLibrary({ onFileSelect }) {
                     </div>
                   </div>
                 </div>
-                
+
                 {isSelected && (
                   <div className="selected-indicator">✓</div>
                 )}
@@ -264,23 +263,7 @@ function LocalJSONLibrary({ onFileSelect }) {
         )}
       </div>
 
-      {/* Quiz Time Setting */}
-      <div className="quiz-time-section">
-        <div className="time-setting">
-          <label className="time-label">
-            <span className="time-icon">⏱️</span>
-            <span className="time-text">Quiz Duration (minutes)</span>
-          </label>
-          <input
-            type="number"
-            min="1"
-            max="300"
-            value={quizTime}
-            onChange={(e) => setQuizTime(Number(e.target.value))}
-            className="time-input"
-          />
-        </div>
-      </div>
+      
 
       {/* Continue Button */}
       <div className="action-section">

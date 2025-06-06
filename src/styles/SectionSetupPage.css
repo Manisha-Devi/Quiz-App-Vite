@@ -590,6 +590,14 @@
   border-color: rgba(167, 139, 250, 0.2);
 }
 
+/* Action Section at Top */
+.action-section-top {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+  margin-bottom: 30px;
+}
+
 /* Action Section */
 .action-section {
   display: flex;

@@ -198,6 +198,18 @@ function SectionSetupPage() {
           </div>
         </div>
 
+        {/* Start Quiz Button at Top */}
+        <div className="action-section-top">
+          <button
+            className="start-exam-btn"
+            onClick={handleStartExam}
+            disabled={getTotalSelected() === 0}
+          >
+            <span className="btn-text">Start Quiz</span>
+            <span className="btn-icon">🚀</span>
+          </button>
+        </div>
+
         {/* Sections Grid */}
         <div className="sections-grid">
           {quizData.map((file, fileIndex) => {
@@ -262,17 +274,6 @@ function SectionSetupPage() {
               </div>
             );
           })}
-        </div>
-
-        <div className="action-section">
-          <button
-            className="start-exam-btn"
-            onClick={handleStartExam}
-            disabled={getTotalSelected() === 0}
-          >
-            <span className="btn-text">Start Quiz</span>
-            <span className="btn-icon">🚀</span>
-          </button>
         </div>
       </div>
 
