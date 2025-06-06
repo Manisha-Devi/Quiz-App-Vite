@@ -385,7 +385,7 @@
 .section-name {
   font-size: 18px;
   font-weight: 600;
-  color: #2d3748;
+  color: #1a1a1a;
   margin: 0 0 12px 0;
   display: flex;
   align-items: center;
@@ -394,7 +394,7 @@
 }
 
 .section-page.dark-mode .section-name {
-  color: #e2e8f0;
+  color: white;
 }
 
 .section-name::before {
