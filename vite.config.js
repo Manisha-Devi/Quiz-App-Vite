@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     allowedHosts: [
-      "b7c4b305-dc5f-4ba9-ae2c-5c3efc5ab025-00-36rehncjxgmzj.sisko.replit.dev",
+      "ce79a939-c14a-4b24-a048-f37a182dfd7a-00-3d7fu30aj1s9g.pike.replit.dev",
       // Add any other hosts you want to allow here
     ],
   },
