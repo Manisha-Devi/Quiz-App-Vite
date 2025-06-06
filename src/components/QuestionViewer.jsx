@@ -12,7 +12,8 @@ function QuestionViewer({
   onToggleReview,
   injectImageSources,
   hasMath,
-  isDarkMode
+  isDarkMode,
+  swipeHandlers
 }) {
   const [showAnswer, setShowAnswer] = React.useState(false);
 
@@ -48,7 +49,7 @@ function QuestionViewer({
           })}
         </div>
       </div>
-      <div className="question-scroll">
+      <div className="question-scroll" {...swipeHandlers}>
         <div className="q-header">
           <div className="q-number">Q{currentIndex + 1}</div>
           <div className="header-actions">
@@ -129,7 +130,8 @@ QuestionViewer.propTypes = {
   onToggleReview: PropTypes.func.isRequired,
   injectImageSources: PropTypes.func.isRequired,
   hasMath: PropTypes.func.isRequired,
-  isDarkMode: PropTypes.bool
+  isDarkMode: PropTypes.bool,
+  swipeHandlers: PropTypes.object
 };
 
 export default QuestionViewer;

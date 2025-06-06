@@ -247,7 +247,7 @@ function ExamPage() {
             )}
 
             <div className="exam-main-layout">
-              <div className="exam-left" {...swipeHandlers}>
+              <div className="exam-left">
                 <QuestionViewer
                   question={q}
                   currentIndex={current}
@@ -258,6 +258,7 @@ function ExamPage() {
                   injectImageSources={injectImageSources}
                   hasMath={hasMath}
                   isDarkMode={isDarkMode}
+                  swipeHandlers={swipeHandlers}
                 />
               </div>
 
