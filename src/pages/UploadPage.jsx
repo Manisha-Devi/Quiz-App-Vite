@@ -282,13 +282,13 @@ function UploadPage() {
             onClick={() => setShowLocalJSON(!showLocalJSON)}
             title="Local JSON Files"
           >
-            {showLocalJSON ? "📄" : "📁"}
+            {showLocalJSON ? "📁" : "📄"}
           </button>
         </div>
       </header>
 
       <div className="upload-content">
-        {showLocalJSON ? (
+        {!showLocalJSON ? (
           <div className="library-section">
             {/* <div className="section-header">
               <h2>📁 Local JSON Files</h2>
