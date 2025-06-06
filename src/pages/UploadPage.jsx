@@ -217,9 +217,9 @@ function UploadPage() {
     }
   };
 
-  const handleLocalJSONSelect = (jsonData) => {
+  const handleLocalJSONSelect = (jsonData, selectedTime) => {
     localStorage.setItem('quizData', JSON.stringify(jsonData));
-    localStorage.setItem('quizTime', String(quizTime));
+    localStorage.setItem('quizTime', String(selectedTime || quizTime));
     localStorage.setItem('fileImageMap', JSON.stringify({}));
     navigate('/sections');
   };

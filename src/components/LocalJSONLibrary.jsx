@@ -56,7 +56,7 @@ function LocalJSONLibrary({ onFileSelect }) {
     localStorage.setItem('quizTime', String(quizTime));
     localStorage.setItem('fileImageMap', JSON.stringify({}));
 
-    onFileSelect(formattedData);
+    onFileSelect(formattedData, quizTime);
   };
 
   const getFilteredAndSortedFiles = () => {

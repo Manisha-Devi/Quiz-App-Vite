@@ -30,12 +30,15 @@ function ExamPage() {
   };
 
   const quizTimeRaw = localStorage.getItem('quizTime');
+  const practiceMode = localStorage.getItem('practiceMode') === 'true';
+  const enableDrawing = localStorage.getItem('enableDrawing') !== 'false';
+  
   if (!quizTimeRaw) throw new Error("❌ quizTime not found in localStorage.");
   const quizTimeMinutes = Number(quizTimeRaw);
   if (isNaN(quizTimeMinutes) || quizTimeMinutes <= 0) {
     throw new Error("❌ Invalid quizTime in localStorage.");
   }
-  const EXAM_DURATION = quizTimeMinutes * 60;
+  const EXAM_DURATION = practiceMode ? Infinity : quizTimeMinutes * 60;
 
   const mathConfig = { loader: { load: ['input/tex', 'output/chtml'] } };
   const hasMath = (text = '') => /\\\(|\\\[|\\begin|\\frac|\\sqrt/.test(text);
@@ -47,11 +50,12 @@ function ExamPage() {
   const [current, setCurrent] = useState(saved.current ?? 0);
   const [answers, setAnswers] = useState(saved.answers ?? {});
   const [review, setReview] = useState(saved.review ?? {});
-  const [timeLeft, setTimeLeft] = useState(() =>
-    meta.startedAt
+  const [timeLeft, setTimeLeft] = useState(() => {
+    if (practiceMode) return Infinity;
+    return meta.startedAt
       ? Math.max(0, EXAM_DURATION - Math.floor((Date.now() - meta.startedAt) / 1000))
-      : EXAM_DURATION
-  );
+      : EXAM_DURATION;
+  });
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
   const [showTimeWarning, setShowTimeWarning] = useState(timeLeft <= 300); // Track visibility of the warning
@@ -127,6 +131,8 @@ function ExamPage() {
   }, []);
 
   useEffect(() => {
+    if (practiceMode) return;
+    
     const id = setInterval(() => {
       setTimeLeft(prev => {
         if (prev <= 1) {
@@ -138,7 +144,7 @@ function ExamPage() {
       });
     }, 1000);
     return () => clearInterval(id);
-  }, []);
+  }, [practiceMode]);
 
   useEffect(() => {
     localStorage.setItem('examState', JSON.stringify({ answers, review, current }));
@@ -217,9 +223,13 @@ function ExamPage() {
         <MathJaxContext config={mathConfig}>
           <div className="exam-ui">
             <header className="exam-header">
-              <div className="section-name">Exam Page</div>
+              <div className="section-name">
+                {practiceMode ? 'Practice Mode' : 'Exam Page'}
+              </div>
               <div className="d-flex align-items-center gap-2">
-                <div className="timer-box">{formatTime(timeLeft)}</div>
+                <div className="timer-box">
+                  {practiceMode ? '∞ Practice' : formatTime(timeLeft)}
+                </div>
                 <button className="theme-toggle-btn" onClick={toggleDarkMode} title="Toggle Dark Mode">
                   {isDarkMode ? '☀️' : '🌙'}
                 </button>
@@ -229,7 +239,7 @@ function ExamPage() {
               </div>
             </header>
 
-            {showTimeWarning && timeLeft <= 300 && (
+            {!practiceMode && showTimeWarning && timeLeft <= 300 && (
               <div className="time-warning">
                 ⚠️ Only 5 minutes left. Please finish up!
                 <button className="close-btn" onClick={closeTimeWarning}>✖️</button>
@@ -273,7 +283,7 @@ function ExamPage() {
             </footer>
           </div>
         </MathJaxContext>
-        <DrawingOverlay />
+        {enableDrawing && <DrawingOverlay />}
         <div className="fullscreen-btn-container">
           <button className="fullscreen-btn" onClick={toggleFullscreen}>
             {!isFullscreen && <span className="fullscreen-icon">⛶</span>}

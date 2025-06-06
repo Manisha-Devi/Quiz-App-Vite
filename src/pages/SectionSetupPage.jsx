@@ -14,6 +14,11 @@ function SectionSetupPage() {
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return localStorage.getItem('darkMode') === 'true';
   });
+  const [quizTime, setQuizTime] = useState(() => {
+    return Number(localStorage.getItem('quizTime')) || 60;
+  });
+  const [practiceMode, setPracticeMode] = useState(false);
+  const [enableDrawing, setEnableDrawing] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -95,6 +100,11 @@ function SectionSetupPage() {
       return;
     }
 
+    // Save quiz settings
+    localStorage.setItem('quizTime', String(quizTime));
+    localStorage.setItem('practiceMode', String(practiceMode));
+    localStorage.setItem('enableDrawing', String(enableDrawing));
+    
     // Don't shuffle the final array to maintain section grouping
     localStorage.setItem('finalQuiz', JSON.stringify(selectedQuestions));
     navigate('/exam');
@@ -236,6 +246,60 @@ function SectionSetupPage() {
               </div>
             );
           })}
+        </div>
+
+        {/* Quiz Settings */}
+        <div className="quiz-settings-section">
+          <div className="settings-header">
+            <h3>⚙️ Quiz Settings</h3>
+          </div>
+          
+          <div className="settings-controls">
+            <div className="setting-item">
+              <label className="setting-label">
+                <span className="label-icon">⏱️</span>
+                <span className="label-text">Quiz Duration (minutes)</span>
+              </label>
+              <input
+                type="number"
+                min="1"
+                max="300"
+                value={quizTime}
+                onChange={(e) => setQuizTime(Number(e.target.value))}
+                className="time-input"
+              />
+            </div>
+            
+            <div className="setting-item">
+              <label className="setting-label">
+                <span className="label-icon">🎯</span>
+                <span className="label-text">Practice Mode</span>
+              </label>
+              <label className="toggle-switch">
+                <input
+                  type="checkbox"
+                  checked={practiceMode}
+                  onChange={(e) => setPracticeMode(e.target.checked)}
+                />
+                <span className="toggle-slider"></span>
+              </label>
+            </div>
+            
+            <div className="setting-item">
+              <label className="setting-label">
+                <span className="label-icon">✏️</span>
+                <span className="label-text">Enable Drawing</span>
+              </label>
+              <label className="toggle-switch">
+                <input
+                  type="checkbox"
+                  checked={enableDrawing}
+                  onChange={(e) => setEnableDrawing(e.target.checked)}
+                />
+                <span className="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
         </div>
 
         <div className="action-section">
