@@ -227,4 +227,3 @@ QuestionViewer.propTypes = {
 };
 
 export default QuestionViewer;
-```
