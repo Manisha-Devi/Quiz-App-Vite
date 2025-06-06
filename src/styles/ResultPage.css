@@ -680,16 +680,16 @@
     gap: 30px;
     text-align: center;
   }
-  
+
   .performance-stats {
     grid-template-columns: repeat(2, 1fr);
     gap: 15px;
   }
-  
+
   .breakdown-bar-container {
     min-width: auto;
   }
-  
+
   .breakdown-legend {
     justify-content: center;
   }
@@ -723,16 +723,16 @@
   .performance-dashboard {
     padding: 20px 15px;
   }
-  
+
   .performance-stats {
     grid-template-columns: 1fr;
     gap: 12px;
   }
-  
+
   .stat-item {
     padding: 12px;
   }
-  
+
   .breakdown-legend {
     flex-direction: column;
     align-items: center;
@@ -1757,4 +1757,16 @@
   .filter-tab:active {
     transform: scale(0.95);
   }
+}
+
+/* result-content class and dark mode adjustments */
+.result-content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background: transparent;
+}
+
+.result-page.dark-mode .result-content {
+  color: #e0e0e0 !important;
 }
