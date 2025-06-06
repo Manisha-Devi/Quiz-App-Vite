@@ -72,29 +72,84 @@ const PWAInstaller = () => {
 
       {/* Install Banner */}
       {showInstallBanner && (
-        <div className="alert alert-info position-fixed bottom-0 start-0 end-0 m-3" 
-             style={{ zIndex: 9998 }}>
-          <div className="d-flex justify-content-between align-items-center">
-            <div>
-              <strong>📱 Install Quiz App</strong>
-              <p className="mb-0 small">Get faster access and offline support!</p>
-            </div>
-            <div>
+        <div className="position-fixed top-50 start-50 translate-middle" 
+             style={{ 
+               zIndex: 9998, 
+               width: '90%', 
+               maxWidth: '400px',
+               background: 'white',
+               borderRadius: '12px',
+               boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
+               border: '2px solid #4CAF50'
+             }}>
+          <div className="position-relative p-4">
+            <button 
+              className="position-absolute top-0 end-0 m-2 btn-close"
+              onClick={handleDismiss}
+              style={{
+                background: 'none',
+                border: 'none',
+                fontSize: '20px',
+                cursor: 'pointer',
+                color: '#666',
+                padding: '8px',
+                borderRadius: '50%',
+                width: '32px',
+                height: '32px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              ✕
+            </button>
+            
+            <div className="text-center">
+              <div className="mb-3">
+                <span style={{ fontSize: '48px' }}>📱</span>
+              </div>
+              <h4 className="mb-2" style={{ color: '#333', fontWeight: 'bold' }}>
+                Install Quiz App
+              </h4>
+              <p className="mb-3 text-muted">
+                Get faster access and offline support!
+              </p>
               <button 
-                className="btn btn-primary btn-sm me-2" 
+                className="btn btn-primary btn-lg w-100" 
                 onClick={handleInstallClick}
+                style={{
+                  background: '#4CAF50',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  fontWeight: 'bold'
+                }}
               >
-                Install
+                🚀 Install Now
               </button>
               <button 
-                className="btn btn-outline-secondary btn-sm" 
+                className="btn btn-link text-muted mt-2 w-100" 
                 onClick={handleDismiss}
+                style={{ textDecoration: 'none', fontSize: '14px' }}
               >
-                ✕
+                Maybe later
               </button>
             </div>
           </div>
         </div>
+      )}
+      
+      {/* Backdrop */}
+      {showInstallBanner && (
+        <div 
+          className="position-fixed top-0 start-0 w-100 h-100"
+          style={{
+            zIndex: 9997,
+            background: 'rgba(0,0,0,0.5)',
+            backdropFilter: 'blur(4px)'
+          }}
+          onClick={handleDismiss}
+        />
       )}
     </>
   );
