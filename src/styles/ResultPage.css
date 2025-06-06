@@ -63,6 +63,11 @@
 .result-page.dark-mode .result-header {
   background: #2d2d30 !important;
   border-bottom: 1px solid #404040 !important;
+  color: white !important;
+}
+
+.result-page.dark-mode .section-name {
+  color: white !important;
 }
 
 .result-page.dark-mode .score-box {
@@ -84,6 +89,7 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  color: white;
 }
 
 .score-box {

@@ -20,6 +20,11 @@
 .exam-ui.dark-mode .exam-header {
   background: #2d2d30 !important;
   border-bottom: 1px solid #404040 !important;
+  color: white !important;
+}
+
+.exam-ui.dark-mode .section-name {
+  color: white !important;
 }
 
 .exam-ui.dark-mode .timer-box {
@@ -101,6 +106,7 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  color: white;
 }
 
 .section-name:before {
