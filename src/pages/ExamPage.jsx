@@ -93,6 +93,11 @@ function ExamPage() {
       });
     });
 
+    // Set global variables immediately
+    setTimeout(() => {
+      window.sections = sectionsArray;
+    }, 0);
+
     return sectionsArray;
   });
 
@@ -116,7 +121,7 @@ function ExamPage() {
     window.sections = sections;
     window.getCurrentSection = getCurrentSection;
     window.jumpToSection = jumpToSection;
-  }, [sections, getCurrentSection, jumpToSection]);
+  }, [sections]);
 
   useEffect(() => {
     if (!meta.startedAt) {
@@ -215,7 +220,7 @@ function ExamPage() {
     setShowTimeWarning(false); // Only hide the warning
   };
 
-  if (!questions.length) return <div className="exam-ui">Loading exam…</div>;
+  if (!questions.length || !sections.length) return <div className="exam-ui">Loading exam…</div>;
 
   return (
     <>

@@ -34,7 +34,7 @@ function QuestionViewer({
             const isActive = window.getCurrentSection && window.getCurrentSection()?.name === section.name;
             const startNum = section.questions.length > 0 ? section.questions[0] + 1 : 1;
             const endNum = section.questions.length > 0 ? section.questions[section.questions.length - 1] + 1 : 1;
-            
+
             return (
               <button
                 key={index}
