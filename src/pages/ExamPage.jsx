@@ -119,7 +119,7 @@ function ExamPage() {
     window.sections = sections;
     window.getCurrentSection = getCurrentSection;
     window.jumpToSection = jumpToSection;
-  }, []);
+  }, [current, sections]);
 
   useEffect(() => {
     if (!meta.startedAt) {

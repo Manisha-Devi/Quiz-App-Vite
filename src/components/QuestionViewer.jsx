@@ -1,4 +1,3 @@
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { InlineMath, BlockMath } from 'react-katex';
@@ -32,18 +31,18 @@ function QuestionViewer({
         setSectionsReady(true);
       }
     };
-    
+
     // Check immediately
     checkSections();
-    
+
     // Set up interval to check periodically
     const interval = setInterval(checkSections, 100);
-    
+
     // Clean up after 2 seconds
     const timeout = setTimeout(() => {
       clearInterval(interval);
     }, 2000);
-    
+
     return () => {
       clearInterval(interval);
       clearTimeout(timeout);
@@ -60,7 +59,7 @@ function QuestionViewer({
 
     // Process the text with image sources first
     const processedText = injectImageSources(text);
-    
+
     // Split by $ for inline math and $$ for display math
     const parts = [];
     let currentText = processedText;
@@ -70,9 +69,9 @@ function QuestionViewer({
     while (currentText.includes('$$')) {
       const startIndex = currentText.indexOf('$$');
       const endIndex = currentText.indexOf('$$', startIndex + 2);
-      
+
       if (endIndex === -1) break;
-      
+
       // Add text before math
       if (startIndex > 0) {
         const beforeMath = currentText.substring(0, startIndex);
@@ -80,13 +79,13 @@ function QuestionViewer({
           <span key={key++} dangerouslySetInnerHTML={{ __html: beforeMath }} />
         );
       }
-      
+
       // Add display math
       const mathContent = currentText.substring(startIndex + 2, endIndex);
       parts.push(
         <BlockMath key={key++} math={mathContent} />
       );
-      
+
       // Continue with remaining text
       currentText = currentText.substring(endIndex + 2);
     }
@@ -95,9 +94,9 @@ function QuestionViewer({
     while (currentText.includes('$')) {
       const startIndex = currentText.indexOf('$');
       const endIndex = currentText.indexOf('$', startIndex + 1);
-      
+
       if (endIndex === -1) break;
-      
+
       // Add text before math
       if (startIndex > 0) {
         const beforeMath = currentText.substring(0, startIndex);
@@ -105,13 +104,13 @@ function QuestionViewer({
           <span key={key++} dangerouslySetInnerHTML={{ __html: beforeMath }} />
         );
       }
-      
+
       // Add inline math
       const mathContent = currentText.substring(startIndex + 1, endIndex);
       parts.push(
         <InlineMath key={key++} math={mathContent} />
       );
-      
+
       // Continue with remaining text
       currentText = currentText.substring(endIndex + 1);
     }
@@ -124,6 +123,13 @@ function QuestionViewer({
     }
 
     return parts.length > 0 ? parts : <span dangerouslySetInnerHTML={{ __html: processedText }} />;
+  };
+
+  // Get current section
+  const getCurrentSection = () => {
+    return window.sections?.find(section => 
+      section.questions.includes(currentIndex)
+    ) || window.sections?.[0];
   };
 
   return (
@@ -152,7 +158,7 @@ function QuestionViewer({
           )}
         </div>
       </div>
-      
+
       <div className="question-scroll" {...swipeHandlers}>
         <div className="q-header">
           <div className="q-number">Q{currentIndex + 1}</div>
@@ -221,3 +227,4 @@ QuestionViewer.propTypes = {
 };
 
 export default QuestionViewer;
+```
