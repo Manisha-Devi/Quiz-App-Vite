@@ -125,11 +125,14 @@ function QuestionViewer({
     return parts.length > 0 ? parts : <span dangerouslySetInnerHTML={{ __html: processedText }} />;
   };
 
-  // Get current section
+  // Get current section - using 1-based indexing for proper boundaries
   const getCurrentSection = () => {
-    return window.sections?.find(section => 
-      currentIndex >= section.startIndex && currentIndex <= section.endIndex
-    ) || window.sections?.[0];
+    const currentQuestionNumber = currentIndex + 1; // Convert to 1-based
+    return window.sections?.find(section => {
+      const startQuestion = section.startIndex + 1; // Convert to 1-based
+      const endQuestion = section.endIndex + 1; // Convert to 1-based
+      return currentQuestionNumber >= startQuestion && currentQuestionNumber <= endQuestion;
+    }) || window.sections?.[0];
   };
 
   return (
