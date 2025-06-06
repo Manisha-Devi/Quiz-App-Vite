@@ -141,9 +141,10 @@ const QuestionViewer = React.memo(function QuestionViewer({
         <div className="section-placeholder"></div>
         <div className="section-navigation-horizontal">
           {sectionsReady && window.sections && window.sections.length > 0 ? window.sections.map((section, index) => {
-            const isActive = window.getCurrentSection && window.getCurrentSection()?.name === section.name;
-            const startNum = section.questions.length > 0 ? section.questions[0] + 1 : 1;
-            const endNum = section.questions.length > 0 ? section.questions[section.questions.length - 1] + 1 : 1;
+            const currentSection = window.getCurrentSection && window.getCurrentSection();
+            const isActive = currentSection && currentSection.name === section.name;
+            const startNum = section.startIndex + 1;
+            const endNum = section.endIndex + 1;
 
             return (
               <button

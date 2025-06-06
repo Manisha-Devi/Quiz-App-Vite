@@ -100,13 +100,10 @@ function ExamPage() {
     return sectionsArray;
   }, [questions]);
 
-  // Get current section - using 1-based indexing for proper boundaries - memoized
+  // Get current section - using proper indexing for boundaries - memoized
   const getCurrentSection = useCallback(() => {
-    const currentQuestionNumber = current + 1; // Convert to 1-based
     return sections.find(section => {
-      const startQuestion = section.startIndex + 1; // Convert to 1-based
-      const endQuestion = section.endIndex + 1; // Convert to 1-based
-      return currentQuestionNumber >= startQuestion && currentQuestionNumber <= endQuestion;
+      return current >= section.startIndex && current <= section.endIndex;
     }) || sections[0];
   }, [current, sections]);
 
