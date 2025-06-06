@@ -249,55 +249,123 @@ function SectionSetupPage() {
         </div>
 
         {/* Quiz Settings */}
-        <div className="quiz-settings-section">
-          <div className="settings-header">
-            <h3>⚙️ Quiz Settings</h3>
+        <div className="quiz-settings-panel">
+          <div className="panel-header">
+            <div className="header-content">
+              <h3>⚙️ Quiz Configuration</h3>
+              <p>Customize your quiz experience</p>
+            </div>
           </div>
           
-          <div className="settings-controls">
-            <div className="setting-item">
-              <label className="setting-label">
-                <span className="label-icon">⏱️</span>
-                <span className="label-text">Quiz Duration (minutes)</span>
-              </label>
-              <input
-                type="number"
-                min="1"
-                max="300"
-                value={quizTime}
-                onChange={(e) => setQuizTime(Number(e.target.value))}
-                className="time-input"
-              />
+          <div className="settings-grid">
+            <div className="setting-card time-setting">
+              <div className="card-icon">
+                <span>⏱️</span>
+              </div>
+              <div className="card-content">
+                <div className="card-header">
+                  <h4>Quiz Duration</h4>
+                  <p>Set time limit for the entire quiz</p>
+                </div>
+                <div className="time-control">
+                  <button 
+                    className="time-btn decrease"
+                    onClick={() => setQuizTime(Math.max(1, quizTime - 5))}
+                  >
+                    −
+                  </button>
+                  <div className="time-display">
+                    <input
+                      type="number"
+                      min="1"
+                      max="300"
+                      value={quizTime}
+                      onChange={(e) => setQuizTime(Number(e.target.value))}
+                      className="time-input"
+                    />
+                    <span className="time-unit">min</span>
+                  </div>
+                  <button 
+                    className="time-btn increase"
+                    onClick={() => setQuizTime(Math.min(300, quizTime + 5))}
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
             </div>
             
-            <div className="setting-item">
-              <label className="setting-label">
-                <span className="label-icon">🎯</span>
-                <span className="label-text">Practice Mode</span>
-              </label>
-              <label className="toggle-switch">
-                <input
-                  type="checkbox"
-                  checked={practiceMode}
-                  onChange={(e) => setPracticeMode(e.target.checked)}
-                />
-                <span className="toggle-slider"></span>
-              </label>
+            <div className="setting-card mode-setting">
+              <div className="card-icon">
+                <span>🎯</span>
+              </div>
+              <div className="card-content">
+                <div className="card-header">
+                  <h4>Practice Mode</h4>
+                  <p>Show answers immediately after each question</p>
+                </div>
+                <div className="toggle-control">
+                  <label className="modern-toggle">
+                    <input
+                      type="checkbox"
+                      checked={practiceMode}
+                      onChange={(e) => setPracticeMode(e.target.checked)}
+                    />
+                    <span className="toggle-track">
+                      <span className="toggle-thumb"></span>
+                      <span className="toggle-labels">
+                        <span className="label-off">OFF</span>
+                        <span className="label-on">ON</span>
+                      </span>
+                    </span>
+                  </label>
+                </div>
+              </div>
             </div>
             
-            <div className="setting-item">
-              <label className="setting-label">
-                <span className="label-icon">✏️</span>
-                <span className="label-text">Enable Drawing</span>
-              </label>
-              <label className="toggle-switch">
-                <input
-                  type="checkbox"
-                  checked={enableDrawing}
-                  onChange={(e) => setEnableDrawing(e.target.checked)}
-                />
-                <span className="toggle-slider"></span>
-              </label>
+            <div className="setting-card drawing-setting">
+              <div className="card-icon">
+                <span>✏️</span>
+              </div>
+              <div className="card-content">
+                <div className="card-header">
+                  <h4>Drawing Tools</h4>
+                  <p>Enable sketching and note-taking during quiz</p>
+                </div>
+                <div className="toggle-control">
+                  <label className="modern-toggle">
+                    <input
+                      type="checkbox"
+                      checked={enableDrawing}
+                      onChange={(e) => setEnableDrawing(e.target.checked)}
+                    />
+                    <span className="toggle-track">
+                      <span className="toggle-thumb"></span>
+                      <span className="toggle-labels">
+                        <span className="label-off">OFF</span>
+                        <span className="label-on">ON</span>
+                      </span>
+                    </span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="settings-summary">
+            <div className="summary-items">
+              <div className="summary-item">
+                <span className="summary-icon">⏱️</span>
+                <span className="summary-text">{quizTime} minutes</span>
+              </div>
+              <div className="summary-item">
+                <span className="summary-icon">🎯</span>
+                <span className="summary-text">{practiceMode ? 'Practice' : 'Exam'} mode</span>
+              </div>
+              <div className="summary-item">
+                <span className="summary-icon">✏️</span>
+                <span className="summary-text">Drawing {enableDrawing ? 'enabled' : 'disabled'}</span>
+              </div>
             </div>
           </div>
         </div>

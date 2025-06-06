@@ -356,46 +356,7 @@ function UploadPage() {
               )}
             </div>
 
-            {/* Quiz Settings */}
-            <div className="settings-section">
-              <div className="settings-header">
-                <h3>⚙️ Quiz Configuration</h3>
-                <p>Set up your quiz preferences</p>
-              </div>
-
-              <div className="settings-grid">
-                <div className="setting-item">
-                  <label className="setting-label">
-                    <span className="label-icon">⏱️</span>
-                    <div className="label-content">
-                      <span className="label-title">Quiz Duration</span>
-                      <span className="label-subtitle">Time limit for the entire quiz</span>
-                    </div>
-                  </label>
-                  <div className="time-input-container">
-                    <input
-                      type="number"
-                      min="1"
-                      max="300"
-                      value={quizTime}
-                      onChange={e => setQuizTime(Number(e.target.value))}
-                      className="time-input"
-                      placeholder="60"
-                    />
-                    <div className="time-unit">minutes</div>
-                  </div>
-                </div>
-
-                <div className="setting-info">
-                  <div className="info-card">
-                    <span className="info-icon">💡</span>
-                    <div className="info-content">
-                      <strong>Tip:</strong> Recommended 1-2 minutes per question
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            
 
             {/* Success Message */}
             {showSuccess && (
