@@ -295,7 +295,7 @@ function UploadPage() {
               <p>Select from JSON files automatically loaded from your project</p>
             </div> */}
             <div className="upload-instructions">
-              <h3>📁 Upload Quiz Files</h3>
+              <h3>📁 Select Quiz Files</h3>
               <p>Select from blow files to load your Quiz</p>
             </div>
             <LocalJSONLibrary onFileSelect={handleLocalJSONSelect} />
