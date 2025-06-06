@@ -149,67 +149,6 @@ function SectionSetupPage() {
       </header>
 
       <div className="section-content">
-        {/* Quiz Configuration */}
-        <div className="quiz-config-bar">
-          <div className="config-title">
-            <span>⚙️</span>
-            <span>Configuration</span>
-          </div>
-
-          <div className="config-controls">
-            <div className="config-item">
-              <span className="config-icon">⏱️</span>
-              <input
-                type="number"
-                min="1"
-                max="300"
-                value={quizTime}
-                onChange={(e) => setQuizTime(Number(e.target.value))}
-                className="time-input-mini"
-              />
-              <span className="config-unit">min</span>
-            </div>
-
-            <div className="config-item">
-              <span className="config-icon">🎯</span>
-              <label className="config-checkbox">
-                <input
-                  type="checkbox"
-                  checked={practiceMode}
-                  onChange={(e) => setPracticeMode(e.target.checked)}
-                />
-                <span className="checkbox-custom"></span>
-                <span className="config-label">Practice</span>
-              </label>
-            </div>
-
-            <div className="config-item">
-              <span className="config-icon">✏️</span>
-              <label className="config-checkbox">
-                <input
-                  type="checkbox"
-                  checked={enableDrawing}
-                  onChange={(e) => setEnableDrawing(e.target.checked)}
-                />
-                <span className="checkbox-custom"></span>
-                <span className="config-label">Drawing</span>
-              </label>
-            </div>
-          </div>
-        </div>
-
-        {/* Start Quiz Button */}
-        <div className="action-section-top">
-          <button
-            className="start-exam-btn"
-            onClick={handleStartExam}
-            disabled={getTotalSelected() === 0}
-          >
-            <span className="btn-text">Start Quiz</span>
-            <span className="btn-icon">🚀</span>
-          </button>
-        </div>
-
         {/* Sections Grid */}
         <div className="sections-grid">
           {quizData.map((file, fileIndex) => {
@@ -274,6 +213,67 @@ function SectionSetupPage() {
               </div>
             );
           })}
+        </div>
+
+        {/* Quiz Configuration */}
+        <div className="quiz-config-bar">
+          <div className="config-title">
+            <span>⚙️</span>
+            <span>Configuration</span>
+          </div>
+
+          <div className="config-controls">
+            <div className="config-item">
+              <span className="config-icon">⏱️</span>
+              <input
+                type="number"
+                min="1"
+                max="300"
+                value={quizTime}
+                onChange={(e) => setQuizTime(Number(e.target.value))}
+                className="time-input-mini"
+              />
+              <span className="config-unit">min</span>
+            </div>
+
+            <div className="config-item">
+              <span className="config-icon">🎯</span>
+              <label className="config-checkbox">
+                <input
+                  type="checkbox"
+                  checked={practiceMode}
+                  onChange={(e) => setPracticeMode(e.target.checked)}
+                />
+                <span className="checkbox-custom"></span>
+                <span className="config-label">Practice</span>
+              </label>
+            </div>
+
+            <div className="config-item">
+              <span className="config-icon">✏️</span>
+              <label className="config-checkbox">
+                <input
+                  type="checkbox"
+                  checked={enableDrawing}
+                  onChange={(e) => setEnableDrawing(e.target.checked)}
+                />
+                <span className="checkbox-custom"></span>
+                <span className="config-label">Drawing</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        {/* Start Quiz Button at Bottom */}
+        <div className="action-section">
+          <button
+            className="start-exam-btn"
+            onClick={handleStartExam}
+            disabled={getTotalSelected() === 0}
+          >
+            <span className="btn-text">Start Quiz</span>
+            <span className="btn-icon">🚀</span>
+          </button>
         </div>
       </div>
 
