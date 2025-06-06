@@ -190,8 +190,8 @@ function SectionSetupPage() {
                     return (
                       <div className="difficulty-group" key={level}>
                         <div className="difficulty-header">
+                          <span className="difficulty-icon">{icons[level]}</span>
                           <div className="difficulty-info">
-                            <span className="difficulty-icon">{icons[level]}</span>
                             <span className="difficulty-name">{labels[level]}</span>
                           </div>
                           <span className="difficulty-counter">{currentValue || 0}/{maxAvailable}</span>

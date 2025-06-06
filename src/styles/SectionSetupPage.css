@@ -495,17 +495,20 @@
   flex-wrap: nowrap;
 }
 
-.difficulty-info {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex: 1;
-  min-width: 0;
-}
-
 .difficulty-icon {
   font-size: 14px;
   flex-shrink: 0;
+  order: 1;
+}
+
+.difficulty-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+  order: 2;
 }
 
 .difficulty-name {
@@ -513,6 +516,7 @@
   color: #4a5568;
   font-size: 14px;
   flex-shrink: 0;
+  text-align: center;
 }
 
 .section-page.dark-mode .difficulty-name {
@@ -527,8 +531,8 @@
   padding: 4px 8px;
   border-radius: 8px;
   border: 1px solid rgba(0, 0, 0, 0.1);
-  margin-left: auto;
   flex-shrink: 0;
+  order: 3;
 }
 
 .section-page.dark-mode .difficulty-counter {
