@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MathJaxContext } from 'better-react-mathjax';
 import { useSwipeable } from 'react-swipeable';
@@ -60,8 +60,8 @@ function ExamPage() {
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
   const [showTimeWarning, setShowTimeWarning] = useState(timeLeft <= 300); // Track visibility of the warning
 
-  // Generate sections with proper numbering and grouping
-  const [sections] = useState(() => {
+  // Generate sections with proper numbering and grouping - memoized for performance
+  const sections = useMemo(() => {
     // First, group questions by section maintaining order
     const sectionGroups = {};
     const sectionOrder = [];
@@ -98,25 +98,25 @@ function ExamPage() {
     });
 
     return sectionsArray;
-  });
+  }, [questions]);
 
-  // Get current section - using 1-based indexing for proper boundaries
-  const getCurrentSection = () => {
+  // Get current section - using 1-based indexing for proper boundaries - memoized
+  const getCurrentSection = useCallback(() => {
     const currentQuestionNumber = current + 1; // Convert to 1-based
     return sections.find(section => {
       const startQuestion = section.startIndex + 1; // Convert to 1-based
       const endQuestion = section.endIndex + 1; // Convert to 1-based
       return currentQuestionNumber >= startQuestion && currentQuestionNumber <= endQuestion;
     }) || sections[0];
-  };
+  }, [current, sections]);
 
-  // Jump to section's first question
-  const jumpToSection = (sectionIndex) => {
+  // Jump to section's first question - memoized
+  const jumpToSection = useCallback((sectionIndex) => {
     const section = sections[sectionIndex];
     if (section && section.questions.length > 0) {
       setCurrent(section.questions[0]);
     }
-  };
+  }, [sections]);
 
   // Make functions available globally for QuestionViewer
   useEffect(() => {
@@ -157,10 +157,10 @@ function ExamPage() {
     localStorage.setItem('examState', JSON.stringify({ answers, review, current }));
   }, [answers, review, current]);
 
-  const handleClear = () => {
+  const handleClear = useCallback(() => {
     setAnswers(a => { const c = { ...a }; delete c[current]; return c; });
     setReview(r => { const c = { ...r }; delete c[current]; return c; });
-  };
+  }, [current]);
 
   useEffect(() => {
     const handler = (e) => {
@@ -175,18 +175,22 @@ function ExamPage() {
     return () => window.removeEventListener('keydown', handler);
   }, [current, questions.length]);
 
-  const injectImageSources = (html) => {
-    const imageMap = JSON.parse(localStorage.getItem('fileImageMap') || '{}');
+  // Memoize image injection for performance
+  const imageMap = useMemo(() => {
+    const map = JSON.parse(localStorage.getItem('fileImageMap') || '{}');
     const flatMap = {};
-    Object.values(imageMap).flat().forEach(({ name, data }) => {
+    Object.values(map).flat().forEach(({ name, data }) => {
       flatMap[name] = data;
     });
+    return flatMap;
+  }, []);
 
+  const injectImageSources = useCallback((html) => {
     return html.replace(/<img\s+[^>]*id=['"]([^'"]+)['"][^>]*>/g, (match, id) => {
-      const src = flatMap[id] || '';
+      const src = imageMap[id] || '';
       return `<img id="${id}" src="${src}" alt="${id}" />`;
     });
-  };
+  }, [imageMap]);
 
   const goNext = useCallback(() => setCurrent(c => (c + 1) % questions.length), [questions.length]);
   const goPrev = useCallback(() => setCurrent(c => (c - 1 + questions.length) % questions.length), [questions.length]);
@@ -200,27 +204,27 @@ function ExamPage() {
 
   const q = questions[current] || {};
 
-  const formatTime = s => {
+  const formatTime = useCallback(s => {
     const h = String(Math.floor(s / 3600)).padStart(2, '0');
     const m = String(Math.floor((s % 3600) / 60)).padStart(2, '0');
     const sec = String(s % 60).padStart(2, '0');
     return `${h}:${m}:${sec}`;
-  };
+  }, []);
 
-  const handleOption = idx => setAnswers(a => ({ ...a, [current]: idx }));
-  const toggleReview = () => setReview(r => ({ ...r, [current]: !r[current] }));
-  const handleNext = () => current < questions.length - 1 && setCurrent(current + 1);
+  const handleOption = useCallback(idx => setAnswers(a => ({ ...a, [current]: idx })), [current]);
+  const toggleReview = useCallback(() => setReview(r => ({ ...r, [current]: !r[current] })), [current]);
+  const handleNext = useCallback(() => current < questions.length - 1 && setCurrent(current + 1), [current, questions.length]);
 
-  const handleSubmit = (auto = false) => {
+  const handleSubmit = useCallback((auto = false) => {
     if (!auto && !window.confirm("Are you sure you want to submit the test?")) return;
     localStorage.setItem('examAnswers', JSON.stringify(answers));
     localStorage.setItem('reviewMarks', JSON.stringify(review));
     navigate('/result');
-  };
+  }, [answers, review, navigate]);
 
-  const closeTimeWarning = () => {
+  const closeTimeWarning = useCallback(() => {
     setShowTimeWarning(false); // Only hide the warning
-  };
+  }, []);
 
   if (!questions.length || !sections.length) return <div className="exam-ui">Loading exam…</div>;
 

@@ -1,15 +1,15 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
-import "./styles/QuestionNavigator.css";
+import React from 'react';
+import PropTypes from 'prop-types';
+import './styles/QuestionNavigator.css';
 
-function QuestionNavigator({
+const QuestionNavigator = React.memo(function QuestionNavigator({
   totalQuestions,
   current,
   answers,
   review,
   onJump,
 }) {
-  const [selectedTypes, setSelectedTypes] = useState([]);
+  const [selectedTypes, setSelectedTypes] = React.useState([]);
 
   const getStatus = (i) => {
     if (i === current) return "active";
@@ -98,7 +98,7 @@ function QuestionNavigator({
       </div>
 
       <div className="legend">
-        
+
 
         <label className="legend-pill answered">
           <input
@@ -108,7 +108,7 @@ function QuestionNavigator({
           />
           Answered ({counts.answered})
         </label>
-        
+
         <label className="legend-pill review">
           <input
             type="checkbox"
@@ -139,7 +139,7 @@ function QuestionNavigator({
       </div>
     </div>
   );
-}
+});
 
 QuestionNavigator.propTypes = {
   totalQuestions: PropTypes.number.isRequired,

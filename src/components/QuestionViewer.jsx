@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { InlineMath, BlockMath } from 'react-katex';
 import 'katex/dist/katex.min.css';
 import './styles/QuestionViewer.css';
 
-function QuestionViewer({
+const QuestionViewer = React.memo(function QuestionViewer({
   question,
   currentIndex,
   answer,
@@ -49,12 +49,12 @@ function QuestionViewer({
     };
   }, [sectionsReady]);
 
-  const handleShowAnswer = () => {
+  const handleShowAnswer = useCallback(() => {
     setShowAnswer(!showAnswer);
-  };
+  }, [showAnswer]);
 
-  // Function to render text with both KaTeX math and HTML
-  const renderMathAndHTML = (text) => {
+  // Function to render text with both KaTeX math and HTML - memoized for performance
+  const renderMathAndHTML = useCallback((text) => {
     if (!text) return null;
 
     // Process the text with image sources first
@@ -123,17 +123,17 @@ function QuestionViewer({
     }
 
     return parts.length > 0 ? parts : <span dangerouslySetInnerHTML={{ __html: processedText }} />;
-  };
+  }, [injectImageSources]);
 
-  // Get current section - using 1-based indexing for proper boundaries
-  const getCurrentSection = () => {
+  // Get current section - using 1-based indexing for proper boundaries - memoized
+  const getCurrentSection = useCallback(() => {
     const currentQuestionNumber = currentIndex + 1; // Convert to 1-based
     return window.sections?.find(section => {
       const startQuestion = section.startIndex + 1; // Convert to 1-based
       const endQuestion = section.endIndex + 1; // Convert to 1-based
       return currentQuestionNumber >= startQuestion && currentQuestionNumber <= endQuestion;
     }) || window.sections?.[0];
-  };
+  }, [currentIndex]);
 
   return (
     <div className="question-box">
@@ -214,7 +214,7 @@ function QuestionViewer({
       </div>
     </div>
   );
-}
+});
 
 QuestionViewer.propTypes = {
   question: PropTypes.object.isRequired,
