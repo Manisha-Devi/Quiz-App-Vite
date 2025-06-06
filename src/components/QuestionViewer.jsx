@@ -76,7 +76,7 @@ function QuestionViewer({
             <div className="loading-sections">Loading sections...</div>
           )}
         </div>
-      </div></div>
+      </div>
       <div className="question-scroll" {...swipeHandlers}>
         <div className="q-header">
           <div className="q-number">Q{currentIndex + 1}</div>
