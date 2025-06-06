@@ -678,9 +678,9 @@
 
 /* Header */
 .upload-header {
-  background: rgba(255, 255, 255, 0.95);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   backdrop-filter: blur(20px);
-  color: #1a1a1a;
+  color: white;
   padding: 16px 24px;
   display: flex;
   justify-content: space-between;
@@ -695,6 +695,7 @@
 .upload-page.dark-mode .upload-header {
   background: rgba(26, 26, 46, 0.8);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: white;
 }
 
 .page-title {
@@ -704,6 +705,7 @@
   font-size: 24px;
   font-weight: 700;
   letter-spacing: -0.5px;
+  color: white;
 }
 
 .title-icon {
