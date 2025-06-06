@@ -1,15 +1,11 @@
 .local-json-library {
-  background: transparent;
-  color: #333;
-  padding: 16px;
-  border-radius: 16px;
-  transition: all 0.3s ease;
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.dark-mode .local-json-library {
-  color: #e0e0e0 !important;
-  background: transparent !important;
-}
+
 
 /* Enhanced Controls Section */
 .controls-section {
