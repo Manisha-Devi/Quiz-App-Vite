@@ -261,10 +261,10 @@ function UploadPage() {
           </div>
         ) : (
           <div className="upload-section">
-            <div className="section-header">
+            {/* <div className="section-header">
               <h2>📁 Upload Quiz Files</h2>
               <p>Upload JSON files and configure your quiz settings</p>
-            </div>
+            </div> */}
 
             {/* File Upload Area */}
             <div className="upload-area">
