@@ -198,7 +198,7 @@ function SectionSetupPage() {
           </div>
         </div>
 
-        {/* Start Quiz Button at Top */}
+        {/* Start Quiz Button */}
         <div className="action-section-top">
           <button
             className="start-exam-btn"
