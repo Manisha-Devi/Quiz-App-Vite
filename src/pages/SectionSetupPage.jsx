@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAllJSONImages } from '../utils/indexedDB';
@@ -39,7 +38,6 @@ function SectionSetupPage() {
         try {
           const images = await getAllJSONImages(file.name);
           if (images && images.length > 0) {
-            // Convert to the expected format
             imageMap[`${file.name}.json`] = images.map(img => ({
               name: img.imageName,
               data: img.imageData
@@ -49,7 +47,7 @@ function SectionSetupPage() {
           console.log(`No images found for ${file.name}:`, error);
         }
       }
-      
+
       setFileImageMap(imageMap);
 
       const initialCounts = {};
@@ -81,7 +79,7 @@ function SectionSetupPage() {
     // Group questions by section to maintain section integrity
     quizData.forEach((file, fileIndex) => {
       const sectionQuestions = [];
-      
+
       [0, 1, 2].forEach(level => {
         const count = questionCounts[fileIndex][level] || 0;
         const filtered = file.questions.filter(q => q.level === level);
@@ -89,7 +87,7 @@ function SectionSetupPage() {
         const picked = filtered.slice(0, count).map(q => ({ ...q, section: file.name }));
         sectionQuestions.push(...picked);
       });
-      
+
       // Shuffle within section only
       shuffleArray(sectionQuestions);
       selectedQuestions.push(...sectionQuestions);
@@ -104,8 +102,7 @@ function SectionSetupPage() {
     localStorage.setItem('quizTime', String(quizTime));
     localStorage.setItem('practiceMode', String(practiceMode));
     localStorage.setItem('enableDrawing', String(enableDrawing));
-    
-    // Don't shuffle the final array to maintain section grouping
+
     localStorage.setItem('finalQuiz', JSON.stringify(selectedQuestions));
     navigate('/exam');
   };
@@ -138,25 +135,70 @@ function SectionSetupPage() {
       <header className="section-header">
         <div className="page-title">
           <span className="title-icon">🎯</span>
-          <span className="title-text">Question Selection</span>
+          <span className="title-text">Quiz Setup</span>
         </div>
         <div className="header-controls">
           <div className="selection-summary">
             <span className="summary-text">{getTotalSelected()}/{getTotalAvailable()}</span>
-            <span className="summary-label">Selected</span>
+            <span className="summary-label">Questions</span>
           </div>
-          <button className="theme-toggle-btn" onClick={toggleDarkMode} title="Toggle Dark Mode">
+          <button className="theme-toggle-btn" onClick={toggleDarkMode}>
             {isDarkMode ? '☀️' : '🌙'}
           </button>
         </div>
       </header>
 
       <div className="section-content">
-        <div className="content-header">
-          <h2>📚 Configure Your Quiz Sections</h2>
-          <p>Select the number of questions from each difficulty level for every section</p>
+        {/* Quiz Configuration */}
+        <div className="quiz-config-bar">
+          <div className="config-title">
+            <span>⚙️</span>
+            <span>Configuration</span>
+          </div>
+
+          <div className="config-controls">
+            <div className="config-item">
+              <span className="config-icon">⏱️</span>
+              <input
+                type="number"
+                min="1"
+                max="300"
+                value={quizTime}
+                onChange={(e) => setQuizTime(Number(e.target.value))}
+                className="time-input-mini"
+              />
+              <span className="config-unit">min</span>
+            </div>
+
+            <div className="config-item">
+              <span className="config-icon">🎯</span>
+              <label className="config-checkbox">
+                <input
+                  type="checkbox"
+                  checked={practiceMode}
+                  onChange={(e) => setPracticeMode(e.target.checked)}
+                />
+                <span className="checkbox-custom"></span>
+                <span className="config-label">Practice</span>
+              </label>
+            </div>
+
+            <div className="config-item">
+              <span className="config-icon">✏️</span>
+              <label className="config-checkbox">
+                <input
+                  type="checkbox"
+                  checked={enableDrawing}
+                  onChange={(e) => setEnableDrawing(e.target.checked)}
+                />
+                <span className="checkbox-custom"></span>
+                <span className="config-label">Drawing</span>
+              </label>
+            </div>
+          </div>
         </div>
 
+        {/* Sections Grid */}
         <div className="sections-grid">
           {quizData.map((file, fileIndex) => {
             const levelCounts = { 0: 0, 1: 0, 2: 0 };
@@ -174,25 +216,17 @@ function SectionSetupPage() {
                     <div className="section-stats">
                       <span className="total-questions">{file.questions.length} total</span>
                       <span className="selected-count">{selectedTotal} selected</span>
-                      <div className="level-breakdown">
-                        <span className="level-stat easy">🟢 {levelCounts[0]}</span>
-                        <span className="level-stat medium">🟠 {levelCounts[1]}</span>
-                        <span className="level-stat hard">🔴 {levelCounts[2]}</span>
-                      </div>
                     </div>
                   </div>
-                  
-                  <div className="section-actions">
-                    {images.length > 0 && (
-                      <button
-                        className="preview-images-btn"
-                        onClick={() => openImageModal(images)}
-                        title={`Preview ${images.length} images`}
-                      >
-                        🖼️ {images.length}
-                      </button>
-                    )}
-                  </div>
+
+                  {images.length > 0 && (
+                    <button
+                      className="preview-images-btn"
+                      onClick={() => openImageModal(images)}
+                    >
+                      🖼️ {images.length}
+                    </button>
+                  )}
                 </div>
 
                 <div className="difficulty-controls">
@@ -201,24 +235,16 @@ function SectionSetupPage() {
                     const icons = ['🟢', '🟠', '🔴'];
                     const maxAvailable = levelCounts[level];
                     const currentValue = questionCounts[fileIndex]?.[level] || 0;
-                    
+
                     return (
                       <div className="difficulty-group" key={level}>
                         <div className="difficulty-header">
                           <span className="difficulty-icon">{icons[level]}</span>
                           <span className="difficulty-name">{labels[level]}</span>
+                          <span className="available-count">/{maxAvailable}</span>
                         </div>
-                        
+
                         <div className="slider-container">
-                          <button 
-                            className="slider-btn left"
-                            onClick={() => handleInputChange(fileIndex, level, Math.max(0, currentValue - 1))}
-                            disabled={currentValue <= 0}
-                            title="Decrease"
-                          >
-                            ◀
-                          </button>
-                          
                           <input
                             type="range"
                             min="0"
@@ -227,17 +253,7 @@ function SectionSetupPage() {
                             onChange={(e) => handleInputChange(fileIndex, level, e.target.value)}
                             className="question-slider"
                           />
-                          
                           <div className="slider-value">{currentValue || 0}</div>
-                          
-                          <button 
-                            className="slider-btn right"
-                            onClick={() => handleInputChange(fileIndex, level, Math.min(maxAvailable, currentValue + 1))}
-                            disabled={currentValue >= maxAvailable}
-                            title="Increase"
-                          >
-                            ▶
-                          </button>
                         </div>
                       </div>
                     );
@@ -246,128 +262,6 @@ function SectionSetupPage() {
               </div>
             );
           })}
-        </div>
-
-        {/* Quiz Settings */}
-        <div className="quiz-settings-panel">
-          <div className="panel-header">
-            <div className="header-content">
-              <h3>⚙️ Quiz Configuration</h3>
-              <p>Customize your quiz experience</p>
-            </div>
-          </div>
-          
-          <div className="settings-grid">
-            <div className="setting-card time-setting">
-              <div className="card-icon">
-                <span>⏱️</span>
-              </div>
-              <div className="card-content">
-                <div className="card-header">
-                  <h4>Quiz Duration</h4>
-                  <p>Set time limit for the entire quiz</p>
-                </div>
-                <div className="time-control">
-                  <button 
-                    className="time-btn decrease"
-                    onClick={() => setQuizTime(Math.max(1, quizTime - 5))}
-                  >
-                    −
-                  </button>
-                  <div className="time-display">
-                    <input
-                      type="number"
-                      min="1"
-                      max="300"
-                      value={quizTime}
-                      onChange={(e) => setQuizTime(Number(e.target.value))}
-                      className="time-input"
-                    />
-                    <span className="time-unit">min</span>
-                  </div>
-                  <button 
-                    className="time-btn increase"
-                    onClick={() => setQuizTime(Math.min(300, quizTime + 5))}
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-            </div>
-            
-            <div className="setting-card mode-setting">
-              <div className="card-icon">
-                <span>🎯</span>
-              </div>
-              <div className="card-content">
-                <div className="card-header">
-                  <h4>Practice Mode</h4>
-                  <p>Show answers immediately after each question</p>
-                </div>
-                <div className="toggle-control">
-                  <label className="modern-toggle">
-                    <input
-                      type="checkbox"
-                      checked={practiceMode}
-                      onChange={(e) => setPracticeMode(e.target.checked)}
-                    />
-                    <span className="toggle-track">
-                      <span className="toggle-thumb"></span>
-                      <span className="toggle-labels">
-                        <span className="label-off">OFF</span>
-                        <span className="label-on">ON</span>
-                      </span>
-                    </span>
-                  </label>
-                </div>
-              </div>
-            </div>
-            
-            <div className="setting-card drawing-setting">
-              <div className="card-icon">
-                <span>✏️</span>
-              </div>
-              <div className="card-content">
-                <div className="card-header">
-                  <h4>Drawing Tools</h4>
-                  <p>Enable sketching and note-taking during quiz</p>
-                </div>
-                <div className="toggle-control">
-                  <label className="modern-toggle">
-                    <input
-                      type="checkbox"
-                      checked={enableDrawing}
-                      onChange={(e) => setEnableDrawing(e.target.checked)}
-                    />
-                    <span className="toggle-track">
-                      <span className="toggle-thumb"></span>
-                      <span className="toggle-labels">
-                        <span className="label-off">OFF</span>
-                        <span className="label-on">ON</span>
-                      </span>
-                    </span>
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="settings-summary">
-            <div className="summary-items">
-              <div className="summary-item">
-                <span className="summary-icon">⏱️</span>
-                <span className="summary-text">{quizTime} minutes</span>
-              </div>
-              <div className="summary-item">
-                <span className="summary-icon">🎯</span>
-                <span className="summary-text">{practiceMode ? 'Practice' : 'Exam'} mode</span>
-              </div>
-              <div className="summary-item">
-                <span className="summary-icon">✏️</span>
-                <span className="summary-text">Drawing {enableDrawing ? 'enabled' : 'disabled'}</span>
-              </div>
-            </div>
-          </div>
         </div>
 
         <div className="action-section">
@@ -390,7 +284,7 @@ function SectionSetupPage() {
               <h3 className="modal-title">{modalImages[modalIndex]?.name}</h3>
               <button className="modal-close-btn" onClick={closeModal}>×</button>
             </div>
-            
+
             <div className="modal-body">
               <img
                 src={modalImages[modalIndex]?.data}
@@ -398,7 +292,7 @@ function SectionSetupPage() {
                 className="modal-image"
               />
             </div>
-            
+
             <div className="modal-footer">
               <div className="image-navigation">
                 <button 
@@ -408,11 +302,11 @@ function SectionSetupPage() {
                 >
                   ⬅️ Previous
                 </button>
-                
+
                 <span className="image-counter">
                   {modalIndex + 1} of {modalImages.length}
                 </span>
-                
+
                 <button
                   className="nav-btn next-btn"
                   onClick={() => setModalIndex(i => Math.min(modalImages.length - 1, i + 1))}
@@ -425,8 +319,7 @@ function SectionSetupPage() {
           </div>
         </div>
       )}
-
-      </div>
+    </div>
   );
 }
 
