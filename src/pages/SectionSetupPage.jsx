@@ -190,12 +190,22 @@ function SectionSetupPage() {
                     return (
                       <div className="difficulty-group" key={level}>
                         <div className="difficulty-header">
-                          <span className="difficulty-icon">{icons[level]}</span>
-                          <span className="difficulty-name">{labels[level]}</span>
-                          <span className="available-count">/{maxAvailable}</span>
+                          <div className="difficulty-info">
+                            <span className="difficulty-icon">{icons[level]}</span>
+                            <span className="difficulty-name">{labels[level]}</span>
+                          </div>
+                          <span className="difficulty-counter">{currentValue || 0}/{maxAvailable}</span>
                         </div>
 
                         <div className="slider-container">
+                          <button 
+                            className="control-button"
+                            onClick={() => handleInputChange(fileIndex, level, Math.max(0, currentValue - 1))}
+                            disabled={currentValue <= 0}
+                            title="Decrease"
+                          >
+                            −
+                          </button>
                           <input
                             type="range"
                             min="0"
@@ -204,7 +214,14 @@ function SectionSetupPage() {
                             onChange={(e) => handleInputChange(fileIndex, level, e.target.value)}
                             className="question-slider"
                           />
-                          <div className="slider-value">{currentValue || 0}</div>
+                          <button 
+                            className="control-button"
+                            onClick={() => handleInputChange(fileIndex, level, Math.min(maxAvailable, currentValue + 1))}
+                            disabled={currentValue >= maxAvailable}
+                            title="Increase"
+                          >
+                            +
+                          </button>
                         </div>
                       </div>
                     );

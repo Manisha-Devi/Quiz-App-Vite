@@ -489,39 +489,98 @@
 .difficulty-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
   margin-bottom: 12px;
+  flex-wrap: nowrap;
+}
+
+.difficulty-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
 }
 
 .difficulty-icon {
   font-size: 14px;
+  flex-shrink: 0;
 }
 
 .difficulty-name {
   font-weight: 500;
   color: #4a5568;
-  flex: 1;
   font-size: 14px;
+  flex-shrink: 0;
 }
 
 .section-page.dark-mode .difficulty-name {
   color: #e2e8f0;
 }
 
-.available-count {
+.difficulty-counter {
   font-size: 12px;
   color: #718096;
   font-weight: 500;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 4px 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  margin-left: auto;
+  flex-shrink: 0;
 }
 
-.section-page.dark-mode .available-count {
+.section-page.dark-mode .difficulty-counter {
   color: #a0aec0;
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .slider-container {
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+.control-button {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: #4c51bf;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.control-button:hover:not(:disabled) {
+  background: #553c9a;
+  transform: scale(1.1);
+}
+
+.control-button:disabled {
+  background: #cbd5e0;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.section-page.dark-mode .control-button {
+  background: #a78bfa;
+}
+
+.section-page.dark-mode .control-button:hover:not(:disabled) {
+  background: #8b5cf6;
+}
+
+.section-page.dark-mode .control-button:disabled {
+  background: #4a5568;
 }
 
 .question-slider {
@@ -570,24 +629,6 @@
   background: #553c9a;
   transform: scale(1.1);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-}
-
-.slider-value {
-  font-size: 12px;
-  font-weight: 600;
-  color: #4c51bf;
-  background: rgba(76, 81, 191, 0.1);
-  padding: 2px 6px;
-  border-radius: 6px;
-  min-width: 18px;
-  text-align: center;
-  border: 1px solid rgba(76, 81, 191, 0.15);
-}
-
-.section-page.dark-mode .slider-value {
-  color: #a78bfa;
-  background: rgba(167, 139, 250, 0.15);
-  border-color: rgba(167, 139, 250, 0.2);
 }
 
 /* Action Section at Top */
@@ -928,23 +969,31 @@
   }
 
   .difficulty-header {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 6px;
   }
 
-  .available-count {
-    order: 3;
-    flex-basis: 100%;
-    margin-top: 4px;
+  .difficulty-info {
+    gap: 6px;
+  }
+
+  .difficulty-name {
+    font-size: 13px;
+  }
+
+  .difficulty-counter {
+    font-size: 11px;
+    padding: 2px 6px;
   }
 
   .slider-container {
-    gap: 6px;
+    gap: 8px;
   }
 
-  .slider-value {
-    font-size: 11px;
-    padding: 1px 4px;
+  .control-button {
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
   }
 
   .start-exam-btn {
