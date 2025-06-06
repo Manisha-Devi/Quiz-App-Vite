@@ -128,7 +128,7 @@ function QuestionViewer({
   // Get current section
   const getCurrentSection = () => {
     return window.sections?.find(section => 
-      section.questions.includes(currentIndex)
+      currentIndex >= section.startIndex && currentIndex <= section.endIndex
     ) || window.sections?.[0];
   };
 

@@ -62,21 +62,24 @@ function ExamPage() {
 
   // Generate sections with proper numbering and grouping
   const [sections] = useState(() => {
-    // First, group questions by section
+    // First, group questions by section maintaining order
     const sectionGroups = {};
+    const sectionOrder = [];
+    
     questions.forEach((question, index) => {
       const sectionName = question.section || 'General';
       if (!sectionGroups[sectionName]) {
         sectionGroups[sectionName] = [];
+        sectionOrder.push(sectionName);
       }
       sectionGroups[sectionName].push({ ...question, originalIndex: index });
     });
 
-    // Create sections with continuous numbering
+    // Create sections with continuous numbering in correct order
     const sectionsArray = [];
     let globalQuestionIndex = 0;
 
-    Object.keys(sectionGroups).forEach(sectionName => {
+    sectionOrder.forEach(sectionName => {
       const sectionQuestions = sectionGroups[sectionName];
       const questionIndices = [];
 
@@ -89,12 +92,10 @@ function ExamPage() {
         name: sectionName,
         startIndex: questionIndices[0],
         endIndex: questionIndices[questionIndices.length - 1],
-        questions: questionIndices
+        questions: questionIndices,
+        totalQuestions: sectionQuestions.length
       });
     });
-
-    // Set global variables immediately and synchronously
-    window.sections = sectionsArray;
 
     return sectionsArray;
   });
@@ -102,7 +103,7 @@ function ExamPage() {
   // Get current section
   const getCurrentSection = () => {
     return sections.find(section => 
-      section.questions.includes(current)
+      current >= section.startIndex && current <= section.endIndex
     ) || sections[0];
   };
 
