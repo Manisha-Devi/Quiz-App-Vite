@@ -7,15 +7,25 @@ export const loadJSONFilesToStorage = async () => {
     // Import all JSON files from the json folder
     const jsonModules = import.meta.glob('../json/*.json');
     
-    console.log('Loading JSON files to IndexedDB:', Object.keys(jsonModules));
+    console.log('Found JSON files:', Object.keys(jsonModules));
     
-    // Clear IndexedDB completely and reload fresh data every time
-    try {
+    // Get current file names from the file system
+    const currentFileNames = Object.keys(jsonModules).map(path => 
+      path.split('/').pop().replace('.json', '')
+    );
+    
+    // Get existing files from IndexedDB
+    const existingFiles = await getAllJSONFiles();
+    const existingFileNames = existingFiles.map(file => file.filename);
+    
+    // Find files that were deleted (exist in IndexedDB but not in file system)
+    const deletedFiles = existingFileNames.filter(name => !currentFileNames.includes(name));
+    
+    // Clear IndexedDB completely and reload fresh data
+    if (deletedFiles.length > 0) {
+      console.log('Deleted files detected:', deletedFiles);
       await clearJSONFiles();
-      console.log('Cleared existing JSON files from IndexedDB');
-    } catch (error) {
-      // IndexedDB might not exist yet, that's fine
-      console.log('No existing IndexedDB to clear');
+      console.log('Cleared all JSON files from IndexedDB');
     }
     
     // Process each JSON file
