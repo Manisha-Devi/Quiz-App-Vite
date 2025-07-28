@@ -20,11 +20,9 @@ function LocalJSONLibrary({ onFileSelect }) {
     try {
       setLoading(true);
       
-      if (forceReload) {
-        // Force reload from file system by calling jsonLoader
-        const { loadJSONFilesToStorage } = await import('../utils/jsonLoader');
-        await loadJSONFilesToStorage();
-      }
+      // Always load from file system first, then check IndexedDB
+      const { loadJSONFilesToStorage } = await import('../utils/jsonLoader');
+      await loadJSONFilesToStorage();
       
       const files = await getAllJSONFiles();
       setLocalFiles(files);

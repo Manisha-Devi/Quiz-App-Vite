@@ -309,16 +309,23 @@ function UploadPage() {
             className="refresh-btn"
             onClick={async () => {
               try {
-                // Clear JSON files cache first
-                await clearDatabase();
+                // Delete entire IndexedDB database
+                await deleteDatabase();
+                console.log('IndexedDB completely deleted');
+                
+                // Clear all localStorage and sessionStorage
+                localStorage.clear();
+                sessionStorage.clear();
+                
                 // Force reload the page
                 window.location.reload(true);
               } catch (error) {
                 console.error('Error during refresh:', error);
+                // Fallback: still reload page even if database deletion fails
                 window.location.reload();
               }
             }}
-            title="Refresh Page"
+            title="Clear All Data & Refresh"
           >
             🔄
           </button>

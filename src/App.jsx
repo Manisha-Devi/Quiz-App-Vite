@@ -9,19 +9,7 @@ import { loadJSONFilesToStorage, loadJSONImagesFromFolders } from './utils/jsonL
 import './App.css';
 
 function App() {
-  useEffect(() => {
-    const initializeApp = async () => {
-      try {
-        await loadJSONFilesToStorage();
-        await loadJSONImagesFromFolders();
-      } catch (error) {
-        console.error('Error initializing app:', error);
-      }
-    };
-
-    initializeApp();
-  }, []);
-
+  // Removed automatic IndexedDB initialization
   return (
     <Router>
       <div className="App">
