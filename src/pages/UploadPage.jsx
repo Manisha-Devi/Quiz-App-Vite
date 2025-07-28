@@ -401,7 +401,6 @@ function UploadPage() {
                     {files.map((file, idx) => (
                       <div key={idx} className="file-item">
                         <div className="file-info">
-                          <div className="file-icon">📄</div>
                           <div className="file-details">
                             <div className="file-name">{file.name}</div>
                             <div className="file-size">
