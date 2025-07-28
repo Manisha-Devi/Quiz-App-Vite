@@ -821,12 +821,20 @@
   color: #e0e0e0 !important;
 }
 
+.result-page.dark-mode .question-text * {
+  color: #e0e0e0 !important;
+}
+
 .result-page.dark-mode .option {
   background: #404040 !important;
   color: #e0e0e0 !important;
 }
 
 .result-page.dark-mode .option-text {
+  color: #e0e0e0 !important;
+}
+
+.result-page.dark-mode .option-text * {
   color: #e0e0e0 !important;
 }
 
@@ -853,10 +861,35 @@
   color: #e0e0e0 !important;
 }
 
+.result-page.dark-mode .explanation-text * {
+  color: #e0e0e0 !important;
+}
+
 .result-page.dark-mode .review-note {
   background: linear-gradient(135deg, #4a3d1a, #5a4d2a) !important;
   border: 2px solid #8a7a3a !important;
   color: #f0e0a0 !important;
+}
+
+/* KaTeX Dark Mode Fixes */
+.result-page.dark-mode .katex {
+  color: #e0e0e0 !important;
+}
+
+.result-page.dark-mode .katex * {
+  color: #e0e0e0 !important;
+}
+
+.result-page.dark-mode .katex .base {
+  color: #e0e0e0 !important;
+}
+
+.result-page.dark-mode .katex-display {
+  color: #e0e0e0 !important;
+}
+
+.result-page.dark-mode .katex-display * {
+  color: #e0e0e0 !important;
 }
 
 .question-card:nth-child(1) {
