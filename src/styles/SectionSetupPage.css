@@ -54,27 +54,31 @@
 }
 
 /* Header */
-.upload-header {
+.section-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   backdrop-filter: blur(20px);
   color: white;
-  padding: 20px 24px;
+  padding: 16px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-size: 18px;
+  font-weight: 600;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
   border-bottom: 1px solid rgba(102, 126, 234, 0.1);
   position: sticky;
   top: 0;
   z-index: 100;
-  min-height: 80px;
-  height: auto;
+  height: 8vh;
+  flex-shrink: 0;
+  margin: 0;
+  width: 100%;
 }
 
-.section-page.dark-mode .upload-header {
-  background: rgba(26, 26, 46, 0.8);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  color: white;
+.section-page.dark-mode .section-header {
+  background: rgba(26, 26, 46, 0.8) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  color: white !important;
 }
 
 .page-title {
@@ -106,7 +110,7 @@
 .header-controls {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 16px;
   height: 100%;
 }
@@ -117,14 +121,15 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 12px 16px;
+  padding: 8px 16px;
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(15px);
-  min-width: 80px;
+  min-width: 70px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
   height: fit-content;
+  align-self: center;
 }
 
 .selection-summary:hover {
@@ -133,9 +138,9 @@
 }
 
 .summary-text {
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 1.2;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1;
   background: linear-gradient(45deg, #fff, #f0f8ff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -143,12 +148,11 @@
 }
 
 .summary-label {
-  font-size: 10px;
+  font-size: 11px;
   opacity: 0.9;
   text-transform: uppercase;
-  letter-spacing: 0.6px;
+  letter-spacing: 0.8px;
   font-weight: 500;
-  line-height: 1.2;
 }
 
 .theme-toggle-btn {
@@ -933,7 +937,7 @@
 }
 
 @media (max-width: 480px) {
-  .upload-header {
+  .section-header {
     padding: 12px 16px;
   }
 
