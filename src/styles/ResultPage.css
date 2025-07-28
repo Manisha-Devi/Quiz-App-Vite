@@ -68,7 +68,11 @@
   color: white !important;
 }
 
-.result-page.dark-mode .section-name {
+.result-page.dark-mode .page-title {
+  color: white !important;
+}
+
+.result-page.dark-mode .title-text {
   color: white !important;
 }
 
@@ -83,18 +87,26 @@
   border: 1px solid #555 !important;
 }
 
-.section-name {
+.page-title {
   display: flex;
   align-items: center;
   gap: 12px;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: white;
+}
+
+.title-icon {
+  font-size: 28px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.title-text {
   max-width: 60%;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  color: white;
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
 }
 
 .score-box {
@@ -124,16 +136,10 @@
   letter-spacing: 0.5px;
 }
 
-.d-flex {
+.header-controls {
   display: flex;
-}
-
-.align-items-center {
   align-items: center;
-}
-
-.gap-2 {
-  gap: 8px;
+  gap: 12px;
 }
 
 .theme-toggle-btn {

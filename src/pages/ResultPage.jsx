@@ -190,8 +190,11 @@ function ResultPage() {
     <div className={`result-page ${isDarkMode ? 'dark-mode' : ''}`}>
       {/* Top Header Bar similar to ExamPage */}
       <header className="result-header">
-        <div className="section-name">📊 Quiz Results</div>
-        <div className="d-flex align-items-center gap-2">
+        <div className="page-title">
+          <span className="title-icon">📊</span>
+          <span className="title-text">Quiz Results</span>
+        </div>
+        <div className="header-controls">
           <div className="score-box">
             <span className="score-percentage">{stats.percentage}%</span>
             <span className="score-text">Score</span>

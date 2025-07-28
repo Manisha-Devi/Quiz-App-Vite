@@ -231,10 +231,11 @@ function ExamPage() {
         
           <div className="exam-ui">
             <header className="exam-header">
-              <div className="section-name">
-                {practiceMode ? 'Practice Mode' : 'Exam Page'}
+              <div className="page-title">
+                <span className="title-icon">📚</span>
+                <span className="title-text">{practiceMode ? 'Practice Mode' : 'Exam Page'}</span>
               </div>
-              <div className="d-flex align-items-center gap-2">
+              <div className="header-controls">
                 <div className="timer-box">
                   {practiceMode ? '∞' : formatTime(timeLeft)}
                 </div>
