@@ -117,17 +117,17 @@
 
 /* Custom thin scrollbar */
 .question-scroll::-webkit-scrollbar {
-  width: 4px;
+  width: 2px;
 }
 
 .question-scroll::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.05);
-  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 1px;
 }
 
 .question-scroll::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 1px;
   transition: background 0.2s ease;
 }
 
