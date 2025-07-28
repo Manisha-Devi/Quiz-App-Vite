@@ -190,7 +190,14 @@ function ExamPage() {
     });
   }, [imageMap]);
 
-  const goNext = useCallback(() => setCurrent(c => (c + 1) % questions.length), [questions.length]);
+  const goNext = useCallback(() => {
+    if (current === questions.length - 1) {
+      setShowSubmitModal(true);
+    } else {
+      setCurrent(current + 1);
+    }
+  }, [current, questions.length]);
+  
   const goPrev = useCallback(() => setCurrent(c => (c - 1 + questions.length) % questions.length), [questions.length]);
 
   const swipeHandlers = useSwipeable({
@@ -211,7 +218,13 @@ function ExamPage() {
 
   const handleOption = useCallback(idx => setAnswers(a => ({ ...a, [current]: idx })), [current]);
   const toggleReview = useCallback(() => setReview(r => ({ ...r, [current]: !r[current] })), [current]);
-  const handleNext = useCallback(() => current < questions.length - 1 && setCurrent(current + 1), [current, questions.length]);
+  const handleNext = useCallback(() => {
+    if (current === questions.length - 1) {
+      setShowSubmitModal(true);
+    } else {
+      setCurrent(current + 1);
+    }
+  }, [current, questions.length]);
 
   const handleSubmit = useCallback((auto = false) => {
     if (!auto) {
