@@ -77,8 +77,12 @@ function SectionSetupPage() {
       total + Object.values(counts).reduce((sum, count) => sum + count, 0), 0
     );
     
+    // Only set quiz time if questions are selected, otherwise keep it as is
     if (totalSelected > 0) {
       setQuizTime(totalSelected);
+    } else if (totalSelected === 0) {
+      // When no questions selected, reset to 0 or keep previous value
+      setQuizTime(0);
     }
   };
 
