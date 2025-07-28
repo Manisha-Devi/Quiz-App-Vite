@@ -337,48 +337,76 @@ function UploadPage() {
             {showLocalJSON ? "📁" : "📄"}
           </button>
           <button
-            className="clear-database-btn"
-            onClick={async () => {
+            className={`clear-database-btn ${loading ? 'loading' : ''}`}
+            onClick={async (e) => {
+              // Prevent multiple clicks
+              if (loading) return;
+              
               const confirmed = window.confirm(
                 "⚠️ Are you sure you want to clear ALL app data? This will delete IndexedDB, localStorage, sessionStorage, caches, and cookies. This action cannot be undone."
               );
               
               if (confirmed) {
+                setLoading(true);
+                e.target.disabled = true;
+                
                 try {
-                  // Clear IndexedDB
+                  console.log("Starting data clearing process...");
+                  
+                  // Clear IndexedDB first
+                  console.log("Clearing IndexedDB...");
                   await deleteDatabase();
                   
+                  // Small delay to ensure IndexedDB operations complete
+                  await new Promise(resolve => setTimeout(resolve, 500));
+                  
                   // Clear localStorage
+                  console.log("Clearing localStorage...");
                   localStorage.clear();
                   
                   // Clear sessionStorage
+                  console.log("Clearing sessionStorage...");
                   sessionStorage.clear();
                   
                   // Clear cookies
-                  document.cookie.split(";").forEach(function(c) {
-                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-                  });
-                  
-                  // Clear cache storage
-                  if ('caches' in window) {
-                    const cacheKeys = await caches.keys();
-                    for (const key of cacheKeys) {
-                      await caches.delete(key);
+                  console.log("Clearing cookies...");
+                  const cookies = document.cookie.split(";");
+                  for (let cookie of cookies) {
+                    const eqPos = cookie.indexOf("=");
+                    const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+                    if (name) {
+                      document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=${window.location.hostname}`;
+                      document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
                     }
                   }
                   
-                  alert("✅ All app data cleared successfully!");
-                  // Force reload the page
-                  window.location.reload();
+                  // Clear cache storage
+                  if ('caches' in window) {
+                    console.log("Clearing cache storage...");
+                    const cacheKeys = await caches.keys();
+                    await Promise.all(cacheKeys.map(key => caches.delete(key)));
+                  }
+                  
+                  console.log("All data cleared successfully!");
+                  alert("✅ All app data cleared successfully! Page will reload now.");
+                  
+                  // Force reload with cache bypass
+                  setTimeout(() => {
+                    window.location.href = window.location.href;
+                  }, 1000);
+                  
                 } catch (error) {
                   console.error('Error clearing all data:', error);
                   alert("❌ Failed to clear all data. Please try again.");
+                  setLoading(false);
+                  e.target.disabled = false;
                 }
               }
             }}
+            disabled={loading}
             title="Clear All Data"
           >
-            🗑️
+            {loading ? "🔄" : "🗑️"}
           </button>
         </div>
       </header>

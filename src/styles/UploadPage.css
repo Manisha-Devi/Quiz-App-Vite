@@ -834,12 +834,35 @@
   transform: scale(1.05);
 }
 
+.clear-database-btn.loading {
+  background: #ff8a80;
+  cursor: not-allowed;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.clear-database-btn:disabled {
+  background: #ff8a80;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
 .upload-page.dark-mode .clear-database-btn {
   background: #ff6b6b;
 }
 
 .upload-page.dark-mode .clear-database-btn:hover {
   background: #ff5252;
+}
+
+.upload-page.dark-mode .clear-database-btn.loading,
+.upload-page.dark-mode .clear-database-btn:disabled {
+  background: #ff8a80;
 }
 
 /* Content */
