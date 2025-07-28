@@ -132,7 +132,7 @@ function SectionSetupPage() {
   return (
     <div className={`section-page ${isDarkMode ? 'dark-mode' : ''}`}>
       {/* Header */}
-      <header className="section-header">
+      <header className="upload-header">
         <div className="page-title">
           <span className="title-icon">🎯</span>
           <span className="title-text">Quiz Setup</span>
