@@ -789,7 +789,7 @@
 }
 
 /* Question Card */
-.question-card {
+.question-card, .result-card {
   background: white;
   border-radius: 20px;
   padding: 30px;

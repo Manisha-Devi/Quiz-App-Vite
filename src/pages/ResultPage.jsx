@@ -1,6 +1,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import QuestionCard from '../components/QuestionCard';
 import '../styles/ResultPage.css';
 
 function ResultPage() {
@@ -183,56 +184,7 @@ function ResultPage() {
     );
   };
 
-  const QuestionCard = ({ question, index, userAnswer, reviewMarked }) => {
-    const isCorrect = userAnswer === question.answer;
-    const isSkipped = userAnswer === undefined;
-
-    return (
-      <div className="question-card">
-        <div className="question-header">
-          <div className="question-number">Q{index + 1}</div>
-          <div className={`status-badge ${isSkipped ? 'skipped' : isCorrect ? 'correct' : 'incorrect'}`}>
-            {isSkipped ? '⏭️ Skipped' : isCorrect ? '✅ Correct' : '❌ Incorrect'}
-          </div>
-        </div>
-        
-        <div className="question-text" dangerouslySetInnerHTML={{ __html: question.question }} />
-        
-        <div className="options-grid">
-          {question.options.map((option, i) => {
-            const isUserChoice = i === userAnswer;
-            const isCorrectOption = i === question.answer;
-            
-            let className = 'option';
-            if (isCorrectOption) className += ' correct-option';
-            else if (isUserChoice) className += ' wrong-option';
-            
-            return (
-              <div key={i} className={className}>
-                <span className="option-label">{String.fromCharCode(65 + i)}.</span>
-                <span className="option-text">{option}</span>
-                {isUserChoice && !isCorrectOption && <span className="user-mark">👤</span>}
-                {isCorrectOption && <span className="correct-mark">✓</span>}
-              </div>
-            );
-          })}
-        </div>
-
-        {reviewMarked && (
-          <div className="review-note">
-            📌 Marked for review
-          </div>
-        )}
-
-        {question.explanation && (
-          <div className="explanation">
-            <div className="explanation-header">💡 Explanation</div>
-            <div className="explanation-text">{question.explanation}</div>
-          </div>
-        )}
-      </div>
-    );
-  };
+  
 
   return (
     <div className={`result-page ${isDarkMode ? 'dark-mode' : ''}`}>

@@ -1,7 +1,76 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
+import { InlineMath, BlockMath } from 'react-katex';
+import 'katex/dist/katex.min.css';
 
 function QuestionCard({ question, index, userAnswer, reviewMarked }) {
+  // Function to render text with KaTeX math
+  const renderMathAndHTML = useCallback((text) => {
+    if (!text) return null;
+
+    const parts = [];
+    let currentText = text;
+    let key = 0;
+
+    // Handle display math ($$...$$) first
+    while (currentText.includes('$$')) {
+      const startIndex = currentText.indexOf('$$');
+      const endIndex = currentText.indexOf('$$', startIndex + 2);
+
+      if (endIndex === -1) break;
+
+      // Add text before math
+      if (startIndex > 0) {
+        const beforeMath = currentText.substring(0, startIndex);
+        parts.push(
+          <span key={key++} dangerouslySetInnerHTML={{ __html: beforeMath }} />
+        );
+      }
+
+      // Add display math
+      const mathContent = currentText.substring(startIndex + 2, endIndex);
+      parts.push(
+        <BlockMath key={key++} math={mathContent} />
+      );
+
+      // Continue with remaining text
+      currentText = currentText.substring(endIndex + 2);
+    }
+
+    // Handle inline math ($...$)
+    while (currentText.includes('$')) {
+      const startIndex = currentText.indexOf('$');
+      const endIndex = currentText.indexOf('$', startIndex + 1);
+
+      if (endIndex === -1) break;
+
+      // Add text before math
+      if (startIndex > 0) {
+        const beforeMath = currentText.substring(0, startIndex);
+        parts.push(
+          <span key={key++} dangerouslySetInnerHTML={{ __html: beforeMath }} />
+        );
+      }
+
+      // Add inline math
+      const mathContent = currentText.substring(startIndex + 1, endIndex);
+      parts.push(
+        <InlineMath key={key++} math={mathContent} />
+      );
+
+      // Continue with remaining text
+      currentText = currentText.substring(endIndex + 1);
+    }
+
+    // Add any remaining text
+    if (currentText) {
+      parts.push(
+        <span key={key++} dangerouslySetInnerHTML={{ __html: currentText }} />
+      );
+    }
+
+    return parts.length > 0 ? parts : <span dangerouslySetInnerHTML={{ __html: text }} />;
+  }, []);
   const isCorrect = userAnswer === question.answer;
 
   const getBadge = () => {
@@ -15,7 +84,7 @@ function QuestionCard({ question, index, userAnswer, reviewMarked }) {
       <div className="result-header">
         <div id={`question-${index}`}>
           <strong>Q{index + 1}:</strong>{' '}
-          <span dangerouslySetInnerHTML={{ __html: question.question }} />
+          <span>{renderMathAndHTML(question.question)}</span>
         </div>
         <div>{getBadge()}</div>
       </div>
@@ -32,7 +101,7 @@ function QuestionCard({ question, index, userAnswer, reviewMarked }) {
 
           return (
             <div key={i} className={className} aria-label={`Option ${String.fromCharCode(65 + i)}`}>
-              <strong>{String.fromCharCode(65 + i)}.</strong> {opt}
+              <strong>{String.fromCharCode(65 + i)}.</strong> {renderMathAndHTML(opt)}
             </div>
           );
         })}
@@ -45,7 +114,7 @@ function QuestionCard({ question, index, userAnswer, reviewMarked }) {
             <strong>Explanation:</strong>
           </div>
           <div className="explanation-body">
-            <p>{question.explanation}</p>
+            <p>{renderMathAndHTML(question.explanation)}</p>
           </div>
         </div>
       )}
