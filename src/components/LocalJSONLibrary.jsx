@@ -7,7 +7,7 @@ function LocalJSONLibrary({ onFileSelect }) {
   const [loading, setLoading] = useState(true);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [quizTime, setQuizTime] = useState(60);
+  const [quizTime, setQuizTime] = useState(0);
   const [sortBy, setSortBy] = useState('name');
   const [filterBy, setFilterBy] = useState('all');
   const [viewMode, setViewMode] = useState('grid');

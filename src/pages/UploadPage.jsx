@@ -14,7 +14,7 @@ import {
 function UploadPage() {
   const [files, setFiles] = useState([]);
   const [fileImageMap, setFileImageMap] = useState({});
-  const [quizTime, setQuizTime] = useState(60);
+  const [quizTime, setQuizTime] = useState(0);
   const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(() => {
