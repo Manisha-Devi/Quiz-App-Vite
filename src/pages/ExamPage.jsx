@@ -268,6 +268,7 @@ function ExamPage() {
                   hasMath={hasMath}
                   isDarkMode={isDarkMode}
                   swipeHandlers={swipeHandlers}
+                  practiceMode={practiceMode}
                 />
               </div>
 

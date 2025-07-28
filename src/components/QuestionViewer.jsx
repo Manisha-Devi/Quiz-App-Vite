@@ -14,7 +14,8 @@ const QuestionViewer = React.memo(function QuestionViewer({
   injectImageSources,
   hasMath,
   isDarkMode,
-  swipeHandlers
+  swipeHandlers,
+  practiceMode = false
 }) {
   const [showAnswer, setShowAnswer] = React.useState(false);
   const [sectionsReady, setSectionsReady] = React.useState(!!window.sections);
@@ -167,9 +168,11 @@ const QuestionViewer = React.memo(function QuestionViewer({
         <div className="q-header">
           <div className="q-number">Q{currentIndex + 1}</div>
           <div className="header-actions">
-            <div className="show-answer" onClick={handleShowAnswer} title="Show/Hide Answer">
-              {showAnswer ? '🙈' : '👁️'}
-            </div>
+            {practiceMode && (
+              <div className="show-answer" onClick={handleShowAnswer} title="Show/Hide Answer">
+                {showAnswer ? '🙈' : '👁️'}
+              </div>
+            )}
             <div className="mark-review" onClick={onToggleReview}>
               Mark for Review: {reviewMarked ? '⭐' : '☆'}
             </div>
