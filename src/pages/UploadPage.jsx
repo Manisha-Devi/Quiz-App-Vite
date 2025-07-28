@@ -340,22 +340,43 @@ function UploadPage() {
             className="clear-database-btn"
             onClick={async () => {
               const confirmed = window.confirm(
-                "⚠️ Are you sure you want to clear the entire quiz database? This will delete all stored quiz data and cannot be undone."
+                "⚠️ Are you sure you want to clear ALL app data? This will delete IndexedDB, localStorage, sessionStorage, caches, and cookies. This action cannot be undone."
               );
               
               if (confirmed) {
                 try {
+                  // Clear IndexedDB
                   await deleteDatabase();
-                  alert("✅ Database cleared successfully!");
+                  
+                  // Clear localStorage
+                  localStorage.clear();
+                  
+                  // Clear sessionStorage
+                  sessionStorage.clear();
+                  
+                  // Clear cookies
+                  document.cookie.split(";").forEach(function(c) {
+                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+                  });
+                  
+                  // Clear cache storage
+                  if ('caches' in window) {
+                    const cacheKeys = await caches.keys();
+                    for (const key of cacheKeys) {
+                      await caches.delete(key);
+                    }
+                  }
+                  
+                  alert("✅ All app data cleared successfully!");
                   // Force reload the page
                   window.location.reload();
                 } catch (error) {
-                  console.error('Error clearing database:', error);
-                  alert("❌ Failed to clear database. Please try again.");
+                  console.error('Error clearing all data:', error);
+                  alert("❌ Failed to clear all data. Please try again.");
                 }
               }
             }}
-            title="Clear Database"
+            title="Clear All Data"
           >
             🗑️
           </button>
