@@ -199,7 +199,14 @@ function ExamPage() {
     }
   }, [current, questions.length]);
   
-  const goPrev = useCallback(() => setCurrent(c => (c - 1 + questions.length) % questions.length), [questions.length]);
+  const goPrev = useCallback(() => {
+    if (current === 0) {
+      // If we're at the first question and trying to go back, show submit modal
+      setShowSubmitModal(true);
+    } else {
+      setCurrent(current - 1);
+    }
+  }, [current]);
 
   const swipeHandlers = useSwipeable({
     onSwipedLeft: goNext,
