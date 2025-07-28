@@ -133,11 +133,10 @@ function SectionSetupPage() {
     <div className={`section-page ${isDarkMode ? 'dark-mode' : ''}`}>
       {/* Header */}
       <header className="section-header">
-        <div className="page-title">
-          <span className="title-icon">🎯</span>
-          <span className="title-text">Quiz Setup</span>
+        <div className="section-name">
+          🎯 Quiz Setup
         </div>
-        <div className="header-controls">
+        <div className="d-flex align-items-center gap-2">
           <div className="selection-summary">
             <span className="summary-text">{getTotalSelected()}/{getTotalAvailable()}</span>
             <span className="summary-label">Questions</span>
