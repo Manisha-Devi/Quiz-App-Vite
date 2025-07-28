@@ -253,48 +253,7 @@ function UploadPage() {
     navigate("/sections");
   };
 
-  const handleClearAllData = async () => {
-    if (confirm("⚠️ Are you sure you want to delete ALL data? This will permanently remove:\n\n• All uploaded files\n• Quiz settings\n• Cached data\n• Offline storage\n\nThis action cannot be undone!")) {
-      try {
-        // Clear localStorage
-        localStorage.clear();
-
-        // Clear IndexedDB
-        await clearDatabase();
-
-        // Clear sessionStorage
-        sessionStorage.clear();
-
-        // Clear cookies (if any)
-        document.cookie.split(";").forEach(function(c) {
-          document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-        });
-
-        // Clear cache storage
-        if (caches) {
-          const cacheKeys = await caches.keys();
-          for (const key of cacheKeys) {
-            await caches.delete(key);
-          }
-        }
-
-        // Reset component state
-        setFiles([]);
-        setFileImageMap({});
-        setQuizTime(0);
-        setErrors([]);
-        setShowSuccess(false);
-
-        alert("✅ All data cleared successfully!");
-        
-        // Reload the page for fresh start
-        window.location.reload();
-      } catch (error) {
-        console.error("Error clearing data:", error);
-        setErrors(["❌ Error clearing data. Please try again."]);
-      }
-    }
-  };
+  
 
   // Function to clear all data
   const clearAllData = async () => {
@@ -352,13 +311,6 @@ function UploadPage() {
             title="Refresh Page"
           >
             🔄
-          </button>
-          <button
-            className="clear-data-btn"
-            onClick={handleClearAllData}
-            title="Clear All Data"
-          >
-            🗑️
           </button>
           <button
             className="theme-toggle-btn"

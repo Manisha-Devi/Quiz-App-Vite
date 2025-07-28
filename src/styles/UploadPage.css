@@ -112,8 +112,7 @@
 
 .theme-toggle-btn,
 .library-toggle-btn,
-.refresh-btn,
-.clear-data-btn {
+.refresh-btn {
   background: rgba(255, 255, 255, 0.1);
   color: white;
   border: none;
@@ -130,16 +129,6 @@
 .refresh-btn:hover {
   background: rgba(255, 255, 255, 0.2);
   transform: translateY(-2px);
-}
-
-.clear-data-btn {
-  background: rgba(255, 71, 87, 0.8);
-}
-
-.clear-data-btn:hover {
-  background: rgba(255, 71, 87, 1);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);
 }
 
 .library-toggle-btn.active {
