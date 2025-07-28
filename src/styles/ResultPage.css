@@ -57,6 +57,9 @@
   flex-shrink: 0;
   margin: 0;
   width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
+  min-width: 100%;
 }
 
 /* Dark mode for result header */
