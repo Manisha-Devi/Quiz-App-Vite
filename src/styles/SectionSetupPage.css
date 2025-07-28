@@ -881,9 +881,12 @@
   .section-header {
     padding: 12px 16px;
     overflow-x: auto;
+    overflow-y: hidden;
     white-space: nowrap;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* IE */
+    height: 8vh;
+    max-height: 8vh;
   }
 
   .section-header::-webkit-scrollbar {

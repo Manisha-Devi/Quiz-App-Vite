@@ -1525,8 +1525,11 @@
 @media (max-width: 768px) {
   .upload-header {
     padding: 12px 16px;
+    overflow-y: hidden;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* IE */
+    height: 8vh;
+    max-height: 8vh;
   }
   
   .upload-header::-webkit-scrollbar {
