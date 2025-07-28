@@ -810,6 +810,38 @@
   color: white;
 }
 
+.library-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.clear-database-btn {
+  background: #ff4757;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clear-database-btn:hover {
+  background: #ff3838;
+  transform: scale(1.05);
+}
+
+.upload-page.dark-mode .clear-database-btn {
+  background: #ff6b6b;
+}
+
+.upload-page.dark-mode .clear-database-btn:hover {
+  background: #ff5252;
+}
+
 /* Content */
 .upload-content {
   flex: 1;

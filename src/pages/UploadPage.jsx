@@ -336,6 +336,29 @@ function UploadPage() {
           >
             {showLocalJSON ? "📁" : "📄"}
           </button>
+          <button
+            className="clear-database-btn"
+            onClick={async () => {
+              const confirmed = window.confirm(
+                "⚠️ Are you sure you want to clear the entire quiz database? This will delete all stored quiz data and cannot be undone."
+              );
+              
+              if (confirmed) {
+                try {
+                  await deleteDatabase();
+                  alert("✅ Database cleared successfully!");
+                  // Force reload the page
+                  window.location.reload();
+                } catch (error) {
+                  console.error('Error clearing database:', error);
+                  alert("❌ Failed to clear database. Please try again.");
+                }
+              }
+            }}
+            title="Clear Database"
+          >
+            🗑️
+          </button>
         </div>
       </header>
 
