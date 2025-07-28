@@ -258,20 +258,20 @@ function UploadPage() {
       try {
         // Clear localStorage
         localStorage.clear();
-        
+
         // Clear IndexedDB
         await clearDatabase();
-        
+
         // Clear sessionStorage
         sessionStorage.clear();
-        
+
         // Reset component state
         setFiles([]);
         setFileImageMap({});
         setQuizTime(60);
         setErrors([]);
         setShowSuccess(false);
-        
+
         // Reload the page for fresh start
         window.location.reload();
       } catch (error) {
@@ -280,6 +280,39 @@ function UploadPage() {
       }
     }
   };
+
+  // Function to clear all data
+  const clearAllData = async () => {
+    try {
+      // Clear localStorage
+      localStorage.clear();
+
+      // Clear IndexedDB
+      await clearDatabase();
+
+      // Clear sessionStorage
+      sessionStorage.clear();
+
+      // Clear cookies (if you are using them)
+      document.cookie.split(";").forEach(function(c) {
+          document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+      });
+
+      // Clear cache storage
+      if (caches) {
+        const cacheKeys = await caches.keys();
+        for (const key of cacheKeys) {
+          await caches.delete(key);
+        }
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Error clearing all data:", error);
+      return false;
+    }
+  };
+
 
   return (
     <div className={`upload-page ${isDarkMode ? "dark-mode" : ""}`}>
