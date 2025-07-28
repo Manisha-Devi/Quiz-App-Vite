@@ -191,7 +191,8 @@ function ExamPage() {
   }, [imageMap]);
 
   const goNext = useCallback(() => {
-    if (current === questions.length - 1) {
+    if (current >= questions.length - 1) {
+      // If we're at or past the last question, show submit modal
       setShowSubmitModal(true);
     } else {
       setCurrent(current + 1);
@@ -245,6 +246,8 @@ function ExamPage() {
 
   const cancelSubmit = useCallback(() => {
     setShowSubmitModal(false);
+    // Ensure we stay on the current question after cancelling
+    // No need to change current state, just close modal
   }, []);
 
   const closeTimeWarning = useCallback(() => {
