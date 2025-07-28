@@ -67,6 +67,8 @@
   position: sticky;
   top: 0;
   z-index: 100;
+  min-height: 70px;
+  height: auto;
 }
 
 .section-page.dark-mode .upload-header {
@@ -104,9 +106,9 @@
 .header-controls {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   gap: 16px;
-  height: 100%;
+  height: auto;
 }
 
 .selection-summary {
@@ -115,15 +117,14 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 8px 16px;
+  padding: 10px 16px;
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(15px);
-  min-width: 70px;
+  min-width: 80px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
-  height: fit-content;
-  align-self: center;
+  height: auto;
 }
 
 .selection-summary:hover {
@@ -132,9 +133,9 @@
 }
 
 .summary-text {
-  font-size: 18px;
-  font-weight: 800;
-  line-height: 1;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.2;
   background: linear-gradient(45deg, #fff, #f0f8ff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -142,11 +143,12 @@
 }
 
 .summary-label {
-  font-size: 11px;
+  font-size: 10px;
   opacity: 0.9;
   text-transform: uppercase;
-  letter-spacing: 0.8px;
+  letter-spacing: 0.6px;
   font-weight: 500;
+  line-height: 1.2;
 }
 
 .theme-toggle-btn {
