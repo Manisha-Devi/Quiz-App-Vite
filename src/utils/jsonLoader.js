@@ -1,5 +1,5 @@
 
-import { storeJSONFile, storeJSONImage } from './indexedDB';
+import { storeJSONFile, storeJSONImage, getAllJSONFiles, clearJSONFiles } from './indexedDB';
 
 // Function to dynamically import all JSON files from the json folder
 export const loadJSONFilesToStorage = async () => {
@@ -8,6 +8,25 @@ export const loadJSONFilesToStorage = async () => {
     const jsonModules = import.meta.glob('../json/*.json');
     
     console.log('Found JSON files:', Object.keys(jsonModules));
+    
+    // Get current file names from the file system
+    const currentFileNames = Object.keys(jsonModules).map(path => 
+      path.split('/').pop().replace('.json', '')
+    );
+    
+    // Get existing files from IndexedDB
+    const existingFiles = await getAllJSONFiles();
+    const existingFileNames = existingFiles.map(file => file.filename);
+    
+    // Find files that were deleted (exist in IndexedDB but not in file system)
+    const deletedFiles = existingFileNames.filter(name => !currentFileNames.includes(name));
+    
+    // Clear IndexedDB completely and reload fresh data
+    if (deletedFiles.length > 0) {
+      console.log('Deleted files detected:', deletedFiles);
+      await clearJSONFiles();
+      console.log('Cleared all JSON files from IndexedDB');
+    }
     
     // Process each JSON file
     for (const path in jsonModules) {

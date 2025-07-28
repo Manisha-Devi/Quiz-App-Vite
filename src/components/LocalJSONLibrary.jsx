@@ -16,9 +16,16 @@ function LocalJSONLibrary({ onFileSelect }) {
     loadLocalFiles();
   }, []);
 
-  const loadLocalFiles = async () => {
+  const loadLocalFiles = async (forceReload = false) => {
     try {
       setLoading(true);
+      
+      if (forceReload) {
+        // Force reload from file system by calling jsonLoader
+        const { loadJSONFilesToStorage } = await import('../utils/jsonLoader');
+        await loadJSONFilesToStorage();
+      }
+      
       const files = await getAllJSONFiles();
       setLocalFiles(files);
     } catch (error) {

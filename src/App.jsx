@@ -10,13 +10,16 @@ import './App.css';
 
 function App() {
   useEffect(() => {
-    // Auto-load JSON files and their associated images into IndexedDB when app starts
-    const loadAllData = async () => {
-      await loadJSONFilesToStorage();
-      await loadJSONImagesFromFolders();
+    const initializeApp = async () => {
+      try {
+        await loadJSONFilesToStorage();
+        await loadJSONImagesFromFolders();
+      } catch (error) {
+        console.error('Error initializing app:', error);
+      }
     };
-    
-    loadAllData();
+
+    initializeApp();
   }, []);
 
   return (

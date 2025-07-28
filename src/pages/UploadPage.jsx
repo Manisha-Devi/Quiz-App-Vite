@@ -307,7 +307,17 @@ function UploadPage() {
           </div>
           <button
             className="refresh-btn"
-            onClick={() => window.location.reload()}
+            onClick={async () => {
+              try {
+                // Clear JSON files cache first
+                await clearDatabase();
+                // Force reload the page
+                window.location.reload(true);
+              } catch (error) {
+                console.error('Error during refresh:', error);
+                window.location.reload();
+              }
+            }}
             title="Refresh Page"
           >
             🔄
