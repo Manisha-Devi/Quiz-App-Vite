@@ -14,7 +14,8 @@ function SectionSetupPage() {
     return localStorage.getItem('darkMode') === 'true';
   });
   const [quizTime, setQuizTime] = useState(() => {
-    return Number(localStorage.getItem('quizTime')) || 60;
+    const savedTime = localStorage.getItem('quizTime');
+    return savedTime ? Number(savedTime) : 0;
   });
   const [practiceMode, setPracticeMode] = useState(false);
   const [enableDrawing, setEnableDrawing] = useState(false);
