@@ -399,3 +399,140 @@
   font-size: 16px;
   display: inline-block;
 }
+
+/* Custom Submit Modal */
+.submit-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.2s ease;
+}
+
+.submit-modal-content {
+  background: var(--bg-primary, #ffffff);
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  max-width: 400px;
+  width: 90%;
+  animation: slideIn 0.3s ease;
+}
+
+.submit-modal-header {
+  padding: 20px 24px 0;
+  text-align: center;
+}
+
+.submit-modal-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary, #333);
+}
+
+.submit-modal-body {
+  padding: 16px 24px;
+  text-align: center;
+}
+
+.submit-modal-body p {
+  margin: 0;
+  color: var(--text-secondary, #666);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.submit-modal-footer {
+  padding: 0 24px 24px;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.submit-modal-btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  min-width: 100px;
+  justify-content: center;
+}
+
+.cancel-btn {
+  background: #f8f9fa;
+  color: #6c757d;
+  border: 1px solid #dee2e6;
+}
+
+.cancel-btn:hover {
+  background: #e9ecef;
+  color: #495057;
+  transform: translateY(-1px);
+}
+
+.confirm-btn {
+  background: #dc3545;
+  color: white;
+}
+
+.confirm-btn:hover {
+  background: #c82333;
+  transform: translateY(-1px);
+}
+
+.submit-modal-btn .btn-icon {
+  font-size: 16px;
+}
+
+/* Dark mode styles for submit modal */
+.dark-mode .submit-modal-content {
+  background: var(--bg-primary, #2d2d2d);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .submit-modal-title {
+  color: var(--text-primary, #ffffff);
+}
+
+.dark-mode .submit-modal-body p {
+  color: var(--text-secondary, #cccccc);
+}
+
+.dark-mode .cancel-btn {
+  background: #495057;
+  color: #ffffff;
+  border: 1px solid #6c757d;
+}
+
+.dark-mode .cancel-btn:hover {
+  background: #5a6268;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { 
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

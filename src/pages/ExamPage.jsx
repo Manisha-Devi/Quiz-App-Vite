@@ -59,6 +59,7 @@ function ExamPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
   const [showTimeWarning, setShowTimeWarning] = useState(timeLeft <= 300); // Track visibility of the warning
+  const [showSubmitModal, setShowSubmitModal] = useState(false);
 
   // Generate sections with proper numbering and grouping - memoized for performance
   const sections = useMemo(() => {
@@ -213,11 +214,25 @@ function ExamPage() {
   const handleNext = useCallback(() => current < questions.length - 1 && setCurrent(current + 1), [current, questions.length]);
 
   const handleSubmit = useCallback((auto = false) => {
-    if (!auto && !window.confirm("Are you sure you want to submit the test?")) return;
+    if (!auto) {
+      setShowSubmitModal(true);
+      return;
+    }
     localStorage.setItem('examAnswers', JSON.stringify(answers));
     localStorage.setItem('reviewMarks', JSON.stringify(review));
     navigate('/result');
   }, [answers, review, navigate]);
+
+  const confirmSubmit = useCallback(() => {
+    setShowSubmitModal(false);
+    localStorage.setItem('examAnswers', JSON.stringify(answers));
+    localStorage.setItem('reviewMarks', JSON.stringify(review));
+    navigate('/result');
+  }, [answers, review, navigate]);
+
+  const cancelSubmit = useCallback(() => {
+    setShowSubmitModal(false);
+  }, []);
 
   const closeTimeWarning = useCallback(() => {
     setShowTimeWarning(false); // Only hide the warning
@@ -300,6 +315,30 @@ function ExamPage() {
             <span className="fullscreen-icon">{isFullscreen ? "⤲" : "⛶"}</span>
           </button>
         </div>
+
+        {/* Custom Submit Confirmation Modal */}
+        {showSubmitModal && (
+          <div className="submit-modal-overlay" onClick={cancelSubmit}>
+            <div className="submit-modal-content" onClick={(e) => e.stopPropagation()}>
+              <div className="submit-modal-header">
+                <h3 className="submit-modal-title">Are You Sure?</h3>
+              </div>
+              <div className="submit-modal-body">
+                <p>Do you want to submit your test? This action cannot be undone.</p>
+              </div>
+              <div className="submit-modal-footer">
+                <button className="submit-modal-btn cancel-btn" onClick={cancelSubmit}>
+                  <span className="btn-icon">✗</span>
+                  <span>Cancel</span>
+                </button>
+                <button className="submit-modal-btn confirm-btn" onClick={confirmSubmit}>
+                  <span className="btn-icon">✓</span>
+                  <span>Submit</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
