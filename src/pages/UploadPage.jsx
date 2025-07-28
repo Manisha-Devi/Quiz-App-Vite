@@ -353,18 +353,56 @@ function UploadPage() {
                 try {
                   console.log("Starting data clearing process...");
                   
-                  // Clear IndexedDB first
+                  // Step 1: Close any existing IndexedDB connections
+                  console.log("Closing IndexedDB connections...");
+                  
+                  // Force close any existing database connections
+                  const dbClosePromise = new Promise((resolve) => {
+                    const request = indexedDB.open("quizDatabase");
+                    request.onsuccess = (event) => {
+                      const db = event.target.result;
+                      db.close();
+                      console.log("Database connection closed");
+                      resolve();
+                    };
+                    request.onerror = () => {
+                      console.log("No existing database to close");
+                      resolve();
+                    };
+                  });
+                  
+                  await dbClosePromise;
+                  
+                  // Step 2: Wait a bit for connections to properly close
+                  await new Promise(resolve => setTimeout(resolve, 100));
+                  
+                  // Step 3: Clear IndexedDB with retry mechanism
                   console.log("Clearing IndexedDB...");
-                  await deleteDatabase();
+                  let deleteAttempts = 0;
+                  const maxAttempts = 3;
                   
-                  // Small delay to ensure IndexedDB operations complete
-                  await new Promise(resolve => setTimeout(resolve, 500));
+                  while (deleteAttempts < maxAttempts) {
+                    try {
+                      await deleteDatabase();
+                      console.log("IndexedDB deleted successfully");
+                      break;
+                    } catch (dbError) {
+                      deleteAttempts++;
+                      console.log(`IndexedDB deletion attempt ${deleteAttempts} failed:`, dbError);
+                      
+                      if (deleteAttempts >= maxAttempts) {
+                        throw new Error("Failed to delete IndexedDB after multiple attempts");
+                      }
+                      
+                      // Wait longer between retries
+                      await new Promise(resolve => setTimeout(resolve, 1000));
+                    }
+                  }
                   
-                  // Clear localStorage
+                  // Step 4: Clear other storage types
                   console.log("Clearing localStorage...");
                   localStorage.clear();
                   
-                  // Clear sessionStorage
                   console.log("Clearing sessionStorage...");
                   sessionStorage.clear();
                   
@@ -397,7 +435,7 @@ function UploadPage() {
                   
                 } catch (error) {
                   console.error('Error clearing all data:', error);
-                  alert("❌ Failed to clear all data. Please try again.");
+                  alert(`❌ Failed to clear all data: ${error.message}. Please try again.`);
                   setLoading(false);
                   e.target.disabled = false;
                 }
