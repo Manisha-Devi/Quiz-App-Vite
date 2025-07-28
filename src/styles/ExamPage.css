@@ -379,16 +379,23 @@
 }
 
 .fullscreen-btn {
-  background: transparent;
-  border: none;
+  background: rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 8px 12px;
   font-size: 18px;
   cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
 }
 
 .fullscreen-btn:hover {
   background-color: #3a2ecb;
+  color: white;
+  transform: scale(1.05);
 }
 
 .fullscreen-icon {
   font-size: 22px;
+  display: inline-block;
 }
