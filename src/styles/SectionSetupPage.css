@@ -55,15 +55,17 @@
 
 /* Header */
 .section-header {
-  background: #4b3ee6;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  backdrop-filter: blur(20px);
   color: white;
-  padding: 10px 16px;
+  padding: 16px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 18px;
   font-weight: 600;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid rgba(102, 126, 234, 0.1);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -74,20 +76,23 @@
 }
 
 .section-page.dark-mode .section-header {
-  background: #2d2d30 !important;
-  border-bottom: 1px solid #404040 !important;
+  background: rgba(26, 26, 46, 0.8) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
   color: white !important;
 }
 
 .section-name {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   max-width: 60%;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   color: white;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
 }
 
 .section-page.dark-mode .section-name {
@@ -149,27 +154,30 @@
 }
 
 .theme-toggle-btn {
-  background: white;
-  color: #4b3ee6;
-  font-weight: bold;
-  padding: 6px 10px;
-  border: 1px solid #4b3ee6;
-  border-radius: 6px;
-  margin-left: 10px;
-  font-size: 16px;
+  background: rgba(102, 126, 234, 0.1);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 16px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  font-size: 16px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-left: 10px;
 }
 
 .theme-toggle-btn:hover {
-  background: #f0f0f0;
-  transform: scale(1.05);
+  background: rgba(102, 126, 234, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
 }
 
 .section-page.dark-mode .theme-toggle-btn {
-  background: #404040 !important;
-  color: #e0e0e0 !important;
-  border: 1px solid #555 !important;
+  background: rgba(102, 126, 234, 0.1) !important;
+  color: white !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
 /* Content */
