@@ -71,6 +71,15 @@ function SectionSetupPage() {
     const max = quizData[fileIndex].questions.filter(q => q.level === level).length;
     updated[fileIndex][level] = Math.min(parseInt(value) || 0, max);
     setQuestionCounts(updated);
+    
+    // Auto-calculate quiz time based on total selected questions (1 minute per question)
+    const totalSelected = Object.values(updated).reduce((total, counts) => 
+      total + Object.values(counts).reduce((sum, count) => sum + count, 0), 0
+    );
+    
+    if (totalSelected > 0) {
+      setQuizTime(totalSelected);
+    }
   };
 
   const handleStartExam = () => {
