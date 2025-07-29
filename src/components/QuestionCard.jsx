@@ -90,19 +90,15 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
 
   const getRetryStatus = () => {
     if (!retryMode) return null;
-    
+
     const questionStatus = getStatusInfo().status;
-    
+
     // Only show retry for incorrect and skipped questions
     if (questionStatus !== 'incorrect' && questionStatus !== 'skipped') {
       return null;
     }
-    
-    if (retryCompleted) {
-      return { icon: '✓', spinning: false };
-    }
-    
-    return { icon: '🔄', spinning: true };
+
+    return { icon: '🔄', spinning: !retryCompleted };
   };
 
   const statusInfo = getStatusInfo();
@@ -122,7 +118,7 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
         }
         return 'option';
       }
-      
+
       // For incorrect/skipped questions
       if (retryAnswer === undefined) {
         // Before clicking any option in retry mode - show normal options
@@ -212,7 +208,7 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
               <div className="option-text">
                 {renderMathAndHTML(option)}
               </div>
-              
+
               {/* Show marks in normal mode */}
               {!retryMode && (
                 <>
@@ -226,7 +222,7 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
                   )}
                 </>
               )}
-              
+
               {/* Show marks in retry mode */}
               {retryMode && (
                 <>
@@ -243,7 +239,7 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
                       )}
                     </>
                   )}
-                  
+
                   {/* For incorrect/skipped questions after retry answer */}
                   {getStatusInfo().status !== 'correct' && retryAnswer !== undefined && (
                     <>
@@ -251,7 +247,7 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
                       {isCorrectOption && !isRetrySelected && (
                         <div className="correct-mark">✅</div>
                       )}
-                      
+
                       {/* Retry answer selected - check if same as original */}
                       {isRetrySelected && (
                         <div className="user-mark retry-mark">
@@ -264,7 +260,7 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
                           )}
                         </div>
                       )}
-                      
+
                       {/* Previous wrong answer (when different from retry) */}
                       {isUserSelected && !isRetrySelected && !isCorrectOption && userAnswer !== retryAnswer && (
                         <div className="user-mark">
@@ -284,7 +280,7 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
         <div className="explanation">
           <div className="explanation-header">💡 Explanation</div>
           <div className="explanation-text">
-            {renderMathAndHTML(question.explanation)}
+                        {renderMathAndHTML(question.explanation)}
           </div>
         </div>
       )}
