@@ -202,31 +202,53 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
                 {renderMathAndHTML(option)}
               </div>
               
-              {/* Show marks only in normal mode or after retry answer is selected */}
-              {!retryMode && isUserSelected && (
-                <div className="user-mark">
-                  {isCorrectOption ? '✅' : '❌'}
-                </div>
-              )}
-              {!retryMode && isCorrectOption && !isUserSelected && (
-                <div className="correct-mark">✅</div>
-              )}
-              
-              {/* Show marks in retry mode only after an answer is selected */}
-              {retryMode && retryAnswer !== undefined && (
+              {/* Show marks in normal mode */}
+              {!retryMode && (
                 <>
-                  {isRetrySelected && (
+                  {isUserSelected && (
                     <div className="user-mark">
                       {isCorrectOption ? '✅' : '❌'}
                     </div>
                   )}
-                  {isCorrectOption && !isRetrySelected && (
+                  {isCorrectOption && !isUserSelected && (
                     <div className="correct-mark">✅</div>
                   )}
-                  {isUserSelected && !isRetrySelected && optionIndex !== isCorrectOption && (
-                    <div className="previous-mark">
-                      ⚪ {/* Previous answer mark */}
-                    </div>
+                </>
+              )}
+              
+              {/* Show marks in retry mode */}
+              {retryMode && (
+                <>
+                  {/* If explanation is showing (correct questions) or after retry answer */}
+                  {(getStatusInfo().status === 'correct' || retryAnswer !== undefined) && (
+                    <>
+                      {isRetrySelected && (
+                        <div className="user-mark">
+                          {isCorrectOption ? '✅' : '❌'}
+                        </div>
+                      )}
+                      {isCorrectOption && !isRetrySelected && (
+                        <div className="correct-mark">✅</div>
+                      )}
+                      {isUserSelected && !isRetrySelected && !isCorrectOption && (
+                        <div className="previous-mark">
+                          ⚪ {/* Previous answer mark */}
+                        </div>
+                      )}
+                    </>
+                  )}
+                  {/* For correct questions, show the original marks */}
+                  {getStatusInfo().status === 'correct' && retryAnswer === undefined && (
+                    <>
+                      {isUserSelected && (
+                        <div className="user-mark">
+                          {isCorrectOption ? '✅' : '❌'}
+                        </div>
+                      )}
+                      {isCorrectOption && !isUserSelected && (
+                        <div className="correct-mark">✅</div>
+                      )}
+                    </>
                   )}
                 </>
               )}
