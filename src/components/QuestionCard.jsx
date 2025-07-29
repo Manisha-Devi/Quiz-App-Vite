@@ -1,8 +1,11 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { InlineMath, BlockMath } from 'react-katex';
 import 'katex/dist/katex.min.css';
 
 function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, retryAnswer, retryCompleted, onRetryAnswer }) {
+  const [fiftyFiftyUsed, setFiftyFiftyUsed] = useState(false);
+  const [hiddenOptions, setHiddenOptions] = useState([]);
+
   const renderMathAndHTML = useCallback((text) => {
     if (!text) return '';
 
@@ -160,6 +163,25 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
     }
   };
 
+  const handleFiftyFifty = () => {
+    if (!fiftyFiftyUsed) {
+      // Determine two incorrect options to hide
+      let incorrectOptions = [];
+      for (let i = 0; i < question.options.length; i++) {
+        if (i !== question.answer) {
+          incorrectOptions.push(i);
+        }
+      }
+
+      // Shuffle incorrect options and pick the first two
+      incorrectOptions = incorrectOptions.sort(() => Math.random() - 0.5);
+      const optionsToHide = incorrectOptions.slice(0, 2);
+
+      setHiddenOptions(optionsToHide);
+      setFiftyFiftyUsed(true);
+    }
+  };
+
 
   const retryStatus = getRetryStatus();
 
@@ -189,8 +211,43 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
         {renderMathAndHTML(question.question)}
       </div>
 
+      {retryMode && retryStatus && (
+        <div className="retry-indicator">
+          <div className={`retry-badge ${retryStatus.spinning ? 'spinning' : 'completed'}`}>
+            <span className="retry-icon">{retryStatus.icon}</span>
+          </div>
+          <div className="retry-text">Retry Mode Active</div>
+          <div className="retry-count">
+            Question {index + 1}
+          </div>
+          {/* 50/50 Button */}
+          {!fiftyFiftyUsed && retryAnswer === undefined && (
+            <button className="fifty-fifty-btn" onClick={handleFiftyFifty} title="50/50 Lifeline">
+              50/50
+            </button>
+          )}
+          {fiftyFiftyUsed && (
+            <div className="fifty-fifty-used">
+              ✓ 50/50 Used
+            </div>
+          )}
+        </div>
+      )}
+
       <div className="options-grid">
         {question.options?.map((option, optionIndex) => {
+          // Hide option if 50/50 is used and this option should be hidden
+          if (fiftyFiftyUsed && hiddenOptions.includes(optionIndex)) {
+            return (
+              <div key={optionIndex} className="option option-hidden">
+                <div className="option-label">{String.fromCharCode(65 + optionIndex)}</div>
+                <div className="option-text">
+                  <span className="hidden-text">Hidden by 50/50</span>
+                </div>
+              </div>
+            );
+          }
+
           const isCorrectOption = optionIndex === question.answer;
           const isUserSelected = optionIndex === userAnswer;
           const isRetrySelected = optionIndex === retryAnswer;

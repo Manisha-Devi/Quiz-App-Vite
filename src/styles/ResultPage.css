@@ -202,6 +202,78 @@
   font-size: 14px;
 }
 
+/* 50/50 Lifeline Styles */
+.fifty-fifty-btn {
+  background: linear-gradient(135deg, #ff9800, #f57c00);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-left: 10px;
+  box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
+}
+
+.fifty-fifty-btn:hover {
+  background: linear-gradient(135deg, #f57c00, #e65100);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
+}
+
+.fifty-fifty-used {
+  background: #4caf50;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 15px;
+  font-weight: 600;
+  font-size: 11px;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.option-hidden {
+  opacity: 0.3;
+  pointer-events: none;
+  background: linear-gradient(135deg, #f5f5f5, #e0e0e0) !important;
+}
+
+.option-hidden .option-label {
+  background: #bbb !important;
+  color: white !important;
+}
+
+.hidden-text {
+  font-style: italic;
+  color: #999;
+  font-size: 14px;
+}
+
+/* Dark mode for 50/50 styles */
+.result-page.dark-mode .fifty-fifty-btn {
+  background: linear-gradient(135deg, #ff9800, #f57c00);
+}
+
+.result-page.dark-mode .fifty-fifty-used {
+  background: #66bb6a;
+}
+
+.result-page.dark-mode .option-hidden {
+  background: linear-gradient(135deg, #333, #2a2a2a) !important;
+}
+
+.result-page.dark-mode .option-hidden .option-label {
+  background: #555 !important;
+}
+
+.result-page.dark-mode .hidden-text {
+  color: #666;
+}
+
 .result-page.dark-mode .retry-indicator {
   background: linear-gradient(135deg, #1a237e, #283593);
   border-color: #3f51b5;
@@ -1535,6 +1607,18 @@
     padding: 6px;
     height: 32px;
     width: 32px;
+  }
+
+  .fifty-fifty-btn {
+    padding: 6px 12px;
+    font-size: 11px;
+    margin-left: 8px;
+  }
+
+  .fifty-fifty-used {
+    padding: 4px 8px;
+    font-size: 10px;
+    margin-left: 8px;
   }
 
   .question-number {
