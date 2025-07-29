@@ -348,7 +348,7 @@ function LocalJSONLibrary({ onFileSelect }) {
                     </div>
                     <div className="file-row file-meta-row">
                       <div className="file-questions-left">
-                        <span className="file-icon">📝</span>
+                        <span className="question-prefix">Q:</span>
                         <span className="question-count">{questionCount} questions</span>
                       </div>
                       <div className="file-size-right">
