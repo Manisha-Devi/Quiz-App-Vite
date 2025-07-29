@@ -356,30 +356,21 @@
   justify-content: flex-start;
   width: 100%;
   min-height: 50px;
-  max-height: 50px;
   align-items: center;
-  overflow: hidden;
 }
 
 .section-navigation-horizontal {
   display: flex;
   gap: 8px;
   overflow-x: auto;
-  overflow-y: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
   flex-wrap: nowrap;
-  width: 100%;
-  height: 100%;
-  align-items: center;
-  -webkit-overflow-scrolling: touch;
-  scroll-behavior: smooth;
+  max-width: 100%;
 }
 
 .section-navigation-horizontal::-webkit-scrollbar {
   display: none;
-  width: 0;
-  height: 0;
 }
 
 .section-nav-item-horizontal {
@@ -394,15 +385,10 @@
   transition: all 0.2s ease;
   white-space: nowrap;
   flex-shrink: 0;
-  flex-grow: 0;
-  display: inline-flex;
+  display: flex;
   flex-direction: row;
   align-items: center;
   gap: 6px;
-  min-width: max-content;
-  height: fit-content;
-  touch-action: manipulation;
-  user-select: none;
 }
 
 .section-nav-item-horizontal:hover {
