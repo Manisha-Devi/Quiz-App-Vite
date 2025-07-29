@@ -315,14 +315,7 @@ function LocalJSONLibrary({ onFileSelect }) {
         </div>
       )}
 
-      {/* All Files Selection Summary */}
-      <div className="selection-summary">
-        <div className="selection-info">
-          <span className="selection-count">
-            📁 All Files: {filteredFiles.length} available
-          </span>
-        </div>
-      </div>
+      
 
       {/* Library Stats - Moved above files */}
       {filteredFiles.length > 0 && (
