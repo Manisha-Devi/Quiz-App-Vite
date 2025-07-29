@@ -4,8 +4,8 @@ import { MathJaxContext } from 'better-react-mathjax';
 import { useSwipeable } from 'react-swipeable';
 import QuestionViewer from '../components/QuestionViewer';
 import QuestionNavigator from '../components/QuestionNavigator';
-import '../styles/ExamPage.css';
 import DrawingOverlay from '../components/DrawingOverlay';
+import '../styles/ExamPage.css';
 
 function ExamPage() {
   const navigate = useNavigate();
