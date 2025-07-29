@@ -11,6 +11,8 @@ function LocalJSONLibrary({ onFileSelect }) {
   const [sortBy, setSortBy] = useState('name');
   const [filterBy, setFilterBy] = useState('all');
   const [viewMode, setViewMode] = useState('grid');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     loadLocalFiles();
@@ -19,13 +21,13 @@ function LocalJSONLibrary({ onFileSelect }) {
   const loadLocalFiles = async (forceReload = false) => {
     try {
       setLoading(true);
-      
+
       if (forceReload) {
         // Force reload from file system by calling jsonLoader
         const { loadJSONFilesToStorage } = await import('../utils/jsonLoader');
         await loadJSONFilesToStorage();
       }
-      
+
       const files = await getAllJSONFiles();
       setLocalFiles(files);
     } catch (error) {
@@ -98,7 +100,29 @@ function LocalJSONLibrary({ onFileSelect }) {
     return filtered;
   };
 
+  // Pagination logic
   const filteredFiles = getFilteredAndSortedFiles();
+  const totalPages = Math.ceil(filteredFiles.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentFiles = filteredFiles.slice(startIndex, endIndex);
+
+  const goToPage = (page) => {
+    setCurrentPage(page);
+  };
+
+  const goToPrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
 
   if (loading) {
     return (
@@ -198,6 +222,14 @@ function LocalJSONLibrary({ onFileSelect }) {
         </div>
       </div>
 
+      {filteredFiles.length > 0 && (
+        <div className="library-stats">
+          <span className="total-files">
+            📊 Total: {filteredFiles.length} files | 
+            Page {currentPage} of {totalPages}
+          </span>
+        </div>
+      )}
 
 
       {/* Selection Summary */}
@@ -218,15 +250,15 @@ function LocalJSONLibrary({ onFileSelect }) {
       </div>
 
       {/* Files Display */}
-      <div className={`files-container ${viewMode}`}>
-        {filteredFiles.length === 0 ? (
+      <div className={`files-container ${viewMode} files-grid-2-col`}>
+        {currentFiles.length === 0 ? (
           <div className="no-results">
             <div className="no-results-icon">🔍</div>
             <h3>No files match your search</h3>
             <p>Try adjusting your search terms or filters</p>
           </div>
         ) : (
-          filteredFiles.map((file, index) => {
+          currentFiles.map((file, index) => {
             const isSelected = selectedFiles.some(f => f.filename === file.filename);
             const questionCount = Array.isArray(file.data) ? file.data.length : 0;
 
@@ -270,7 +302,40 @@ function LocalJSONLibrary({ onFileSelect }) {
         )}
       </div>
 
-      
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="pagination-controls">
+          <button 
+            className="pagination-btn"
+            onClick={goToPrevPage}
+            disabled={currentPage === 1}
+          >
+            ← Previous
+          </button>
+
+          <div className="pagination-pages">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+              <button
+                key={page}
+                className={`pagination-page ${currentPage === page ? 'active' : ''}`}
+                onClick={() => goToPage(page)}
+              >
+                {page}
+              </button>
+            ))}
+          </div>
+
+          <button 
+            className="pagination-btn"
+            onClick={goToNextPage}
+            disabled={currentPage === totalPages}
+          >
+            Next →
+          </button>
+        </div>
+      )}
+
+
 
       {/* Continue Button */}
       <div className="action-section">
