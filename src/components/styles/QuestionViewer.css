@@ -289,9 +289,18 @@
 
 /* Options */
 .options {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 14px;
+}
+
+/* Mobile: Single column layout */
+@media (max-width: 768px) {
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
 }
 
 .option {
