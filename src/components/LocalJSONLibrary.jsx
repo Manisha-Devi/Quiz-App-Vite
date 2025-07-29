@@ -100,9 +100,14 @@ function LocalJSONLibrary({ onFileSelect }) {
       if (filterBy === 'all') return matchesSearch;
 
       const questionCount = Array.isArray(file.data) ? file.data.length : 0;
+      const isSelected = selectedFiles.some(f => f.filename === file.filename);
+      
       if (filterBy === 'small') return matchesSearch && questionCount <= 20;
       if (filterBy === 'medium') return matchesSearch && questionCount > 20 && questionCount <= 50;
       if (filterBy === 'large') return matchesSearch && questionCount > 50;
+      if (filterBy === 'selected') return matchesSearch && isSelected;
+      if (filterBy === 'unselected') return matchesSearch && !isSelected;
+      if (filterBy === 'popular') return matchesSearch && questionCount >= 20 && questionCount <= 100;
 
       return matchesSearch;
     });
@@ -263,6 +268,9 @@ function LocalJSONLibrary({ onFileSelect }) {
               <option value="small">Small (≤20 questions)</option>
               <option value="medium">Medium (21-50 questions)</option>
               <option value="large">Large (&gt;50 questions)</option>
+              <option value="selected">Selected Files Only</option>
+              <option value="unselected">Unselected Files Only</option>
+              <option value="popular">Popular Sizes (20-100 questions)</option>
             </select>
           </div>
 
