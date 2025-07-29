@@ -207,18 +207,18 @@ const QuestionViewer = React.memo(function QuestionViewer({
           <div className="q-number">Q{currentIndex + 1}</div>
           <div className="header-actions">
             {practiceMode && (
-              <>
-                <div className="show-answer" onClick={handleShowAnswer} title="Show/Hide Answer">
-                  {showAnswer ? '🙈' : '👁️'}
-                </div>
-                <div 
-                  className={`fifty-fifty ${fiftyFiftyUsed ? 'used' : ''}`} 
-                  onClick={handleFiftyFifty} 
-                  title="50/50 Lifeline - Remove 2 wrong answers"
-                >
-                  {fiftyFiftyUsed ? '❌' : '50/50'}
-                </div>
-              </>
+              <div className="show-answer" onClick={handleShowAnswer} title="Show/Hide Answer">
+                {showAnswer ? '🙈' : '👁️'}
+              </div>
+            )}
+            {!practiceMode && (
+              <div 
+                className={`fifty-fifty ${fiftyFiftyUsed ? 'used' : ''}`} 
+                onClick={handleFiftyFifty} 
+                title="50/50 Lifeline - Remove 2 wrong answers"
+              >
+                {fiftyFiftyUsed ? '❌' : '50/50'}
+              </div>
             )}
             <div className="mark-review" onClick={onToggleReview}>
               Mark for Review: {reviewMarked ? '⭐' : '☆'}
