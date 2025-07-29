@@ -267,7 +267,7 @@ function LocalJSONLibrary({ onFileSelect }) {
               Clear All
             </button>
           </div>
-          
+
           <div className="selected-files-grid">
             {selectedFiles.map((file, index) => {
               const questionCount = Array.isArray(file.data) ? file.data.length : 0;
@@ -348,7 +348,16 @@ function LocalJSONLibrary({ onFileSelect }) {
                     </div>
                     <div className="file-row file-meta-row">
                       <div className="file-questions-left">
-                        <span className="question-prefix">Q:</span>
+                        <span 
+                          className="question-prefix" 
+                          style={{
+                            color: questionCount <= 20 ? '#4CAF50' : 
+                                   questionCount <= 50 ? '#ff9800' : '#f44336',
+                            fontWeight: 'bold'
+                          }}
+                        >
+                          Q:
+                        </span>
                         <span className="question-count">{questionCount} questions</span>
                       </div>
                       <div className="file-size-right">
