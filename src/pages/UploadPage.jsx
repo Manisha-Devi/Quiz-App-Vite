@@ -34,6 +34,15 @@ function UploadPage() {
     "examAnswers",
     "reviewMarks",
     "fileImageMap",
+    "practiceMode",
+    "enableDrawing",
+    "retryMode",
+    "retryAnswers",
+    "retryCompleted",
+    "retryQuestions",
+    "currentRetryIndex",
+    "retryStats",
+    "quizSetupConfig",
   ];
 
   useEffect(() => {
