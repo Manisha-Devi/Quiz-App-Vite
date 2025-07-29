@@ -254,19 +254,19 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
                         </div>
                       )}
                       
-                      {/* Show correct mark for correct answer */}
-                      {isCorrectOption && (
-                        <div className="correct-mark">✅</div>
-                      )}
-                      
-                      {/* Show previous answer mark (tick or cross based on original answer) */}
+                      {/* Show previous answer mark (tick or cross based on original answer) on left */}
                       {isUserSelected && !isRetrySelected && (
-                        <div className="previous-mark">
+                        <div className="previous-option-mark">
                           {isCorrectOption ? '✅' : '❌'}
                         </div>
                       )}
                       
-                      {/* Show retry result mark for retry selected option (right position) */}
+                      {/* Show correct mark for correct answer (right position) */}
+                      {isCorrectOption && (
+                        <div className="correct-mark">✅</div>
+                      )}
+                      
+                      {/* Show retry result mark for retry selected option (right position) - only one tick */}
                       {isRetrySelected && (
                         <div className="user-mark">
                           {isCorrectOption ? '✅' : '❌'}
