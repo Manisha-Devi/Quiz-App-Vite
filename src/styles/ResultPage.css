@@ -234,17 +234,6 @@
   gap: 4px;
 }
 
-.option-hidden {
-  opacity: 0.3;
-  pointer-events: none;
-  background: linear-gradient(135deg, #f5f5f5, #e0e0e0) !important;
-}
-
-.option-hidden .option-label {
-  background: #bbb !important;
-  color: white !important;
-}
-
 .option-unselectable {
   cursor: not-allowed !important;
   user-select: none !important;
@@ -253,7 +242,8 @@
 .red-fifty {
   font-weight: bold;
   color: #f44336;
-  font-size: 18px;
+  font-size: 16px;
+  margin-left: auto;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -274,16 +264,8 @@
   background: #66bb6a;
 }
 
-.result-page.dark-mode .option-hidden {
-  background: linear-gradient(135deg, #333, #2a2a2a) !important;
-}
-
 .result-page.dark-mode .red-fifty {
   color: #ff5252;
-}
-
-.result-page.dark-mode .option-hidden .option-label {
-  background: #555 !important;
 }
 
 .result-page.dark-mode .hidden-text {

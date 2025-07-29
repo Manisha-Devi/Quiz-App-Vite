@@ -231,11 +231,12 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
           // Hide option if 50/50 is used and this option should be hidden
           if (fiftyFiftyUsed && hiddenOptions.includes(optionIndex)) {
             return (
-              <div key={optionIndex} className="option option-hidden option-unselectable">
+              <div key={optionIndex} className="option option-unselectable">
                 <div className="option-label">{String.fromCharCode(65 + optionIndex)}</div>
                 <div className="option-text">
-                  <span className="red-fifty">50</span>
+                  {renderMathAndHTML(option)}
                 </div>
+                <span className="red-fifty">50</span>
               </div>
             );
           }
