@@ -267,7 +267,7 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
                       
                       {/* Previous wrong answer (when different from retry) */}
                       {isUserSelected && !isRetrySelected && !isCorrectOption && userAnswer !== retryAnswer && (
-                        <div className="previous-mark">
+                        <div className="user-mark">
                           ❌ {/* Previous wrong answer mark */}
                         </div>
                       )}
