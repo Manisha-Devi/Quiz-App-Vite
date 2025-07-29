@@ -1530,6 +1530,7 @@
     -ms-overflow-style: none; /* IE */
     height: 8vh;
     max-height: 8vh;
+    min-width: 100%;
   }
   
   .upload-header::-webkit-scrollbar {
@@ -1547,11 +1548,19 @@
   }
 
   .page-title {
-    font-size: 20px;
+    font-size: 18px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-width: max-content;
   }
 
   .title-icon {
-    font-size: 24px;
+    font-size: 22px;
+  }
+
+  .title-text {
+    font-size: 18px;
+    font-weight: 700;
   }
 
   .section-header h2 {
@@ -1733,28 +1742,62 @@
 
 @media (max-width: 480px) {
   .upload-header {
-    padding: 12px 16px;
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .page-title {
+    font-size: 16px;
+    gap: 8px;
+    flex-shrink: 0;
+    min-width: max-content;
+  }
+
+  .title-icon {
+    font-size: 20px;
+  }
+
+  .title-text {
+    font-size: 16px;
+    font-weight: 700;
+    white-space: nowrap;
   }
 
   .header-controls {
-    gap: 8px;
+    gap: 6px;
+    flex-shrink: 1;
+    min-width: 0;
   }
 
   .theme-toggle-btn,
   .library-toggle-btn {
-    padding: 8px 10px;
+    padding: 6px 8px;
     font-size: 14px;
-    min-width: 36px;
-    min-height: 36px;
+    min-width: 32px;
+    min-height: 32px;
   }
 
   .connection-indicator {
-    padding: 6px 10px;
-    font-size: 12px;
+    padding: 4px 8px;
+    font-size: 11px;
   }
 
   .status-text {
     display: none;
+  }
+
+  .clear-database-btn {
+    padding: 6px 8px;
+    font-size: 14px;
+    min-width: 32px;
+    min-height: 32px;
+  }
+
+  .refresh-btn {
+    padding: 6px 8px;
+    font-size: 14px;
+    min-width: 32px;
+    min-height: 32px;
   }
 
   .upload-content {
