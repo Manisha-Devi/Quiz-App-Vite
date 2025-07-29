@@ -112,6 +112,18 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
 
     // Retry mode logic
     if (retryMode) {
+      // For correct questions (showing explanation), show proper coloring
+      if (getStatusInfo().status === 'correct') {
+        if (optionIndex === correctAnswer) {
+          return 'option correct-option';
+        }
+        if (optionIndex === userAnswer && optionIndex !== correctAnswer) {
+          return 'option wrong-option';
+        }
+        return 'option';
+      }
+      
+      // For incorrect/skipped questions
       if (retryAnswer === undefined) {
         // Before clicking any option in retry mode - show normal options
         return 'option';
