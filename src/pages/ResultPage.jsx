@@ -265,15 +265,6 @@ function ResultPage() {
 
       {/* Fixed Controls Section */}
       <div className="fixed-controls">
-        {retryMode && (
-          <div className="retry-indicator">
-            <span className="retry-icon">🔄</span>
-            <span className="retry-text">Retry Mode Active</span>
-            <span className="retry-count">
-              {Object.keys(retryCompleted).length} of {stats.incorrect + stats.skipped} retried
-            </span>
-          </div>
-        )}
         <div className="filter-tabs">
           {[
             { key: 'all', label: 'All', count: stats.total },
