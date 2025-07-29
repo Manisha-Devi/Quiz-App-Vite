@@ -190,15 +190,7 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
       <div className="question-header">
         <div className="question-number">Q{index + 1}</div>
         <div className="status-badges">
-          <div className={`status-badge ${statusInfo.className}`}>
-            {statusInfo.label}
-          </div>
-          {retryStatus && (
-            <div className={`retry-badge ${retryStatus.spinning ? 'spinning' : 'completed'}`}>
-              <span className="retry-icon">{retryStatus.icon}</span>
-            </div>
-          )}
-          {/* 50/50 Button in status badges */}
+          {/* 50/50 Button - leftmost */}
           {retryMode && retryStatus && !fiftyFiftyUsed && retryAnswer === undefined && (
             <button className="fifty-fifty-btn" onClick={handleFiftyFifty} title="50/50 Lifeline">
               50/50
@@ -209,6 +201,16 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
               ✓ 50/50
             </div>
           )}
+          {/* Retry Badge - middle */}
+          {retryStatus && (
+            <div className={`retry-badge ${retryStatus.spinning ? 'spinning' : 'completed'}`}>
+              <span className="retry-icon">{retryStatus.icon}</span>
+            </div>
+          )}
+          {/* Status Badge - rightmost */}
+          <div className={`status-badge ${statusInfo.className}`}>
+            {statusInfo.label}
+          </div>
         </div>
       </div>
 
