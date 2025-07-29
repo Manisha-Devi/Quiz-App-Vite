@@ -87,10 +87,10 @@ function LocalJSONLibrary({ onFileSelect }) {
   const getFilteredAndSortedFiles = () => {
     let filtered = localFiles.filter(file => {
       const filename = file.filename.toLowerCase();
-      
+
       // Check if matches current search term
       const matchesCurrentSearch = searchTerm ? filename.includes(searchTerm.toLowerCase()) : true;
-      
+
       // Check if matches any active filters
       const matchesActiveFilters = activeFilters.length === 0 || 
         activeFilters.some(filter => filename.includes(filter.toLowerCase()));
@@ -101,7 +101,7 @@ function LocalJSONLibrary({ onFileSelect }) {
 
       const questionCount = Array.isArray(file.data) ? file.data.length : 0;
       const isSelected = selectedFiles.some(f => f.filename === file.filename);
-      
+
       if (filterBy === 'small') return matchesSearch && questionCount <= 20;
       if (filterBy === 'medium') return matchesSearch && questionCount > 20 && questionCount <= 50;
       if (filterBy === 'large') return matchesSearch && questionCount > 50;
@@ -218,7 +218,7 @@ function LocalJSONLibrary({ onFileSelect }) {
           </div>
         </div>
 
-        {/* Active Filters Display */}
+        {/* Active Filters Display - Moved here */}
         {activeFilters.length > 0 && (
           <div className="active-filters">
             <div className="filters-header">
@@ -244,36 +244,6 @@ function LocalJSONLibrary({ onFileSelect }) {
         )}
 
         <div className="filters-row">
-          <div className="filter-group">
-            <label className="filter-label">Sort by:</label>
-            <select 
-              value={sortBy} 
-              onChange={(e) => setSortBy(e.target.value)}
-              className="filter-select"
-            >
-              <option value="name">Name (A-Z)</option>
-              <option value="size">Questions Count</option>
-              <option value="recent">Recently Added</option>
-            </select>
-          </div>
-
-          <div className="filter-group">
-            <label className="filter-label">Filter by size:</label>
-            <select 
-              value={filterBy} 
-              onChange={(e) => setFilterBy(e.target.value)}
-              className="filter-select"
-            >
-              <option value="all">All Files</option>
-              <option value="small">Small (≤20 questions)</option>
-              <option value="medium">Medium (21-50 questions)</option>
-              <option value="large">Large (&gt;50 questions)</option>
-              <option value="selected">Selected Files Only</option>
-              <option value="unselected">Unselected Files Only</option>
-              <option value="popular">Popular Sizes (20-100 questions)</option>
-            </select>
-          </div>
-
           <div className="filter-group">
             <label className="filter-label">View:</label>
             <div className="view-toggle">
