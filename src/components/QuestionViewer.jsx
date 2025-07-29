@@ -254,7 +254,7 @@ const QuestionViewer = React.memo(function QuestionViewer({
                   {renderMathAndHTML(opt)}
                 </span>
                 {isHidden && <span className="crossed-out"> ❌</span>}
-                {isCorrectAnswer && <span className="correct-indicator"> ✅ Correct Answer</span>}
+                {isCorrectAnswer && <span className="correct-indicator">✅</span>}
               </div>
             );
           })}
