@@ -60,19 +60,47 @@
   color: #adb5bd;
 }
 
-.clear-search {
+.search-actions {
   position: absolute;
   right: 12px;
-  background: #f8f9fa;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.add-filter-btn {
+  background: #4CAF50;
   border: none;
-  font-size: 16px;
-  color: #6c757d;
+  font-size: 14px;
+  color: white;
   cursor: pointer;
-  padding: 8px;
+  padding: 6px;
   border-radius: 50%;
   transition: all 0.3s ease;
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.add-filter-btn:hover {
+  background: #45a049;
+  transform: scale(1.1);
+}
+
+.clear-search {
+  background: #f8f9fa;
+  border: none;
+  font-size: 14px;
+  color: #6c757d;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -82,6 +110,100 @@
   color: #495057;
   background: #e9ecef;
   transform: scale(1.1);
+}
+
+/* Active Filters */
+.active-filters {
+  margin-top: 16px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+}
+
+.filters-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.filters-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #495057;
+}
+
+.clear-all-filters {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.clear-all-filters:hover {
+  background: #c82333;
+}
+
+.filter-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filter-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #4CAF50;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.remove-filter {
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 2px 4px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  margin-left: 4px;
+}
+
+.remove-filter:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Dark mode for filters */
+.dark-mode .active-filters {
+  background: #2d2d2d;
+  border-color: #444;
+}
+
+.dark-mode .filters-label {
+  color: #e0e0e0;
+}
+
+.dark-mode .add-filter-btn {
+  background: #4CAF50;
+}
+
+.dark-mode .clear-search {
+  background: #444;
+  color: #e0e0e0;
+}
+
+.dark-mode .clear-search:hover {
+  background: #555;
 }
 
 .filters-row {

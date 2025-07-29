@@ -7,6 +7,7 @@ function LocalJSONLibrary({ onFileSelect }) {
   const [loading, setLoading] = useState(true);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [activeFilters, setActiveFilters] = useState([]);
   const [quizTime, setQuizTime] = useState(0);
   const [sortBy, setSortBy] = useState('name');
   const [filterBy, setFilterBy] = useState('all');
@@ -48,6 +49,22 @@ function LocalJSONLibrary({ onFileSelect }) {
     });
   };
 
+  const addSearchFilter = () => {
+    if (searchTerm.trim() && !activeFilters.includes(searchTerm.trim())) {
+      setActiveFilters(prev => [...prev, searchTerm.trim()]);
+      setSearchTerm('');
+    }
+  };
+
+  const removeFilter = (filterToRemove) => {
+    setActiveFilters(prev => prev.filter(filter => filter !== filterToRemove));
+  };
+
+  const clearAllFilters = () => {
+    setActiveFilters([]);
+    setSearchTerm('');
+  };
+
 
 
   const handleContinue = () => {
@@ -69,7 +86,16 @@ function LocalJSONLibrary({ onFileSelect }) {
 
   const getFilteredAndSortedFiles = () => {
     let filtered = localFiles.filter(file => {
-      const matchesSearch = file.filename.toLowerCase().includes(searchTerm.toLowerCase());
+      const filename = file.filename.toLowerCase();
+      
+      // Check if matches current search term
+      const matchesCurrentSearch = searchTerm ? filename.includes(searchTerm.toLowerCase()) : true;
+      
+      // Check if matches any active filters
+      const matchesActiveFilters = activeFilters.length === 0 || 
+        activeFilters.some(filter => filename.includes(filter.toLowerCase()));
+
+      const matchesSearch = matchesCurrentSearch && matchesActiveFilters;
 
       if (filterBy === 'all') return matchesSearch;
 
@@ -161,18 +187,56 @@ function LocalJSONLibrary({ onFileSelect }) {
               placeholder="Search files by name..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && addSearchFilter()}
               className="search-input"
             />
-            {searchTerm && (
-              <button 
-                className="clear-search"
-                onClick={() => setSearchTerm('')}
-              >
-                ✕
-              </button>
-            )}
+            <div className="search-actions">
+              {searchTerm && (
+                <button 
+                  className="add-filter-btn"
+                  onClick={addSearchFilter}
+                  title="Add as filter"
+                >
+                  ✓
+                </button>
+              )}
+              {searchTerm && (
+                <button 
+                  className="clear-search"
+                  onClick={() => setSearchTerm('')}
+                  title="Clear search"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
           </div>
         </div>
+
+        {/* Active Filters Display */}
+        {activeFilters.length > 0 && (
+          <div className="active-filters">
+            <div className="filters-header">
+              <span className="filters-label">Active Filters:</span>
+              <button className="clear-all-filters" onClick={clearAllFilters}>
+                Clear All
+              </button>
+            </div>
+            <div className="filter-tags">
+              {activeFilters.map((filter, index) => (
+                <span key={index} className="filter-tag">
+                  {filter}
+                  <button 
+                    className="remove-filter"
+                    onClick={() => removeFilter(filter)}
+                  >
+                    ✕
+                  </button>
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="filters-row">
           <div className="filter-group">
