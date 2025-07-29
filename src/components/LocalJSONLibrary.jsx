@@ -272,29 +272,42 @@ function LocalJSONLibrary({ onFileSelect }) {
             {selectedFiles.map((file, index) => {
               const questionCount = Array.isArray(file.data) ? file.data.length : 0;
               return (
-                <div key={index} className="selected-file-card">
-                  <div className="selected-file-content">
-                    <div className="file-icon">✅</div>
+                <div 
+                  key={index} 
+                  className="file-card selected-file-card"
+                  onClick={() => handleFileToggle(file)}
+                >
+                  <div className="file-content">
                     <div className="file-info">
-                      <h4 className="file-name">{file.filename}</h4>
-                      <div className="file-meta">
-                        <span className="question-count">
-                          📝 {questionCount} questions
-                        </span>
-                        <span className="file-size">
-                          {questionCount <= 20 ? '🟢 Small' : 
-                           questionCount <= 50 ? '🟡 Medium' : '🔴 Large'}
-                        </span>
+                      <div className="file-row file-name-row">
+                        <span className="file-icon">📄</span>
+                        <h3 className="file-name">{file.filename}</h3>
+                      </div>
+                      <div className="file-row file-meta-row">
+                        <div className="file-questions-left">
+                          <span 
+                            className="question-prefix" 
+                            style={{
+                              color: questionCount <= 20 ? '#4CAF50' : 
+                                     questionCount <= 50 ? '#ff9800' : '#f44336',
+                              fontWeight: 'bold'
+                            }}
+                          >
+                            Q:
+                          </span>
+                          <span className="question-count">{questionCount} questions</span>
+                        </div>
+                        <div className="file-size-right">
+                          <span className="file-size">
+                            {questionCount <= 20 ? '🟢 Small' : 
+                             questionCount <= 50 ? '🟡 Medium' : '🔴 Large'}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                    <button 
-                      className="remove-selected-btn"
-                      onClick={() => handleFileToggle(file)}
-                      title="Remove from selection"
-                    >
-                      ✕
-                    </button>
                   </div>
+
+                  <div className="selected-indicator">✕</div>
                 </div>
               );
             })}

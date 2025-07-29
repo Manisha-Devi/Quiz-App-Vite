@@ -369,57 +369,15 @@
 }
 
 .selected-file-card {
-  background: white;
-  border: 2px solid #4CAF50;
-  border-radius: 12px;
-  padding: 16px;
-  position: relative;
-  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.1);
-  transition: all 0.3s ease;
+  /* Already inherits from .file-card */
 }
 
-.selected-file-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
-}
-
-.selected-file-content {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.selected-file-content .file-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.selected-file-content .file-name {
-  margin: 0 0 4px 0;
-  font-size: 14px;
-  font-weight: 600;
-  color: #2e7d32;
-  line-height: 1.3;
-  word-break: break-word;
-}
-
-.remove-selected-btn {
+.selected-file-card .selected-indicator {
   background: #ff6b6b;
   color: white;
-  border: none;
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  font-size: 12px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  flex-shrink: 0;
 }
 
-.remove-selected-btn:hover {
+.selected-file-card:hover .selected-indicator {
   background: #ff5252;
   transform: scale(1.1);
 }
@@ -431,15 +389,6 @@
 }
 
 .dark-mode .selected-header h3 {
-  color: #81c784;
-}
-
-.dark-mode .selected-file-card {
-  background: #2d2d2d;
-  border-color: #4CAF50;
-}
-
-.dark-mode .selected-file-content .file-name {
   color: #81c784;
 }
 
