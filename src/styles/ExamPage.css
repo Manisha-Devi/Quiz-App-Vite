@@ -407,6 +407,12 @@
     transform: translateY(0%);
   }
 
+  /* Hide drawing and fullscreen icons when question navigator is open on mobile */
+  .exam-right.open ~ .drawing-toggle,
+  .exam-right.open ~ .fullscreen-btn-container {
+    display: none !important;
+  }
+
   .exam-footer {
     position: fixed;
     bottom: 0;
