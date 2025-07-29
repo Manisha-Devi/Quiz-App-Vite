@@ -245,6 +245,20 @@
   color: white !important;
 }
 
+.option-unselectable {
+  cursor: not-allowed !important;
+  user-select: none !important;
+}
+
+.red-fifty {
+  font-weight: bold;
+  color: #f44336;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .hidden-text {
   font-style: italic;
   color: #999;
@@ -262,6 +276,10 @@
 
 .result-page.dark-mode .option-hidden {
   background: linear-gradient(135deg, #333, #2a2a2a) !important;
+}
+
+.result-page.dark-mode .red-fifty {
+  color: #ff5252;
 }
 
 .result-page.dark-mode .option-hidden .option-label {
