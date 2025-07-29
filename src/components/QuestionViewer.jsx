@@ -15,7 +15,8 @@ const QuestionViewer = React.memo(function QuestionViewer({
   hasMath,
   isDarkMode,
   swipeHandlers,
-  practiceMode = false
+  practiceMode = false,
+  onClear
 }) {
   const [showAnswer, setShowAnswer] = React.useState(false);
   const [sectionsReady, setSectionsReady] = React.useState(!!window.sections);
@@ -28,6 +29,18 @@ const QuestionViewer = React.memo(function QuestionViewer({
     setFiftyFiftyUsed(false);
     setHiddenOptions([]);
   }, [currentIndex]);
+
+  // Handle clear from parent component
+  React.useEffect(() => {
+    if (onClear) {
+      const clearStates = () => {
+        setShowAnswer(false);
+        setFiftyFiftyUsed(false);
+        setHiddenOptions([]);
+      };
+      window.clearQuestionStates = clearStates;
+    }
+  }, [onClear]);
 
   // Check for sections availability
   React.useEffect(() => {
@@ -272,7 +285,8 @@ QuestionViewer.propTypes = {
   injectImageSources: PropTypes.func.isRequired,
   hasMath: PropTypes.func.isRequired,
   isDarkMode: PropTypes.bool,
-  swipeHandlers: PropTypes.object
+  swipeHandlers: PropTypes.object,
+  onClear: PropTypes.func
 };
 
 export default QuestionViewer;

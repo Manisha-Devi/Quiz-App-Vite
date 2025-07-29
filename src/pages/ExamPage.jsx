@@ -158,6 +158,10 @@ function ExamPage() {
   const handleClear = useCallback(() => {
     setAnswers(a => { const c = { ...a }; delete c[current]; return c; });
     setReview(r => { const c = { ...r }; delete c[current]; return c; });
+    // Clear all question states (50/50, show answer)
+    if (window.clearQuestionStates) {
+      window.clearQuestionStates();
+    }
   }, [current]);
 
   useEffect(() => {
@@ -307,6 +311,7 @@ function ExamPage() {
                   isDarkMode={isDarkMode}
                   swipeHandlers={swipeHandlers}
                   practiceMode={practiceMode}
+                  onClear={handleClear}
                 />
               </div>
 
