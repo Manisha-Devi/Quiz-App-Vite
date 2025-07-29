@@ -356,21 +356,28 @@
   justify-content: flex-start;
   width: 100%;
   min-height: 50px;
+  max-height: 50px;
   align-items: center;
+  overflow: hidden;
 }
 
 .section-navigation-horizontal {
   display: flex;
   gap: 8px;
   overflow-x: auto;
+  overflow-y: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
   flex-wrap: nowrap;
   max-width: 100%;
+  width: 100%;
+  min-height: 40px;
+  align-items: center;
 }
 
 .section-navigation-horizontal::-webkit-scrollbar {
   display: none;
+  height: 0;
 }
 
 .section-nav-item-horizontal {
@@ -385,10 +392,13 @@
   transition: all 0.2s ease;
   white-space: nowrap;
   flex-shrink: 0;
-  display: flex;
+  flex-grow: 0;
+  display: inline-flex;
   flex-direction: row;
   align-items: center;
   gap: 6px;
+  min-width: max-content;
+  height: fit-content;
 }
 
 .section-nav-item-horizontal:hover {
