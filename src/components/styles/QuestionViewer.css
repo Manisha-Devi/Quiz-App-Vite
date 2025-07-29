@@ -367,7 +367,6 @@
   -ms-overflow-style: none;
   flex-wrap: nowrap;
   max-width: 100%;
-  white-space: nowrap;
 }
 
 .section-navigation-horizontal::-webkit-scrollbar {
@@ -386,11 +385,10 @@
   transition: all 0.2s ease;
   white-space: nowrap;
   flex-shrink: 0;
-  display: inline-flex;
+  display: flex;
   flex-direction: row;
   align-items: center;
   gap: 6px;
-  min-width: max-content;
 }
 
 .section-nav-item-horizontal:hover {
