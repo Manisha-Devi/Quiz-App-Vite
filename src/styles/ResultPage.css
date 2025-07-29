@@ -1273,6 +1273,11 @@
   color: #333;
   margin-bottom: 25px;
   line-height: 1.5;
+  text-align: left !important;
+}
+
+.question-text * {
+  text-align: left !important;
 }
 
 /* Options Grid */
@@ -1320,6 +1325,11 @@
   flex: 1;
   font-size: 1rem;
   color: #333;
+  text-align: left !important;
+}
+
+.option-text * {
+  text-align: left !important;
 }
 
 .correct-option {
@@ -1436,6 +1446,11 @@
 .explanation-text {
   color: #333;
   line-height: 1.6;
+  text-align: left !important;
+}
+
+.explanation-text * {
+  text-align: left !important;
 }
 
 /* No Results */
