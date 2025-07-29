@@ -17,49 +17,6 @@ function ResultPage() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const navigate = useNavigate();
 
-  const toggleDarkMode = useCallback(() => {
-    const newDarkMode = !isDarkMode;
-    setIsDarkMode(newDarkMode);
-    localStorage.setItem('darkMode', newDarkMode.toString());
-  }, [isDarkMode]);
-
-  const handlePerformanceToggle = useCallback(() => {
-    setShowPerformanceChart(prev => !prev);
-  }, []);
-
-  const goToNextQuestion = useCallback(() => {
-    if (currentQuestionIndex < filteredQuestions.length - 1) {
-      setCurrentQuestionIndex(prev => prev + 1);
-    }
-  }, [currentQuestionIndex, filteredQuestions.length]);
-
-  const goToPrevQuestion = useCallback(() => {
-    if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(prev => prev - 1);
-    }
-  }, [currentQuestionIndex]);
-
-  const swipeHandlers = useSwipeable({
-    onSwipedLeft: goToNextQuestion,
-    onSwipedRight: goToPrevQuestion,
-    trackTouch: true,
-    preventScrollOnSwipe: true,
-  });
-
-  // Keyboard navigation
-  useEffect(() => {
-    const handleKeyPress = (e) => {
-      if (e.key === 'ArrowLeft') {
-        goToPrevQuestion();
-      } else if (e.key === 'ArrowRight') {
-        goToNextQuestion();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [goToPrevQuestion, goToNextQuestion]);
-
   useEffect(() => {
     const q = JSON.parse(localStorage.getItem('finalQuiz') || '[]');
     const a = JSON.parse(localStorage.getItem('examAnswers') || '{}');
@@ -68,6 +25,16 @@ function ResultPage() {
     setQuestions(q);
     setAnswers(a);
     setReviewMarks(r);
+  }, []);
+
+  const toggleDarkMode = useCallback(() => {
+    const newDarkMode = !isDarkMode;
+    setIsDarkMode(newDarkMode);
+    localStorage.setItem('darkMode', newDarkMode.toString());
+  }, [isDarkMode]);
+
+  const handlePerformanceToggle = useCallback(() => {
+    setShowPerformanceChart(prev => !prev);
   }, []);
 
   const calculateStats = () => {
@@ -101,6 +68,39 @@ function ResultPage() {
     
     return true;
   });
+
+  const goToNextQuestion = useCallback(() => {
+    if (currentQuestionIndex < filteredQuestions.length - 1) {
+      setCurrentQuestionIndex(prev => prev + 1);
+    }
+  }, [currentQuestionIndex, filteredQuestions.length]);
+
+  const goToPrevQuestion = useCallback(() => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(prev => prev - 1);
+    }
+  }, [currentQuestionIndex]);
+
+  const swipeHandlers = useSwipeable({
+    onSwipedLeft: goToNextQuestion,
+    onSwipedRight: goToPrevQuestion,
+    trackTouch: true,
+    preventScrollOnSwipe: true,
+  });
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if (e.key === 'ArrowLeft') {
+        goToPrevQuestion();
+      } else if (e.key === 'ArrowRight') {
+        goToNextQuestion();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [goToPrevQuestion, goToNextQuestion]);
 
   // Reset current question index when filter changes
   useEffect(() => {
