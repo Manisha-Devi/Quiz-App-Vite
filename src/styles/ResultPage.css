@@ -234,9 +234,17 @@
   gap: 4px;
 }
 
-.option-unselectable {
+.option-fifty-fifty-hidden {
+  background: linear-gradient(135deg, #ffeaea, #fdd4d4) !important;
+  border-color: #f44336 !important;
   cursor: not-allowed !important;
   user-select: none !important;
+  pointer-events: none !important;
+}
+
+.option-fifty-fifty-hidden .option-label {
+  background: #f44336 !important;
+  color: white !important;
 }
 
 .red-fifty {
@@ -262,6 +270,16 @@
 
 .result-page.dark-mode .fifty-fifty-used {
   background: #66bb6a;
+}
+
+.result-page.dark-mode .option-fifty-fifty-hidden {
+  background: linear-gradient(135deg, #4d1a1a, #5a2a2a) !important;
+  border-color: #f44336 !important;
+}
+
+.result-page.dark-mode .option-fifty-fifty-hidden .option-label {
+  background: #f44336 !important;
+  color: white !important;
 }
 
 .result-page.dark-mode .red-fifty {
