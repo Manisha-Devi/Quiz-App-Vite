@@ -1,6 +1,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSwipeable } from 'react-swipeable';
 import QuestionCard from '../components/QuestionCard';
 import '../styles/ResultPage.css';
 
@@ -13,6 +14,7 @@ function ResultPage() {
     return localStorage.getItem('darkMode') === 'true';
   });
   const [showPerformanceChart, setShowPerformanceChart] = useState(false);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const navigate = useNavigate();
 
   const toggleDarkMode = useCallback(() => {
@@ -24,6 +26,39 @@ function ResultPage() {
   const handlePerformanceToggle = useCallback(() => {
     setShowPerformanceChart(prev => !prev);
   }, []);
+
+  const goToNextQuestion = useCallback(() => {
+    if (currentQuestionIndex < filteredQuestions.length - 1) {
+      setCurrentQuestionIndex(prev => prev + 1);
+    }
+  }, [currentQuestionIndex, filteredQuestions.length]);
+
+  const goToPrevQuestion = useCallback(() => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(prev => prev - 1);
+    }
+  }, [currentQuestionIndex]);
+
+  const swipeHandlers = useSwipeable({
+    onSwipedLeft: goToNextQuestion,
+    onSwipedRight: goToPrevQuestion,
+    trackTouch: true,
+    preventScrollOnSwipe: true,
+  });
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if (e.key === 'ArrowLeft') {
+        goToPrevQuestion();
+      } else if (e.key === 'ArrowRight') {
+        goToNextQuestion();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [goToPrevQuestion, goToNextQuestion]);
 
   useEffect(() => {
     const q = JSON.parse(localStorage.getItem('finalQuiz') || '[]');
@@ -66,6 +101,11 @@ function ResultPage() {
     
     return true;
   });
+
+  // Reset current question index when filter changes
+  useEffect(() => {
+    setCurrentQuestionIndex(0);
+  }, [currentFilter]);
 
   const stats = calculateStats();
 
@@ -227,21 +267,48 @@ function ResultPage() {
 
       {/* Main Content Area */}
       <div className="main-content">
-        {/* Questions List */}
-        <div className="questions-container">
+        {/* Single Question Card View */}
+        <div className="single-question-container" {...swipeHandlers}>
           {filteredQuestions.length > 0 ? (
-            filteredQuestions.map((q, originalIdx) => {
-              const actualIndex = questions.findIndex(question => question === q);
-              return (
-                <QuestionCard
-                  key={actualIndex}
-                  question={q}
-                  index={actualIndex}
-                  userAnswer={answers[actualIndex]}
-                  reviewMarked={reviewMarks[actualIndex]}
-                />
-              );
-            })
+            <>
+              <div className="question-navigation-header">
+                <button 
+                  className="nav-arrow prev" 
+                  onClick={goToPrevQuestion}
+                  disabled={currentQuestionIndex === 0}
+                  title="Previous Question (Left Arrow)"
+                >
+                  ← Previous
+                </button>
+                <div className="question-counter">
+                  {currentQuestionIndex + 1} of {filteredQuestions.length}
+                </div>
+                <button 
+                  className="nav-arrow next" 
+                  onClick={goToNextQuestion}
+                  disabled={currentQuestionIndex === filteredQuestions.length - 1}
+                  title="Next Question (Right Arrow)"
+                >
+                  Next →
+                </button>
+              </div>
+              
+              <div className="current-question-wrapper">
+                {(() => {
+                  const currentQuestion = filteredQuestions[currentQuestionIndex];
+                  const actualIndex = questions.findIndex(question => question === currentQuestion);
+                  return (
+                    <QuestionCard
+                      key={actualIndex}
+                      question={currentQuestion}
+                      index={actualIndex}
+                      userAnswer={answers[actualIndex]}
+                      reviewMarked={reviewMarks[actualIndex]}
+                    />
+                  );
+                })()}
+              </div>
+            </>
           ) : (
             <div className="no-results">
               <div className="no-results-icon">🔍</div>
