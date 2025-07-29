@@ -1091,3 +1091,24 @@
     font-size: 12px;
   }
 }
+/* Mobile Selected Files */
+  .selected-files-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .selected-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .selected-header h3 {
+    text-align: center;
+    font-size: 16px;
+  }
+
+  .selected-files-section {
+    padding: 16px;
+    margin-bottom: 20px;
+  }
