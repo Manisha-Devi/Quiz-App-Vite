@@ -241,21 +241,19 @@
 
 /* Footer - 10% of screen height */
 .exam-footer {
-  background: white;
-  padding: 12px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-top: 1px solid #ccc;
-  position: relative;
-  z-index: 10;
-  height: 10vh;
-  /* Fixed 10% of viewport height */
-  /* min-height: 60px;
-  max-height: 80px;
-  margin-top: auto; */
-  flex-shrink: 0;
-}
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    padding: 16px 16px 20px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+    gap: 12px;
+    z-index: 100;
+  }
 
 .footer-left {
   display: flex;
