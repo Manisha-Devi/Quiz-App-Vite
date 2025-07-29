@@ -549,6 +549,39 @@
   justify-content: center;
 }
 
+.hidden-text {
+  font-style: italic;
+  color: #999;
+  font-size: 14px;
+}
+
+/* Dark mode for 50/50 styles */
+.dark-mode .fifty-fifty-btn {
+  background: linear-gradient(135deg, #ff9800, #f57c00);
+}
+
+.dark-mode .fifty-fifty-used {
+  background: #66bb6a;
+}
+
+.dark-mode .option-fifty-fifty-hidden {
+  background: linear-gradient(135deg, #4d1a1a, #5a2a2a) !important;
+  border-color: #f44336 !important;
+}
+
+.dark-mode .option-fifty-fifty-hidden .option-label {
+  background: #f44336 !important;
+  color: white !important;
+}
+
+.dark-mode .red-fifty {
+  color: #ff5252;
+}
+
+.dark-mode .hidden-text {
+  color: #666;
+}
+
 .show-answer-btn,
 .review-btn {
 /* Dark mode styles */

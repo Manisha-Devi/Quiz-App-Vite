@@ -235,7 +235,7 @@ const QuestionViewer = React.memo(function QuestionViewer({
             const isUserAnswer = answer === idx;
             const isCorrectAnswer = showAnswer && question.answer === idx;
             const isHidden = hiddenOptions.includes(idx);
-            const optionClass = `option ${isUserAnswer ? 'active' : ''} ${isCorrectAnswer ? 'correct-answer' : ''} ${isHidden ? 'hidden-option' : ''}`;
+            const optionClass = `option ${isUserAnswer ? 'active' : ''} ${isCorrectAnswer ? 'correct-answer' : ''} ${isHidden ? 'option-fifty-fifty-hidden' : ''}`;
 
             return (
               <div
@@ -243,17 +243,12 @@ const QuestionViewer = React.memo(function QuestionViewer({
                 className={optionClass}
                 onClick={() => !showAnswer && !isHidden && onOptionClick(idx)}
                 aria-label={`Option ${String.fromCharCode(65 + idx)}`}
-                style={{ 
-                  cursor: showAnswer || isHidden ? 'not-allowed' : 'pointer',
-                  opacity: isHidden ? 0.3 : 1,
-                  pointerEvents: isHidden ? 'none' : 'auto'
-                }}
               >
                 <strong>{String.fromCharCode(65 + idx)}.</strong>{' '}
-                <span style={{ textDecoration: isHidden ? 'line-through' : 'none' }}>
+                <span>
                   {renderMathAndHTML(opt)}
                 </span>
-                {isHidden && <span className="crossed-out"> ❌</span>}
+                {isHidden && <span className="red-fifty">❌</span>}
                 {isCorrectAnswer && <span className="correct-indicator">✅</span>}
               </div>
             );
