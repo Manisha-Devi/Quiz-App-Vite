@@ -14,6 +14,7 @@ function LocalJSONLibrary({ onFileSelect }) {
   const [viewMode, setViewMode] = useState('grid');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  const [searchSuggestions, setSearchSuggestions] = useState([]);
 
   useEffect(() => {
     loadLocalFiles();
@@ -63,6 +64,22 @@ function LocalJSONLibrary({ onFileSelect }) {
   const clearAllFilters = () => {
     setActiveFilters([]);
     setSearchTerm('');
+    setSearchSuggestions([]);
+  };
+
+  // Generate search suggestions
+  const generateSearchSuggestions = (term) => {
+    if (!term || term.length < 2) {
+      setSearchSuggestions([]);
+      return;
+    }
+    
+    const suggestions = localFiles
+      .filter(file => file.filename.toLowerCase().includes(term.toLowerCase()))
+      .slice(0, 5) // Show max 5 suggestions
+      .map(file => file.filename);
+    
+    setSearchSuggestions(suggestions);
   };
 
 
@@ -87,6 +104,10 @@ function LocalJSONLibrary({ onFileSelect }) {
   const getFilteredAndSortedFiles = () => {
     let filtered = localFiles.filter(file => {
       const filename = file.filename.toLowerCase();
+      const isSelected = selectedFiles.some(f => f.filename === file.filename);
+      
+      // Always show selected files regardless of search/filters
+      if (isSelected) return true;
       
       // Check if matches current search term
       const matchesCurrentSearch = searchTerm ? filename.includes(searchTerm.toLowerCase()) : true;
@@ -100,12 +121,11 @@ function LocalJSONLibrary({ onFileSelect }) {
       if (filterBy === 'all') return matchesSearch;
 
       const questionCount = Array.isArray(file.data) ? file.data.length : 0;
-      const isSelected = selectedFiles.some(f => f.filename === file.filename);
       
       if (filterBy === 'small') return matchesSearch && questionCount <= 20;
       if (filterBy === 'medium') return matchesSearch && questionCount > 20 && questionCount <= 50;
       if (filterBy === 'large') return matchesSearch && questionCount > 50;
-      if (filterBy === 'selected') return matchesSearch && isSelected;
+      if (filterBy === 'selected') return isSelected; // Only selected files
       if (filterBy === 'unselected') return matchesSearch && !isSelected;
       if (filterBy === 'popular') return matchesSearch && questionCount >= 20 && questionCount <= 100;
 
@@ -191,7 +211,10 @@ function LocalJSONLibrary({ onFileSelect }) {
               type="text"
               placeholder="Search files by name..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                generateSearchSuggestions(e.target.value);
+              }}
               onKeyPress={(e) => e.key === 'Enter' && addSearchFilter()}
               className="search-input"
             />
@@ -216,6 +239,24 @@ function LocalJSONLibrary({ onFileSelect }) {
               )}
             </div>
           </div>
+          
+          {/* Search Suggestions */}
+          {searchSuggestions.length > 0 && searchTerm && (
+            <div className="search-suggestions">
+              {searchSuggestions.map((suggestion, index) => (
+                <div 
+                  key={index}
+                  className="suggestion-item"
+                  onClick={() => {
+                    setSearchTerm(suggestion);
+                    setSearchSuggestions([]);
+                  }}
+                >
+                  🔍 {suggestion}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Active Filters Display */}
