@@ -99,7 +99,8 @@
   top: 0;
   z-index: 100;
   height: 8vh;
-  max-height: 8vh;
+  max-height: 80px;
+  min-height: 60px;
   flex-shrink: 0;
   margin: 0;
   width: 100%;
@@ -332,6 +333,21 @@
 }
 
 @media (max-width: 768px) {
+  .exam-header {
+    padding: 12px 16px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    height: 8vh;
+    max-height: 70px;
+    min-height: 50px;
+  }
+
+  .exam-header::-webkit-scrollbar {
+    display: none;
+  }
+
   .exam-main-layout {
     /* flex-direction: column; */
     gap: 10px;
