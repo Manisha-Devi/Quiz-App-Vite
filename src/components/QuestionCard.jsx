@@ -247,17 +247,29 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
                   {/* For incorrect/skipped questions after retry answer */}
                   {getStatusInfo().status !== 'correct' && retryAnswer !== undefined && (
                     <>
+                      {/* Show retry icon for retry selected option (left position) */}
                       {isRetrySelected && (
-                        <div className="user-mark">
+                        <div className="retry-option-mark">
+                          🔄
+                        </div>
+                      )}
+                      
+                      {/* Show correct mark for correct answer */}
+                      {isCorrectOption && (
+                        <div className="correct-mark">✅</div>
+                      )}
+                      
+                      {/* Show previous answer mark (tick or cross based on original answer) */}
+                      {isUserSelected && !isRetrySelected && (
+                        <div className="previous-mark">
                           {isCorrectOption ? '✅' : '❌'}
                         </div>
                       )}
-                      {isCorrectOption && !isRetrySelected && (
-                        <div className="correct-mark">✅</div>
-                      )}
-                      {isUserSelected && !isRetrySelected && !isCorrectOption && (
-                        <div className="previous-mark">
-                          ⚪ {/* Previous answer mark */}
+                      
+                      {/* Show retry result mark for retry selected option (right position) */}
+                      {isRetrySelected && (
+                        <div className="user-mark">
+                          {isCorrectOption ? '✅' : '❌'}
                         </div>
                       )}
                     </>
