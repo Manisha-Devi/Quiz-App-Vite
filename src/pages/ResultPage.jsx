@@ -17,6 +17,7 @@ function ResultPage() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [retryMode, setRetryMode] = useState(false);
   const [retryAnswers, setRetryAnswers] = useState({});
+  const [retryCompleted, setRetryCompleted] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,12 +26,14 @@ function ResultPage() {
     const r = JSON.parse(localStorage.getItem('reviewMarks') || '{}');
     const retry = localStorage.getItem('retryMode') === 'true';
     const retryAns = JSON.parse(localStorage.getItem('retryAnswers') || '{}');
+    const retryComp = JSON.parse(localStorage.getItem('retryCompleted') || '{}');
 
     setQuestions(q);
     setAnswers(a);
     setReviewMarks(r);
     setRetryMode(retry);
     setRetryAnswers(retryAns);
+    setRetryCompleted(retryComp);
   }, []);
 
   const toggleDarkMode = useCallback(() => {
@@ -69,19 +72,17 @@ function ResultPage() {
 
   const handleRetryAnswer = (questionIndex, selectedOption) => {
     const newRetryAnswers = { ...retryAnswers, [questionIndex]: selectedOption };
+    const newRetryCompleted = { ...retryCompleted, [questionIndex]: true };
     setRetryAnswers(newRetryAnswers);
+    setRetryCompleted(newRetryCompleted);
     localStorage.setItem('retryAnswers', JSON.stringify(newRetryAnswers));
+    localStorage.setItem('retryCompleted', JSON.stringify(newRetryCompleted));
   };
 
   const filteredQuestions = questions.filter((q, idx) => {
     const status = getQuestionStatus(idx);
     
-    // In retry mode, only show incorrect and skipped questions
-    if (retryMode) {
-      return status === 'incorrect' || status === 'skipped';
-    }
-    
-    // Normal mode: Filter by status
+    // Always filter by selected tab, even in retry mode
     if (currentFilter === 'all') return true;
     return status === currentFilter;
   });
@@ -264,30 +265,31 @@ function ResultPage() {
 
       {/* Fixed Controls Section */}
       <div className="fixed-controls">
-        {retryMode ? (
+        {retryMode && (
           <div className="retry-indicator">
             <span className="retry-icon">🔄</span>
-            <span className="retry-text">Retry Mode - Only Incorrect & Skipped Questions</span>
-            <span className="retry-count">{filteredQuestions.length} questions</span>
-          </div>
-        ) : (
-          <div className="filter-tabs">
-            {[
-              { key: 'all', label: 'All', count: stats.total },
-              { key: 'correct', label: 'Correct', count: stats.correct },
-              { key: 'incorrect', label: 'Incorrect', count: stats.incorrect },
-              { key: 'skipped', label: 'Skipped', count: stats.skipped }
-            ].map(filter => (
-              <button
-                key={filter.key}
-                className={`filter-tab ${currentFilter === filter.key ? 'active' : ''}`}
-                onClick={() => setCurrentFilter(filter.key)}
-              >
-                {filter.label} ({filter.count})
-              </button>
-            ))}
+            <span className="retry-text">Retry Mode Active</span>
+            <span className="retry-count">
+              {Object.keys(retryCompleted).length} of {stats.incorrect + stats.skipped} retried
+            </span>
           </div>
         )}
+        <div className="filter-tabs">
+          {[
+            { key: 'all', label: 'All', count: stats.total },
+            { key: 'correct', label: 'Correct', count: stats.correct },
+            { key: 'incorrect', label: 'Incorrect', count: stats.incorrect },
+            { key: 'skipped', label: 'Skipped', count: stats.skipped }
+          ].map(filter => (
+            <button
+              key={filter.key}
+              className={`filter-tab ${currentFilter === filter.key ? 'active' : ''}`}
+              onClick={() => setCurrentFilter(filter.key)}
+            >
+              {filter.label} ({filter.count})
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Main Content Area */}
@@ -331,6 +333,7 @@ function ResultPage() {
                       reviewMarked={reviewMarks[actualIndex]}
                       retryMode={retryMode}
                       retryAnswer={retryAnswers[actualIndex]}
+                      retryCompleted={retryCompleted[actualIndex]}
                       onRetryAnswer={handleRetryAnswer}
                     />
                   );

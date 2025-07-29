@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { InlineMath, BlockMath } from 'react-katex';
 import 'katex/dist/katex.min.css';
 
-function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, retryAnswer, onRetryAnswer }) {
+function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, retryAnswer, retryCompleted, onRetryAnswer }) {
   const renderMathAndHTML = useCallback((text) => {
     if (!text) return '';
 
@@ -79,11 +79,6 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
   }, []);
 
   const getStatusInfo = () => {
-    // In retry mode, don't show status initially
-    if (retryMode && retryAnswer === undefined) {
-      return { status: 'retry', label: 'Retry', className: 'retry' };
-    }
-    
     if (userAnswer === undefined) {
       return { status: 'skipped', label: 'Skipped', className: 'skipped' };
     }
@@ -91,6 +86,23 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
       return { status: 'correct', label: 'Correct', className: 'correct' };
     }
     return { status: 'incorrect', label: 'Incorrect', className: 'incorrect' };
+  };
+
+  const getRetryStatus = () => {
+    if (!retryMode) return null;
+    
+    const questionStatus = getStatusInfo().status;
+    
+    // Only show retry for incorrect and skipped questions
+    if (questionStatus !== 'incorrect' && questionStatus !== 'skipped') {
+      return null;
+    }
+    
+    if (retryCompleted) {
+      return { icon: '✓', text: 'Retry Complete', spinning: false };
+    }
+    
+    return { icon: '🔄', text: 'Click to Retry', spinning: true };
   };
 
   const statusInfo = getStatusInfo();
@@ -131,18 +143,32 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
   };
 
   const handleOptionClick = (optionIndex) => {
-    if (retryMode && onRetryAnswer) {
-      onRetryAnswer(index, optionIndex);
+    if (retryMode && onRetryAnswer && !retryCompleted) {
+      const questionStatus = getStatusInfo().status;
+      // Only allow retry for incorrect and skipped questions
+      if (questionStatus === 'incorrect' || questionStatus === 'skipped') {
+        onRetryAnswer(index, optionIndex);
+      }
     }
   };
 
+
+  const retryStatus = getRetryStatus();
 
   return (
     <div className="question-card">
       <div className="question-header">
         <div className="question-number">Q{index + 1}</div>
-        <div className={`status-badge ${statusInfo.className}`}>
-          {statusInfo.label}
+        <div className="status-badges">
+          <div className={`status-badge ${statusInfo.className}`}>
+            {statusInfo.label}
+          </div>
+          {retryStatus && (
+            <div className={`retry-badge ${retryStatus.spinning ? 'spinning' : 'completed'}`}>
+              <span className="retry-icon">{retryStatus.icon}</span>
+              <span className="retry-text">{retryStatus.text}</span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -167,7 +193,9 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
               key={optionIndex} 
               className={getOptionClass(optionIndex)}
               onClick={() => handleOptionClick(optionIndex)}
-              style={{ cursor: retryMode ? 'pointer' : 'default' }}
+              style={{ 
+                cursor: (retryMode && !retryCompleted && (getStatusInfo().status === 'incorrect' || getStatusInfo().status === 'skipped')) ? 'pointer' : 'default' 
+              }}
             >
               <div className="option-label">{String.fromCharCode(65 + optionIndex)}</div>
               <div className="option-text">

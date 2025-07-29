@@ -1040,6 +1040,13 @@
   gap: 10px;
 }
 
+.status-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+}
+
 .question-number {
   background: linear-gradient(135deg, #667eea, #764ba2);
   color: white;
@@ -1106,6 +1113,52 @@
 .status-badge.retry {
   background: linear-gradient(135deg, #2196f3, #1976d2);
   color: white;
+}
+
+.retry-badge {
+  padding: 4px 12px;
+  border-radius: 15px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 2px solid;
+}
+
+.retry-badge.spinning {
+  background: linear-gradient(135deg, #ff9800, #f57c00);
+  border-color: #ff9800;
+  color: white;
+}
+
+.retry-badge.completed {
+  background: linear-gradient(135deg, #4caf50, #45a049);
+  border-color: #4caf50;
+  color: white;
+}
+
+.retry-badge.spinning .retry-icon {
+  animation: spin 1s linear infinite;
+}
+
+.retry-badge.completed .retry-icon {
+  animation: none;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.result-page.dark-mode .retry-badge.spinning {
+  background: linear-gradient(135deg, #ff9800, #f57c00);
+  border-color: #ff9800;
+}
+
+.result-page.dark-mode .retry-badge.completed {
+  background: linear-gradient(135deg, #66bb6a, #4caf50);
+  border-color: #66bb6a;
 }
 
 .previous-mark {
@@ -1432,6 +1485,16 @@
     align-items: flex-start;
     gap: 12px;
     margin-bottom: 16px;
+  }
+
+  .status-badges {
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .retry-badge {
+    font-size: 0.7rem;
+    padding: 3px 8px;
   }
 
   .question-number {
