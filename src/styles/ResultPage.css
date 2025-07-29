@@ -1332,48 +1332,21 @@
 }
 
 .wrong-option {
-  background: linear-gradient(135deg, #ffeaea, #fdd4d4) !important;
-  border-color: #f44336 !important;
-  border-width: 2px !important;
+  background: linear-gradient(135deg, #ffeaea, #fdd4d4);
+  border-color: #f44336;
 }
 
 .wrong-option .option-label {
-  background: #f44336 !important;
+  background: #f44336;
 }
 
 .previous-answer {
-  background: linear-gradient(135deg, #ffeaea, #fdd4d4) !important;
-  border-color: #f44336 !important;
-  border-width: 2px !important;
+  background: linear-gradient(135deg, #ffeaea, #fdd4d4);
+  border-color: #f44336;
 }
 
 .previous-answer .option-label {
-  background: #f44336 !important;
-}
-
-/* Dark mode incorrect options - red border only */
-.result-page.dark-mode .wrong-option {
-  background: #404040 !important;
-  border-color: #f44336 !important;
-  border-width: 2px !important;
-  color: #e0e0e0 !important;
-}
-
-.result-page.dark-mode .wrong-option .option-label {
-  background: #f44336 !important;
-  color: white !important;
-}
-
-.result-page.dark-mode .previous-answer {
-  background: #404040 !important;
-  border-color: #f44336 !important;
-  border-width: 2px !important;
-  color: #e0e0e0 !important;
-}
-
-.result-page.dark-mode .previous-answer .option-label {
-  background: #f44336 !important;
-  color: white !important;
+  background: #f44336;
 }
 
 .user-mark,
