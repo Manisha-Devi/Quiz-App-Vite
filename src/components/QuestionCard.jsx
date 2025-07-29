@@ -247,17 +247,33 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
                   {/* For incorrect/skipped questions after retry answer */}
                   {getStatusInfo().status !== 'correct' && retryAnswer !== undefined && (
                     <>
+                      {/* Retry answer selected - show retry result */}
                       {isRetrySelected && (
-                        <div className="user-mark">
-                          {isCorrectOption ? '✅' : '❌'}
+                        <div className="user-mark retry-mark">
+                          {isCorrectOption ? (
+                            <>🔄 ✅</>  // Retry icon + correct
+                          ) : (
+                            <>🔄</>     // Only retry icon for wrong retry
+                          )}
                         </div>
                       )}
+                      
+                      {/* Correct answer indicator (when not retry selected) */}
                       {isCorrectOption && !isRetrySelected && (
                         <div className="correct-mark">✅</div>
                       )}
-                      {isUserSelected && !isRetrySelected && !isCorrectOption && (
+                      
+                      {/* Previous wrong answer (when different from retry) */}
+                      {isUserSelected && !isRetrySelected && !isCorrectOption && userAnswer !== retryAnswer && (
                         <div className="previous-mark">
-                          ⚪ {/* Previous answer mark */}
+                          ❌ {/* Previous wrong answer mark */}
+                        </div>
+                      )}
+                      
+                      {/* Previous wrong answer same as retry */}
+                      {isUserSelected && !isRetrySelected && !isCorrectOption && userAnswer === retryAnswer && (
+                        <div className="previous-mark">
+                          ❌ 🔄 {/* Previous wrong + retry icon */}
                         </div>
                       )}
                     </>

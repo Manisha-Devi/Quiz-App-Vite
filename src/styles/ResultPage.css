@@ -1165,6 +1165,19 @@
   margin-left: 8px;
 }
 
+.retry-mark {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  font-size: 1.2rem;
+}
+
+.retry-mark span {
+  display: inline-flex;
+  align-items: center;
+}
+
 .question-text {
   font-size: 1.2rem;
   font-weight: 600;
