@@ -1034,9 +1034,9 @@
 .question-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 20px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 10px;
 }
 
@@ -1481,15 +1481,18 @@
   }
 
   .question-header {
-    flex-direction: column;
+    flex-direction: row;
     align-items: flex-start;
-    gap: 12px;
+    justify-content: space-between;
+    gap: 8px;
     margin-bottom: 16px;
+    flex-wrap: nowrap;
   }
 
   .status-badges {
     align-items: flex-start;
-    width: 100%;
+    flex-shrink: 0;
+    justify-content: flex-end;
   }
 
   .retry-badge {
@@ -1506,8 +1509,6 @@
   .status-badge {
     padding: 6px 12px;
     font-size: 12px;
-    align-self: flex-end;
-    margin-top: -30px;
   }
 
   .question-text {
@@ -1732,7 +1733,6 @@
   .status-badge {
     padding: 4px 8px;
     font-size: 11px;
-    margin-top: -26px;
   }
 
   .question-text {
