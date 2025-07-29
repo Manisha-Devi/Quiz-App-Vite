@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './styles/LocalJSONLibrary.css';
 import { getAllJSONFiles } from '../utils/indexedDB';
 import '../components/styles/LocalJSONLibrary.css';
 
