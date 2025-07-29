@@ -305,10 +305,93 @@
 
 /* Mobile: Single column layout */
 @media (max-width: 768px) {
+  .question-scroll {
+    padding: 12px 16px 16px 16px;
+  }
+
+  .q-header {
+    padding: 8px 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .q-number {
+    font-size: 16px;
+  }
+
+  .header-actions {
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .control-buttons {
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .fifty-fifty-btn,
+  .show-answer-btn,
+  .mark-review {
+    padding: 6px 10px;
+    font-size: 11px;
+    border-radius: 6px;
+  }
+
+  .q-text {
+    font-size: 16px;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
   .options {
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 10px;
+  }
+
+  .option {
+    padding: 12px 14px;
+    font-size: 14px;
+    border-radius: 8px;
+  }
+
+  .section-name-display {
+    padding: 8px 12px;
+    min-height: 40px;
+  }
+
+  .section-navigation-horizontal {
+    gap: 6px;
+  }
+
+  .section-nav-item-horizontal {
+    padding: 4px 8px;
+    font-size: 10px;
+    border-radius: 4px;
+  }
+
+  .section-nav-item-horizontal .section-nav-name {
+    font-size: 10px;
+  }
+
+  .section-nav-item-horizontal .section-nav-range {
+    font-size: 9px;
+  }
+
+  .explanation-section {
+    padding: 12px;
+    margin-top: 12px;
+    border-radius: 8px;
+  }
+
+  .explanation-header {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .explanation-content {
+    font-size: 13px;
+    line-height: 1.5;
   }
 }
 
