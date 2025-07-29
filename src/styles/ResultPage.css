@@ -1122,9 +1122,11 @@
   font-size: 0.9rem;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   border: 2px solid;
   order: -1;
+  height: fit-content;
+  white-space: nowrap;
 }
 
 .retry-badge.spinning {
