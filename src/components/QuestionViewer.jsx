@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { InlineMath, BlockMath } from 'react-katex';
 import 'katex/dist/katex.min.css';
@@ -76,7 +76,7 @@ const QuestionViewer = React.memo(function QuestionViewer({
 
     const correctAnswer = question.answer;
     const incorrectOptions = [];
-    
+
     // Find all incorrect options
     question.options.forEach((_, index) => {
       if (index !== correctAnswer) {
