@@ -340,15 +340,6 @@ function LocalJSONLibrary({ onFileSelect }) {
                 className={`file-card ${isSelected ? 'selected' : ''} ${viewMode}`}
                 onClick={() => handleFileToggle(file)}
               >
-                <div className="file-checkbox">
-                  <input
-                    type="checkbox"
-                    checked={isSelected}
-                    onChange={() => handleFileToggle(file)}
-                    className="checkbox-input"
-                  />
-                </div>
-
                 <div className="file-content">
                   <div className="file-icon">📄</div>
                   <div className="file-info">
