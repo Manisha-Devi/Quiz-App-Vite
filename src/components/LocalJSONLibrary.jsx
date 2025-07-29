@@ -198,6 +198,15 @@ function LocalJSONLibrary({ onFileSelect }) {
             <div className="search-actions">
               {searchTerm && (
                 <button 
+                  className="add-filter-btn"
+                  onClick={addSearchFilter}
+                  title="Add as filter"
+                >
+                  ✓
+                </button>
+              )}
+              {searchTerm && (
+                <button 
                   className="clear-search"
                   onClick={() => setSearchTerm('')}
                   title="Clear search"
@@ -267,47 +276,34 @@ function LocalJSONLibrary({ onFileSelect }) {
               Clear All
             </button>
           </div>
-
+          
           <div className="selected-files-grid">
             {selectedFiles.map((file, index) => {
               const questionCount = Array.isArray(file.data) ? file.data.length : 0;
               return (
-                <div 
-                  key={index} 
-                  className="file-card selected-file-card"
-                  onClick={() => handleFileToggle(file)}
-                >
-                  <div className="file-content">
+                <div key={index} className="selected-file-card">
+                  <div className="selected-file-content">
+                    <div className="file-icon">✅</div>
                     <div className="file-info">
-                      <div className="file-row file-name-row">
-                        <span className="file-icon">📄</span>
-                        <h3 className="file-name">{file.filename}</h3>
-                      </div>
-                      <div className="file-row file-meta-row">
-                        <div className="file-questions-left">
-                          <span 
-                            className="question-prefix" 
-                            style={{
-                              color: questionCount <= 20 ? '#4CAF50' : 
-                                     questionCount <= 50 ? '#ff9800' : '#f44336',
-                              fontWeight: 'bold'
-                            }}
-                          >
-                            Q:
-                          </span>
-                          <span className="question-count">{questionCount} questions</span>
-                        </div>
-                        <div className="file-size-right">
-                          <span className="file-size">
-                            {questionCount <= 20 ? '🟢 Small' : 
-                             questionCount <= 50 ? '🟡 Medium' : '🔴 Large'}
-                          </span>
-                        </div>
+                      <h4 className="file-name">{file.filename}</h4>
+                      <div className="file-meta">
+                        <span className="question-count">
+                          📝 {questionCount} questions
+                        </span>
+                        <span className="file-size">
+                          {questionCount <= 20 ? '🟢 Small' : 
+                           questionCount <= 50 ? '🟡 Medium' : '🔴 Large'}
+                        </span>
                       </div>
                     </div>
+                    <button 
+                      className="remove-selected-btn"
+                      onClick={() => handleFileToggle(file)}
+                      title="Remove from selection"
+                    >
+                      ✕
+                    </button>
                   </div>
-
-                  <div className="selected-indicator">✕</div>
                 </div>
               );
             })}
@@ -315,7 +311,14 @@ function LocalJSONLibrary({ onFileSelect }) {
         </div>
       )}
 
-      
+      {/* All Files Selection Summary */}
+      <div className="selection-summary">
+        <div className="selection-info">
+          <span className="selection-count">
+            📁 All Files: {filteredFiles.length} available
+          </span>
+        </div>
+      </div>
 
       {/* Library Stats - Moved above files */}
       {filteredFiles.length > 0 && (
@@ -346,32 +349,27 @@ function LocalJSONLibrary({ onFileSelect }) {
                 className={`file-card ${isSelected ? 'selected' : ''} ${viewMode}`}
                 onClick={() => handleFileToggle(file)}
               >
+                <div className="file-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={() => handleFileToggle(file)}
+                    className="checkbox-input"
+                  />
+                </div>
+
                 <div className="file-content">
+                  <div className="file-icon">📄</div>
                   <div className="file-info">
-                    <div className="file-row file-name-row">
-                      <span className="file-icon">📄</span>
-                      <h3 className="file-name">{file.filename}</h3>
-                    </div>
-                    <div className="file-row file-meta-row">
-                      <div className="file-questions-left">
-                        <span 
-                          className="question-prefix" 
-                          style={{
-                            color: questionCount <= 20 ? '#4CAF50' : 
-                                   questionCount <= 50 ? '#ff9800' : '#f44336',
-                            fontWeight: 'bold'
-                          }}
-                        >
-                          Q:
-                        </span>
-                        <span className="question-count">{questionCount} questions</span>
-                      </div>
-                      <div className="file-size-right">
-                        <span className="file-size">
-                          {questionCount <= 20 ? '🟢 Small' : 
-                           questionCount <= 50 ? '🟡 Medium' : '🔴 Large'}
-                        </span>
-                      </div>
+                    <h3 className="file-name">{file.filename}</h3>
+                    <div className="file-meta">
+                      <span className="question-count">
+                        📝 {questionCount} questions
+                      </span>
+                      <span className="file-size">
+                        {questionCount <= 20 ? '🟢 Small' : 
+                         questionCount <= 50 ? '🟡 Medium' : '🔴 Large'}
+                      </span>
                     </div>
                   </div>
                 </div>
