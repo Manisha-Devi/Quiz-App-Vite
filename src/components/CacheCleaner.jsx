@@ -2,7 +2,7 @@
 import React from 'react';
 import { clearAllAppData } from '../utils/dataManager';
 
-const CacheCleaner = () => {
+const CacheCleaner = ({ isDarkMode, loading, setLoading }) => {
   const clearBrowserCache = async () => {
     try {
       // Clear all app data
@@ -29,25 +29,28 @@ const CacheCleaner = () => {
   };
 
   return (
-    <div style={{ 
-      position: 'fixed', 
-      top: '10px', 
-      right: '10px', 
-      zIndex: 9999,
-      background: '#f0f0f0',
-      padding: '10px',
-      borderRadius: '5px',
-      border: '1px solid #ccc'
-    }}>
-      <h4>Developer Tools</h4>
-      <button onClick={clearBrowserCache} style={{ margin: '5px', padding: '8px' }}>
-        🗑️ Clear All Data
-      </button>
-      <button onClick={forceRefresh} style={{ margin: '5px', padding: '8px' }}>
-        🔄 Force Refresh
-      </button>
-      <div style={{ fontSize: '12px', marginTop: '5px' }}>
-        Use if updates not showing
+    <div className={`cache-cleaner-footer ${isDarkMode ? 'dark-mode' : ''}`}>
+      <div className="cache-cleaner-content">
+        <div className="cache-cleaner-info">
+          <span className="cache-cleaner-title">Developer Tools</span>
+          <span className="cache-cleaner-desc">Use if updates not showing</span>
+        </div>
+        <div className="cache-cleaner-actions">
+          <button 
+            onClick={clearBrowserCache} 
+            className="cache-action-btn"
+            disabled={loading}
+          >
+            🗑️ Clear All Data
+          </button>
+          <button 
+            onClick={forceRefresh} 
+            className="cache-action-btn"
+            disabled={loading}
+          >
+            🔄 Force Refresh
+          </button>
+        </div>
       </div>
     </div>
   );
