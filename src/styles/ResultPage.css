@@ -1042,9 +1042,9 @@
 
 .status-badges {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  align-items: flex-end;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: nowrap;
 }
 
 .question-number {
