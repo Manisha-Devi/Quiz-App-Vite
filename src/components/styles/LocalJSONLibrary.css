@@ -338,6 +338,111 @@
   border-color: #4CAF50;
 }
 
+/* Selected Files Section */
+.selected-files-section {
+  background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%);
+  border: 2px solid #4CAF50;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 16px rgba(76, 175, 80, 0.15);
+}
+
+.selected-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.selected-header h3 {
+  margin: 0;
+  color: #2e7d32;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.selected-files-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.selected-file-card {
+  background: white;
+  border: 2px solid #4CAF50;
+  border-radius: 12px;
+  padding: 16px;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.1);
+  transition: all 0.3s ease;
+}
+
+.selected-file-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+}
+
+.selected-file-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.selected-file-content .file-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.selected-file-content .file-name {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #2e7d32;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.remove-selected-btn {
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.remove-selected-btn:hover {
+  background: #ff5252;
+  transform: scale(1.1);
+}
+
+/* Dark mode for selected files */
+.dark-mode .selected-files-section {
+  background: linear-gradient(135deg, #1a4a1a 0%, #0d3d0d 100%);
+  border-color: #4CAF50;
+}
+
+.dark-mode .selected-header h3 {
+  color: #81c784;
+}
+
+.dark-mode .selected-file-card {
+  background: #2d2d2d;
+  border-color: #4CAF50;
+}
+
+.dark-mode .selected-file-content .file-name {
+  color: #81c784;
+}
+
 /* Enhanced Selection Summary */
 .selection-summary {
   display: flex;
@@ -1030,6 +1135,23 @@
   .total-files {
     font-size: 13px;
     text-align: center;
+  }
+
+  /* Mobile Selected Files */
+  .selected-files-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .selected-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .selected-header h3 {
+    text-align: center;
+    font-size: 16px;
   }
 
   /* Mobile Pagination */

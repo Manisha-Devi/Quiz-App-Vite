@@ -264,21 +264,60 @@ function LocalJSONLibrary({ onFileSelect }) {
         </div>
       </div>
 
-      {/* Selection Summary */}
+      {/* Selected Files Section */}
+      {selectedFiles.length > 0 && (
+        <div className="selected-files-section">
+          <div className="selected-header">
+            <h3>✅ Selected Files ({selectedFiles.length})</h3>
+            <button 
+              className="clear-selection-btn"
+              onClick={() => setSelectedFiles([])}
+            >
+              Clear All
+            </button>
+          </div>
+          
+          <div className="selected-files-grid">
+            {selectedFiles.map((file, index) => {
+              const questionCount = Array.isArray(file.data) ? file.data.length : 0;
+              return (
+                <div key={index} className="selected-file-card">
+                  <div className="selected-file-content">
+                    <div className="file-icon">✅</div>
+                    <div className="file-info">
+                      <h4 className="file-name">{file.filename}</h4>
+                      <div className="file-meta">
+                        <span className="question-count">
+                          📝 {questionCount} questions
+                        </span>
+                        <span className="file-size">
+                          {questionCount <= 20 ? '🟢 Small' : 
+                           questionCount <= 50 ? '🟡 Medium' : '🔴 Large'}
+                        </span>
+                      </div>
+                    </div>
+                    <button 
+                      className="remove-selected-btn"
+                      onClick={() => handleFileToggle(file)}
+                      title="Remove from selection"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* All Files Selection Summary */}
       <div className="selection-summary">
         <div className="selection-info">
           <span className="selection-count">
-            {selectedFiles.length} files selected
+            📁 All Files: {filteredFiles.length} available
           </span>
         </div>
-        {selectedFiles.length > 0 && (
-          <button 
-            className="clear-selection-btn"
-            onClick={() => setSelectedFiles([])}
-          >
-            Clear Selection
-          </button>
-        )}
       </div>
 
       {/* Library Stats - Moved above files */}
