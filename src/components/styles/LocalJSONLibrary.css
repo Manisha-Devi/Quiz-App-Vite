@@ -562,24 +562,29 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  align-items: stretch;
 }
 
 .file-row {
   display: flex;
   align-items: center;
   gap: 8px;
+  width: 100%;
 }
 
 .file-questions {
   justify-content: flex-start;
+  align-items: center;
 }
 
 .file-name-row {
   justify-content: flex-start;
+  align-items: center;
 }
 
 .file-size-row {
   justify-content: flex-end;
+  align-items: center;
 }
 
 .file-icon {
@@ -1052,35 +1057,6 @@
   transition: all 0.3s ease;
   min-width: 100px;
   justify-content: center;
-}
-
-.pagination-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-}
-
-.pagination-btn:disabled {
-  background: linear-gradient(135deg, #ccc, #bbb);
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-  opacity: 0.6;<replit_final_file>
-  padding: 10px 16px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  min-width: 100px;
-  justify-content: center;
-}
-
-.pagination-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
 }
 
 .pagination-btn:disabled {
