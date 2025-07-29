@@ -1116,14 +1116,15 @@
 }
 
 .retry-badge {
-  padding: 4px 12px;
-  border-radius: 15px;
+  padding: 8px 16px;
+  border-radius: 20px;
   font-weight: 600;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   display: flex;
   align-items: center;
   gap: 6px;
   border: 2px solid;
+  order: -1;
 }
 
 .retry-badge.spinning {
@@ -1496,8 +1497,8 @@
   }
 
   .retry-badge {
-    font-size: 0.7rem;
-    padding: 3px 8px;
+    font-size: 12px;
+    padding: 6px 12px;
   }
 
   .question-number {
@@ -1733,6 +1734,11 @@
   .status-badge {
     padding: 4px 8px;
     font-size: 11px;
+  }
+
+  .retry-badge {
+    font-size: 11px;
+    padding: 4px 8px;
   }
 
   .question-text {
