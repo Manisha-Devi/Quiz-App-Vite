@@ -235,7 +235,7 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
         })}
       </div>
 
-      {question.explanation && (!retryMode || retryAnswer !== undefined) && (
+      {question.explanation && (!retryMode || retryAnswer !== undefined || getStatusInfo().status === 'correct') && (
         <div className="explanation">
           <div className="explanation-header">💡 Explanation</div>
           <div className="explanation-text">
