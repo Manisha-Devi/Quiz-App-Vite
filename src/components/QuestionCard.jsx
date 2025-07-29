@@ -219,8 +219,22 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
               {/* Show marks in retry mode */}
               {retryMode && (
                 <>
-                  {/* If explanation is showing (correct questions) or after retry answer */}
-                  {(getStatusInfo().status === 'correct' || retryAnswer !== undefined) && (
+                  {/* For correct questions that haven't been retried - show original marks */}
+                  {getStatusInfo().status === 'correct' && retryAnswer === undefined && (
+                    <>
+                      {isUserSelected && (
+                        <div className="user-mark">
+                          {isCorrectOption ? '✅' : '❌'}
+                        </div>
+                      )}
+                      {isCorrectOption && !isUserSelected && (
+                        <div className="correct-mark">✅</div>
+                      )}
+                    </>
+                  )}
+                  
+                  {/* For incorrect/skipped questions after retry answer */}
+                  {getStatusInfo().status !== 'correct' && retryAnswer !== undefined && (
                     <>
                       {isRetrySelected && (
                         <div className="user-mark">
@@ -234,19 +248,6 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
                         <div className="previous-mark">
                           ⚪ {/* Previous answer mark */}
                         </div>
-                      )}
-                    </>
-                  )}
-                  {/* For correct questions, show the original marks */}
-                  {getStatusInfo().status === 'correct' && retryAnswer === undefined && (
-                    <>
-                      {isUserSelected && (
-                        <div className="user-mark">
-                          {isCorrectOption ? '✅' : '❌'}
-                        </div>
-                      )}
-                      {isCorrectOption && !isUserSelected && (
-                        <div className="correct-mark">✅</div>
                       )}
                     </>
                   )}
