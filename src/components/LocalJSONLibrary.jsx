@@ -341,13 +341,16 @@ function LocalJSONLibrary({ onFileSelect }) {
                 onClick={() => handleFileToggle(file)}
               >
                 <div className="file-content">
-                  <div className="file-icon">📄</div>
                   <div className="file-info">
-                    <h3 className="file-name">{file.filename}</h3>
-                    <div className="file-meta">
-                      <span className="question-count">
-                        📝 {questionCount} questions
-                      </span>
+                    <div className="file-row file-questions">
+                      <span className="file-icon">📝</span>
+                      <span className="question-count">{questionCount} questions</span>
+                    </div>
+                    <div className="file-row file-name-row">
+                      <span className="file-icon">📄</span>
+                      <h3 className="file-name">{file.filename}</h3>
+                    </div>
+                    <div className="file-row file-size-row">
                       <span className="file-size">
                         {questionCount <= 20 ? '🟢 Small' : 
                          questionCount <= 50 ? '🟡 Medium' : '🔴 Large'}

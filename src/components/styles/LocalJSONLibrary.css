@@ -551,23 +551,44 @@
 
 .file-content {
   display: flex;
-  align-items: center;
-  gap: 12px;
+  align-items: stretch;
   flex: 1;
-}
-
-.file-icon {
-  font-size: 24px;
-  flex-shrink: 0;
+  width: 100%;
 }
 
 .file-info {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.file-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.file-questions {
+  justify-content: flex-start;
+}
+
+.file-name-row {
+  justify-content: flex-start;
+}
+
+.file-size-row {
+  justify-content: flex-end;
+}
+
+.file-icon {
+  font-size: 16px;
+  flex-shrink: 0;
 }
 
 .file-name {
-  margin: 0 0 4px 0;
+  margin: 0;
   font-size: 16px;
   font-weight: 600;
   color: #333;
@@ -575,22 +596,15 @@
   word-break: break-word;
 }
 
-.file-meta {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.question-count, .file-size {
+.question-count {
   font-size: 12px;
   color: #666;
-  display: flex;
-  align-items: center;
-  gap: 4px;
+  font-weight: 500;
 }
 
 .file-size {
+  font-size: 12px;
+  color: #666;
   font-weight: 500;
 }
 
