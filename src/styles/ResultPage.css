@@ -990,8 +990,18 @@
 /* Options Grid */
 .options-grid {
   display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 15px;
   margin-bottom: 20px;
+}
+
+/* Mobile: Single column layout */
+@media (max-width: 768px) {
+  .options-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
 }
 
 .option {
