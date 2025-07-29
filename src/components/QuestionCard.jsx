@@ -273,7 +273,7 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
                       {/* Previous wrong answer same as retry */}
                       {isUserSelected && !isRetrySelected && !isCorrectOption && userAnswer === retryAnswer && (
                         <div className="previous-mark">
-                          ❌ 🔄 {/* Previous wrong + retry icon */}
+                          🔄 ❌ {/* Retry icon + wrong icon */}
                         </div>
                       )}
                     </>
