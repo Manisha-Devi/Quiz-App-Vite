@@ -1969,3 +1969,18 @@
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);
 }
+
+/* Footer Styles */
+.upload-footer {
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  border-top: 1px solid rgba(102, 126, 234, 0.1);
+  display: flex;
+  justify-content: center;
+  margin-top: auto;
+}
+
+.upload-page.dark-mode .upload-footer {
+  background: rgba(26, 26, 46, 0.9);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
