@@ -106,9 +106,6 @@ function LocalJSONLibrary({ onFileSelect }) {
       const filename = file.filename.toLowerCase();
       const isSelected = selectedFiles.some(f => f.filename === file.filename);
       
-      // Always show selected files regardless of search/filters
-      if (isSelected) return true;
-      
       // Check if matches current search term
       const matchesCurrentSearch = searchTerm ? filename.includes(searchTerm.toLowerCase()) : true;
       
@@ -131,6 +128,13 @@ function LocalJSONLibrary({ onFileSelect }) {
 
       return matchesSearch;
     });
+
+    // ALWAYS show selected files at the top, regardless of filters
+    const selectedFilesToShow = selectedFiles.filter(selectedFile => 
+      !filtered.some(f => f.filename === selectedFile.filename)
+    );
+    
+    filtered = [...selectedFilesToShow, ...filtered];
 
     // Sort files
     filtered.sort((a, b) => {
