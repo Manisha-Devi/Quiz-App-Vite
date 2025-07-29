@@ -342,19 +342,21 @@ function LocalJSONLibrary({ onFileSelect }) {
               >
                 <div className="file-content">
                   <div className="file-info">
-                    <div className="file-row file-questions">
-                      <span className="file-icon">📝</span>
-                      <span className="question-count">{questionCount} questions</span>
-                    </div>
                     <div className="file-row file-name-row">
                       <span className="file-icon">📄</span>
                       <h3 className="file-name">{file.filename}</h3>
                     </div>
-                    <div className="file-row file-size-row">
-                      <span className="file-size">
-                        {questionCount <= 20 ? '🟢 Small' : 
-                         questionCount <= 50 ? '🟡 Medium' : '🔴 Large'}
-                      </span>
+                    <div className="file-row file-meta-row">
+                      <div className="file-questions-left">
+                        <span className="file-icon">📝</span>
+                        <span className="question-count">{questionCount} questions</span>
+                      </div>
+                      <div className="file-size-right">
+                        <span className="file-size">
+                          {questionCount <= 20 ? '🟢 Small' : 
+                           questionCount <= 50 ? '🟡 Medium' : '🔴 Large'}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>

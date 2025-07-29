@@ -572,19 +572,27 @@
   width: 100%;
 }
 
-.file-questions {
-  justify-content: flex-start;
-  align-items: center;
-}
-
 .file-name-row {
   justify-content: flex-start;
   align-items: center;
 }
 
-.file-size-row {
-  justify-content: flex-end;
+.file-meta-row {
+  justify-content: space-between;
   align-items: center;
+}
+
+.file-questions-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-start;
+}
+
+.file-size-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 .file-icon {
