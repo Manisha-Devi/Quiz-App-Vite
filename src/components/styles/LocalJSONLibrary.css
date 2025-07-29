@@ -997,9 +997,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
   margin-top: 32px;
-  padding: 20px;
+  margin-bottom: 40px;
+  padding: 24px 20px;
   background: rgba(255, 255, 255, 0.8);
   border-radius: 16px;
   border: 1px solid rgba(102, 126, 234, 0.1);
@@ -1038,24 +1039,27 @@
 
 .pagination-pages {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   align-items: center;
+  flex-wrap: nowrap;
+  max-width: none;
 }
 
 .pagination-page {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
   border: 2px solid rgba(102, 126, 234, 0.2);
   background: rgba(255, 255, 255, 0.8);
-  border-radius: 10px;
-  font-size: 14px;
+  border-radius: 12px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   color: #667eea;
+  flex-shrink: 0;
 }
 
 .upload-page.dark-mode .pagination-page {
@@ -1128,28 +1132,37 @@
 
   /* Mobile Pagination */
   .pagination-controls {
-    flex-direction: column;
-    gap: 16px;
-    padding: 16px;
+    flex-direction: row;
+    gap: 12px;
+    padding: 16px 12px;
+    margin-bottom: 30px;
+    overflow-x: auto;
+    justify-content: flex-start;
+    scroll-snap-type: x mandatory;
   }
 
   .pagination-pages {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     justify-content: center;
-    gap: 6px;
+    gap: 8px;
+    flex-shrink: 0;
   }
 
   .pagination-page {
-    width: 36px;
-    height: 36px;
-    font-size: 13px;
+    width: 38px;
+    height: 38px;
+    font-size: 14px;
+    flex-shrink: 0;
+    scroll-snap-align: center;
   }
 
   .pagination-btn {
-    width: 100%;
-    max-width: 140px;
+    min-width: 80px;
+    max-width: 120px;
     font-size: 13px;
     padding: 10px 12px;
+    flex-shrink: 0;
+    scroll-snap-align: center;
   }
 }
 
@@ -1161,24 +1174,31 @@
   }
 
   .pagination-controls {
-    padding: 12px;
-    gap: 12px;
+    padding: 14px 10px;
+    gap: 10px;
+    margin-bottom: 25px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .pagination-pages {
-    gap: 4px;
+    gap: 6px;
+    flex-shrink: 0;
   }
 
   .pagination-page {
-    width: 32px;
-    height: 32px;
-    font-size: 12px;
+    width: 34px;
+    height: 34px;
+    font-size: 13px;
+    flex-shrink: 0;
   }
 
   .pagination-btn {
     font-size: 12px;
-    padding: 8px 10px;
-    max-width: 120px;
+    padding: 8px 12px;
+    min-width: 75px;
+    max-width: 100px;
+    flex-shrink: 0;
   }
 
   .total-files {
