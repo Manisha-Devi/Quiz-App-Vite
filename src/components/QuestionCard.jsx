@@ -222,17 +222,7 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
         {renderMathAndHTML(question.question)}
       </div>
 
-      {retryMode && retryStatus && (
-        <div className="retry-indicator">
-          <div className={`retry-badge ${retryStatus.spinning ? 'spinning' : 'completed'}`}>
-            <span className="retry-icon">{retryStatus.icon}</span>
-          </div>
-          <div className="retry-text">Retry Mode Active</div>
-          <div className="retry-count">
-            Question {index + 1}
-          </div>
-        </div>
-      )}
+      
 
       <div className="options-grid">
         {question.options?.map((option, optionIndex) => {
