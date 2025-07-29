@@ -19,6 +19,7 @@ function SectionSetupPage() {
   });
   const [practiceMode, setPracticeMode] = useState(false);
   const [enableDrawing, setEnableDrawing] = useState(false);
+  const [retryMode, setRetryMode] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -116,6 +117,7 @@ function SectionSetupPage() {
     localStorage.setItem('quizTime', String(quizTime));
     localStorage.setItem('practiceMode', String(practiceMode));
     localStorage.setItem('enableDrawing', String(enableDrawing));
+    localStorage.setItem('retryMode', String(retryMode));
 
     localStorage.setItem('finalQuiz', JSON.stringify(selectedQuestions));
     navigate('/exam');
@@ -290,6 +292,19 @@ function SectionSetupPage() {
                 />
                 <span className="checkbox-custom"></span>
                 <span className="config-label">Drawing</span>
+              </label>
+            </div>
+
+            <div className="config-item">
+              <span className="config-icon">🔄</span>
+              <label className="config-checkbox">
+                <input
+                  type="checkbox"
+                  checked={retryMode}
+                  onChange={(e) => setRetryMode(e.target.checked)}
+                />
+                <span className="checkbox-custom"></span>
+                <span className="config-label">Retry</span>
               </label>
             </div>
           </div>

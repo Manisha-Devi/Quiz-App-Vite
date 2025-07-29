@@ -15,16 +15,22 @@ function ResultPage() {
   });
   const [showPerformanceChart, setShowPerformanceChart] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [retryMode, setRetryMode] = useState(false);
+  const [retryAnswers, setRetryAnswers] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
     const q = JSON.parse(localStorage.getItem('finalQuiz') || '[]');
     const a = JSON.parse(localStorage.getItem('examAnswers') || '{}');
     const r = JSON.parse(localStorage.getItem('reviewMarks') || '{}');
+    const retry = localStorage.getItem('retryMode') === 'true';
+    const retryAns = JSON.parse(localStorage.getItem('retryAnswers') || '{}');
 
     setQuestions(q);
     setAnswers(a);
     setReviewMarks(r);
+    setRetryMode(retry);
+    setRetryAnswers(retryAns);
   }, []);
 
   const toggleDarkMode = useCallback(() => {
@@ -61,14 +67,22 @@ function ResultPage() {
     return userAnswer === questions[idx].answer ? 'correct' : 'incorrect';
   };
 
+  const handleRetryAnswer = (questionIndex, selectedOption) => {
+    const newRetryAnswers = { ...retryAnswers, [questionIndex]: selectedOption };
+    setRetryAnswers(newRetryAnswers);
+    localStorage.setItem('retryAnswers', JSON.stringify(newRetryAnswers));
+  };
+
   const filteredQuestions = questions.filter((q, idx) => {
-    // Filter by status
     const status = getQuestionStatus(idx);
     
-    // If filter is 'all', show all questions
-    if (currentFilter === 'all') return true;
+    // In retry mode, only show incorrect and skipped questions
+    if (retryMode) {
+      return status === 'incorrect' || status === 'skipped';
+    }
     
-    // Otherwise, only show questions that match the current filter
+    // Normal mode: Filter by status
+    if (currentFilter === 'all') return true;
     return status === currentFilter;
   });
 
@@ -250,22 +264,30 @@ function ResultPage() {
 
       {/* Fixed Controls Section */}
       <div className="fixed-controls">
-        <div className="filter-tabs">
-          {[
-            { key: 'all', label: 'All', count: stats.total },
-            { key: 'correct', label: 'Correct', count: stats.correct },
-            { key: 'incorrect', label: 'Incorrect', count: stats.incorrect },
-            { key: 'skipped', label: 'Skipped', count: stats.skipped }
-          ].map(filter => (
-            <button
-              key={filter.key}
-              className={`filter-tab ${currentFilter === filter.key ? 'active' : ''}`}
-              onClick={() => setCurrentFilter(filter.key)}
-            >
-              {filter.label} ({filter.count})
-            </button>
-          ))}
-        </div>
+        {retryMode ? (
+          <div className="retry-indicator">
+            <span className="retry-icon">🔄</span>
+            <span className="retry-text">Retry Mode - Only Incorrect & Skipped Questions</span>
+            <span className="retry-count">{filteredQuestions.length} questions</span>
+          </div>
+        ) : (
+          <div className="filter-tabs">
+            {[
+              { key: 'all', label: 'All', count: stats.total },
+              { key: 'correct', label: 'Correct', count: stats.correct },
+              { key: 'incorrect', label: 'Incorrect', count: stats.incorrect },
+              { key: 'skipped', label: 'Skipped', count: stats.skipped }
+            ].map(filter => (
+              <button
+                key={filter.key}
+                className={`filter-tab ${currentFilter === filter.key ? 'active' : ''}`}
+                onClick={() => setCurrentFilter(filter.key)}
+              >
+                {filter.label} ({filter.count})
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Main Content Area */}
@@ -307,6 +329,9 @@ function ResultPage() {
                       index={actualIndex}
                       userAnswer={answers[actualIndex]}
                       reviewMarked={reviewMarks[actualIndex]}
+                      retryMode={retryMode}
+                      retryAnswer={retryAnswers[actualIndex]}
+                      onRetryAnswer={handleRetryAnswer}
                     />
                   );
                 })()}

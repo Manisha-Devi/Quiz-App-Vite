@@ -1,9 +1,8 @@
-
 import React, { useCallback } from 'react';
 import { InlineMath, BlockMath } from 'react-katex';
 import 'katex/dist/katex.min.css';
 
-const QuestionCard = ({ question, index, userAnswer, reviewMarked }) => {
+function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, retryAnswer, onRetryAnswer }) {
   const renderMathAndHTML = useCallback((text) => {
     if (!text) return '';
 
@@ -91,6 +90,42 @@ const QuestionCard = ({ question, index, userAnswer, reviewMarked }) => {
 
   const statusInfo = getStatusInfo();
 
+  const getOptionClass = (optionIndex) => {
+    const correctAnswer = question.answer;
+
+    if (retryMode && retryAnswer !== undefined) {
+      // In retry mode with a retry answer selected
+      if (optionIndex === correctAnswer) {
+        return 'option correct-option';
+      }
+      if (optionIndex === retryAnswer && optionIndex !== correctAnswer) {
+        return 'option wrong-option';
+      }
+      if (optionIndex === userAnswer && optionIndex !== retryAnswer) {
+        return 'option previous-answer';
+      }
+      return 'option';
+    }
+
+    // Normal mode
+    if (optionIndex === correctAnswer) {
+      return 'option correct-option';
+    }
+
+    if (userAnswer !== undefined && optionIndex === userAnswer && optionIndex !== correctAnswer) {
+      return 'option wrong-option';
+    }
+
+    return 'option';
+  };
+
+  const handleOptionClick = (optionIndex) => {
+    if (retryMode && onRetryAnswer) {
+      onRetryAnswer(index, optionIndex);
+    }
+  };
+
+
   return (
     <div className="question-card">
       <div className="question-header">
@@ -114,7 +149,7 @@ const QuestionCard = ({ question, index, userAnswer, reviewMarked }) => {
         {question.options?.map((option, optionIndex) => {
           const isCorrectOption = optionIndex === question.answer;
           const isUserSelected = optionIndex === userAnswer;
-          
+
           let optionClassName = 'option';
           if (isCorrectOption) {
             optionClassName += ' correct-option';
@@ -125,9 +160,14 @@ const QuestionCard = ({ question, index, userAnswer, reviewMarked }) => {
           const optionLabel = String.fromCharCode(65 + optionIndex); // A, B, C, D
 
           return (
-            <div key={optionIndex} className={optionClassName}>
-              <div className="option-label">{optionLabel}</div>
-              <div className="option-text">
+            <div 
+            key={optionIndex} 
+            className={getOptionClass(optionIndex)}
+            onClick={() => handleOptionClick(optionIndex)}
+            style={{ cursor: retryMode ? 'pointer' : 'default' }}
+          >
+            <div className="option-label">{String.fromCharCode(65 + optionIndex)}</div>
+            <div className="option-text">
                 {renderMathAndHTML(option)}
               </div>
               {isUserSelected && (
