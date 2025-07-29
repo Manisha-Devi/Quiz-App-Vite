@@ -198,15 +198,6 @@ function LocalJSONLibrary({ onFileSelect }) {
             <div className="search-actions">
               {searchTerm && (
                 <button 
-                  className="add-filter-btn"
-                  onClick={addSearchFilter}
-                  title="Add as filter"
-                >
-                  ✓
-                </button>
-              )}
-              {searchTerm && (
-                <button 
                   className="clear-search"
                   onClick={() => setSearchTerm('')}
                   title="Clear search"
