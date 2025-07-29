@@ -5,6 +5,7 @@ import SectionSetupPage from './pages/SectionSetupPage';
 import ExamPage from './pages/ExamPage';
 import ResultPage from './pages/ResultPage';
 import PWAInstaller from './components/PWAInstaller';
+import CacheCleaner from './components/CacheCleaner';
 import { loadJSONFilesToStorage, loadJSONImagesFromFolders } from './utils/jsonLoader';
 import './App.css';
 
@@ -26,6 +27,7 @@ function App() {
     <Router>
       <div className="App">
         <PWAInstaller />
+        <CacheCleaner />
         <Routes>
           <Route path="/" element={<UploadPage />} />
           <Route path="/sections" element={<SectionSetupPage />} />
