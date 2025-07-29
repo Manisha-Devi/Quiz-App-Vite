@@ -241,19 +241,21 @@
 
 /* Footer - 10% of screen height */
 .exam-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 100px;
-    padding: 16px 16px 20px 16px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: stretch;
-    gap: 12px;
-    z-index: 100;
-  }
+  background: white;
+  padding: 12px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #ccc;
+  position: relative;
+  z-index: 10;
+  height: 10vh;
+  /* Fixed 10% of viewport height */
+  /* min-height: 60px;
+  max-height: 80px;
+  margin-top: auto; */
+  flex-shrink: 0;
+}
 
 .footer-left {
   display: flex;
@@ -332,137 +334,60 @@
 
 @media (max-width: 768px) {
   .exam-header {
-    padding: 8px 12px;
+    padding: 12px 16px;
     overflow-x: auto;
     overflow-y: hidden;
     scrollbar-width: none;
     -ms-overflow-style: none;
-    height: 60px;
-    min-height: 60px;
-    max-height: 60px;
-    flex-shrink: 0;
+    height: 8vh;
+    max-height: 70px;
+    min-height: 50px;
   }
 
   .exam-header::-webkit-scrollbar {
     display: none;
   }
 
-  .page-title {
-    font-size: 16px;
-    gap: 8px;
-  }
-
-  .title-icon {
-    font-size: 18px;
-  }
-
-  .title-text {
-    font-size: 16px;
-    max-width: 50%;
-  }
-
-  .timer-box {
-    padding: 6px 12px;
-    font-size: 12px;
-    border-radius: 15px;
-  }
-
-  .theme-toggle-btn,
-  .toggle-btn {
-    padding: 6px 10px;
-    font-size: 14px;
-    border-radius: 8px;
-    min-width: 36px;
-  }
-
   .exam-main-layout {
-    flex-direction: column;
-    gap: 8px;
-    padding: 0 8px;
-    height: calc(100vh - 160px);
-    margin-top: 0;
-    margin-bottom: 0;
-  }
-
-  .exam-left {
-    flex: 1;
-    height: 70%;
-    overflow-y: auto;
+    /* flex-direction: column; */
+    gap: 10px;
+    padding: 0 10px;
   }
 
   .exam-right {
     width: 100%;
-    height: 60%;
+    height: 50%;
     position: fixed;
     bottom: 0;
     left: 0;
-    z-index: 999;
+    z-index: 99;
     border-radius: 16px 16px 0 0;
     transform: translateY(100%);
     transition: transform 0.3s ease-in-out;
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
   }
 
   .exam-right.open {
     transform: translateY(0%);
   }
 
-  /* Hide drawing and fullscreen icons when question navigator is open on mobile */
-  .exam-right.open ~ .drawing-toggle,
-  .exam-right.open ~ .fullscreen-btn-container {
-    display: none !important;
-  }
-
   .exam-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 100px;
-    padding: 8px 12px;
-    display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: stretch;
-    gap: 8px;
-    z-index: 100;
+    align-items: center;
+    height: 17vh;
+    /* Slightly more on mobile */
   }
 
-  .footer-left {
-    display: flex;
-    gap: 8px;
-    width: 100%;
-  }
-
+  .footer-left,
   .footer-right {
-    display: flex;
-    gap: 8px;
     width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
   }
 
   .exam-footer button {
-    padding: 12px 16px;
-    font-size: 14px;
-    font-weight: 600;
-    border-radius: 8px;
-    white-space: nowrap;
-  }
-
-  .footer-left button {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .footer-right button {
     width: 100%;
-  }
-
-  /* Time warning adjustment for mobile */
-  .time-warning {
-    top: 60px;
-    height: 40px;
-    padding: 8px;
-    font-size: 12px;
   }
 }
 
@@ -474,47 +399,6 @@
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
-}
-
-/* Practice Mode Mobile Optimizations */
-@media (max-width: 768px) {
-  .fullscreen-btn-container {
-    position: fixed;
-    top: 50%;
-    right: 10px;
-    transform: translateY(-50%);
-    z-index: 1000;
-  }
-
-  .fullscreen-btn {
-    padding: 8px 10px;
-    font-size: 12px;
-    border-radius: 6px;
-    background: rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(10px);
-  }
-
-  /* Practice mode specific adjustments */
-  .exam-ui .timer-box {
-    min-width: 40px;
-    text-align: center;
-  }
-
-  /* Better spacing for practice mode */
-  .exam-main-layout {
-    padding: 0 6px;
-  }
-
-  .question-box {
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  }
-
-  /* Ensure proper height distribution */
-  .exam-left {
-    height: calc(100vh - 140px);
-    max-height: calc(100vh - 140px);
-  }
 }
 
 .fullscreen-btn {
