@@ -85,22 +85,31 @@ function LocalJSONLibrary({ onFileSelect }) {
   };
 
   const getFilteredAndSortedFiles = () => {
-    // Show ALL files - no filtering by search term or active filters in main section
     let filtered = localFiles.filter(file => {
-      // Only apply basic filterBy dropdown filters, not search/active filters
-      if (filterBy === 'all') return true;
+      const filename = file.filename.toLowerCase();
+
+      // Check if matches current search term
+      const matchesCurrentSearch = searchTerm ? filename.includes(searchTerm.toLowerCase()) : true;
+
+      // Check if matches any active filters
+      const matchesActiveFilters = activeFilters.length === 0 || 
+        activeFilters.some(filter => filename.includes(filter.toLowerCase()));
+
+      const matchesSearch = matchesCurrentSearch && matchesActiveFilters;
+
+      if (filterBy === 'all') return matchesSearch;
 
       const questionCount = Array.isArray(file.data) ? file.data.length : 0;
       const isSelected = selectedFiles.some(f => f.filename === file.filename);
 
-      if (filterBy === 'small') return questionCount <= 20;
-      if (filterBy === 'medium') return questionCount > 20 && questionCount <= 50;
-      if (filterBy === 'large') return questionCount > 50;
-      if (filterBy === 'selected') return isSelected;
-      if (filterBy === 'unselected') return !isSelected;
-      if (filterBy === 'popular') return questionCount >= 20 && questionCount <= 100;
+      if (filterBy === 'small') return matchesSearch && questionCount <= 20;
+      if (filterBy === 'medium') return matchesSearch && questionCount > 20 && questionCount <= 50;
+      if (filterBy === 'large') return matchesSearch && questionCount > 50;
+      if (filterBy === 'selected') return matchesSearch && isSelected;
+      if (filterBy === 'unselected') return matchesSearch && !isSelected;
+      if (filterBy === 'popular') return matchesSearch && questionCount >= 20 && questionCount <= 100;
 
-      return true;
+      return matchesSearch;
     });
 
     // Sort files
@@ -234,53 +243,6 @@ function LocalJSONLibrary({ onFileSelect }) {
           </div>
         )}
 
-        {/* Selected Files Section */}
-        {selectedFiles.length > 0 && (
-          <div className="selected-files-section">
-            <div className="selected-header">
-              <h3>✅ Selected Files ({selectedFiles.length})</h3>
-              <button 
-                className="clear-selection-btn"
-                onClick={() => setSelectedFiles([])}
-              >
-                Clear All
-              </button>
-            </div>
-            
-            <div className="selected-files-grid">
-              {selectedFiles.map((file, index) => {
-                const questionCount = Array.isArray(file.data) ? file.data.length : 0;
-                return (
-                  <div key={index} className="selected-file-card">
-                    <div className="selected-file-content">
-                      <div className="file-icon">✅</div>
-                      <div className="file-info">
-                        <h4 className="file-name">{file.filename}</h4>
-                        <div className="file-meta">
-                          <span className="question-count">
-                            📝 {questionCount} questions
-                          </span>
-                          <span className="file-size">
-                            {questionCount <= 20 ? '🟢 Small' : 
-                             questionCount <= 50 ? '🟡 Medium' : '🔴 Large'}
-                          </span>
-                        </div>
-                      </div>
-                      <button 
-                        className="remove-selected-btn"
-                        onClick={() => handleFileToggle(file)}
-                        title="Remove from selection"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
         <div className="filters-row">
           <div className="filter-group">
             <label className="filter-label">View:</label>
@@ -302,11 +264,58 @@ function LocalJSONLibrary({ onFileSelect }) {
         </div>
       </div>
 
+      {/* Selected Files Section */}
+      {selectedFiles.length > 0 && (
+        <div className="selected-files-section">
+          <div className="selected-header">
+            <h3>✅ Selected Files ({selectedFiles.length})</h3>
+            <button 
+              className="clear-selection-btn"
+              onClick={() => setSelectedFiles([])}
+            >
+              Clear All
+            </button>
+          </div>
+          
+          <div className="selected-files-grid">
+            {selectedFiles.map((file, index) => {
+              const questionCount = Array.isArray(file.data) ? file.data.length : 0;
+              return (
+                <div key={index} className="selected-file-card">
+                  <div className="selected-file-content">
+                    <div className="file-icon">✅</div>
+                    <div className="file-info">
+                      <h4 className="file-name">{file.filename}</h4>
+                      <div className="file-meta">
+                        <span className="question-count">
+                          📝 {questionCount} questions
+                        </span>
+                        <span className="file-size">
+                          {questionCount <= 20 ? '🟢 Small' : 
+                           questionCount <= 50 ? '🟡 Medium' : '🔴 Large'}
+                        </span>
+                      </div>
+                    </div>
+                    <button 
+                      className="remove-selected-btn"
+                      onClick={() => handleFileToggle(file)}
+                      title="Remove from selection"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* All Files Selection Summary */}
       <div className="selection-summary">
         <div className="selection-info">
           <span className="selection-count">
-            📁 All Files: {filteredFiles.length} available | {selectedFiles.length} selected
+            📁 All Files: {filteredFiles.length} available
           </span>
         </div>
       </div>
