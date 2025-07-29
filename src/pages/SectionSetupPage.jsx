@@ -23,22 +23,6 @@ function SectionSetupPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Clear future pages data when entering Section Setup
-    const FUTURE_PAGES_KEYS = [
-      'finalQuiz',
-      'examState',
-      'examMeta',
-      'examAnswers',
-      'reviewMarks',
-      'retryAnswers',
-      'retryCompleted',
-      'retryQuestions',
-      'currentRetryIndex',
-      'retryStats'
-    ];
-    
-    FUTURE_PAGES_KEYS.forEach((key) => localStorage.removeItem(key));
-
     const loadData = async () => {
       const data = JSON.parse(localStorage.getItem('quizData'));
 

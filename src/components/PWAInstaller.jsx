@@ -62,8 +62,13 @@ const PWAInstaller = () => {
 
   return (
     <>
-      {/* Offline Indicator - Hidden when offline */}
-      {/* Removed offline indicator as requested */}
+      {/* Offline Indicator */}
+      {!isOnline && (
+        <div className="alert alert-warning position-fixed top-0 start-50 translate-middle-x mt-2" 
+             style={{ zIndex: 9999, width: 'auto' }}>
+          📱 You're offline - App data cached locally
+        </div>
+      )}
 
       {/* Install Banner */}
       {showInstallBanner && (

@@ -124,19 +124,6 @@ function ExamPage() {
   }, [current, sections]);
 
   useEffect(() => {
-    // Clear ResultPage data when entering ExamPage
-    const RESULT_PAGE_KEYS = [
-      'examAnswers',
-      'reviewMarks',
-      'retryAnswers',
-      'retryCompleted',
-      'retryQuestions',
-      'currentRetryIndex',
-      'retryStats'
-    ];
-    
-    RESULT_PAGE_KEYS.forEach((key) => localStorage.removeItem(key));
-
     if (!meta.startedAt) {
       localStorage.setItem('examMeta', JSON.stringify({ startedAt: Date.now() }));
     }
