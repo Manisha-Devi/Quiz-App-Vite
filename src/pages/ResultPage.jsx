@@ -82,8 +82,10 @@ function ResultPage() {
   const filteredQuestions = questions.filter((q, idx) => {
     const status = getQuestionStatus(idx);
     
-    // Always filter by selected tab, even in retry mode
+    // If filter is 'all', show all questions
     if (currentFilter === 'all') return true;
+    
+    // For other filters, only show questions that match the current filter
     return status === currentFilter;
   });
 
@@ -315,9 +317,19 @@ function ResultPage() {
                 {(() => {
                   const currentQuestion = filteredQuestions[currentQuestionIndex];
                   const actualIndex = questions.findIndex(question => question === currentQuestion);
+                  
+                  if (actualIndex === -1) {
+                    return (
+                      <div className="no-results">
+                        <div className="no-results-icon">🔍</div>
+                        <div className="no-results-text">Question not found</div>
+                      </div>
+                    );
+                  }
+                  
                   return (
                     <QuestionCard
-                      key={actualIndex}
+                      key={`${actualIndex}-${currentFilter}`}
                       question={currentQuestion}
                       index={actualIndex}
                       userAnswer={answers[actualIndex]}
