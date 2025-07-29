@@ -1351,7 +1351,20 @@
   background: #f44336 !important;
 }
 
-/* Dark mode incorrect options - red border only */
+/* Dark mode correct options - green border */
+.result-page.dark-mode .correct-option {
+  background: #404040 !important;
+  border-color: #4CAF50 !important;
+  border-width: 2px !important;
+  color: #e0e0e0 !important;
+}
+
+.result-page.dark-mode .correct-option .option-label {
+  background: #4CAF50 !important;
+  color: white !important;
+}
+
+/* Dark mode incorrect options - red border */
 .result-page.dark-mode .wrong-option {
   background: #404040 !important;
   border-color: #f44336 !important;
