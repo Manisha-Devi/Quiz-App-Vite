@@ -99,10 +99,10 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
     }
     
     if (retryCompleted) {
-      return { icon: '✓', text: 'Retry Complete', spinning: false };
+      return { icon: '✓', spinning: false };
     }
     
-    return { icon: '🔄', text: 'Click to Retry', spinning: true };
+    return { icon: '🔄', spinning: true };
   };
 
   const statusInfo = getStatusInfo();
@@ -178,7 +178,6 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
           {retryStatus && (
             <div className={`retry-badge ${retryStatus.spinning ? 'spinning' : 'completed'}`}>
               <span className="retry-icon">{retryStatus.icon}</span>
-              <span className="retry-text">{retryStatus.text}</span>
             </div>
           )}
         </div>

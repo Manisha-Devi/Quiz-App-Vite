@@ -1116,29 +1116,26 @@
 }
 
 .retry-badge {
-  padding: 8px 16px;
-  border-radius: 20px;
+  padding: 8px;
+  border-radius: 50%;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 1.2rem;
   display: flex;
   align-items: center;
-  gap: 4px;
-  border: 2px solid;
+  justify-content: center;
+  border: none;
   order: -1;
-  height: fit-content;
-  white-space: nowrap;
+  height: 36px;
+  width: 36px;
+  background: transparent;
 }
 
 .retry-badge.spinning {
-  background: linear-gradient(135deg, #ff9800, #f57c00);
-  border-color: #ff9800;
-  color: white;
+  color: #ff9800;
 }
 
 .retry-badge.completed {
-  background: linear-gradient(135deg, #4caf50, #45a049);
-  border-color: #4caf50;
-  color: white;
+  color: #4caf50;
 }
 
 .retry-badge.spinning .retry-icon {
@@ -1155,13 +1152,11 @@
 }
 
 .result-page.dark-mode .retry-badge.spinning {
-  background: linear-gradient(135deg, #ff9800, #f57c00);
-  border-color: #ff9800;
+  color: #ff9800;
 }
 
 .result-page.dark-mode .retry-badge.completed {
-  background: linear-gradient(135deg, #66bb6a, #4caf50);
-  border-color: #66bb6a;
+  color: #66bb6a;
 }
 
 .previous-mark {
@@ -1499,8 +1494,10 @@
   }
 
   .retry-badge {
-    font-size: 12px;
-    padding: 6px 12px;
+    font-size: 16px;
+    padding: 6px;
+    height: 32px;
+    width: 32px;
   }
 
   .question-number {
@@ -1739,8 +1736,10 @@
   }
 
   .retry-badge {
-    font-size: 11px;
-    padding: 4px 8px;
+    font-size: 14px;
+    padding: 4px;
+    height: 28px;
+    width: 28px;
   }
 
   .question-text {
