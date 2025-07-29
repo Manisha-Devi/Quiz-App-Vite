@@ -530,8 +530,12 @@
 
 /* Dark mode styles */
 .dark-mode .section-name-display {
-  background: #3a3a3d;
+  background: #2d2d30;
   border-bottom-color: #555;
+}
+
+.dark-mode .section-name-display {
+  background: #2d2d30 !important;
 }
 .question-box {
   background: white;
@@ -553,7 +557,23 @@
     display: flex;
     flex-direction: column;
   }
+  
+  .section-name-display {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: white;
+    border-bottom: 1px solid #eee;
+    flex-shrink: 0;
+  }
+  
+  .question-scroll {
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex: 1;
+  }
 }
+
 .question-scroll {
   flex: 1;
   overflow-y: auto;
