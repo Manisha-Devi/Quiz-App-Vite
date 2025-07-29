@@ -30,25 +30,50 @@ const CacheCleaner = () => {
 
   return (
     <div style={{ 
-      position: 'fixed', 
-      top: '10px', 
-      right: '10px', 
-      zIndex: 9999,
-      background: '#f0f0f0',
-      padding: '10px',
-      borderRadius: '5px',
-      border: '1px solid #ccc'
+      display: 'flex',
+      gap: '12px',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '16px',
+      background: 'rgba(102, 126, 234, 0.1)',
+      borderRadius: '12px',
+      border: '1px solid rgba(102, 126, 234, 0.2)'
     }}>
-      <h4>Developer Tools</h4>
-      <button onClick={clearBrowserCache} style={{ margin: '5px', padding: '8px' }}>
+      <span style={{ fontSize: '14px', fontWeight: '500', color: '#666' }}>
+        Developer Tools:
+      </span>
+      <button 
+        onClick={clearBrowserCache} 
+        style={{ 
+          padding: '8px 16px',
+          background: '#ff4757',
+          color: 'white',
+          border: 'none',
+          borderRadius: '8px',
+          fontSize: '14px',
+          fontWeight: '500',
+          cursor: 'pointer',
+          transition: 'all 0.3s ease'
+        }}
+      >
         🗑️ Clear All Data
       </button>
-      <button onClick={forceRefresh} style={{ margin: '5px', padding: '8px' }}>
+      <button 
+        onClick={forceRefresh} 
+        style={{ 
+          padding: '8px 16px',
+          background: '#667eea',
+          color: 'white',
+          border: 'none',
+          borderRadius: '8px',
+          fontSize: '14px',
+          fontWeight: '500',
+          cursor: 'pointer',
+          transition: 'all 0.3s ease'
+        }}
+      >
         🔄 Force Refresh
       </button>
-      <div style={{ fontSize: '12px', marginTop: '5px' }}>
-        Use if updates not showing
-      </div>
     </div>
   );
 };
