@@ -761,14 +761,30 @@
 .library-stats {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 16px;
-  margin-top: 16px;
+  margin: 16px 0 24px 0;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 10px;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 .total-files {
   font-size: 14px;
-  color: #666;
-  font-weight: 500;
+  color: #495057;
+  font-weight: 600;
+  text-align: center;
+}
+
+.dark-mode .library-stats {
+  background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+  border-color: #444;
+}
+
+.dark-mode .total-files {
+  color: #e0e0e0;
 }
 
 .upload-page.dark-mode .total-files {
