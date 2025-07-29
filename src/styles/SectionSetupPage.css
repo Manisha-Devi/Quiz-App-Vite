@@ -725,7 +725,7 @@
 }
 
 .btn-icon {
-  font-size: 16px;px;
+  font-size: 16px;
 }
 
 /* Modal Styles */
@@ -1060,7 +1060,5 @@
   .nav-btn {
     padding: 6px 12px;
     font-size: 12px;
-  }
-}
   }
 }

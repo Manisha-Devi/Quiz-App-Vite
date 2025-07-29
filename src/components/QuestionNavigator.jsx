@@ -1,5 +1,4 @@
 import React from 'react';
-import './styles/QuestionNavigator.css';
 import PropTypes from 'prop-types';
 import './styles/QuestionNavigator.css';
 

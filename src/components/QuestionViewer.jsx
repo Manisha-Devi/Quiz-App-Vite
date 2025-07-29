@@ -16,18 +16,18 @@ const QuestionViewer = React.memo(function QuestionViewer({
   isDarkMode,
   swipeHandlers,
   practiceMode = false,
-  onClear,
-  fiftyFiftyUsed,
-  onFiftyFiftyUse
+  onClear
 }) {
   const [showAnswer, setShowAnswer] = React.useState(false);
   const [sectionsReady, setSectionsReady] = React.useState(!!window.sections);
-  const hiddenOptions = fiftyFiftyUsed || [];
-  const isFiftyFiftyUsed = hiddenOptions.length > 0;
+  const [fiftyFiftyUsed, setFiftyFiftyUsed] = React.useState(false);
+  const [hiddenOptions, setHiddenOptions] = React.useState([]);
 
-  // Reset showAnswer when question changes
+  // Reset showAnswer and 50/50 when question changes
   React.useEffect(() => {
     setShowAnswer(false);
+    setFiftyFiftyUsed(false);
+    setHiddenOptions([]);
   }, [currentIndex]);
 
   // Handle clear from parent component
@@ -35,6 +35,8 @@ const QuestionViewer = React.memo(function QuestionViewer({
     if (onClear) {
       const clearStates = () => {
         setShowAnswer(false);
+        setFiftyFiftyUsed(false);
+        setHiddenOptions([]);
       };
       window.clearQuestionStates = clearStates;
     }
@@ -70,7 +72,7 @@ const QuestionViewer = React.memo(function QuestionViewer({
   }, [showAnswer]);
 
   const handleFiftyFifty = useCallback(() => {
-    if (isFiftyFiftyUsed || !question.options || question.options.length !== 4 || !onFiftyFiftyUse) return;
+    if (fiftyFiftyUsed || !question.options || question.options.length !== 4) return;
 
     const correctAnswer = question.answer;
     const incorrectOptions = [];
@@ -86,8 +88,9 @@ const QuestionViewer = React.memo(function QuestionViewer({
     const shuffled = [...incorrectOptions].sort(() => Math.random() - 0.5);
     const optionsToHide = shuffled.slice(0, 2);
 
-    onFiftyFiftyUse(optionsToHide);
-  }, [isFiftyFiftyUsed, question, onFiftyFiftyUse]);
+    setHiddenOptions(optionsToHide);
+    setFiftyFiftyUsed(true);
+  }, [fiftyFiftyUsed, question]);
 
   // Function to render text with both KaTeX math and HTML - memoized for performance
   const renderMathAndHTML = useCallback((text) => {
@@ -204,18 +207,18 @@ const QuestionViewer = React.memo(function QuestionViewer({
           <div className="q-number">Q{currentIndex + 1}</div>
           <div className="header-actions">
             {practiceMode && (
-              <div className="show-answer" onClick={handleShowAnswer} title="Show/Hide Answer">
-                {showAnswer ? '🙈' : '👁️'}
-              </div>
-            )}
-            {!practiceMode && (
-              <div 
-                className={`fifty-fifty ${isFiftyFiftyUsed ? 'used' : ''}`} 
-                onClick={handleFiftyFifty} 
-                title="50/50 Lifeline - Remove 2 wrong answers"
-              >
-                {isFiftyFiftyUsed ? '❌' : '50/50'}
-              </div>
+              <>
+                <div className="show-answer" onClick={handleShowAnswer} title="Show/Hide Answer">
+                  {showAnswer ? '🙈' : '👁️'}
+                </div>
+                <div 
+                  className={`fifty-fifty ${fiftyFiftyUsed ? 'used' : ''}`} 
+                  onClick={handleFiftyFifty} 
+                  title="50/50 Lifeline - Remove 2 wrong answers"
+                >
+                  {fiftyFiftyUsed ? '❌' : '50/50'}
+                </div>
+              </>
             )}
             <div className="mark-review" onClick={onToggleReview}>
               Mark for Review: {reviewMarked ? '⭐' : '☆'}
@@ -232,7 +235,7 @@ const QuestionViewer = React.memo(function QuestionViewer({
             const isUserAnswer = answer === idx;
             const isCorrectAnswer = showAnswer && question.answer === idx;
             const isHidden = hiddenOptions.includes(idx);
-            const optionClass = `option ${isUserAnswer ? 'active' : ''} ${isCorrectAnswer ? 'correct-answer' : ''} ${isHidden ? 'option-fifty-fifty-hidden' : ''}`;
+            const optionClass = `option ${isUserAnswer ? 'active' : ''} ${isCorrectAnswer ? 'correct-answer' : ''} ${isHidden ? 'hidden-option' : ''}`;
 
             return (
               <div
@@ -240,13 +243,18 @@ const QuestionViewer = React.memo(function QuestionViewer({
                 className={optionClass}
                 onClick={() => !showAnswer && !isHidden && onOptionClick(idx)}
                 aria-label={`Option ${String.fromCharCode(65 + idx)}`}
+                style={{ 
+                  cursor: showAnswer || isHidden ? 'not-allowed' : 'pointer',
+                  opacity: isHidden ? 0.3 : 1,
+                  pointerEvents: isHidden ? 'none' : 'auto'
+                }}
               >
                 <strong>{String.fromCharCode(65 + idx)}.</strong>{' '}
-                <span>
+                <span style={{ textDecoration: isHidden ? 'line-through' : 'none' }}>
                   {renderMathAndHTML(opt)}
                 </span>
-                {isHidden && <span className="red-fifty">❌</span>}
-                {isCorrectAnswer && <span className="correct-indicator">✅</span>}
+                {isHidden && <span className="crossed-out"> ❌</span>}
+                {isCorrectAnswer && <span className="correct-indicator"> ✅ Correct Answer</span>}
               </div>
             );
           })}
@@ -278,9 +286,7 @@ QuestionViewer.propTypes = {
   hasMath: PropTypes.func.isRequired,
   isDarkMode: PropTypes.bool,
   swipeHandlers: PropTypes.object,
-  onClear: PropTypes.func,
-  fiftyFiftyUsed: PropTypes.array,
-  onFiftyFiftyUse: PropTypes.func
+  onClear: PropTypes.func
 };
 
 export default QuestionViewer;
