@@ -79,6 +79,11 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
   }, []);
 
   const getStatusInfo = () => {
+    // In retry mode, don't show status initially
+    if (retryMode && retryAnswer === undefined) {
+      return { status: 'retry', label: 'Retry', className: 'retry' };
+    }
+    
     if (userAnswer === undefined) {
       return { status: 'skipped', label: 'Skipped', className: 'skipped' };
     }
@@ -93,18 +98,24 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
   const getOptionClass = (optionIndex) => {
     const correctAnswer = question.answer;
 
-    if (retryMode && retryAnswer !== undefined) {
-      // In retry mode with a retry answer selected
-      if (optionIndex === correctAnswer) {
-        return 'option correct-option';
+    // Retry mode logic
+    if (retryMode) {
+      if (retryAnswer === undefined) {
+        // Before clicking any option in retry mode - show normal options
+        return 'option';
+      } else {
+        // After clicking an option in retry mode - show comparison
+        if (optionIndex === correctAnswer) {
+          return 'option correct-option';
+        }
+        if (optionIndex === retryAnswer && optionIndex !== correctAnswer) {
+          return 'option wrong-option';
+        }
+        if (optionIndex === userAnswer && optionIndex !== retryAnswer) {
+          return 'option previous-answer';
+        }
+        return 'option';
       }
-      if (optionIndex === retryAnswer && optionIndex !== correctAnswer) {
-        return 'option wrong-option';
-      }
-      if (optionIndex === userAnswer && optionIndex !== retryAnswer) {
-        return 'option previous-answer';
-      }
-      return 'option';
     }
 
     // Normal mode
@@ -149,41 +160,54 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
         {question.options?.map((option, optionIndex) => {
           const isCorrectOption = optionIndex === question.answer;
           const isUserSelected = optionIndex === userAnswer;
-
-          let optionClassName = 'option';
-          if (isCorrectOption) {
-            optionClassName += ' correct-option';
-          } else if (isUserSelected && !isCorrectOption) {
-            optionClassName += ' wrong-option';
-          }
-
-          const optionLabel = String.fromCharCode(65 + optionIndex); // A, B, C, D
+          const isRetrySelected = optionIndex === retryAnswer;
 
           return (
             <div 
-            key={optionIndex} 
-            className={getOptionClass(optionIndex)}
-            onClick={() => handleOptionClick(optionIndex)}
-            style={{ cursor: retryMode ? 'pointer' : 'default' }}
-          >
-            <div className="option-label">{String.fromCharCode(65 + optionIndex)}</div>
-            <div className="option-text">
+              key={optionIndex} 
+              className={getOptionClass(optionIndex)}
+              onClick={() => handleOptionClick(optionIndex)}
+              style={{ cursor: retryMode ? 'pointer' : 'default' }}
+            >
+              <div className="option-label">{String.fromCharCode(65 + optionIndex)}</div>
+              <div className="option-text">
                 {renderMathAndHTML(option)}
               </div>
-              {isUserSelected && (
+              
+              {/* Show marks only in normal mode or after retry answer is selected */}
+              {!retryMode && isUserSelected && (
                 <div className="user-mark">
                   {isCorrectOption ? '✅' : '❌'}
                 </div>
               )}
-              {isCorrectOption && !isUserSelected && (
+              {!retryMode && isCorrectOption && !isUserSelected && (
                 <div className="correct-mark">✅</div>
+              )}
+              
+              {/* Show marks in retry mode only after an answer is selected */}
+              {retryMode && retryAnswer !== undefined && (
+                <>
+                  {isRetrySelected && (
+                    <div className="user-mark">
+                      {isCorrectOption ? '✅' : '❌'}
+                    </div>
+                  )}
+                  {isCorrectOption && !isRetrySelected && (
+                    <div className="correct-mark">✅</div>
+                  )}
+                  {isUserSelected && !isRetrySelected && optionIndex !== isCorrectOption && (
+                    <div className="previous-mark">
+                      ⚪ {/* Previous answer mark */}
+                    </div>
+                  )}
+                </>
               )}
             </div>
           );
         })}
       </div>
 
-      {question.explanation && (
+      {question.explanation && (!retryMode || retryAnswer !== undefined) && (
         <div className="explanation">
           <div className="explanation-header">💡 Explanation</div>
           <div className="explanation-text">
