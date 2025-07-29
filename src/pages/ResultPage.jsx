@@ -64,9 +64,12 @@ function ResultPage() {
   const filteredQuestions = questions.filter((q, idx) => {
     // Filter by status
     const status = getQuestionStatus(idx);
-    if (currentFilter !== 'all' && status !== currentFilter) return false;
     
-    return true;
+    // If filter is 'all', show all questions
+    if (currentFilter === 'all') return true;
+    
+    // Otherwise, only show questions that match the current filter
+    return status === currentFilter;
   });
 
   const goToNextQuestion = useCallback(() => {
