@@ -7,6 +7,10 @@ import ResultPage from './pages/ResultPage';
 import PWAInstaller from './components/PWAInstaller';
 import { loadJSONFilesToStorage, loadJSONImagesFromFolders } from './utils/jsonLoader';
 import './App.css';
+import './styles/ExamPage.css';
+import './styles/ResultPage.css';
+import './styles/SectionSetupPage.css';
+import './styles/UploadPage.css';
 
 function App() {
   useEffect(() => {
