@@ -1251,6 +1251,15 @@
   background: #f44336;
 }
 
+.previous-answer {
+  background: linear-gradient(135deg, #ffeaea, #fdd4d4);
+  border-color: #f44336;
+}
+
+.previous-answer .option-label {
+  background: #f44336;
+}
+
 .user-mark,
 .correct-mark {
   font-size: 1.2rem;
