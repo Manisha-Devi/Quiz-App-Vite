@@ -19,10 +19,14 @@ const QuestionViewer = React.memo(function QuestionViewer({
 }) {
   const [showAnswer, setShowAnswer] = React.useState(false);
   const [sectionsReady, setSectionsReady] = React.useState(!!window.sections);
+  const [fiftyFiftyUsed, setFiftyFiftyUsed] = React.useState(false);
+  const [hiddenOptions, setHiddenOptions] = React.useState([]);
 
-  // Reset showAnswer when question changes
+  // Reset showAnswer and 50/50 when question changes
   React.useEffect(() => {
     setShowAnswer(false);
+    setFiftyFiftyUsed(false);
+    setHiddenOptions([]);
   }, [currentIndex]);
 
   // Check for sections availability
@@ -53,6 +57,27 @@ const QuestionViewer = React.memo(function QuestionViewer({
   const handleShowAnswer = useCallback(() => {
     setShowAnswer(!showAnswer);
   }, [showAnswer]);
+
+  const handleFiftyFifty = useCallback(() => {
+    if (fiftyFiftyUsed || !question.options || question.options.length !== 4) return;
+
+    const correctAnswer = question.answer;
+    const incorrectOptions = [];
+    
+    // Find all incorrect options
+    question.options.forEach((_, index) => {
+      if (index !== correctAnswer) {
+        incorrectOptions.push(index);
+      }
+    });
+
+    // Randomly select 2 incorrect options to hide
+    const shuffled = [...incorrectOptions].sort(() => Math.random() - 0.5);
+    const optionsToHide = shuffled.slice(0, 2);
+
+    setHiddenOptions(optionsToHide);
+    setFiftyFiftyUsed(true);
+  }, [fiftyFiftyUsed, question]);
 
   // Function to render text with both KaTeX math and HTML - memoized for performance
   const renderMathAndHTML = useCallback((text) => {
@@ -173,6 +198,13 @@ const QuestionViewer = React.memo(function QuestionViewer({
                 {showAnswer ? '🙈' : '👁️'}
               </div>
             )}
+            <div 
+              className={`fifty-fifty ${fiftyFiftyUsed ? 'used' : ''}`} 
+              onClick={handleFiftyFifty} 
+              title="50/50 Lifeline - Remove 2 wrong answers"
+            >
+              {fiftyFiftyUsed ? '❌' : '50/50'}
+            </div>
             <div className="mark-review" onClick={onToggleReview}>
               Mark for Review: {reviewMarked ? '⭐' : '☆'}
             </div>
@@ -187,18 +219,26 @@ const QuestionViewer = React.memo(function QuestionViewer({
           {question.options?.map((opt, idx) => {
             const isUserAnswer = answer === idx;
             const isCorrectAnswer = showAnswer && question.answer === idx;
-            const optionClass = `option ${isUserAnswer ? 'active' : ''} ${isCorrectAnswer ? 'correct-answer' : ''}`;
+            const isHidden = hiddenOptions.includes(idx);
+            const optionClass = `option ${isUserAnswer ? 'active' : ''} ${isCorrectAnswer ? 'correct-answer' : ''} ${isHidden ? 'hidden-option' : ''}`;
 
             return (
               <div
                 key={idx}
                 className={optionClass}
-                onClick={() => !showAnswer && onOptionClick(idx)}
+                onClick={() => !showAnswer && !isHidden && onOptionClick(idx)}
                 aria-label={`Option ${String.fromCharCode(65 + idx)}`}
-                style={{ cursor: showAnswer ? 'not-allowed' : 'pointer' }}
+                style={{ 
+                  cursor: showAnswer || isHidden ? 'not-allowed' : 'pointer',
+                  opacity: isHidden ? 0.3 : 1,
+                  pointerEvents: isHidden ? 'none' : 'auto'
+                }}
               >
                 <strong>{String.fromCharCode(65 + idx)}.</strong>{' '}
-                {renderMathAndHTML(opt)}
+                <span style={{ textDecoration: isHidden ? 'line-through' : 'none' }}>
+                  {renderMathAndHTML(opt)}
+                </span>
+                {isHidden && <span className="crossed-out"> ❌</span>}
                 {isCorrectAnswer && <span className="correct-indicator"> ✅ Correct Answer</span>}
               </div>
             );
