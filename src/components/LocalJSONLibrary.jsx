@@ -222,16 +222,6 @@ function LocalJSONLibrary({ onFileSelect }) {
         </div>
       </div>
 
-      {filteredFiles.length > 0 && (
-        <div className="library-stats">
-          <span className="total-files">
-            📊 Total: {filteredFiles.length} files | 
-            Page {currentPage} of {totalPages}
-          </span>
-        </div>
-      )}
-
-
       {/* Selection Summary */}
       <div className="selection-summary">
         <div className="selection-info">
@@ -248,6 +238,16 @@ function LocalJSONLibrary({ onFileSelect }) {
           </button>
         )}
       </div>
+
+      {/* Library Stats - Moved above files */}
+      {filteredFiles.length > 0 && (
+        <div className="library-stats">
+          <span className="total-files">
+            📊 Total: {filteredFiles.length} files | 
+            Page {currentPage} of {totalPages}
+          </span>
+        </div>
+      )}
 
       {/* Files Display */}
       <div className={`files-container ${viewMode} files-grid-2-col`}>
