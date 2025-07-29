@@ -213,7 +213,6 @@
   font-size: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-left: 10px;
   box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
 }
 
@@ -226,11 +225,10 @@
 .fifty-fifty-used {
   background: #4caf50;
   color: white;
-  padding: 6px 12px;
-  border-radius: 15px;
+  padding: 8px 12px;
+  border-radius: 20px;
   font-weight: 600;
-  font-size: 11px;
-  margin-left: 10px;
+  font-size: 12px;
   display: flex;
   align-items: center;
   gap: 4px;
@@ -1612,13 +1610,11 @@
   .fifty-fifty-btn {
     padding: 6px 12px;
     font-size: 11px;
-    margin-left: 8px;
   }
 
   .fifty-fifty-used {
-    padding: 4px 8px;
+    padding: 6px 10px;
     font-size: 10px;
-    margin-left: 8px;
   }
 
   .question-number {
