@@ -43,10 +43,18 @@
 .legend {
   margin-top: auto; /* Push to bottom in flex container */
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+.legend-row {
+  display: flex;
   gap: 6px;
-  justify-content: center;  /* Centers horizontally */
-  align-items: center;      /* Centers vertically (optional) */
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .legend-pill {
