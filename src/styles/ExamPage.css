@@ -748,11 +748,15 @@
   box-shadow: 0 2px 4px rgba(111, 66, 193, 0.2);
 }
 
-.theme-toggle-btn:hover, .bold-toggle-btn:hover {
+.theme-toggle-btn:hover {
   background: #6f42c1;
   color: white;
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(111, 66, 193, 0.3);
+}
+
+.bold-toggle-btn {
+  color: white;
 }
 
 .bold-toggle-btn.active {
@@ -763,15 +767,22 @@
 
 .dark-mode .theme-toggle-btn, .dark-mode .bold-toggle-btn {
   border-color: #a78bfa;
+}
+
+.dark-mode .theme-toggle-btn {
   color: #a78bfa;
 }
 
-.dark-mode .theme-toggle-btn:hover, .dark-mode .bold-toggle-btn:hover {
+.dark-mode .bold-toggle-btn {
+  color: white;
+}
+
+.dark-mode .theme-toggle-btn:hover {
   background: #a78bfa;
   color: #1a1a1a;
 }
 
 .dark-mode .bold-toggle-btn.active {
   background: #a78bfa;
-  color: #1a1a1a;
+  color: white;
 }
