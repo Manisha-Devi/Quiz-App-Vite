@@ -224,12 +224,6 @@ function ExamPage() {
           drawingOverlay.click();
         }
       }
-      if (e.key.toLowerCase() === 'p' && enableDrawing) {
-        // Toggle pen tool and show color picker
-        if (window.togglePenColors) {
-          window.togglePenColors();
-        }
-      }
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);

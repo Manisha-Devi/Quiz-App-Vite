@@ -19,16 +19,6 @@ function DrawingOverlay() {
     setVisible(!visible);
   };
 
-  const togglePenColors = () => {
-    if (!visible) {
-      // If overlay is not visible, open it first
-      setDrawingVisible(true);
-      setVisible(true);
-    }
-    // Set tool to pen to show color picker
-    setTool('pen');
-  };
-
   // Get pointer position for both mouse and touch events
   const getPointerPosition = (e) => {
     const stage = e.target.getStage();
@@ -171,14 +161,6 @@ function DrawingOverlay() {
   useEffect(() => {
     console.log('Navigated to group:', currentIndex);
   }, [currentIndex]);
-
-  // Make togglePenColors available globally
-  useEffect(() => {
-    window.togglePenColors = togglePenColors;
-    return () => {
-      delete window.togglePenColors;
-    };
-  }, [visible]);
 
   return (
     <>
