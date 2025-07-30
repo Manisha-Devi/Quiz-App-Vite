@@ -124,47 +124,17 @@
   -webkit-overflow-scrolling: touch;
 }
 
-/* Custom thin scrollbar */
+/* Hide scrollbar completely */
 .question-scroll::-webkit-scrollbar {
-  width: 2px;
-}
-
-.question-scroll::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.03);
-  border-radius: 1px;
-}
-
-.question-scroll::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.15);
-  border-radius: 1px;
-  transition: background 0.2s ease;
-}
-
-.question-scroll::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.4);
-}
-
-/* Dark mode scrollbar */
-.dark-mode .question-scroll::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.dark-mode .question-scroll::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.dark-mode .question-scroll::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.4);
+  width: 0;
+  height: 0;
+  display: none; /* Chrome, Safari, Opera */
 }
 
 /* Firefox scrollbar */
 .question-scroll {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0.05);
-}
-
-.dark-mode .question-scroll {
-  scrollbar-color: rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.05);
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
 }
 
 @keyframes fadeIn {
