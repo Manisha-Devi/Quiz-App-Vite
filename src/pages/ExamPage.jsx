@@ -173,6 +173,25 @@ function ExamPage() {
       localStorage.setItem('examMeta', JSON.stringify({ startedAt: Date.now() }));
     }
 
+    // Set initial question index for DrawingOverlay
+    window.currentQuestionIndex = current;
+    const event = new CustomEvent('questionChanged', { 
+      detail: { questionIndex: current } 
+    });
+    window.dispatchEvent(event);
+
+    // Listen for navigation events from DrawingOverlay
+    const handleDrawingNavigation = (event) => {
+      const direction = event.detail.direction;
+      if (direction === 'next') {
+        goNext();
+      } else if (direction === 'prev') {
+        goPrev();
+      }
+    };
+
+    window.addEventListener('navigateQuestion', handleDrawingNavigation);
+
     // Sync dark mode with document classes
     if (isDarkMode) {
       document.documentElement.classList.add('dark-mode');
@@ -181,7 +200,11 @@ function ExamPage() {
       document.documentElement.classList.remove('dark-mode');
       document.body.classList.remove('dark-mode');
     }
-  }, [isDarkMode]);
+
+    return () => {
+      window.removeEventListener('navigateQuestion', handleDrawingNavigation);
+    };
+  }, [isDarkMode, current, goNext, goPrev]);
 
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth <= 768);
@@ -380,7 +403,14 @@ function ExamPage() {
       // If we're at or past the last question, show submit modal
       setShowSubmitModal(true);
     } else {
-      setCurrent(current + 1);
+      const newIndex = current + 1;
+      setCurrent(newIndex);
+      // Notify DrawingOverlay about question change
+      window.currentQuestionIndex = newIndex;
+      const event = new CustomEvent('questionChanged', { 
+        detail: { questionIndex: newIndex } 
+      });
+      window.dispatchEvent(event);
     }
   }, [current, questions.length]);
 
@@ -389,7 +419,14 @@ function ExamPage() {
       // If we're at the first question and trying to go back, show submit modal
       setShowSubmitModal(true);
     } else {
-      setCurrent(current - 1);
+      const newIndex = current - 1;
+      setCurrent(newIndex);
+      // Notify DrawingOverlay about question change
+      window.currentQuestionIndex = newIndex;
+      const event = new CustomEvent('questionChanged', { 
+        detail: { questionIndex: newIndex } 
+      });
+      window.dispatchEvent(event);
     }
   }, [current]);
 
@@ -581,7 +618,15 @@ function ExamPage() {
                   current={current}
                   answers={answers}
                   review={review}
-                  onJump={(i) => setCurrent(i)}
+                  onJump={(i) => {
+                    setCurrent(i);
+                    // Notify DrawingOverlay about question change
+                    window.currentQuestionIndex = i;
+                    const event = new CustomEvent('questionChanged', { 
+                      detail: { questionIndex: i } 
+                    });
+                    window.dispatchEvent(event);
+                  }}
                 />
               </div>
             </div>
