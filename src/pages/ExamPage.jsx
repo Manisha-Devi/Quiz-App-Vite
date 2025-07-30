@@ -70,6 +70,7 @@ function ExamPage() {
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
   const [showTimeWarning, setShowTimeWarning] = useState(false); // Track visibility of the warning
   const [timeWarningDismissed, setTimeWarningDismissed] = useState(false); // Track if warning was dismissed
+  const [timeWarningAnimating, setTimeWarningAnimating] = useState(false); // Track animation state
   const [showSubmitModal, setShowSubmitModal] = useState(false);
 
   // Generate sections with proper numbering and grouping - memoized for performance
@@ -192,7 +193,12 @@ function ExamPage() {
   // Show time warning when 5 minutes left (only if not dismissed)
   useEffect(() => {
     if (!practiceMode && timeLeft <= 300 && timeLeft > 0 && !timeWarningDismissed) {
+      setTimeWarningAnimating(true);
       setShowTimeWarning(true);
+      // Clean up animation state after show animation
+      setTimeout(() => {
+        setTimeWarningAnimating(false);
+      }, 300);
     }
   }, [timeLeft, practiceMode, timeWarningDismissed]);
 
@@ -365,8 +371,14 @@ function ExamPage() {
   }, []);
 
   const closeTimeWarning = useCallback(() => {
-    setShowTimeWarning(false); // Hide the warning
-    setTimeWarningDismissed(true); // Mark as dismissed so it won't show again
+    setTimeWarningAnimating(true);
+    setShowTimeWarning(false); // Start hide animation
+    
+    // After animation completes, clean up
+    setTimeout(() => {
+      setTimeWarningAnimating(false);
+      setTimeWarningDismissed(true); // Mark as dismissed so it won't show again
+    }, 300); // Match transition duration
   }, []);
 
   if (!questions.length || !sections.length) return <div className="exam-ui">Loading exam…</div>;
@@ -396,8 +408,17 @@ function ExamPage() {
 
             <div className="exam-main-layout">
               <div className="exam-left">
-                {!practiceMode && showTimeWarning && timeLeft <= 300 && timeLeft > 0 && (
-                  <div className="time-warning">
+                {!practiceMode && (showTimeWarning || timeWarningAnimating) && timeLeft <= 300 && timeLeft > 0 && (
+                  <div 
+                    className="time-warning"
+                    style={{
+                      transform: showTimeWarning ? 'translateY(0)' : 'translateY(-100%)',
+                      opacity: showTimeWarning ? 1 : 0,
+                      maxHeight: showTimeWarning ? '60px' : '0px',
+                      marginBottom: showTimeWarning ? '15px' : '0px',
+                      padding: showTimeWarning ? '12px' : '0px'
+                    }}
+                  >
                     ⚠️ Only 5 minutes left. Please finish up!
                     <button className="close-btn" onClick={closeTimeWarning}>✖️</button>
                   </div>
