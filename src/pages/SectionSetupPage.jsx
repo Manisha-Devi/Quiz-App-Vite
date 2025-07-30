@@ -23,6 +23,7 @@ function SectionSetupPage() {
   const [retryMode, setRetryMode] = useState(false);
   const [noShuffle, setNoShuffle] = useState(false);
   const [questionRanges, setQuestionRanges] = useState({});
+  const [sectionShuffleSettings, setSectionShuffleSettings] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -73,6 +74,7 @@ function SectionSetupPage() {
 
       const initialCounts = {};
       const initialRanges = {};
+      const initialShuffleSettings = {};
       data.forEach((file, index) => {
         initialCounts[index] = { 0: 0, 1: 0, 2: 0 };
         initialRanges[index] = { 
@@ -80,9 +82,11 @@ function SectionSetupPage() {
           endIndex: file.questions.length,
           maxQuestions: file.questions.length
         };
+        initialShuffleSettings[index] = false; // Default: shuffle enabled (false means no-shuffle is off)
       });
       setQuestionCounts(initialCounts);
       setQuestionRanges(initialRanges);
+      setSectionShuffleSettings(initialShuffleSettings);
     };
 
     loadData();
@@ -137,8 +141,9 @@ function SectionSetupPage() {
     
     setQuestionRanges(updated);
 
-    // Auto-calculate total selected for no-shuffle mode
-    if (noShuffle) {
+    // Auto-calculate total selected for no-shuffle sections
+    const anyNoShuffleSection = Object.values(sectionShuffleSettings).some(noShuffle => noShuffle);
+    if (anyNoShuffleSection) {
       const totalInRange = updated[fileIndex].endIndex - updated[fileIndex].startIndex + 1;
       setQuizTime(Object.values(updated).reduce((total, range) => 
         total + (range.endIndex - range.startIndex + 1), 0
@@ -146,14 +151,39 @@ function SectionSetupPage() {
     }
   };
 
+  const handleSectionShuffleToggle = (fileIndex, noShuffle) => {
+    const updated = { ...sectionShuffleSettings };
+    updated[fileIndex] = noShuffle;
+    setSectionShuffleSettings(updated);
+
+    // Recalculate quiz time based on mixed modes
+    const totalSelected = quizData.reduce((total, file, index) => {
+      if (updated[index]) {
+        // No shuffle mode - use range
+        const range = questionRanges[index];
+        return total + (range ? range.endIndex - range.startIndex + 1 : 0);
+      } else {
+        // Shuffle mode - use difficulty counts
+        const counts = questionCounts[index] || {};
+        return total + Object.values(counts).reduce((sum, count) => sum + count, 0);
+      }
+    }, 0);
+
+    if (totalSelected > 0) {
+      setQuizTime(totalSelected);
+    }
+  };
+
   const handleStartExam = () => {
     const selectedQuestions = [];
 
-    if (noShuffle) {
-      // No shuffle mode - select questions by range in original order
-      quizData.forEach((file, fileIndex) => {
+    quizData.forEach((file, fileIndex) => {
+      const isNoShuffle = sectionShuffleSettings[fileIndex] || false;
+      
+      if (isNoShuffle) {
+        // No shuffle mode for this section - select questions by range in original order
         const range = questionRanges[fileIndex];
-        if (range) {
+        if (range && range.startIndex && range.endIndex) {
           const startIdx = range.startIndex - 1; // Convert to 0-based index
           const endIdx = range.endIndex - 1;     // Convert to 0-based index
           
@@ -163,10 +193,8 @@ function SectionSetupPage() {
           
           selectedQuestions.push(...rangeQuestions);
         }
-      });
-    } else {
-      // Original shuffle mode
-      quizData.forEach((file, fileIndex) => {
+      } else {
+        // Shuffle mode for this section
         const sectionQuestions = [];
 
         [0, 1, 2].forEach(level => {
@@ -180,8 +208,8 @@ function SectionSetupPage() {
         // Shuffle within section only
         shuffleArray(sectionQuestions);
         selectedQuestions.push(...sectionQuestions);
-      });
-    }
+      }
+    });
 
     if (selectedQuestions.length === 0) {
       alert("⚠️ Please select at least one question before starting the exam.");
@@ -212,14 +240,17 @@ function SectionSetupPage() {
   };
 
   const getTotalSelected = () => {
-    if (noShuffle) {
-      return Object.values(questionRanges).reduce((total, range) => 
-        total + (range.endIndex - range.startIndex + 1), 0
-      );
-    }
-    return Object.values(questionCounts).reduce((total, counts) => 
-      total + Object.values(counts).reduce((sum, count) => sum + count, 0), 0
-    );
+    return quizData.reduce((total, file, fileIndex) => {
+      const isNoShuffle = sectionShuffleSettings[fileIndex] || false;
+      
+      if (isNoShuffle) {
+        const range = questionRanges[fileIndex];
+        return total + (range ? range.endIndex - range.startIndex + 1 : 0);
+      } else {
+        const counts = questionCounts[fileIndex] || {};
+        return total + Object.values(counts).reduce((sum, count) => sum + count, 0);
+      }
+    }, 0);
   };
 
   const getTotalAvailable = () => {
@@ -297,8 +328,21 @@ function SectionSetupPage() {
                   )}
                 </div>
 
+                {/* Section Shuffle Toggle */}
+                <div className="section-shuffle-toggle">
+                  <label className="shuffle-checkbox">
+                    <input
+                      type="checkbox"
+                      checked={sectionShuffleSettings[fileIndex] || false}
+                      onChange={(e) => handleSectionShuffleToggle(fileIndex, e.target.checked)}
+                    />
+                    <span className="checkbox-custom"></span>
+                    <span className="shuffle-label">📐 No Shuffle</span>
+                  </label>
+                </div>
+
                 <div className="difficulty-controls">
-                  {!noShuffle ? (
+                  {!sectionShuffleSettings[fileIndex] ? (
                     // Original difficulty-based selection
                     [0, 1, 2].map(level => {
                       const labels = ['Easy', 'Medium', 'Hard'];
@@ -346,7 +390,7 @@ function SectionSetupPage() {
                       );
                     })
                   ) : (
-                    // Range-based selection for no-shuffle mode
+                    // Range-based selection for this section's no-shuffle mode
                     <div className="range-selection">
                       <div className="range-header">
                         <span className="range-icon">📋</span>
