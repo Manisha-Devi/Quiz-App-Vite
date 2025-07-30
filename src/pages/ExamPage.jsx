@@ -68,7 +68,7 @@ function ExamPage() {
   });
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
-  const [showTimeWarning, setShowTimeWarning] = useState(timeLeft <= 300); // Track visibility of the warning
+  const [showTimeWarning, setShowTimeWarning] = useState(false); // Track visibility of the warning
   const [showSubmitModal, setShowSubmitModal] = useState(false);
 
   // Generate sections with proper numbering and grouping - memoized for performance
@@ -174,7 +174,8 @@ function ExamPage() {
       setTimeLeft(prev => {
         if (prev <= 1) {
           clearInterval(id);
-          handleSubmit(true);
+          // Show submit modal instead of auto-submitting
+          setShowSubmitModal(true);
           return 0;
         }
         return prev - 1;
@@ -186,6 +187,13 @@ function ExamPage() {
   useEffect(() => {
     localStorage.setItem('examState', JSON.stringify({ answers, review, current, fiftyFiftyUsed }));
   }, [answers, review, current, fiftyFiftyUsed]);
+
+  // Show time warning when 5 minutes left
+  useEffect(() => {
+    if (!practiceMode && timeLeft <= 300 && timeLeft > 0) {
+      setShowTimeWarning(true);
+    }
+  }, [timeLeft, practiceMode]);
 
   const handleClear = useCallback(() => {
     setAnswers(a => { const c = { ...a }; delete c[current]; return c; });
@@ -384,7 +392,7 @@ function ExamPage() {
               </div>
             </header>
 
-            {!practiceMode && showTimeWarning && timeLeft <= 300 && (
+            {!practiceMode && showTimeWarning && timeLeft <= 300 && timeLeft > 0 && (
               <div className="time-warning">
                 ⚠️ Only 5 minutes left. Please finish up!
                 <button className="close-btn" onClick={closeTimeWarning}>✖️</button>
@@ -442,22 +450,31 @@ function ExamPage() {
 
         {/* Custom Submit Confirmation Modal */}
         {showSubmitModal && (
-          <div className="submit-modal-overlay" onClick={cancelSubmit}>
+          <div className="submit-modal-overlay" onClick={timeLeft <= 0 ? undefined : cancelSubmit}>
             <div className="submit-modal-content" onClick={(e) => e.stopPropagation()}>
               <div className="submit-modal-header">
-                <h3 className="submit-modal-title">Are You Sure?</h3>
+                <h3 className="submit-modal-title">
+                  {timeLeft <= 0 ? "⏰ Time's Up!" : "Are You Sure?"}
+                </h3>
               </div>
               <div className="submit-modal-body">
-                <p>Do you want to submit your test? This action cannot be undone.</p>
+                <p>
+                  {timeLeft <= 0 
+                    ? "Your exam time has ended. Your responses have been saved and will be submitted." 
+                    : "Do you want to submit your test? This action cannot be undone."
+                  }
+                </p>
               </div>
               <div className="submit-modal-footer">
-                <button className="submit-modal-btn cancel-btn" onClick={cancelSubmit}>
-                  <span className="btn-icon">✗</span>
-                  <span>Cancel</span>
-                </button>
+                {timeLeft > 0 && (
+                  <button className="submit-modal-btn cancel-btn" onClick={cancelSubmit}>
+                    <span className="btn-icon">✗</span>
+                    <span>Cancel</span>
+                  </button>
+                )}
                 <button className="submit-modal-btn confirm-btn" onClick={confirmSubmit}>
                   <span className="btn-icon">✓</span>
-                  <span>Submit</span>
+                  <span>{timeLeft <= 0 ? "View Results" : "Submit"}</span>
                 </button>
               </div>
             </div>
