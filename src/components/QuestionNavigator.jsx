@@ -170,44 +170,49 @@ const QuestionNavigator = React.memo(function QuestionNavigator({
       )}
 
       <div className="legend">
+        {/* First Row: Answered, Review, Current */}
+        <div className="legend-row legend-row-1">
+          <label className="legend-pill answered">
+            <input
+              type="checkbox"
+              checked={selectedTypes.includes("answered")}
+              onChange={() => handleTypeToggle("answered")}
+            />
+            Answered ({counts.answered})
+          </label>
 
+          <label className="legend-pill review">
+            <input
+              type="checkbox"
+              checked={selectedTypes.includes("review")}
+              onChange={() => handleTypeToggle("review")}
+            />
+            Review ({counts.reviewOnly})
+          </label>
 
-        <label className="legend-pill answered">
-          <input
-            type="checkbox"
-            checked={selectedTypes.includes("answered")}
-            onChange={() => handleTypeToggle("answered")}
-          />
-          Answered ({counts.answered})
-        </label>
+          <span className="legend-pill current">🎯Current</span>
+        </div>
 
-        <label className="legend-pill review">
-          <input
-            type="checkbox"
-            checked={selectedTypes.includes("review")}
-            onChange={() => handleTypeToggle("review")}
-          />
-          Review ({counts.reviewOnly})
-        </label>
+        {/* Second Row: Review+Answered, Not Visited */}
+        <div className="legend-row legend-row-2">
+          <label className="legend-pill review-answered">
+            <input
+              type="checkbox"
+              checked={selectedTypes.includes("review-answered")}
+              onChange={() => handleTypeToggle("review-answered")}
+            />
+            Review + Answered ({counts.reviewAnswered})
+          </label>
 
-        <label className="legend-pill review-answered">
-          <input
-            type="checkbox"
-            checked={selectedTypes.includes("review-answered")}
-            onChange={() => handleTypeToggle("review-answered")}
-          />
-          Review + Answered ({counts.reviewAnswered})
-        </label>
-
-        <label className="legend-pill not-visited">
-          <input
-            type="checkbox"
-            checked={selectedTypes.includes("not-visited")}
-            onChange={() => handleTypeToggle("not-visited")}
-          />
-          Not Visited ({counts.notVisited})
-        </label>
-        <span className="legend-pill current">🎯Current</span>
+          <label className="legend-pill not-visited">
+            <input
+              type="checkbox"
+              checked={selectedTypes.includes("not-visited")}
+              onChange={() => handleTypeToggle("not-visited")}
+            />
+            Not Visited ({counts.notVisited})
+          </label>
+        </div>
       </div>
     </div>
   );
