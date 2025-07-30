@@ -141,13 +141,21 @@ function SectionSetupPage() {
     
     setQuestionRanges(updated);
 
-    // Auto-calculate total selected for no-shuffle sections
-    const anyNoShuffleSection = Object.values(sectionShuffleSettings).some(noShuffle => noShuffle);
-    if (anyNoShuffleSection) {
-      const totalInRange = updated[fileIndex].endIndex - updated[fileIndex].startIndex + 1;
-      setQuizTime(Object.values(updated).reduce((total, range) => 
-        total + (range.endIndex - range.startIndex + 1), 0
-      ));
+    // Auto-calculate total selected questions across all sections
+    const totalSelected = quizData.reduce((total, file, index) => {
+      if (sectionShuffleSettings[index]) {
+        // No shuffle mode - use range
+        const range = index === fileIndex ? updated[index] : questionRanges[index];
+        return total + (range ? range.endIndex - range.startIndex + 1 : 0);
+      } else {
+        // Shuffle mode - use difficulty counts
+        const counts = questionCounts[index] || {};
+        return total + Object.values(counts).reduce((sum, count) => sum + count, 0);
+      }
+    }, 0);
+
+    if (totalSelected > 0) {
+      setQuizTime(totalSelected);
     }
   };
 
@@ -303,7 +311,9 @@ function SectionSetupPage() {
             const levelCounts = { 0: 0, 1: 0, 2: 0 };
             file.questions.forEach(q => levelCounts[q.level]++);
 
-            const selectedTotal = Object.values(questionCounts[fileIndex] || {}).reduce((a, b) => a + b, 0);
+            const selectedTotal = sectionShuffleSettings[fileIndex] 
+              ? (questionRanges[fileIndex] ? questionRanges[fileIndex].endIndex - questionRanges[fileIndex].startIndex + 1 : 0)
+              : Object.values(questionCounts[fileIndex] || {}).reduce((a, b) => a + b, 0);
             const fileName = `${file.name}.json`;
             const images = fileImageMap[fileName] || [];
 
