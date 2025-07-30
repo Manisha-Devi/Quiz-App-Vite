@@ -109,6 +109,11 @@
   color: #f0a0a0 !important;
 }
 
+.exam-ui.dark-mode .tab-leave-warning {
+  background: #3a1a4a !important;
+  color: #d0a0f0 !important;
+}
+
 .exam-ui.dark-mode .exam-main-layout {
   background: #1a1a1a !important;
 }
@@ -411,6 +416,26 @@
   background: #ffe6cc;
   color: #cc4400;
   border-left: 4px solid #ff8800;
+}
+
+/* Tab leave warning - Purple theme */
+.tab-leave-warning {
+  background: #e6ccff !important;
+  color: #6600cc !important;
+  border-left: 4px solid #8800ff !important;
+  animation: tabLeaveWarningPulse 1.5s infinite !important;
+}
+
+@keyframes tabLeaveWarningPulse {
+  0%, 100% { 
+    opacity: 1; 
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.9; 
+    transform: scale(1.03);
+    box-shadow: 0 6px 20px rgba(136, 0, 255, 0.3);
+  }
 }
 
 /* Critical time warning - Red theme */

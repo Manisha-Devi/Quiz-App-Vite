@@ -75,6 +75,8 @@ function ExamPage() {
   const [showQuarterTimeWarning, setShowQuarterTimeWarning] = useState(false);
   const [quarterTimeWarningDismissed, setQuarterTimeWarningDismissed] = useState(false)
   const [showSubmitModal, setShowSubmitModal] = useState(false);
+  const [tabLeaveWarnings, setTabLeaveWarnings] = useState(0);
+  const [showTabLeaveWarning, setShowTabLeaveWarning] = useState(false);
 
   // Generate sections with proper numbering and grouping - memoized for performance
   const sections = useMemo(() => {
@@ -192,6 +194,40 @@ function ExamPage() {
   useEffect(() => {
     localStorage.setItem('examState', JSON.stringify({ answers, review, current, fiftyFiftyUsed }));
   }, [answers, review, current, fiftyFiftyUsed]);
+
+  // Tab visibility detection for warnings (only in exam mode)
+  useEffect(() => {
+    if (practiceMode) return;
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        // Tab is hidden/switched - increment warning count
+        setTabLeaveWarnings(prev => {
+          const newCount = prev + 1;
+          
+          if (newCount >= 3) {
+            // Force submit after 3 warnings
+            setTimeout(() => {
+              localStorage.setItem('examAnswers', JSON.stringify(answers));
+              localStorage.setItem('reviewMarks', JSON.stringify(review));
+              navigate('/result');
+            }, 100);
+          } else {
+            // Show warning popup
+            setShowTabLeaveWarning(true);
+          }
+          
+          return newCount;
+        });
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [practiceMode, answers, review, navigate]);
 
   // Show time warnings at different intervals
   useEffect(() => {
@@ -427,6 +463,10 @@ function ExamPage() {
     setQuarterTimeWarningDismissed(true);
   }, []);
 
+  const closeTabLeaveWarning = useCallback(() => {
+    setShowTabLeaveWarning(false);
+  }, []);
+
   if (!questions.length || !sections.length) return <div className="exam-ui">Loading exam…</div>;
 
   return (
@@ -470,6 +510,14 @@ function ExamPage() {
               <div className="time-warning critical-time-warning">
                 🚨 CRITICAL: Only 5 minutes left! Please finish up immediately!
                 <button className="close-btn" onClick={closeTimeWarning}>✖️</button>
+              </div>
+            )}
+
+            {!practiceMode && showTabLeaveWarning && (
+              <div className="time-warning tab-leave-warning">
+                ⚠️ WARNING #{tabLeaveWarnings}: Don't leave this tab during exam! 
+                {tabLeaveWarnings >= 2 && " Next leave will auto-submit your exam!"}
+                <button className="close-btn" onClick={closeTabLeaveWarning}>✖️</button>
               </div>
             )}
 
