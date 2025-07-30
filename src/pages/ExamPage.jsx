@@ -210,7 +210,14 @@ function ExamPage() {
 
       if (isTyping) return;
 
-      if (e.key >= '1' && e.key <= '4') handleOption(Number(e.key) - 1);
+      if (e.key >= '1' && e.key <= '4') {
+        const optionIndex = Number(e.key) - 1;
+        const hiddenOptions = fiftyFiftyUsed[current] || [];
+        // Only allow selection if option is not hidden by 50/50
+        if (!hiddenOptions.includes(optionIndex)) {
+          handleOption(optionIndex);
+        }
+      }
       if (e.key === 'ArrowRight') goNext();
       if (e.key === 'ArrowLeft') goPrev();
       if (e.key.toLowerCase() === 'r') toggleReview();
