@@ -400,7 +400,7 @@ function ExamPage() {
                 <button onClick={handleNext} className="primary">Save & Next</button>
               </div>
               <div className="footer-right">
-                <button onClick={() => handleSubmit(false)} className="submit">Submit Test</button>
+                <button onClick={() => handleSubmit(false)} className="submit">Submit Exam</button>
               </div>
             </footer>
           </div>
