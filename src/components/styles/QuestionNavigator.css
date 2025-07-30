@@ -12,8 +12,9 @@
   min-height: 0;
   padding-right: 4px;
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(36px, 36px));
+  gap: 10px 10px;
+  justify-content: space-evenly;
   margin-bottom: 12px;
 }
 
