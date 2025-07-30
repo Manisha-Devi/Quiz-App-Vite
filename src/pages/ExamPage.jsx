@@ -438,13 +438,26 @@ function ExamPage() {
 
         {/* Custom Submit Confirmation Modal */}
         {showSubmitModal && (
-          <div className="submit-modal-overlay" onClick={cancelSubmit}>
+          <div 
+            className="submit-modal-overlay" 
+            onClick={cancelSubmit}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                confirmSubmit();
+              } else {
+                cancelSubmit();
+              }
+            }}
+            tabIndex={0}
+            autoFocus
+          >
             <div className="submit-modal-content" onClick={(e) => e.stopPropagation()}>
               <div className="submit-modal-header">
                 <h3 className="submit-modal-title">Are You Sure?</h3>
               </div>
               <div className="submit-modal-body">
                 <p>Do you want to submit your test? This action cannot be undone.</p>
+                <p className="modal-instructions">Press <strong>Enter</strong> to Submit or <strong>any other key</strong> to Cancel</p>
               </div>
               <div className="submit-modal-footer">
                 <button className="submit-modal-btn cancel-btn" onClick={cancelSubmit}>
