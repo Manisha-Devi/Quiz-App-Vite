@@ -354,20 +354,37 @@
   width: 100%;
   min-height: 50px;
   align-items: center;
+  overflow: hidden;
 }
 
 .section-navigation-horizontal {
   display: flex;
   gap: 8px;
   overflow-x: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
   flex-wrap: nowrap;
-  max-width: 100%;
+  width: 100%;
+  padding: 2px 0;
+  scroll-behavior: smooth;
 }
 
 .section-navigation-horizontal::-webkit-scrollbar {
-  display: none;
+  height: 4px;
+}
+
+.section-navigation-horizontal::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.section-navigation-horizontal::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+}
+
+.section-navigation-horizontal::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.4);
 }
 
 .section-nav-item-horizontal {
@@ -435,14 +452,24 @@
 }
 
 .section-placeholder {
-  height: 24px;
-  width: 100%;
-  background: transparent;
+  display: none;
 }
 
 .dark-mode .section-name-display {
   background: #3a3a3d;
   border-bottom-color: #555;
+}
+
+.dark-mode .section-navigation-horizontal {
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+.dark-mode .section-navigation-horizontal::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.dark-mode .section-navigation-horizontal::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
 }
 
 /* Control Buttons */
