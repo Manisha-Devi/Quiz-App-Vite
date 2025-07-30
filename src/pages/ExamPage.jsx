@@ -413,10 +413,7 @@ function ExamPage() {
                     className="time-warning"
                     style={{
                       transform: showTimeWarning ? 'translateY(0)' : 'translateY(-100%)',
-                      opacity: showTimeWarning ? 1 : 0,
-                      maxHeight: showTimeWarning ? '60px' : '0px',
-                      marginBottom: showTimeWarning ? '15px' : '0px',
-                      padding: showTimeWarning ? '12px' : '0px'
+                      opacity: showTimeWarning ? 1 : 0
                     }}
                   >
                     ⚠️ Only 5 minutes left. Please finish up!
@@ -426,7 +423,7 @@ function ExamPage() {
                 <div style={{ 
                   flex: 1,
                   overflow: 'auto',
-                  paddingTop: (!practiceMode && (showTimeWarning || timeWarningAnimating) && timeLeft <= 300 && timeLeft > 0) ? '20px' : '0px',
+                  paddingTop: (!practiceMode && (showTimeWarning || timeWarningAnimating) && timeLeft <= 300 && timeLeft > 0) ? '75px' : '0px',
                   transition: 'padding-top 0.3s ease-in-out'
                 }}>
                   <QuestionViewer
