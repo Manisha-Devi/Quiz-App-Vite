@@ -14,6 +14,8 @@ function DrawingOverlay() {
   const [brushColor, setBrushColor] = useState('#000');
   const [tool, setTool] = useState('pen');
   const [drawingVisible, setDrawingVisible] = useState(false);
+  const [pdfPageCount, setPdfPageCount] = useState(0);
+  const [questionScreenshots, setQuestionScreenshots] = useState({}); // Store screenshots for each question
 
   // Get current question index from ExamPage
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -22,6 +24,12 @@ function DrawingOverlay() {
   useEffect(() => {
     const handleQuestionChange = (event) => {
       const newIndex = event.detail.questionIndex;
+      
+      // Take screenshot of current question before switching
+      if (newIndex !== currentQuestionIndex) {
+        takeQuestionScreenshot(currentQuestionIndex);
+      }
+      
       setCurrentQuestionIndex(newIndex);
       console.log('Question changed to:', newIndex);
     };
@@ -32,6 +40,9 @@ function DrawingOverlay() {
     // Also check if there's a global current question index
     const checkCurrentQuestion = () => {
       if (window.currentQuestionIndex !== undefined) {
+        if (window.currentQuestionIndex !== currentQuestionIndex) {
+          takeQuestionScreenshot(currentQuestionIndex);
+        }
         setCurrentQuestionIndex(window.currentQuestionIndex);
       }
     };
@@ -44,7 +55,43 @@ function DrawingOverlay() {
       window.removeEventListener('questionChanged', handleQuestionChange);
       clearInterval(interval);
     };
-  }, []);
+  }, [currentQuestionIndex]);
+
+  // Take screenshot of current question
+  const takeQuestionScreenshot = async (questionIndex) => {
+    try {
+      const examContent = document.querySelector('.exam-left') || 
+                         document.querySelector('.question-viewer') ||
+                         document.querySelector('.exam-main-layout');
+      
+      if (examContent) {
+        const canvas = await html2canvas(examContent, {
+          useCORS: true,
+          allowTaint: true,
+          scale: 1.5,
+          backgroundColor: '#ffffff',
+          width: examContent.offsetWidth,
+          height: examContent.offsetHeight
+        });
+        
+        const screenshotData = canvas.toDataURL('image/png');
+        
+        setQuestionScreenshots(prev => ({
+          ...prev,
+          [questionIndex]: {
+            data: screenshotData,
+            timestamp: Date.now(),
+            width: canvas.width,
+            height: canvas.height
+          }
+        }));
+        
+        console.log(`Screenshot taken for question ${questionIndex + 1}`);
+      }
+    } catch (error) {
+      console.error('Error taking screenshot:', error);
+    }
+  };
 
   const toggleOverlay = () => {
     setDrawingVisible(!drawingVisible);
@@ -130,6 +177,9 @@ function DrawingOverlay() {
 
   // Navigate to next question (if available)
   const nextQuestion = () => {
+    // Take screenshot before navigating
+    takeQuestionScreenshot(currentQuestionIndex);
+    
     // Dispatch event to ExamPage to go to next question
     const event = new CustomEvent('navigateQuestion', { 
       detail: { direction: 'next' } 
@@ -139,6 +189,9 @@ function DrawingOverlay() {
 
   // Navigate to previous question (if available)
   const prevQuestion = () => {
+    // Take screenshot before navigating
+    takeQuestionScreenshot(currentQuestionIndex);
+    
     // Dispatch event to ExamPage to go to previous question
     const event = new CustomEvent('navigateQuestion', { 
       detail: { direction: 'prev' } 
@@ -146,7 +199,7 @@ function DrawingOverlay() {
     window.dispatchEvent(event);
   };
 
-  // Generate PDF with all questions and drawings
+  // Generate PDF with all questions, screenshots, and drawings
   const generatePDF = async () => {
     try {
       const pdf = new jsPDF('p', 'mm', 'a4');
@@ -159,81 +212,78 @@ function DrawingOverlay() {
                      JSON.parse(localStorage.getItem('examState'))?.answers || {};
       
       let isFirstPage = true;
+      let totalPagesAdded = 0;
+      
+      // Take screenshot of current question before generating PDF
+      await takeQuestionScreenshot(currentQuestionIndex);
       
       for (let questionIndex = 0; questionIndex < questions.length; questionIndex++) {
         if (!isFirstPage) {
           pdf.addPage();
         }
         isFirstPage = false;
+        totalPagesAdded++;
         
-        // Temporarily switch to the question
-        const originalIndex = currentQuestionIndex;
-        setCurrentQuestionIndex(questionIndex);
+        const question = questions[questionIndex];
+        const userAnswer = answers[questionIndex];
         
-        // Wait for state to update
-        await new Promise(resolve => setTimeout(resolve, 100));
+        // Add page header
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text(`Question ${questionIndex + 1}`, 10, 15);
         
-        // Capture the main exam content (question area)
-        const examContent = document.querySelector('.exam-left') || 
-                           document.querySelector('.question-viewer') ||
-                           document.querySelector('.exam-main-layout');
+        let yPosition = 25;
         
-        if (examContent) {
+        // Add screenshot if available
+        const screenshot = questionScreenshots[questionIndex];
+        if (screenshot) {
           try {
-            const canvas = await html2canvas(examContent, {
-              useCORS: true,
-              allowTaint: true,
-              scale: 2,
-              backgroundColor: '#ffffff',
-              width: examContent.offsetWidth,
-              height: examContent.offsetHeight
-            });
-            
-            const imgData = canvas.toDataURL('image/png');
             const imgWidth = pageWidth - 20; // 10mm margin on each side
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            const imgHeight = Math.min((screenshot.height * imgWidth) / screenshot.width, pageHeight - 80);
             
-            // Add question content
-            pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, Math.min(imgHeight, pageHeight - 40));
-            
-            // Add question info
-            const question = questions[questionIndex];
-            const userAnswer = answers[questionIndex];
-            
-            let yPosition = Math.min(imgHeight + 20, pageHeight - 30);
-            
-            // Add question number
-            pdf.setFontSize(12);
-            pdf.setFont('helvetica', 'bold');
-            pdf.text(`Question ${questionIndex + 1}`, 10, yPosition);
-            
-            // Add user's answer if exists
-            if (userAnswer !== undefined) {
-              yPosition += 6;
-              pdf.setFont('helvetica', 'normal');
-              const answerText = question.options && question.options[userAnswer] 
-                ? `Answer: ${String.fromCharCode(65 + userAnswer)}) ${question.options[userAnswer]}`
-                : `Answer: ${userAnswer}`;
-              pdf.text(answerText, 10, yPosition);
-            }
-            
-            // Add correct answer
-            if (question.answer !== undefined) {
-              yPosition += 6;
-              pdf.setTextColor(0, 128, 0); // Green color
-              const correctText = question.options && question.options[question.answer]
-                ? `Correct: ${String.fromCharCode(65 + question.answer)}) ${question.options[question.answer]}`
-                : `Correct: ${question.answer}`;
-              pdf.text(correctText, 10, yPosition);
-              pdf.setTextColor(0, 0, 0); // Reset to black
-            }
-            
-          } catch (canvasError) {
-            console.error('Error capturing question:', questionIndex, canvasError);
+            pdf.addImage(screenshot.data, 'PNG', 10, yPosition, imgWidth, imgHeight);
+            yPosition += imgHeight + 10;
+          } catch (imgError) {
+            console.error('Error adding screenshot for question:', questionIndex, imgError);
             // Add fallback text
-            pdf.setFontSize(14);
-            pdf.text(`Question ${questionIndex + 1} - Screenshot unavailable`, 10, 20);
+            pdf.setFontSize(10);
+            pdf.text('Screenshot not available', 10, yPosition);
+            yPosition += 10;
           }
+        } else {
+          // Add fallback text
+          pdf.setFontSize(10);
+          pdf.text('No screenshot available for this question', 10, yPosition);
+          yPosition += 10;
+        }
+        
+        // Add question info at bottom
+        if (yPosition > pageHeight - 40) {
+          pdf.addPage();
+          totalPagesAdded++;
+          yPosition = 20;
+        }
+        
+        // Add user's answer if exists
+        if (userAnswer !== undefined) {
+          pdf.setFontSize(10);
+          pdf.setFont('helvetica', 'normal');
+          const answerText = question.options && question.options[userAnswer] 
+            ? `Your Answer: ${String.fromCharCode(65 + userAnswer)}) ${question.options[userAnswer]}`
+            : `Your Answer: ${userAnswer}`;
+          pdf.text(answerText, 10, yPosition);
+          yPosition += 6;
+        }
+        
+        // Add correct answer
+        if (question.answer !== undefined) {
+          pdf.setTextColor(0, 128, 0); // Green color
+          const correctText = question.options && question.options[question.answer]
+            ? `Correct Answer: ${String.fromCharCode(65 + question.answer)}) ${question.options[question.answer]}`
+            : `Correct Answer: ${question.answer}`;
+          pdf.text(correctText, 10, yPosition);
+          pdf.setTextColor(0, 0, 0); // Reset to black
+          yPosition += 6;
         }
         
         // Add drawing overlay if exists for this question
@@ -277,6 +327,7 @@ function DrawingOverlay() {
             
             // Add new page for drawing
             pdf.addPage();
+            totalPagesAdded++;
             pdf.setFontSize(12);
             pdf.setFont('helvetica', 'bold');
             pdf.text(`Question ${questionIndex + 1} - Drawing Notes`, 10, 15);
@@ -290,16 +341,16 @@ function DrawingOverlay() {
             console.error('Error adding drawing for question:', questionIndex, drawingError);
           }
         }
-        
-        // Restore original question index
-        setCurrentQuestionIndex(originalIndex);
       }
       
+      // Update page count
+      setPdfPageCount(totalPagesAdded);
+      
       // Save the PDF
-      const fileName = `Quiz_Questions_${new Date().toISOString().split('T')[0]}.pdf`;
+      const fileName = `Quiz_Complete_${new Date().toISOString().split('T')[0]}.pdf`;
       pdf.save(fileName);
       
-      alert(`PDF generated successfully! File saved as: ${fileName}`);
+      alert(`PDF generated successfully!\nFile: ${fileName}\nTotal Pages: ${totalPagesAdded}`);
       
     } catch (error) {
       console.error('Error generating PDF:', error);
@@ -317,7 +368,12 @@ function DrawingOverlay() {
     localStorage.setItem('questionDrawings', JSON.stringify(lines));
   }, [lines]);
 
-  // Load drawing data from localStorage on component mount
+  // Save screenshots to localStorage when they change
+  useEffect(() => {
+    localStorage.setItem('questionScreenshots', JSON.stringify(questionScreenshots));
+  }, [questionScreenshots]);
+
+  // Load drawing data and screenshots from localStorage on component mount
   useEffect(() => {
     const savedDrawings = localStorage.getItem('questionDrawings');
     if (savedDrawings) {
@@ -326,6 +382,16 @@ function DrawingOverlay() {
         setLines(parsedDrawings);
       } catch (error) {
         console.error('Error loading saved drawings:', error);
+      }
+    }
+
+    const savedScreenshots = localStorage.getItem('questionScreenshots');
+    if (savedScreenshots) {
+      try {
+        const parsedScreenshots = JSON.parse(savedScreenshots);
+        setQuestionScreenshots(parsedScreenshots);
+      } catch (error) {
+        console.error('Error loading saved screenshots:', error);
       }
     }
   }, []);
@@ -351,10 +417,24 @@ function DrawingOverlay() {
           <button onClick={prevQuestion} title="Previous Question">⬅️</button>
           <button onClick={nextQuestion} title="Next Question">➡️</button>
           
-          {/* PDF Generation button */}
-          <button onClick={generatePDF} title="Generate PDF with all questions and drawings" className="pdf-btn">
+          {/* Screenshot button */}
+          <button 
+            onClick={() => takeQuestionScreenshot(currentQuestionIndex)} 
+            title="Take Screenshot of Current Question"
+            className="screenshot-btn"
+          >
+            📸
+          </button>
+          
+          {/* PDF Generation button with counter */}
+          <button onClick={generatePDF} title="Generate PDF with all questions, screenshots and drawings" className="pdf-btn">
             📄 PDF
           </button>
+          
+          {/* Page counter display */}
+          <div className="page-counter">
+            📄 Pages: {Object.keys(questionScreenshots).length}
+          </div>
         </div>
       </div>
       <div id="scratchpad" style={{ display: visible ? 'block' : 'none' }}>
