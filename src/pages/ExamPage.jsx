@@ -187,6 +187,7 @@ function ExamPage() {
       if (e.key === 'ArrowLeft') goPrev();
       if (e.key.toLowerCase() === 'r') toggleReview();
       if (e.key.toLowerCase() === 'c') handleClear();
+      if (e.key.toLowerCase() === 'q') setIsSidebarOpen(prev => !prev);
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
