@@ -351,6 +351,23 @@ function ExamPage() {
     }
   }, []);
 
+  const getTimerColorClass = useCallback(() => {
+    if (practiceMode || timeLeft === Infinity) return '';
+    
+    const totalTime = EXAM_DURATION;
+    const quarterTime = totalTime * 0.25;
+    const tenMinutes = 600; // 10 minutes in seconds
+    const fiveMinutes = 300; // 5 minutes in seconds
+    
+    if (timeLeft <= fiveMinutes) {
+      return 'timer-critical';
+    } else if (timeLeft <= tenMinutes || timeLeft <= quarterTime) {
+      return 'timer-warning';
+    } else {
+      return 'timer-normal';
+    }
+  }, [timeLeft, practiceMode, EXAM_DURATION]);
+
   const handleOption = useCallback(idx => {
     if (idx === undefined) {
       // Clear the answer for current question
@@ -423,7 +440,7 @@ function ExamPage() {
                 <span className="title-text">{practiceMode ? 'Practice Mode' : 'Exam Page'}</span>
               </div>
               <div className="header-controls">
-                <div className="timer-box">
+                <div className={`timer-box ${getTimerColorClass()}`}>
                   {practiceMode ? '∞' : formatTime(timeLeft)}
                 </div>
                 <button className="theme-toggle-btn" onClick={toggleDarkMode} title="Toggle Dark Mode">

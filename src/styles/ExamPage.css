@@ -36,6 +36,24 @@
   color: #2d2d30 !important;
 }
 
+.exam-ui.dark-mode .timer-box.timer-normal {
+  background: linear-gradient(135deg, #2E7D32, #1B5E20) !important;
+  color: white !important;
+  border: 1px solid rgba(76, 175, 80, 0.4) !important;
+}
+
+.exam-ui.dark-mode .timer-box.timer-warning {
+  background: linear-gradient(135deg, #F57C00, #E65100) !important;
+  color: white !important;
+  border: 1px solid rgba(255, 152, 0, 0.4) !important;
+}
+
+.exam-ui.dark-mode .timer-box.timer-critical {
+  background: linear-gradient(135deg, #D32F2F, #B71C1C) !important;
+  color: white !important;
+  border: 1px solid rgba(244, 67, 54, 0.4) !important;
+}
+
 .exam-ui.dark-mode .exam-right {
   background: #2d2d30 !important;
   border: 2px solid #404040 !important;
@@ -168,6 +186,53 @@
   flex-shrink: 0;
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+/* Timer color states based on remaining time */
+.timer-box.timer-normal {
+  background: linear-gradient(135deg, #4CAF50, #2E7D32);
+  color: white;
+  border: 1px solid rgba(76, 175, 80, 0.3);
+  box-shadow: 0 0 10px rgba(76, 175, 80, 0.2);
+}
+
+.timer-box.timer-warning {
+  background: linear-gradient(135deg, #FF9800, #F57C00);
+  color: white;
+  border: 1px solid rgba(255, 152, 0, 0.3);
+  box-shadow: 0 0 10px rgba(255, 152, 0, 0.3);
+  animation: timerWarningPulse 2s infinite;
+}
+
+.timer-box.timer-critical {
+  background: linear-gradient(135deg, #F44336, #D32F2F);
+  color: white;
+  border: 1px solid rgba(244, 67, 54, 0.3);
+  box-shadow: 0 0 15px rgba(244, 67, 54, 0.4);
+  animation: timerCriticalPulse 1s infinite;
+}
+
+@keyframes timerWarningPulse {
+  0%, 100% { 
+    transform: scale(1);
+    box-shadow: 0 0 10px rgba(255, 152, 0, 0.3);
+  }
+  50% { 
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(255, 152, 0, 0.5);
+  }
+}
+
+@keyframes timerCriticalPulse {
+  0%, 100% { 
+    transform: scale(1);
+    box-shadow: 0 0 15px rgba(244, 67, 54, 0.4);
+  }
+  50% { 
+    transform: scale(1.08);
+    box-shadow: 0 0 20px rgba(244, 67, 54, 0.6);
+  }
 }
 
 .header-controls {
