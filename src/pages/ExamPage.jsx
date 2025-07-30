@@ -229,6 +229,25 @@ function ExamPage() {
     };
   }, [practiceMode, answers, review, navigate]);
 
+  // Prevent browser back button and redirect to UploadPage
+  useEffect(() => {
+    // Push current state to prevent back navigation
+    window.history.pushState(null, null, window.location.pathname);
+    
+    const handlePopState = (event) => {
+      event.preventDefault();
+      
+      // Always redirect to UploadPage when back is pressed
+      navigate('/', { replace: true });
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [navigate]);
+
   // Show time warnings at different intervals
   useEffect(() => {
     if (practiceMode) return;
