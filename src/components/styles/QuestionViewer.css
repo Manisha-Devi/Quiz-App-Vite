@@ -8,6 +8,8 @@
   display: flex;
   flex-direction: column;
   transition: background-color 0.3s ease, color 0.3s ease;
+  will-change: transform;
+  contain: content;
 }
 
 .dark-mode .question-box {
@@ -188,11 +190,6 @@
   align-items: center;
 }
 
-.dark-mode .q-header {
-  background: transparent;
-  color: #e0e0e0;
-}
-
 .q-number {
   font-size: 18px;
   font-weight: 700;
@@ -305,7 +302,6 @@
   gap: 14px;
 }
 
-/* Mobile: Single column layout */
 @media (max-width: 768px) {
   .options {
     display: flex;
@@ -325,7 +321,7 @@
   transition: all 0.2s ease-in-out;
   color: #333;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-  text-align: left !important;
+  will-change: transform, background-color;
 }
 
 .option * {
@@ -345,8 +341,7 @@
   box-shadow: 0 2px 10px rgba(75, 62, 230, 0.15);
 }
 
-/* Removed tick mark for selected options */
-
+/* Section Navigation */
 .section-name-display {
   position: sticky;
   top: 0;
@@ -419,7 +414,6 @@
   opacity: 1;
 }
 
-/* Dark mode styles */
 .dark-mode .section-name-display {
   background: transparent;
   border-bottom-color: #555;
@@ -439,7 +433,6 @@
   color: white;
   border-color: #007bff;
 }
-}
 
 .section-placeholder {
   height: 24px;
@@ -447,11 +440,12 @@
   background: transparent;
 }
 
-/* Dark mode styles */
 .dark-mode .section-name-display {
   background: #3a3a3d;
   border-bottom-color: #555;
 }
+
+/* Control Buttons */
 .control-buttons {
   display: flex;
   gap: 12px;
@@ -547,15 +541,23 @@
   color: #666;
 }
 
+/* Show Answer & Review Buttons */
 .show-answer-btn,
 .review-btn {
-  /* Add your button styles here */
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  background: #4b3ee6;
+  color: white;
+  transition: all 0.3s ease;
 }
 
-/* Dark mode styles */
-.question-viewer.dark-mode {
-  background: #1a1a1a;
-  color: #e0e0e0;
+.show-answer-btn:hover,
+.review-btn:hover {
+  background: #372cb0;
 }
 
 /* Incorrect Options Styling */
@@ -569,7 +571,6 @@
   border-color: #f44336 !important;
 }
 
-/* Dark mode incorrect options - red border only */
 .dark-mode .option.wrong-option {
   background: #404040 !important;
   border-color: #f44336 !important;
