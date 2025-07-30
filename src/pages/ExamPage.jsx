@@ -575,7 +575,7 @@ function ExamPage() {
                 />
               </div>
 
-              <div className={`exam-right ${isMobile ? (isSidebarOpen ? 'open' : 'closed') : (isSidebarOpen ? 'open' : 'closed')}`}>
+              <div className={`exam-right ${isSidebarOpen ? 'open' : 'closed'}`}>
                 <QuestionNavigator
                   totalQuestions={questions.length}
                   current={current}
@@ -595,22 +595,6 @@ function ExamPage() {
                 <button onClick={() => handleSubmit(false)} className="submit">Submit Exam</button>
               </div>
             </footer>
-
-            {/* Fixed Legend at Bottom */}
-            <div className="exam-legend-fixed">
-              {/* First Row: Answered, Review, Current */}
-              <div className="exam-legend-row">
-                <span className="legend-pill answered">Answered</span>
-                <span className="legend-pill review">Review</span>
-                <span className="legend-pill current">🎯Current</span>
-              </div>
-
-              {/* Second Row: Review+Answered, Not Visited */}
-              <div className="exam-legend-row">
-                <span className="legend-pill review-answered">Review + Answered</span>
-                <span className="legend-pill not-visited">Not Visited</span>
-              </div>
-            </div>
           </div>
 
         {enableDrawing && <DrawingOverlay />}
