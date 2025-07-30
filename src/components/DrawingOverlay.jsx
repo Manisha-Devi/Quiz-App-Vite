@@ -418,7 +418,11 @@ function DrawingOverlay() {
           <button onClick={nextQuestion} title="Next Question">➡️</button>
           
           {/* Page counter display as circular icon */}
-          <div className="page-counter-circle" title={`Screenshots captured: ${Object.keys(questionScreenshots).length}`}>
+          <div 
+            className="page-counter-circle" 
+            title={`Screenshots captured: ${Object.keys(questionScreenshots).length} - Click to download PDF`}
+            onClick={generatePDF}
+          >
             {Object.keys(questionScreenshots).length}
           </div>
         </div>
