@@ -310,35 +310,36 @@ function SectionSetupPage() {
             return (
               <div key={fileIndex} className="section-card">
                 <div className="section-card-header">
-                  <div className="section-info">
+                  <div className="section-name-row">
                     <h3 className="section-name">{file.name}</h3>
+                    {images.length > 0 && (
+                      <button
+                        className="preview-images-btn"
+                        onClick={() => openImageModal(images)}
+                      >
+                        🖼️ {images.length}
+                      </button>
+                    )}
+                  </div>
+                  
+                  <div className="section-controls-row">
                     <div className="section-stats">
-                      <span className="total-questions">{file.questions.length} total</span>
-                      <span className="selected-count">{selectedTotal} selected</span>
+                      <span className="total-questions">{file.questions.length} Total</span>
+                      <span className="selected-count">{selectedTotal} Selected</span>
+                    </div>
+                    
+                    <div className="section-shuffle-toggle">
+                      <label className="shuffle-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={sectionShuffleSettings[fileIndex] || false}
+                          onChange={(e) => handleSectionShuffleToggle(fileIndex, e.target.checked)}
+                        />
+                        <span className="checkbox-custom"></span>
+                        <span className="shuffle-label">📐 No Shuffle</span>
+                      </label>
                     </div>
                   </div>
-
-                  {images.length > 0 && (
-                    <button
-                      className="preview-images-btn"
-                      onClick={() => openImageModal(images)}
-                    >
-                      🖼️ {images.length}
-                    </button>
-                  )}
-                </div>
-
-                {/* Section Shuffle Toggle */}
-                <div className="section-shuffle-toggle">
-                  <label className="shuffle-checkbox">
-                    <input
-                      type="checkbox"
-                      checked={sectionShuffleSettings[fileIndex] || false}
-                      onChange={(e) => handleSectionShuffleToggle(fileIndex, e.target.checked)}
-                    />
-                    <span className="checkbox-custom"></span>
-                    <span className="shuffle-label">📐 No Shuffle</span>
-                  </label>
                 </div>
 
                 <div className="difficulty-controls">
