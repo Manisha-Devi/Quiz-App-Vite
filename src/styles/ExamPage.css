@@ -98,13 +98,16 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  height: 80px;
+  height: 8vh;
+  max-height: 80px;
+  min-height: 60px;
   flex-shrink: 0;
   margin: 0;
   width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
   white-space: nowrap;
+  min-width: 100%;
 }
 
 .page-title {
@@ -180,14 +183,19 @@
   max-height: 20px;
 }
 
-/* Main Layout - Flexible height */
+/* Main Layout - 78% of screen height */
 .exam-main-layout {
   flex: 1;
   display: flex;
   gap: 20px;
   overflow: hidden;
-  padding: 20px;
-  height: calc(100vh - 160px);
+  padding: 0 20px;
+  height: 80vh;
+  /* Fixed 78% of viewport height */
+  /* max-height: 78vh; */
+  margin-top:1vh;
+  margin-bottom: 1vh;
+  /* Add margin to prevent footer overlap */
   transition: background-color 0.3s ease;
 }
 
@@ -195,8 +203,9 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  height: 100%;
+  /* height: 100%;
   max-height: 100%;
+  padding: 10px 0; */
 }
 
 .exam-right {
@@ -209,8 +218,8 @@
   flex-direction: column;
   border: 2px solid #e0e0e0;
   transition: all 0.3s ease-in-out;
-  height: 100%;
-  max-height: 100%;
+  /* height: 100%;
+  max-height: 100%; */
   overflow: hidden;
 }
 
@@ -230,7 +239,7 @@
   max-height: 20px;
 }
 
-/* Footer - Fixed height */
+/* Footer - 10% of screen height */
 .exam-footer {
   background: white;
   padding: 12px 24px;
@@ -240,7 +249,11 @@
   border-top: 1px solid #ccc;
   position: relative;
   z-index: 10;
-  height: 80px;
+  height: 10vh;
+  /* Fixed 10% of viewport height */
+  /* min-height: 60px;
+  max-height: 80px;
+  margin-top: auto; */
   flex-shrink: 0;
 }
 
@@ -298,8 +311,10 @@
   text-align: center;
   font-weight: bold;
   border-radius: 6px;
+  margin-bottom: 10px;
   position: fixed;
-  top: 80px;
+  top: 8vh;
+  /* Place it just below the header */
   left: 0;
   width: 100%;
   z-index: 20;
@@ -324,7 +339,9 @@
     overflow-y: hidden;
     scrollbar-width: none;
     -ms-overflow-style: none;
-    height: 70px;
+    height: 8vh;
+    max-height: 70px;
+    min-height: 50px;
   }
 
   .exam-header::-webkit-scrollbar {
@@ -332,16 +349,16 @@
   }
 
   .exam-main-layout {
+    /* flex-direction: column; */
     gap: 10px;
-    padding: 10px;
-    height: calc(100vh - 150px);
+    padding: 0 10px;
   }
 
   .exam-right {
     width: 100%;
     height: 50%;
     position: fixed;
-    bottom: 80px;
+    bottom: 0;
     left: 0;
     z-index: 99;
     border-radius: 16px 16px 0 0;
@@ -356,8 +373,8 @@
   .exam-footer {
     flex-direction: column;
     align-items: center;
-    height: 120px;
-    padding: 8px 16px;
+    height: 17vh;
+    /* Slightly more on mobile */
   }
 
   .footer-left,
@@ -366,105 +383,12 @@
     display: flex;
     justify-content: center;
     gap: 10px;
-    margin-top: 8px;
+    margin-top: 10px;
   }
 
   .exam-footer button {
     width: 100%;
-    padding: 8px 12px;
   }
-
-  .time-warning {
-    top: 70px;
-  }
-}
-
-/* 50/50 Lifeline Styles */
-.fifty-fifty-btn {
-  background: linear-gradient(135deg, #ff9800, #f57c00);
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-weight: 600;
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
-}
-
-.fifty-fifty-btn:hover {
-  background: linear-gradient(135deg, #f57c00, #e65100);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.4);
-}
-
-.fifty-fifty-used {
-  background: #4caf50;
-  color: white;
-  padding: 8px 12px;
-  border-radius: 20px;
-  font-weight: 600;
-  font-size: 12px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.option-fifty-fifty-hidden {
-  background: linear-gradient(135deg, #ffeaea, #fdd4d4) !important;
-  border-color: #f44336 !important;
-  cursor: not-allowed !important;
-  user-select: none !important;
-  pointer-events: none !important;
-}
-
-.option-fifty-fifty-hidden .option-label {
-  background: #f44336 !important;
-  color: white !important;
-}
-
-.red-fifty {
-  font-weight: bold;
-  color: #f44336;
-  font-size: 16px;
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.hidden-text {
-  font-style: italic;
-  color: #999;
-  font-size: 14px;
-}
-
-/* Dark mode for 50/50 styles */
-.exam-ui.dark-mode .fifty-fifty-btn {
-  background: linear-gradient(135deg, #ff9800, #f57c00);
-}
-
-.exam-ui.dark-mode .fifty-fifty-used {
-  background: #66bb6a;
-}
-
-.exam-ui.dark-mode .option-fifty-fifty-hidden {
-  background: linear-gradient(135deg, #4d1a1a, #5a2a2a) !important;
-  border-color: #f44336 !important;
-}
-
-.exam-ui.dark-mode .option-fifty-fifty-hidden .option-label {
-  background: #f44336 !important;
-  color: white !important;
-}
-
-.exam-ui.dark-mode .red-fifty {
-  color: #ff5252;
-}
-
-.exam-ui.dark-mode .hidden-text {
-  color: #666;
 }
 
 .fullscreen-btn-container {
