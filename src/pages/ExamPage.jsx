@@ -424,6 +424,8 @@ function ExamPage() {
                   </div>
                 )}
                 <div style={{ 
+                  flex: 1,
+                  overflow: 'auto',
                   paddingTop: (!practiceMode && (showTimeWarning || timeWarningAnimating) && timeLeft <= 300 && timeLeft > 0) ? '75px' : '0px',
                   transition: 'padding-top 0.3s ease-in-out'
                 }}>
