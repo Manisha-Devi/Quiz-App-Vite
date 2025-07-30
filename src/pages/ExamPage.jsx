@@ -70,7 +70,6 @@ function ExamPage() {
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
   const [showTimeWarning, setShowTimeWarning] = useState(false); // Track visibility of the warning
   const [timeWarningDismissed, setTimeWarningDismissed] = useState(false); // Track if warning was dismissed
-  const [timeWarningAnimating, setTimeWarningAnimating] = useState(false); // Track animation state
   const [showSubmitModal, setShowSubmitModal] = useState(false);
 
   // Generate sections with proper numbering and grouping - memoized for performance
@@ -193,12 +192,7 @@ function ExamPage() {
   // Show time warning when 5 minutes left (only if not dismissed)
   useEffect(() => {
     if (!practiceMode && timeLeft <= 300 && timeLeft > 0 && !timeWarningDismissed) {
-      setTimeWarningAnimating(true);
       setShowTimeWarning(true);
-      // Clean up animation state after show animation
-      setTimeout(() => {
-        setTimeWarningAnimating(false);
-      }, 300);
     }
   }, [timeLeft, practiceMode, timeWarningDismissed]);
 
@@ -371,14 +365,8 @@ function ExamPage() {
   }, []);
 
   const closeTimeWarning = useCallback(() => {
-    setTimeWarningAnimating(true);
-    setShowTimeWarning(false); // Start hide animation
-
-    // After animation completes, clean up
-    setTimeout(() => {
-      setTimeWarningAnimating(false);
-      setTimeWarningDismissed(true); // Mark as dismissed so it won't show again
-    }, 300); // Match transition duration
+    setShowTimeWarning(false); // Hide the warning
+    setTimeWarningDismissed(true); // Mark as dismissed so it won't show again
   }, []);
 
   if (!questions.length || !sections.length) return <div className="exam-ui">Loading exam…</div>;
@@ -406,41 +394,31 @@ function ExamPage() {
               </div>
             </header>
 
+            {!practiceMode && showTimeWarning && timeLeft <= 300 && timeLeft > 0 && (
+              <div className="time-warning">
+                ⚠️ Only 5 minutes left. Please finish up!
+                <button className="close-btn" onClick={closeTimeWarning}>✖️</button>
+              </div>
+            )}
+
             <div className="exam-main-layout">
-              <div className={`exam-left ${(showTimeWarning || timeWarningAnimating) && timeLeft <= 300 && timeLeft > 0 ? 'with-warning' : ''} ${timeWarningDismissed && timeLeft <= 300 && timeLeft > 0 ? 'warning-dismissed' : ''}`}>
-                {!practiceMode && (showTimeWarning || timeWarningAnimating) && timeLeft <= 300 && timeLeft > 0 && (
-                  <div 
-                    className="time-warning"
-                    style={{
-                      transform: showTimeWarning ? 'translateY(0)' : 'translateY(-100%)',
-                      opacity: showTimeWarning ? 1 : 0
-                    }}
-                  >
-                    ⚠️ Only 5 minutes left. Please finish up!
-                    <button className="close-btn" onClick={closeTimeWarning}>✖️</button>
-                  </div>
-                )}
-                <div style={{ 
-                  flex: 1,
-                  overflow: 'auto'
-                }}>
-                  <QuestionViewer
-                    question={q}
-                    currentIndex={current}
-                    answer={answers[current]}
-                    reviewMarked={review[current]}
-                    onOptionClick={handleOption}
-                    onToggleReview={toggleReview}
-                    injectImageSources={injectImageSources}
-                    hasMath={hasMath}
-                    isDarkMode={isDarkMode}
-                    swipeHandlers={swipeHandlers}
-                    practiceMode={practiceMode}
-                    onClear={handleClear}
-                    fiftyFiftyUsed={fiftyFiftyUsed[current]}
-                    onFiftyFiftyUse={(hiddenOptions) => setFiftyFiftyUsed(prev => ({ ...prev, [current]: hiddenOptions }))}
-                  />
-                </div>
+              <div className="exam-left">
+                <QuestionViewer
+                  question={q}
+                  currentIndex={current}
+                  answer={answers[current]}
+                  reviewMarked={review[current]}
+                  onOptionClick={handleOption}
+                  onToggleReview={toggleReview}
+                  injectImageSources={injectImageSources}
+                  hasMath={hasMath}
+                  isDarkMode={isDarkMode}
+                  swipeHandlers={swipeHandlers}
+                  practiceMode={practiceMode}
+                  onClear={handleClear}
+                  fiftyFiftyUsed={fiftyFiftyUsed[current]}
+                  onFiftyFiftyUse={(hiddenOptions) => setFiftyFiftyUsed(prev => ({ ...prev, [current]: hiddenOptions }))}
+                />
               </div>
 
               <div className={`exam-right ${isSidebarOpen ? 'open' : 'closed'}`}>

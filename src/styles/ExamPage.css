@@ -183,19 +183,19 @@
   max-height: 20px;
 }
 
-/* Main Layout - Calculate full screen height minus header and footer */
+/* Main Layout - 78% of screen height */
 .exam-main-layout {
   flex: 1;
   display: flex;
   gap: 20px;
   overflow: hidden;
   padding: 0 20px;
-  /* Calculate: Full viewport (100vh) - Header (8vh) - Footer (10vh) - Gaps (2vh) = 80vh */
   height: 80vh;
-  min-height: calc(100vh - 180px);
-  /* Fallback with fixed pixel values */
-  margin-top: 1vh;
+  /* Fixed 78% of viewport height */
+  /* max-height: 78vh; */
+  margin-top:1vh;
   margin-bottom: 1vh;
+  /* Add margin to prevent footer overlap */
   transition: background-color 0.3s ease;
 }
 
@@ -203,25 +203,9 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  transition: all 0.3s ease-in-out;
-  /* Use full available height from main layout */
-  height: 100%;
+  /* height: 100%;
   max-height: 100%;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-}
-
-.exam-left.with-warning {
-  /* When alert is showing, reduce height by alert height (60px) */
-  height: calc(100% - 60px);
-  max-height: calc(100% - 60px);
-}
-
-.exam-left.warning-dismissed {
-  /* When alert is dismissed, restore full height */
-  height: 100%;
-  max-height: 100%;
+  padding: 10px 0; */
 }
 
 .exam-right {
@@ -234,9 +218,8 @@
   flex-direction: column;
   border: 2px solid #e0e0e0;
   transition: all 0.3s ease-in-out;
-  /* Use full available height from main layout */
-  height: 100%;
-  max-height: 100%;
+  /* height: 100%;
+  max-height: 100%; */
   overflow: hidden;
 }
 
@@ -328,9 +311,9 @@
   text-align: center;
   font-weight: bold;
   border-radius: 8px;
-  margin: 0 0 15px 0;
+  margin: 10px 20px;
   position: relative;
-  width: 100%;
+  width: calc(100% - 40px);
   z-index: 20;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   border-left: 4px solid #ffc107;
@@ -338,10 +321,6 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  height: 60px;
-  flex-shrink: 0;
-  overflow: hidden;
-  transition: all 0.3s ease-in-out;
 }
 
 .time-warning .close-btn {
@@ -379,15 +358,11 @@
     /* flex-direction: column; */
     gap: 10px;
     padding: 0 10px;
-    /* Calculate: Full viewport (100vh) - Header (8vh) - Mobile Footer (17vh) - Gaps (2vh) = 73vh */
-    height: 73vh;
-    min-height: calc(100vh - 220px);
   }
 
   .exam-right {
     width: 100%;
-    height: 50vh;
-    /* Use viewport height instead of percentage */
+    height: 50%;
     position: fixed;
     bottom: 0;
     left: 0;
