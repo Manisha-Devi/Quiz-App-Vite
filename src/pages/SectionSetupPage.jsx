@@ -294,7 +294,7 @@ function SectionSetupPage() {
       <header className="section-header">
         <div className="page-title">
           <span className="title-icon">🎯</span>
-          <span className="title-text">Quiz Setup</span>
+          <span className="title-text">Setup</span>
         </div>
         <div className="header-controls">
           <div className="selection-summary">

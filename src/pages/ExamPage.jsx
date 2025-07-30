@@ -511,7 +511,7 @@ function ExamPage() {
             <header className="exam-header">
               <div className="page-title">
                 <span className="title-icon">📚</span>
-                <span className="title-text">{practiceMode ? 'Practice Mode' : 'Exam Page'}</span>
+                <span className="title-text">{practiceMode ? 'Practice' : 'Exam'}</span>
               </div>
               <div className="header-controls">
                 <div className={`timer-box ${getTimerColorClass()}`}>

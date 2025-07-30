@@ -331,7 +331,7 @@ function UploadPage() {
       <header className="upload-header">
         <div className="page-title">
           <span className="title-icon">📂</span>
-          <span className="title-text">Quiz Setup</span>
+          <span className="title-text">Upload</span>
         </div>
         <div className="header-controls">
           <div className="connection-indicator">

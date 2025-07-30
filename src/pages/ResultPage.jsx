@@ -295,7 +295,7 @@ function ResultPage() {
       <header className="result-header">
         <div className="page-title">
           <span className="title-icon">📊</span>
-          <span className="title-text">Quiz Results</span>
+          <span className="title-text">Result</span>
         </div>
         <div className="header-controls">
           <div className="score-box">
