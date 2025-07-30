@@ -211,7 +211,6 @@ function ExamPage() {
       if (isTyping) return;
 
       if (e.key >= '1' && e.key <= '4') handleOption(Number(e.key) - 1);
-      if (e.key === '0') toggleReview();
       if (e.key === 'ArrowRight') goNext();
       if (e.key === 'ArrowLeft') goPrev();
       if (e.key.toLowerCase() === 'r') toggleReview();
