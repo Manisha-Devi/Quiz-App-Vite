@@ -205,20 +205,24 @@ function DrawingOverlay() {
     window.dispatchEvent(event);
   };
 
-  // Generate PDF with only visited questions, screenshots, and drawings
+  // Generate PDF with 2 screenshots per page for better space utilization
   const generatePDF = async () => {
     try {
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 10;
+      const availableWidth = pageWidth - (2 * margin);
+      const availableHeight = pageHeight - (2 * margin);
       
       // Get questions from localStorage
       const questions = JSON.parse(localStorage.getItem('finalQuiz')) || [];
       const answers = JSON.parse(localStorage.getItem('examAnswers')) || 
                      JSON.parse(localStorage.getItem('examState'))?.answers || {};
       
-      let isFirstPage = true;
       let totalPagesAdded = 0;
+      let screenshotsOnCurrentPage = 0;
+      let currentYPosition = margin;
       
       // Take screenshot of current question before generating PDF
       await takeQuestionScreenshot(currentQuestionIndex);
@@ -229,115 +233,146 @@ function DrawingOverlay() {
         .sort((a, b) => a - b);
       
       if (visitedQuestions.length === 0) {
-        alert('No questions have been visited yet. Please navigate through some questions first.');
+        alert('कोई questions visit नहीं हुए हैं। पहले कुछ questions देखें।');
         return;
       }
       
+      // Add first page
+      totalPagesAdded++;
+      
+      // Add title page
+      pdf.setFontSize(20);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Quiz Screenshots & Notes', pageWidth / 2, 30, { align: 'center' });
+      
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(`Total Questions Visited: ${visitedQuestions.length}`, pageWidth / 2, 45, { align: 'center' });
+      pdf.text(`Generated: ${new Date().toLocaleString()}`, pageWidth / 2, 55, { align: 'center' });
+      
+      currentYPosition = 70;
+      
       for (let i = 0; i < visitedQuestions.length; i++) {
         const questionIndex = visitedQuestions[i];
-        
-        if (!isFirstPage) {
-          pdf.addPage();
-        }
-        isFirstPage = false;
-        totalPagesAdded++;
-        
-        const question = questions[questionIndex];
-        const userAnswer = answers[questionIndex];
         const screenshot = questionScreenshots[questionIndex];
+        const questionDrawings = lines[questionIndex];
         
-        // Add page header
-        pdf.setFontSize(16);
+        // Check if we need a new page (2 screenshots per page max)
+        if (screenshotsOnCurrentPage >= 2) {
+          pdf.addPage();
+          totalPagesAdded++;
+          screenshotsOnCurrentPage = 0;
+          currentYPosition = margin;
+        }
+        
+        // If first screenshot on page, start from top
+        if (screenshotsOnCurrentPage === 0) {
+          currentYPosition = margin + 5;
+        }
+        
+        // Calculate image dimensions for half page height
+        const maxImageHeight = (availableHeight - 20) / 2; // Space for 2 images + spacing
+        const imageWidth = availableWidth * 0.95; // 95% of available width
+        
+        // Add question header
+        pdf.setFontSize(14);
         pdf.setFont('helvetica', 'bold');
-        pdf.text(`Question ${questionIndex + 1} (Visited)`, 10, 15);
+        pdf.text(`Q${questionIndex + 1}`, margin, currentYPosition);
+        currentYPosition += 8;
         
-        let yPosition = 25;
-        
-        // Add full page screenshot
+        // Add screenshot
         if (screenshot) {
           try {
-            const imgWidth = pageWidth - 20; // 10mm margin on each side
-            const imgHeight = Math.min((screenshot.height * imgWidth) / screenshot.width, pageHeight - 40);
+            // Calculate proper aspect ratio
+            const aspectRatio = screenshot.width / screenshot.height;
+            let imgWidth = imageWidth;
+            let imgHeight = imgWidth / aspectRatio;
             
-            pdf.addImage(screenshot.data, 'PNG', 10, yPosition, imgWidth, imgHeight);
-            yPosition += imgHeight + 5;
+            // If height is too much, adjust based on height
+            if (imgHeight > maxImageHeight) {
+              imgHeight = maxImageHeight;
+              imgWidth = imgHeight * aspectRatio;
+            }
+            
+            // Center the image horizontally
+            const xPosition = (pageWidth - imgWidth) / 2;
+            
+            pdf.addImage(screenshot.data, 'PNG', xPosition, currentYPosition, imgWidth, imgHeight);
+            currentYPosition += imgHeight + 5;
+            
+            // Add drawing overlay if exists
+            if (questionDrawings && Object.keys(questionDrawings).length > 0) {
+              try {
+                // Create canvas for drawing overlay
+                const drawingCanvas = document.createElement('canvas');
+                drawingCanvas.width = screenshot.width;
+                drawingCanvas.height = screenshot.height;
+                const ctx = drawingCanvas.getContext('2d');
+                
+                // Transparent background
+                ctx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+                
+                // Scale factor for drawings to match screenshot
+                const scaleX = screenshot.width / window.innerWidth;
+                const scaleY = screenshot.height / window.innerHeight;
+                
+                // Draw all lines with proper scaling
+                Object.values(questionDrawings).forEach(line => {
+                  if (line.points && line.points.length >= 2) {
+                    ctx.strokeStyle = line.color || '#FF0000'; // Make drawings more visible
+                    ctx.lineWidth = (line.tool === 'pen' ? 4 : 35) * Math.max(scaleX, scaleY);
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+                    ctx.globalCompositeOperation = 'source-over';
+                    
+                    ctx.beginPath();
+                    const scaledPoints = line.points.map((point, index) => 
+                      index % 2 === 0 ? point * scaleX : point * scaleY
+                    );
+                    
+                    ctx.moveTo(scaledPoints[0], scaledPoints[1]);
+                    for (let j = 2; j < scaledPoints.length; j += 2) {
+                      ctx.lineTo(scaledPoints[j], scaledPoints[j + 1]);
+                    }
+                    ctx.stroke();
+                  }
+                });
+                
+                const drawingImgData = drawingCanvas.toDataURL('image/png');
+                
+                // Overlay drawing on screenshot with same dimensions
+                pdf.addImage(drawingImgData, 'PNG', xPosition, currentYPosition - imgHeight - 5, imgWidth, imgHeight);
+                
+              } catch (drawingError) {
+                console.error('Error adding drawing overlay:', drawingError);
+              }
+            }
+            
           } catch (imgError) {
-            console.error('Error adding screenshot for question:', questionIndex, imgError);
+            console.error('Error adding screenshot:', imgError);
             pdf.setFontSize(10);
-            pdf.text('Screenshot could not be added', 10, yPosition);
-            yPosition += 10;
+            pdf.text('Screenshot लोड नहीं हो सका', margin, currentYPosition);
+            currentYPosition += 10;
           }
         }
         
-        // Add drawing overlay if exists for this question
-        const questionDrawings = lines[questionIndex];
-        if (questionDrawings && Object.keys(questionDrawings).length > 0) {
-          try {
-            // Add new page for drawing
-            pdf.addPage();
-            totalPagesAdded++;
-            
-            pdf.setFontSize(14);
-            pdf.setFont('helvetica', 'bold');
-            pdf.text(`Question ${questionIndex + 1} - Your Drawing Notes`, 10, 15);
-            
-            // Create a temporary canvas for drawing
-            const drawingCanvas = document.createElement('canvas');
-            drawingCanvas.width = window.innerWidth;
-            drawingCanvas.height = window.innerHeight;
-            const ctx = drawingCanvas.getContext('2d');
-            
-            // Set transparent background to overlay on screenshot
-            ctx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
-            
-            // Draw all lines for this question
-            Object.values(questionDrawings).forEach(line => {
-              if (line.points && line.points.length >= 2) {
-                ctx.strokeStyle = line.color || '#000';
-                ctx.lineWidth = line.tool === 'pen' ? 3 : 30;
-                ctx.lineCap = 'round';
-                ctx.lineJoin = 'round';
-                
-                if (line.tool === 'eraser') {
-                  ctx.globalCompositeOperation = 'destination-out';
-                } else {
-                  ctx.globalCompositeOperation = 'source-over';
-                }
-                
-                ctx.beginPath();
-                ctx.moveTo(line.points[0], line.points[1]);
-                for (let i = 2; i < line.points.length; i += 2) {
-                  ctx.lineTo(line.points[i], line.points[i + 1]);
-                }
-                ctx.stroke();
-              }
-            });
-            
-            const drawingImgData = drawingCanvas.toDataURL('image/png');
-            
-            const drawingImgWidth = pageWidth - 20;
-            const drawingImgHeight = Math.min((drawingCanvas.height * drawingImgWidth) / drawingCanvas.width, pageHeight - 35);
-            
-            pdf.addImage(drawingImgData, 'PNG', 10, 25, drawingImgWidth, drawingImgHeight);
-            
-          } catch (drawingError) {
-            console.error('Error adding drawing for question:', questionIndex, drawingError);
-          }
+        screenshotsOnCurrentPage++;
+        
+        // Add some spacing between questions on same page
+        if (screenshotsOnCurrentPage === 1) {
+          currentYPosition += 10;
         }
       }
       
-      // Update page count
-      setPdfPageCount(totalPagesAdded);
-      
       // Save the PDF
-      const fileName = `Quiz_Visited_Questions_${new Date().toISOString().split('T')[0]}.pdf`;
+      const fileName = `Quiz_Screenshots_${new Date().getTime()}.pdf`;
       pdf.save(fileName);
       
-      alert(`PDF generated successfully!\nFile: ${fileName}\nVisited Questions: ${visitedQuestions.length}\nTotal Pages: ${totalPagesAdded}`);
+      alert(`✅ PDF सफलतापूर्वक बनाई गई!\n📄 File: ${fileName}\n📚 Questions: ${visitedQuestions.length}\n📄 Pages: ${totalPagesAdded}`);
       
     } catch (error) {
-      console.error('Error generating PDF:', error);
-      alert('Error generating PDF. Please try again.');
+      console.error('PDF Generation Error:', error);
+      alert('❌ PDF बनाने में समस्या हुई। कृपया फिर से कोशिश करें।');
     }
   };
 
