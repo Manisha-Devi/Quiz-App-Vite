@@ -14,23 +14,14 @@ function ExamPage() {
     return localStorage.getItem('darkMode') === 'true';
   });
 
-  const toggleFullscreen = useCallback(() => {
+  const toggleFullscreen = () => {
     if (isFullscreen) {
       document.exitFullscreen();
     } else {
       document.documentElement.requestFullscreen();
     }
-  }, [isFullscreen]);
-
-  // Handle fullscreen change events
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
-    };
-
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
-  }, []);
+    setIsFullscreen(!isFullscreen);
+  };
 
   const toggleDarkMode = () => {
     const newDarkMode = !isDarkMode;
@@ -45,13 +36,6 @@ function ExamPage() {
       document.documentElement.classList.remove('dark-mode');
       document.body.classList.remove('dark-mode');
     }
-  };
-
-  const toggleDrawing = () => {
-    const currentDrawingState = localStorage.getItem('enableDrawing') !== 'false';
-    localStorage.setItem('enableDrawing', (!currentDrawingState).toString());
-    // Force re-render to show/hide drawing overlay
-    window.location.reload();
   };
 
   const quizTimeRaw = localStorage.getItem('quizTime');
@@ -233,15 +217,10 @@ function ExamPage() {
       if (e.key.toLowerCase() === 'c') handleClear();
       if (e.key.toLowerCase() === 'q') setIsSidebarOpen(prev => !prev);
       if (e.key.toLowerCase() === 'm') toggleDarkMode();
-      if (e.key === 'Enter') handleSubmit(false);
-      if (e.key.toLowerCase() === 's') handleNext();
-      if (e.key.toLowerCase() === 'h') setIsSidebarOpen(prev => !prev);
-      if (e.key.toLowerCase() === 'd') toggleDrawing();
-      if (e.key.toLowerCase() === 'f') toggleFullscreen();
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [current, questions.length, toggleDarkMode, handleClear, handleNext, handleSubmit, toggleFullscreen, handleOption, goNext, goPrev, toggleReview]);
+  }, [current, questions.length, toggleDarkMode, handleClear]);
 
   // Memoize image injection for performance
   const imageMap = useMemo(() => {
