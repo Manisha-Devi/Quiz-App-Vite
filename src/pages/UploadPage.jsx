@@ -66,6 +66,16 @@ function UploadPage() {
     setIsFullscreen(!isFullscreen);
   };
 
+  // Handle fullscreen change events
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
+
   const handleFileChange = async (e) => {
     const selected = Array.from(e.target.files);
     const newErrors = [];
@@ -317,6 +327,12 @@ function UploadPage() {
       }
       if (e.key.toLowerCase() === 'f') {
         toggleFullscreen();
+      }
+      if (e.key === 'Escape') {
+        // Prevent Esc from exiting fullscreen
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
       }
     };
 

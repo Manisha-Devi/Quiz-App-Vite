@@ -23,6 +23,16 @@ function ExamPage() {
     setIsFullscreen(!isFullscreen);
   };
 
+  // Handle fullscreen change events
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
+
   const toggleDarkMode = () => {
     const newDarkMode = !isDarkMode;
     setIsDarkMode(newDarkMode);
@@ -254,6 +264,12 @@ function ExamPage() {
       if (e.key.toLowerCase() === 'f') {
         // Toggle fullscreen
         toggleFullscreen();
+      }
+      if (e.key === 'Escape') {
+        // Prevent Esc from exiting fullscreen
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
       }
     };
     window.addEventListener('keydown', handler);
