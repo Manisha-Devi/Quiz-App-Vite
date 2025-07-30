@@ -21,6 +21,8 @@ function SectionSetupPage() {
   const [practiceMode, setPracticeMode] = useState(false);
   const [enableDrawing, setEnableDrawing] = useState(false);
   const [retryMode, setRetryMode] = useState(false);
+  const [noShuffle, setNoShuffle] = useState(false);
+  const [questionRanges, setQuestionRanges] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -70,10 +72,17 @@ function SectionSetupPage() {
       setFileImageMap(imageMap);
 
       const initialCounts = {};
+      const initialRanges = {};
       data.forEach((file, index) => {
         initialCounts[index] = { 0: 0, 1: 0, 2: 0 };
+        initialRanges[index] = { 
+          startIndex: 1, 
+          endIndex: file.questions.length,
+          maxQuestions: file.questions.length
+        };
       });
       setQuestionCounts(initialCounts);
+      setQuestionRanges(initialRanges);
     };
 
     loadData();
@@ -114,25 +123,65 @@ function SectionSetupPage() {
     }
   };
 
+  const handleRangeChange = (fileIndex, type, value) => {
+    const updated = { ...questionRanges };
+    const maxQuestions = quizData[fileIndex].questions.length;
+    
+    if (type === 'start') {
+      const newStart = Math.max(1, Math.min(parseInt(value) || 1, updated[fileIndex].endIndex));
+      updated[fileIndex].startIndex = newStart;
+    } else if (type === 'end') {
+      const newEnd = Math.max(updated[fileIndex].startIndex, Math.min(parseInt(value) || maxQuestions, maxQuestions));
+      updated[fileIndex].endIndex = newEnd;
+    }
+    
+    setQuestionRanges(updated);
+
+    // Auto-calculate total selected for no-shuffle mode
+    if (noShuffle) {
+      const totalInRange = updated[fileIndex].endIndex - updated[fileIndex].startIndex + 1;
+      setQuizTime(Object.values(updated).reduce((total, range) => 
+        total + (range.endIndex - range.startIndex + 1), 0
+      ));
+    }
+  };
+
   const handleStartExam = () => {
     const selectedQuestions = [];
 
-    // Group questions by section to maintain section integrity
-    quizData.forEach((file, fileIndex) => {
-      const sectionQuestions = [];
-
-      [0, 1, 2].forEach(level => {
-        const count = questionCounts[fileIndex][level] || 0;
-        const filtered = file.questions.filter(q => q.level === level);
-        shuffleArray(filtered);
-        const picked = filtered.slice(0, count).map(q => ({ ...q, section: file.name }));
-        sectionQuestions.push(...picked);
+    if (noShuffle) {
+      // No shuffle mode - select questions by range in original order
+      quizData.forEach((file, fileIndex) => {
+        const range = questionRanges[fileIndex];
+        if (range) {
+          const startIdx = range.startIndex - 1; // Convert to 0-based index
+          const endIdx = range.endIndex - 1;     // Convert to 0-based index
+          
+          const rangeQuestions = file.questions
+            .slice(startIdx, endIdx + 1)
+            .map(q => ({ ...q, section: file.name }));
+          
+          selectedQuestions.push(...rangeQuestions);
+        }
       });
+    } else {
+      // Original shuffle mode
+      quizData.forEach((file, fileIndex) => {
+        const sectionQuestions = [];
 
-      // Shuffle within section only
-      shuffleArray(sectionQuestions);
-      selectedQuestions.push(...sectionQuestions);
-    });
+        [0, 1, 2].forEach(level => {
+          const count = questionCounts[fileIndex][level] || 0;
+          const filtered = file.questions.filter(q => q.level === level);
+          shuffleArray(filtered);
+          const picked = filtered.slice(0, count).map(q => ({ ...q, section: file.name }));
+          sectionQuestions.push(...picked);
+        });
+
+        // Shuffle within section only
+        shuffleArray(sectionQuestions);
+        selectedQuestions.push(...sectionQuestions);
+      });
+    }
 
     if (selectedQuestions.length === 0) {
       alert("⚠️ Please select at least one question before starting the exam.");
@@ -144,6 +193,7 @@ function SectionSetupPage() {
     localStorage.setItem('practiceMode', String(practiceMode));
     localStorage.setItem('enableDrawing', String(enableDrawing));
     localStorage.setItem('retryMode', String(retryMode));
+    localStorage.setItem('noShuffle', String(noShuffle));
 
     localStorage.setItem('finalQuiz', JSON.stringify(selectedQuestions));
     navigate('/exam');
@@ -162,6 +212,11 @@ function SectionSetupPage() {
   };
 
   const getTotalSelected = () => {
+    if (noShuffle) {
+      return Object.values(questionRanges).reduce((total, range) => 
+        total + (range.endIndex - range.startIndex + 1), 0
+      );
+    }
     return Object.values(questionCounts).reduce((total, counts) => 
       total + Object.values(counts).reduce((sum, count) => sum + count, 0), 0
     );
@@ -243,51 +298,132 @@ function SectionSetupPage() {
                 </div>
 
                 <div className="difficulty-controls">
-                  {[0, 1, 2].map(level => {
-                    const labels = ['Easy', 'Medium', 'Hard'];
-                    const icons = ['🟢', '🟠', '🔴'];
-                    const maxAvailable = levelCounts[level];
-                    const currentValue = questionCounts[fileIndex]?.[level] || 0;
+                  {!noShuffle ? (
+                    // Original difficulty-based selection
+                    [0, 1, 2].map(level => {
+                      const labels = ['Easy', 'Medium', 'Hard'];
+                      const icons = ['🟢', '🟠', '🔴'];
+                      const maxAvailable = levelCounts[level];
+                      const currentValue = questionCounts[fileIndex]?.[level] || 0;
 
-                    return (
-                      <div className="difficulty-group" key={level}>
-                        <div className="difficulty-header">
-                          <span className="difficulty-icon">{icons[level]}</span>
-                          <div className="difficulty-info">
-                            <span className="difficulty-name">{labels[level]}</span>
+                      return (
+                        <div className="difficulty-group" key={level}>
+                          <div className="difficulty-header">
+                            <span className="difficulty-icon">{icons[level]}</span>
+                            <div className="difficulty-info">
+                              <span className="difficulty-name">{labels[level]}</span>
+                            </div>
+                            <span className="difficulty-counter">{currentValue || 0}/{maxAvailable}</span>
                           </div>
-                          <span className="difficulty-counter">{currentValue || 0}/{maxAvailable}</span>
-                        </div>
 
-                        <div className="slider-container">
-                          <button 
-                            className="control-button"
-                            onClick={() => handleInputChange(fileIndex, level, Math.max(0, currentValue - 1))}
-                            disabled={currentValue <= 0}
-                            title="Decrease"
-                          >
-                            −
-                          </button>
-                          <input
-                            type="range"
-                            min="0"
-                            max={maxAvailable}
-                            value={currentValue || 0}
-                            onChange={(e) => handleInputChange(fileIndex, level, e.target.value)}
-                            className="question-slider"
-                          />
-                          <button 
-                            className="control-button"
-                            onClick={() => handleInputChange(fileIndex, level, Math.min(maxAvailable, currentValue + 1))}
-                            disabled={currentValue >= maxAvailable}
-                            title="Increase"
-                          >
-                            +
-                          </button>
+                          <div className="slider-container">
+                            <button 
+                              className="control-button"
+                              onClick={() => handleInputChange(fileIndex, level, Math.max(0, currentValue - 1))}
+                              disabled={currentValue <= 0}
+                              title="Decrease"
+                            >
+                              −
+                            </button>
+                            <input
+                              type="range"
+                              min="0"
+                              max={maxAvailable}
+                              value={currentValue || 0}
+                              onChange={(e) => handleInputChange(fileIndex, level, e.target.value)}
+                              className="question-slider"
+                            />
+                            <button 
+                              className="control-button"
+                              onClick={() => handleInputChange(fileIndex, level, Math.min(maxAvailable, currentValue + 1))}
+                              disabled={currentValue >= maxAvailable}
+                              title="Increase"
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    // Range-based selection for no-shuffle mode
+                    <div className="range-selection">
+                      <div className="range-header">
+                        <span className="range-icon">📋</span>
+                        <div className="range-info">
+                          <span className="range-name">Question Range</span>
+                          <span className="range-counter">
+                            Q{questionRanges[fileIndex]?.startIndex || 1} - Q{questionRanges[fileIndex]?.endIndex || file.questions.length}
+                            ({(questionRanges[fileIndex]?.endIndex || file.questions.length) - (questionRanges[fileIndex]?.startIndex || 1) + 1} questions)
+                          </span>
                         </div>
                       </div>
-                    );
-                  })}
+
+                      <div className="range-controls">
+                        <div className="range-group">
+                          <label className="range-label">Start Question:</label>
+                          <div className="slider-container">
+                            <button 
+                              className="control-button"
+                              onClick={() => handleRangeChange(fileIndex, 'start', (questionRanges[fileIndex]?.startIndex || 1) - 1)}
+                              disabled={(questionRanges[fileIndex]?.startIndex || 1) <= 1}
+                              title="Decrease Start"
+                            >
+                              −
+                            </button>
+                            <input
+                              type="range"
+                              min="1"
+                              max={questionRanges[fileIndex]?.endIndex || file.questions.length}
+                              value={questionRanges[fileIndex]?.startIndex || 1}
+                              onChange={(e) => handleRangeChange(fileIndex, 'start', e.target.value)}
+                              className="question-slider"
+                            />
+                            <button 
+                              className="control-button"
+                              onClick={() => handleRangeChange(fileIndex, 'start', (questionRanges[fileIndex]?.startIndex || 1) + 1)}
+                              disabled={(questionRanges[fileIndex]?.startIndex || 1) >= (questionRanges[fileIndex]?.endIndex || file.questions.length)}
+                              title="Increase Start"
+                            >
+                              +
+                            </button>
+                          </div>
+                          <span className="range-value">Q{questionRanges[fileIndex]?.startIndex || 1}</span>
+                        </div>
+
+                        <div className="range-group">
+                          <label className="range-label">End Question:</label>
+                          <div className="slider-container">
+                            <button 
+                              className="control-button"
+                              onClick={() => handleRangeChange(fileIndex, 'end', (questionRanges[fileIndex]?.endIndex || file.questions.length) - 1)}
+                              disabled={(questionRanges[fileIndex]?.endIndex || file.questions.length) <= (questionRanges[fileIndex]?.startIndex || 1)}
+                              title="Decrease End"
+                            >
+                              −
+                            </button>
+                            <input
+                              type="range"
+                              min={questionRanges[fileIndex]?.startIndex || 1}
+                              max={file.questions.length}
+                              value={questionRanges[fileIndex]?.endIndex || file.questions.length}
+                              onChange={(e) => handleRangeChange(fileIndex, 'end', e.target.value)}
+                              className="question-slider"
+                            />
+                            <button 
+                              className="control-button"
+                              onClick={() => handleRangeChange(fileIndex, 'end', (questionRanges[fileIndex]?.endIndex || file.questions.length) + 1)}
+                              disabled={(questionRanges[fileIndex]?.endIndex || file.questions.length) >= file.questions.length}
+                              title="Increase End"
+                            >
+                              +
+                            </button>
+                          </div>
+                          <span className="range-value">Q{questionRanges[fileIndex]?.endIndex || file.questions.length}</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             );
@@ -351,6 +487,19 @@ function SectionSetupPage() {
                 />
                 <span className="checkbox-custom"></span>
                 <span className="config-label">Retry</span>
+              </label>
+            </div>
+
+            <div className="config-item">
+              <span className="config-icon">📐</span>
+              <label className="config-checkbox">
+                <input
+                  type="checkbox"
+                  checked={noShuffle}
+                  onChange={(e) => setNoShuffle(e.target.checked)}
+                />
+                <span className="checkbox-custom"></span>
+                <span className="config-label">No Shuffle</span>
               </label>
             </div>
           </div>
