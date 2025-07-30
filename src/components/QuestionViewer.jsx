@@ -1,8 +1,8 @@
-import React, { useMemo, useCallback, useState, useEffect, useRef } from "react";
-import PropTypes from "prop-types";
-import { InlineMath, BlockMath } from "react-katex";
-import "katex/dist/katex.min.css";
-import "./styles/QuestionViewer.css";
+import React, { useMemo, useCallback, useState, useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
+import { InlineMath, BlockMath } from 'react-katex';
+import 'katex/dist/katex.min.css';
+import './styles/QuestionViewer.css';
 
 const QuestionViewer = React.memo(function QuestionViewer({
   question,

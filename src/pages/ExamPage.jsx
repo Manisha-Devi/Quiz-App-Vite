@@ -1,11 +1,11 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
-import { MathJaxContext } from "better-react-mathjax";
-import { useSwipeable } from "react-swipeable";
-import QuestionViewer from "../components/QuestionViewer";
-import QuestionNavigator from "../components/QuestionNavigator";
-import "../styles/ExamPage.css";
-import DrawingOverlay from "../components/DrawingOverlay";
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { MathJaxContext } from 'better-react-mathjax';
+import { useSwipeable } from 'react-swipeable';
+import QuestionViewer from '../components/QuestionViewer';
+import QuestionNavigator from '../components/QuestionNavigator';
+import '../styles/ExamPage.css';
+import DrawingOverlay from '../components/DrawingOverlay';
 
 function ExamPage() {
   const navigate = useNavigate();
