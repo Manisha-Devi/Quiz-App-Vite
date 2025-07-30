@@ -411,6 +411,13 @@ function ResultPage() {
           </button>
         </div>
       </div>
+
+      {/* Fullscreen Button Container */}
+      <div className="fullscreen-btn-container">
+        <button className="fullscreen-btn" onClick={toggleFullscreen} title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}>
+          <span className="fullscreen-icon">{isFullscreen ? "⤲" : "⛶"}</span>
+        </button>
+      </div>
     </div>
   );
 }

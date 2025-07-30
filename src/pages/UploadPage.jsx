@@ -373,9 +373,7 @@ function UploadPage() {
           >
             {showLocalJSON ? "📁" : "📄"}
           </button>
-          <button className="fullscreen-btn" onClick={toggleFullscreen} title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}>
-            <span className="fullscreen-icon">{isFullscreen ? "⤲" : "⛶"}</span>
-          </button>
+          
           <button
             className={`clear-database-btn ${loading ? 'loading' : ''}`}
             onClick={async (e) => {
@@ -663,6 +661,13 @@ function UploadPage() {
       {/* Footer with CacheCleaner */}
       <div className="upload-footer">
         <CacheCleaner />
+      </div>
+
+      {/* Fullscreen Button Container */}
+      <div className="fullscreen-btn-container">
+        <button className="fullscreen-btn" onClick={toggleFullscreen} title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}>
+          <span className="fullscreen-icon">{isFullscreen ? "⤲" : "⛶"}</span>
+        </button>
       </div>
     </div>
   );

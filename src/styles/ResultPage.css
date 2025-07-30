@@ -1473,7 +1473,18 @@
   font-weight: 600;
 }
 
-/* Fullscreen Button */
+/* Fullscreen Button Container */
+.fullscreen-btn-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 999;
+}
+
 .fullscreen-btn {
   background: rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(0, 0, 0, 0.2);
