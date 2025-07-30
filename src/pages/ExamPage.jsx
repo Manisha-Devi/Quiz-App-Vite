@@ -27,6 +27,15 @@ function ExamPage() {
     const newDarkMode = !isDarkMode;
     setIsDarkMode(newDarkMode);
     localStorage.setItem('darkMode', newDarkMode.toString());
+    
+    // Force re-render by updating document class
+    if (newDarkMode) {
+      document.documentElement.classList.add('dark-mode');
+      document.body.classList.add('dark-mode');
+    } else {
+      document.documentElement.classList.remove('dark-mode');
+      document.body.classList.remove('dark-mode');
+    }
   };
 
   const quizTimeRaw = localStorage.getItem('quizTime');
@@ -141,7 +150,16 @@ function ExamPage() {
     if (!meta.startedAt) {
       localStorage.setItem('examMeta', JSON.stringify({ startedAt: Date.now() }));
     }
-  }, []);
+
+    // Sync dark mode with document classes
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark-mode');
+      document.body.classList.add('dark-mode');
+    } else {
+      document.documentElement.classList.remove('dark-mode');
+      document.body.classList.remove('dark-mode');
+    }
+  }, [isDarkMode]);
 
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth <= 768);
