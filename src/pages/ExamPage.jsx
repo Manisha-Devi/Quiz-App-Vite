@@ -373,7 +373,7 @@ function ExamPage() {
   const closeTimeWarning = useCallback(() => {
     setTimeWarningAnimating(true);
     setShowTimeWarning(false); // Start hide animation
-    
+
     // After animation completes, clean up
     setTimeout(() => {
       setTimeWarningAnimating(false);
@@ -422,9 +422,7 @@ function ExamPage() {
                 )}
                 <div style={{ 
                   flex: 1,
-                  overflow: 'auto',
-                  paddingTop: (!practiceMode && (showTimeWarning || timeWarningAnimating) && timeLeft <= 300 && timeLeft > 0) ? '75px' : '0px',
-                  transition: 'padding-top 0.3s ease-in-out'
+                  overflow: 'auto'
                 }}>
                   <QuestionViewer
                     question={q}

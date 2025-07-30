@@ -183,16 +183,16 @@
   max-height: 20px;
 }
 
-/* Main Layout - Calculate height from header to footer */
+/* Main Layout - Calculate full screen height minus header and footer */
 .exam-main-layout {
   flex: 1;
   display: flex;
   gap: 20px;
   overflow: hidden;
   padding: 0 20px;
-  height: calc(100vh - 8vh - 10vh - 2vh);
-  /* Full viewport minus header (8vh) minus footer (10vh) minus gaps (2vh) */
-  min-height: calc(100vh - 160px);
+  /* Calculate: Full viewport (100vh) - Header (8vh) - Footer (10vh) - Gaps (2vh) = 80vh */
+  height: 80vh;
+  min-height: calc(100vh - 180px);
   /* Fallback with fixed pixel values */
   margin-top: 1vh;
   margin-bottom: 1vh;
@@ -204,6 +204,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   transition: all 0.3s ease-in-out;
+  /* Use full available height from main layout */
   height: 100%;
   max-height: 100%;
   display: flex;
@@ -212,11 +213,15 @@
 }
 
 .exam-left.with-warning {
-  /* Additional styles for warning state if needed */
+  /* When alert is showing, reduce height by alert height (60px) */
+  height: calc(100% - 60px);
+  max-height: calc(100% - 60px);
 }
 
 .exam-left.warning-dismissed {
-  /* Remove extra height calculation as it's now properly sized */
+  /* When alert is dismissed, restore full height */
+  height: 100%;
+  max-height: 100%;
 }
 
 .exam-right {
@@ -229,6 +234,7 @@
   flex-direction: column;
   border: 2px solid #e0e0e0;
   transition: all 0.3s ease-in-out;
+  /* Use full available height from main layout */
   height: 100%;
   max-height: 100%;
   overflow: hidden;
@@ -322,11 +328,8 @@
   text-align: center;
   font-weight: bold;
   border-radius: 8px;
-  margin: 0;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
+  margin: 0 0 15px 0;
+  position: relative;
   width: 100%;
   z-index: 20;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -336,6 +339,7 @@
   justify-content: center;
   gap: 10px;
   height: 60px;
+  flex-shrink: 0;
   overflow: hidden;
   transition: all 0.3s ease-in-out;
 }
@@ -375,9 +379,9 @@
     /* flex-direction: column; */
     gap: 10px;
     padding: 0 10px;
-    height: calc(100vh - 8vh - 17vh - 2vh);
-    /* Adjust for mobile footer height */
-    min-height: calc(100vh - 200px);
+    /* Calculate: Full viewport (100vh) - Header (8vh) - Mobile Footer (17vh) - Gaps (2vh) = 73vh */
+    height: 73vh;
+    min-height: calc(100vh - 220px);
   }
 
   .exam-right {
