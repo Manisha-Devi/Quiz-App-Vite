@@ -70,7 +70,7 @@ function DrawingOverlay() {
     };
   }, [currentQuestionIndex]);
 
-  // Take screenshot of current question - capture full exam page
+  // Take screenshot of current question - capture only main content
   const takeQuestionScreenshot = async (questionIndex) => {
     // Check if we already have a recent screenshot (within 2 seconds)
     const existingScreenshot = questionScreenshots[questionIndex];
@@ -83,7 +83,8 @@ function DrawingOverlay() {
       // Wait for content to fully load
       await new Promise(resolve => setTimeout(resolve, 200));
 
-      const examContent = document.querySelector('.exam-ui');
+      // Target only the main content area, not the entire exam UI
+      const examContent = document.querySelector('.exam-left') || document.querySelector('.exam-main-layout');
       if (!examContent) {
         console.log('Exam content not found');
         return;
@@ -91,34 +92,41 @@ function DrawingOverlay() {
 
       console.log(`Taking screenshot for question ${questionIndex + 1}...`);
 
-      // Use optimized settings to prevent memory issues
+      // Use optimized settings for clean screenshots
       const canvas = await html2canvas(examContent, {
-        scale: 0.6, // Slightly better quality
+        scale: 0.8, // Good quality
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
         logging: false,
-        width: Math.min(examContent.offsetWidth, 1200),
-        height: Math.min(examContent.offsetHeight, 1400),
+        width: examContent.offsetWidth,
+        height: examContent.offsetHeight,
         scrollX: 0,
         scrollY: 0,
+        ignoreElements: (element) => {
+          // Ignore drawing overlay, navigation, and other UI elements
+          return element.classList.contains('drawing-overlay') ||
+                 element.classList.contains('drawing-toggle') ||
+                 element.classList.contains('exam-header') ||
+                 element.classList.contains('exam-footer') ||
+                 element.classList.contains('exam-right') ||
+                 element.classList.contains('fullscreen-btn-container');
+        },
         onclone: (clonedDoc) => {
-          // Remove heavy elements to reduce memory usage
-          const scripts = clonedDoc.querySelectorAll('script, link[rel="stylesheet"]');
-          scripts.forEach(el => el.remove());
+          // Remove navigation and UI elements
+          const elementsToRemove = clonedDoc.querySelectorAll(
+            '.drawing-overlay, .drawing-toggle, .exam-header, .exam-footer, .exam-right, .fullscreen-btn-container, script, link[rel="stylesheet"]'
+          );
+          elementsToRemove.forEach(el => el.remove());
           
-          // Ensure visibility of elements
+          // Clean up any hidden elements
           const hiddenElements = clonedDoc.querySelectorAll('[style*="display: none"]');
-          hiddenElements.forEach(el => {
-            if (!el.classList.contains('drawing-overlay')) {
-              el.style.display = 'block';
-            }
-          });
+          hiddenElements.forEach(el => el.remove());
         }
       });
 
       // Use JPEG with good compression
-      const screenshotData = canvas.toDataURL('image/jpeg', 0.8);
+      const screenshotData = canvas.toDataURL('image/jpeg', 0.9);
 
       setQuestionScreenshots(prev => {
         const updated = {
@@ -381,8 +389,11 @@ function DrawingOverlay() {
         }
       }
 
-      // Save the PDF
-      const fileName = `Quiz_Screenshots_${new Date().getTime()}.pdf`;
+      // Save the PDF with date and time including seconds
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('en-IN').replace(/\//g, '-'); // DD-MM-YYYY format
+      const timeStr = now.toLocaleTimeString('en-IN', { hour12: false }).replace(/:/g, '-'); // HH-MM-SS format
+      const fileName = `Quiz_Screenshots_${dateStr}_${timeStr}.pdf`;
       pdf.save(fileName);
 
       alert(`✅ PDF सफलतापूर्वक बनाई गई!\n📄 File: ${fileName}\n📚 Questions: ${visitedQuestions.length}\n📄 Pages: ${totalPagesAdded}`);
