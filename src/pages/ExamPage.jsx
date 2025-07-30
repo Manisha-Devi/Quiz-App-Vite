@@ -217,7 +217,6 @@ function ExamPage() {
       if (e.key.toLowerCase() === 'r') toggleReview();
       if (e.key.toLowerCase() === 'c') handleClear();
       if (e.key.toLowerCase() === 'q') setIsSidebarOpen(prev => !prev);
-      if (e.key.toLowerCase() === 'm') toggleDarkMode();
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
