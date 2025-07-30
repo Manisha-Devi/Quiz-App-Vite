@@ -1,18 +1,48 @@
+
 import React, { useState, useEffect } from 'react';
 import { Stage, Layer, Line } from 'react-konva';
 import './styles/DrawingOverlay.css';
 
-function DrawingOverlay() {
+function DrawingOverlay({ currentQuestionIndex = 0 }) {
   const [visible, setVisible] = useState(false);
-  const [color, setColor] = useState('#000');
-  const [savedImage, setSavedImage] = useState(null);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [lines, setLines] = useState({}); // Store lines as a nested object with index as key
+  const [lines, setLines] = useState({}); // Store lines as nested object with questionIndex as key
   const [brushColor, setBrushColor] = useState('#000');
   const [tool, setTool] = useState('pen');
   const [drawingVisible, setDrawingVisible] = useState(false);
 
-  const [currentIndex, setCurrentIndex] = useState(0); // Track the current index for navigation
+  // Load saved drawings from localStorage on component mount
+  useEffect(() => {
+    const savedDrawings = localStorage.getItem('questionDrawings');
+    if (savedDrawings) {
+      try {
+        setLines(JSON.parse(savedDrawings));
+      } catch (error) {
+        console.error('Error loading saved drawings:', error);
+      }
+    }
+  }, []);
+
+  // Save drawings to localStorage whenever lines change
+  useEffect(() => {
+    localStorage.setItem('questionDrawings', JSON.stringify(lines));
+  }, [lines]);
+
+  // Make drawing overlay globally accessible for other components
+  useEffect(() => {
+    window.drawingOverlay = {
+      toggle: toggleOverlay,
+      clear: () => handleClear(),
+      setQuestionIndex: (index) => {
+        // This function can be called from other components to sync question index
+        console.log('Drawing overlay synced to question:', index);
+      }
+    };
+
+    return () => {
+      delete window.drawingOverlay;
+    };
+  }, []);
 
   const toggleOverlay = () => {
     setDrawingVisible(!drawingVisible);
@@ -25,30 +55,29 @@ function DrawingOverlay() {
     return stage.getPointerPosition();
   };
 
-  // Start drawing a new line or add points to the existing line in the current group
+  // Start drawing a new line for the current question
   const handleMouseDownOrTouchStart = (e) => {
     setIsDrawing(true);
     const pointer = getPointerPosition(e);
 
     setLines((prevLines) => {
-      const newLines = { ...prevLines }; // Copy previous lines
+      const newLines = { ...prevLines };
 
-      // If the group for the currentIndex doesn't exist, create a new group
-      if (!newLines[currentIndex]) {
-        newLines[currentIndex] = {}; // Create a new group if not exist
+      // If the group for the currentQuestionIndex doesn't exist, create it
+      if (!newLines[currentQuestionIndex]) {
+        newLines[currentQuestionIndex] = {};
       }
 
-      const group = newLines[currentIndex];
-      const newIndex = Object.keys(group).length; // Get the next available line index
+      const questionLines = newLines[currentQuestionIndex];
+      const newLineIndex = Object.keys(questionLines).length;
 
-      // Add the new line to the group
-      group[newIndex] = {
+      // Add the new line to the current question's canvas
+      questionLines[newLineIndex] = {
         tool,
         color: brushColor,
         points: [pointer.x, pointer.y]
       };
 
-      console.log("Updated lines after mouse down:", newLines);
       return newLines;
     });
   };
@@ -60,16 +89,21 @@ function DrawingOverlay() {
     const pointer = getPointerPosition(e);
 
     setLines((prevLines) => {
-      const updatedLines = { ...prevLines }; // Copy the previous lines
+      const updatedLines = { ...prevLines };
 
-      const group = updatedLines[currentIndex]; // Get the group for the current index
-      const currentLine = group[Object.keys(group).length - 1]; // Get the current line by its index
+      if (!updatedLines[currentQuestionIndex]) {
+        return updatedLines;
+      }
 
-      // Append points to the current line
-      currentLine.points = currentLine.points.concat([pointer.x, pointer.y]);
+      const questionLines = updatedLines[currentQuestionIndex];
+      const currentLineIndex = Object.keys(questionLines).length - 1;
+      
+      if (questionLines[currentLineIndex]) {
+        // Append points to the current line
+        questionLines[currentLineIndex].points = questionLines[currentLineIndex].points.concat([pointer.x, pointer.y]);
+      }
 
-      console.log("Updated lines with new points:", updatedLines);
-      return updatedLines; // Return the updated lines
+      return updatedLines;
     });
   };
 
@@ -78,119 +112,112 @@ function DrawingOverlay() {
     setIsDrawing(false);
   };
 
-  // Clear the canvas but only for the current group
+  // Clear the canvas for the current question only
   const handleClear = () => {
     setLines((prevLines) => {
-      const newLines = { ...prevLines }; // Copy previous lines
-
-      // If the group exists, clear the lines for the current index
-      if (newLines[currentIndex]) {
-        newLines[currentIndex] = {}; // Clear the lines for the current group
-      }
-
-      console.log("Lines cleared for current index:", currentIndex, newLines);
-      return newLines;
-    });
-  };
-
-  // Handle adding a new group (increment index)
-  const handleAddition = () => {
-    // Increment the index for the next group
-    const newIndex = currentIndex + 1;
-
-    // Set the current index and preserve the lines for the previous group
-    setLines((prevLines) => {
       const newLines = { ...prevLines };
-      newLines[newIndex] = {}; // Create a new group for the next index
-      console.log("Added new group (handleAddition):", newLines);
-      return newLines;
-    });
-
-    setCurrentIndex(newIndex); // Update the current index
-    console.log("Current index after addition:", newIndex);
-  };
-
-  // Handle removing the current group and shifting subsequent indexes
-  const handleRemove = () => {
-    setLines((prevLines) => {
-      const newLines = { ...prevLines }; // Copy previous lines
-
-      // If the group for the currentIndex exists, delete it
-      if (newLines[currentIndex]) {
-        delete newLines[currentIndex]; // Delete the lines for the current group
-        console.log("Removed lines for current index:", currentIndex, newLines);
+      
+      // Clear only the current question's canvas
+      if (newLines[currentQuestionIndex]) {
+        newLines[currentQuestionIndex] = {};
       }
 
-      // Now shift all subsequent groups down by 1 index
-      const shiftedLines = {};
-      Object.keys(newLines).forEach((key) => {
-        const groupIndex = parseInt(key, 10);
-        if (groupIndex > currentIndex) {
-          shiftedLines[groupIndex - 1] = newLines[key]; // Shift down by 1 index
-        } else {
-          shiftedLines[groupIndex] = newLines[key]; // Keep other groups as is
-        }
-      });
-
-      console.log("Shifted groups after removal:", shiftedLines);
-      return shiftedLines;
+      return newLines;
     });
-
-    // Decrement the current index since we removed the current group
-    setCurrentIndex(Math.max(0, currentIndex - 1)); // Update the index after removal
-    console.log("Current index after remove:", currentIndex);
   };
 
-  // Navigate to the next group (index)
-  const nextIndex = () => {
-    if (currentIndex < Object.keys(lines).length - 1) {
-      setCurrentIndex(currentIndex + 1); // Move to the next group
-      console.log("Next group index:", currentIndex + 1);
-    }
+  // Clear all canvases for all questions
+  const handleClearAll = () => {
+    setLines({});
+    localStorage.removeItem('questionDrawings');
   };
 
-  // Navigate to the previous group (index)
-  const prevIndex = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1); // Move to the previous group
-      console.log("Previous group index:", currentIndex - 1);
-    }
+  // Get the lines for the current question
+  const getCurrentQuestionLines = () => {
+    return lines[currentQuestionIndex] || {};
   };
-
-  // Ensure that we re-render lines properly when the currentIndex changes
-  useEffect(() => {
-    console.log('Navigated to group:', currentIndex);
-  }, [currentIndex]);
 
   return (
     <>
       <div className="drawing-toggle">
-        <button onClick={toggleOverlay}>✍️</button>
+        <button onClick={toggleOverlay} title={`Drawing Canvas - Question ${currentQuestionIndex + 1}`}>
+          ✍️
+        </button>
         <div className={`drawing-panel ${visible ? 'open' : ''}`}>
-          <button onClick={() => setTool('pen')}>🖊️</button>
-          {tool === 'pen' && (
-            <div className="color-picker">
-              <button onClick={() => setBrushColor('#000')} style={{ background: '#000' }} />
-              <button onClick={() => setBrushColor('#f00')} style={{ background: '#f00' }} />
-              <button onClick={() => setBrushColor('#00f')} style={{ background: '#00f' }} />
-              <button onClick={() => setBrushColor('#0a0')} style={{ background: '#0a0' }} />
-            </div>
-          )}
-          <button onClick={() => setTool('eraser')}>🧽</button>
-          <button onClick={handleClear}>🗑️</button>
+          <div className="drawing-info">
+            <span className="question-indicator">Q{currentQuestionIndex + 1}</span>
+          </div>
+          
+          <div className="tool-section">
+            <button 
+              onClick={() => setTool('pen')} 
+              className={tool === 'pen' ? 'active' : ''}
+              title="Pen Tool"
+            >
+              🖊️
+            </button>
+            
+            {tool === 'pen' && (
+              <div className="color-picker">
+                <button 
+                  onClick={() => setBrushColor('#000')} 
+                  style={{ background: '#000' }}
+                  className={brushColor === '#000' ? 'active' : ''}
+                  title="Black"
+                />
+                <button 
+                  onClick={() => setBrushColor('#f00')} 
+                  style={{ background: '#f00' }}
+                  className={brushColor === '#f00' ? 'active' : ''}
+                  title="Red"
+                />
+                <button 
+                  onClick={() => setBrushColor('#00f')} 
+                  style={{ background: '#00f' }}
+                  className={brushColor === '#00f' ? 'active' : ''}
+                  title="Blue"
+                />
+                <button 
+                  onClick={() => setBrushColor('#0a0')} 
+                  style={{ background: '#0a0' }}
+                  className={brushColor === '#0a0' ? 'active' : ''}
+                  title="Green"
+                />
+              </div>
+            )}
+            
+            <button 
+              onClick={() => setTool('eraser')} 
+              className={tool === 'eraser' ? 'active' : ''}
+              title="Eraser Tool"
+            >
+              🧽
+            </button>
+          </div>
 
-          {/* New buttons for adding, removing, and navigating */}
-          <button onClick={handleAddition}>➕</button>
-          <button onClick={handleRemove}>✖️</button>
-          <button onClick={nextIndex}>➡️</button>
-          <button onClick={prevIndex}>⬅️</button>
+          <div className="action-section">
+            <button onClick={handleClear} title="Clear Current Question Canvas">
+              🗑️ Clear
+            </button>
+            <button onClick={handleClearAll} title="Clear All Question Canvases" className="danger-btn">
+              🗑️ Clear All
+            </button>
+          </div>
+
+          <div className="canvas-stats">
+            <small>
+              Drawings: {Object.keys(getCurrentQuestionLines()).length} lines
+              <br />
+              Total Questions with Drawings: {Object.keys(lines).length}
+            </small>
+          </div>
         </div>
       </div>
+
       <div id="scratchpad" style={{ display: visible ? 'block' : 'none' }}>
-        {/* Drawing Pad */}
         {drawingVisible && (
           <Stage
-             width={window.innerWidth}
+            width={window.innerWidth}
             height={window.innerHeight}
             onMouseDown={handleMouseDownOrTouchStart}
             onMouseMove={handleMouseMoveOrTouchMove}
@@ -200,21 +227,18 @@ function DrawingOverlay() {
             onTouchEnd={handleMouseUpOrTouchEnd}
           >
             <Layer>
-              {/* Loop through each group (currentIndex) and each line within that group */}
-              {Object.entries(lines).map(([groupIndex, group]) =>
-                groupIndex === String(currentIndex) && // Only display lines in the current group
-                Object.entries(group).map(([lineIndex, line]) => (
-                  <Line
-                    key={`${groupIndex}-${lineIndex}`}
-                    points={line.points}
-                    stroke={line.color}
-                    strokeWidth={line.tool === 'pen' ? 3 : 30} // thinner for pen, larger for eraser
-                    lineCap="round"
-                    lineJoin="round"
-                    globalCompositeOperation={line.tool === 'eraser' ? 'destination-out' : 'source-over'}
-                  />
-                ))
-              )}
+              {/* Render only the lines for the current question */}
+              {Object.entries(getCurrentQuestionLines()).map(([lineIndex, line]) => (
+                <Line
+                  key={`${currentQuestionIndex}-${lineIndex}`}
+                  points={line.points}
+                  stroke={line.color}
+                  strokeWidth={line.tool === 'pen' ? 3 : 30}
+                  lineCap="round"
+                  lineJoin="round"
+                  globalCompositeOperation={line.tool === 'eraser' ? 'destination-out' : 'source-over'}
+                />
+              ))}
             </Layer>
           </Stage>
         )}

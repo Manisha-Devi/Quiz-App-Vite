@@ -47,13 +47,13 @@ function ExamPage() {
     // Set default time if not found
     localStorage.setItem('quizTime', '60');
   }
-  
+
   const quizTimeMinutes = Number(quizTimeRaw || '60');
   if (isNaN(quizTimeMinutes) || quizTimeMinutes <= 0) {
     console.error("❌ Invalid quizTime in localStorage, using default 60 minutes.");
     localStorage.setItem('quizTime', '60');
   }
-  
+
   const validQuizTime = Math.max(1, quizTimeMinutes); // Ensure at least 1 minute
   const EXAM_DURATION = practiceMode ? Infinity : validQuizTime * 60;
 
@@ -70,13 +70,13 @@ function ExamPage() {
   const [fiftyFiftyUsed, setFiftyFiftyUsed] = useState(saved.fiftyFiftyUsed ?? {});
   const [timeLeft, setTimeLeft] = useState(() => {
     if (practiceMode) return Infinity;
-    
+
     // Ensure EXAM_DURATION is valid
     if (!EXAM_DURATION || EXAM_DURATION <= 0) {
       console.warn("Invalid EXAM_DURATION, using 60 minutes as fallback");
       return 3600; // 60 minutes fallback
     }
-    
+
     return meta.startedAt
       ? Math.max(0, EXAM_DURATION - Math.floor((Date.now() - meta.startedAt) / 1000))
       : EXAM_DURATION;
@@ -219,7 +219,7 @@ function ExamPage() {
         // Tab is hidden/switched - increment warning count
         setTabLeaveWarnings(prev => {
           const newCount = prev + 1;
-          
+
           if (newCount >= 3) {
             // Force submit after 3 warnings
             setTimeout(() => {
@@ -231,14 +231,14 @@ function ExamPage() {
             // Show warning popup
             setShowTabLeaveWarning(true);
           }
-          
+
           return newCount;
         });
       }
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    
+
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
@@ -248,16 +248,16 @@ function ExamPage() {
   useEffect(() => {
     // Push current state to prevent back navigation
     window.history.pushState(null, null, window.location.pathname);
-    
+
     const handlePopState = (event) => {
       event.preventDefault();
-      
+
       // Always redirect to UploadPage when back is pressed
       navigate('/', { replace: true });
     };
 
     window.addEventListener('popstate', handlePopState);
-    
+
     return () => {
       window.removeEventListener('popstate', handlePopState);
     };
@@ -266,19 +266,19 @@ function ExamPage() {
   // Show time warnings at different intervals
   useEffect(() => {
     if (practiceMode) return;
-    
+
     // Half time warning (50% time remaining)
     const halfTime = Math.floor(EXAM_DURATION / 2);
     if (timeLeft <= halfTime && timeLeft > halfTime - 5 && !halfTimeWarningDismissed) {
       setShowHalfTimeWarning(true);
     }
-    
+
     // Quarter time warning (25% time remaining) 
     const quarterTime = Math.floor(EXAM_DURATION / 4);
     if (timeLeft <= quarterTime && timeLeft > quarterTime - 5 && !quarterTimeWarningDismissed) {
       setShowQuarterTimeWarning(true);
     }
-    
+
     // 5 minutes left warning (critical)
     if (timeLeft <= 300 && timeLeft > 0 && !timeWarningDismissed) {
       setShowTimeWarning(true);
@@ -406,7 +406,7 @@ function ExamPage() {
     const h = Math.floor(s / 3600);
     const m = Math.floor((s % 3600) / 60);
     const sec = s % 60;
-    
+
     // Show hours only if there are hours
     if (h > 0) {
       return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
@@ -423,12 +423,12 @@ function ExamPage() {
 
   const getTimerColorClass = useCallback(() => {
     if (practiceMode || timeLeft === Infinity) return '';
-    
+
     const totalTime = EXAM_DURATION;
     const quarterTime = totalTime * 0.25;
     const tenMinutes = 600; // 10 minutes in seconds
     const fiveMinutes = 300; // 5 minutes in seconds
-    
+
     if (timeLeft <= fiveMinutes) {
       return 'timer-critical';
     } else if (timeLeft <= tenMinutes || timeLeft <= quarterTime) {
@@ -597,7 +597,7 @@ function ExamPage() {
             </footer>
           </div>
 
-        {enableDrawing && <DrawingOverlay />}
+        {enableDrawing && <DrawingOverlay currentQuestionIndex={current} />}
         <div className="fullscreen-btn-container">
           <button className="fullscreen-btn" onClick={toggleFullscreen} title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}>
             <span className="fullscreen-icon">{isFullscreen ? "⤲" : "⛶"}</span>
