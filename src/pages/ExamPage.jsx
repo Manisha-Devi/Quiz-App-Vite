@@ -70,6 +70,10 @@ function ExamPage() {
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
   const [showTimeWarning, setShowTimeWarning] = useState(false); // Track visibility of the warning
   const [timeWarningDismissed, setTimeWarningDismissed] = useState(false); // Track if warning was dismissed
+  const [showHalfTimeWarning, setShowHalfTimeWarning] = useState(false);
+  const [halfTimeWarningDismissed, setHalfTimeWarningDismissed] = useState(false);
+  const [showQuarterTimeWarning, setShowQuarterTimeWarning] = useState(false);
+  const [quarterTimeWarningDismissed, setQuarterTimeWarningDismissed] = useState(false)
   const [showSubmitModal, setShowSubmitModal] = useState(false);
 
   // Generate sections with proper numbering and grouping - memoized for performance
@@ -189,12 +193,27 @@ function ExamPage() {
     localStorage.setItem('examState', JSON.stringify({ answers, review, current, fiftyFiftyUsed }));
   }, [answers, review, current, fiftyFiftyUsed]);
 
-  // Show time warning when 5 minutes left (only if not dismissed)
+  // Show time warnings at different intervals
   useEffect(() => {
-    if (!practiceMode && timeLeft <= 300 && timeLeft > 0 && !timeWarningDismissed) {
+    if (practiceMode) return;
+    
+    // Half time warning (50% time remaining)
+    const halfTime = Math.floor(EXAM_DURATION / 2);
+    if (timeLeft <= halfTime && timeLeft > halfTime - 5 && !halfTimeWarningDismissed) {
+      setShowHalfTimeWarning(true);
+    }
+    
+    // Quarter time warning (25% time remaining) 
+    const quarterTime = Math.floor(EXAM_DURATION / 4);
+    if (timeLeft <= quarterTime && timeLeft > quarterTime - 5 && !quarterTimeWarningDismissed) {
+      setShowQuarterTimeWarning(true);
+    }
+    
+    // 5 minutes left warning (critical)
+    if (timeLeft <= 300 && timeLeft > 0 && !timeWarningDismissed) {
       setShowTimeWarning(true);
     }
-  }, [timeLeft, practiceMode, timeWarningDismissed]);
+  }, [timeLeft, practiceMode, timeWarningDismissed, halfTimeWarningDismissed, quarterTimeWarningDismissed, EXAM_DURATION]);
 
   const handleClear = useCallback(() => {
     setAnswers(a => { const c = { ...a }; delete c[current]; return c; });
@@ -369,6 +388,16 @@ function ExamPage() {
     setTimeWarningDismissed(true); // Mark as dismissed so it won't show again
   }, []);
 
+  const closeHalfTimeWarning = useCallback(() => {
+    setShowHalfTimeWarning(false);
+    setHalfTimeWarningDismissed(true);
+  }, []);
+
+  const closeQuarterTimeWarning = useCallback(() => {
+    setShowQuarterTimeWarning(false);
+    setQuarterTimeWarningDismissed(true);
+  }, []);
+
   if (!questions.length || !sections.length) return <div className="exam-ui">Loading exam…</div>;
 
   return (
@@ -394,9 +423,23 @@ function ExamPage() {
               </div>
             </header>
 
+            {!practiceMode && showHalfTimeWarning && (
+              <div className="time-warning half-time-warning">
+                ⏰ Half time reached! You have {formatTime(timeLeft)} remaining.
+                <button className="close-btn" onClick={closeHalfTimeWarning}>✖️</button>
+              </div>
+            )}
+
+            {!practiceMode && showQuarterTimeWarning && (
+              <div className="time-warning quarter-time-warning">
+                ⚡ Quarter time left! Only {formatTime(timeLeft)} remaining. Speed up!
+                <button className="close-btn" onClick={closeQuarterTimeWarning}>✖️</button>
+              </div>
+            )}
+
             {!practiceMode && showTimeWarning && timeLeft <= 300 && timeLeft > 0 && (
-              <div className="time-warning">
-                ⚠️ Only 5 minutes left. Please finish up!
+              <div className="time-warning critical-time-warning">
+                🚨 CRITICAL: Only 5 minutes left! Please finish up immediately!
                 <button className="close-btn" onClick={closeTimeWarning}>✖️</button>
               </div>
             )}

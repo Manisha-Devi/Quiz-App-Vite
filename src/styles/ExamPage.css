@@ -73,9 +73,22 @@
 }
 
 .exam-ui.dark-mode .time-warning {
-  background: #4a4a2a !important;
-  color: #f0f0a0 !important;
-  border: 1px solid #666633 !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.exam-ui.dark-mode .half-time-warning {
+  background: #1a2a4a !important;
+  color: #a0c0f0 !important;
+}
+
+.exam-ui.dark-mode .quarter-time-warning {
+  background: #4a3a1a !important;
+  color: #f0c0a0 !important;
+}
+
+.exam-ui.dark-mode .critical-time-warning {
+  background: #4a1a1a !important;
+  color: #f0a0a0 !important;
 }
 
 .exam-ui.dark-mode .exam-main-layout {
@@ -305,8 +318,6 @@
 }
 
 .time-warning {
-  background: #fff3cd;
-  color: #856404;
   padding: 12px;
   text-align: center;
   font-weight: bold;
@@ -316,11 +327,50 @@
   width: calc(100% - 40px);
   z-index: 20;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  border-left: 4px solid #ffc107;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
+  animation: warningPulse 2s infinite;
+}
+
+/* Half time warning - Blue theme */
+.half-time-warning {
+  background: #cce7ff;
+  color: #004085;
+  border-left: 4px solid #007bff;
+}
+
+/* Quarter time warning - Orange theme */
+.quarter-time-warning {
+  background: #ffe6cc;
+  color: #cc4400;
+  border-left: 4px solid #ff8800;
+}
+
+/* Critical time warning - Red theme */
+.critical-time-warning {
+  background: #ffcccc !important;
+  color: #cc0000 !important;
+  border-left: 4px solid #ff0000 !important;
+  animation: criticalWarningPulse 1s infinite !important;
+}
+
+@keyframes warningPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes criticalWarningPulse {
+  0%, 100% { 
+    opacity: 1; 
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.9; 
+    transform: scale(1.02);
+    box-shadow: 0 6px 20px rgba(255, 0, 0, 0.3);
+  }
 }
 
 .time-warning .close-btn {
