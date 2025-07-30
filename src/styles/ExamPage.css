@@ -203,9 +203,15 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
+  transition: height 0.3s ease-in-out;
   /* height: 100%;
   max-height: 100%;
   padding: 10px 0; */
+}
+
+.exam-left.with-warning {
+  height: calc(100% - 75px);
+  padding-top: 75px;
 }
 
 .exam-right {
