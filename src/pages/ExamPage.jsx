@@ -251,10 +251,14 @@ function ExamPage() {
           drawingOverlay.click();
         }
       }
+      if (e.key.toLowerCase() === 'f') {
+        // Toggle fullscreen
+        toggleFullscreen();
+      }
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [current, questions.length, toggleDarkMode, handleClear, enableDrawing]);
+  }, [current, questions.length, toggleDarkMode, handleClear, enableDrawing, toggleFullscreen]);
 
   // Memoize image injection for performance
   const imageMap = useMemo(() => {
