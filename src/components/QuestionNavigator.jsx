@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import './styles/QuestionNavigator.css';
+import React from "react";
+import PropTypes from "prop-types";
+import "./styles/QuestionNavigator.css";
 
 const QuestionNavigator = React.memo(function QuestionNavigator({
   totalQuestions,

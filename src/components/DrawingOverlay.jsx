@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Stage, Layer, Line } from 'react-konva';
-import './styles/DrawingOverlay.css';
+import React, { useState, useEffect } from "react";
+import { Stage, Layer, Line } from "react-konva";
+import "./styles/DrawingOverlay.css";
 
 function DrawingOverlay() {
   const [visible, setVisible] = useState(false);
