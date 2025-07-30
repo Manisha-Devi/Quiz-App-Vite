@@ -119,102 +119,76 @@ const QuestionViewer = React.memo(function QuestionViewer({
     };
   }, [handleFiftyFifty, practiceMode]);
 
-  // Function to render text with both KaTeX math and HTML - optimized for performance
+  // Function to render text with both KaTeX math and HTML - memoized for performance
   const renderMathAndHTML = useCallback((text) => {
     if (!text) return null;
 
-    // Limit text length aggressively to prevent memory issues
-    if (text.length > 10000) {
-      console.warn('Text too long, truncating to prevent memory issues');
-      text = text.substring(0, 10000) + '...';
-    }
+    // Process the text with image sources first
+    const processedText = injectImageSources(text);
 
-    try {
-      // Process the text with image sources first
-      const processedText = injectImageSources(text);
+    // Split by $ for inline math and $$ for display math
+    const parts = [];
+    let currentText = processedText;
+    let key = 0;
 
-      // Simple approach: if no math detected, return HTML directly
-      if (!processedText.includes('$')) {
-        return <span dangerouslySetInnerHTML={{ __html: processedText }} />;
-      }
+    // Handle display math ($$...$$) first
+    while (currentText.includes('$$')) {
+      const startIndex = currentText.indexOf('$$');
+      const endIndex = currentText.indexOf('$$', startIndex + 2);
 
-      // Handle math rendering with better error handling
-      const parts = [];
-      let currentText = processedText;
-      let key = 0;
-      let iterations = 0;
-      const maxIterations = 20; // Prevent infinite loops
+      if (endIndex === -1) break;
 
-      // Handle display math ($$...$$) first
-      while (currentText.includes('$$') && iterations < maxIterations) {
-        iterations++;
-        const startIndex = currentText.indexOf('$$');
-        const endIndex = currentText.indexOf('$$', startIndex + 2);
-
-        if (endIndex === -1) break;
-
-        // Add text before math
-        if (startIndex > 0) {
-          const beforeMath = currentText.substring(0, startIndex);
-          parts.push(
-            <span key={key++} dangerouslySetInnerHTML={{ __html: beforeMath }} />
-          );
-        }
-
-        // Add display math with error handling
-        const mathContent = currentText.substring(startIndex + 2, endIndex);
-        try {
-          parts.push(<BlockMath key={key++} math={mathContent} />);
-        } catch (mathError) {
-          console.warn('Math rendering error:', mathError);
-          parts.push(<span key={key++}>$$${mathContent}$$</span>);
-        }
-
-        currentText = currentText.substring(endIndex + 2);
-      }
-
-      // Handle inline math ($...$) with iteration limit
-      iterations = 0;
-      while (currentText.includes('$') && iterations < maxIterations) {
-        iterations++;
-        const startIndex = currentText.indexOf('$');
-        const endIndex = currentText.indexOf('$', startIndex + 1);
-
-        if (endIndex === -1) break;
-
-        // Add text before math
-        if (startIndex > 0) {
-          const beforeMath = currentText.substring(0, startIndex);
-          parts.push(
-            <span key={key++} dangerouslySetInnerHTML={{ __html: beforeMath }} />
-          );
-        }
-
-        // Add inline math with error handling
-        const mathContent = currentText.substring(startIndex + 1, endIndex);
-        try {
-          parts.push(<InlineMath key={key++} math={mathContent} />);
-        } catch (mathError) {
-          console.warn('Math rendering error:', mathError);
-          parts.push(<span key={key++}>${mathContent}$</span>);
-        }
-
-        currentText = currentText.substring(endIndex + 1);
-      }
-
-      // Add any remaining text
-      if (currentText) {
+      // Add text before math
+      if (startIndex > 0) {
+        const beforeMath = currentText.substring(0, startIndex);
         parts.push(
-          <span key={key++} dangerouslySetInnerHTML={{ __html: currentText }} />
+          <span key={key++} dangerouslySetInnerHTML={{ __html: beforeMath }} />
         );
       }
 
-      return parts.length > 0 ? parts : <span dangerouslySetInnerHTML={{ __html: processedText }} />;
-    } catch (error) {
-      console.error('Text rendering error:', error);
-      // Fallback to simple HTML rendering
-      return <span dangerouslySetInnerHTML={{ __html: text }} />;
+      // Add display math
+      const mathContent = currentText.substring(startIndex + 2, endIndex);
+      parts.push(
+        <BlockMath key={key++} math={mathContent} />
+      );
+
+      // Continue with remaining text
+      currentText = currentText.substring(endIndex + 2);
     }
+
+    // Handle inline math ($...$)
+    while (currentText.includes('$')) {
+      const startIndex = currentText.indexOf('$');
+      const endIndex = currentText.indexOf('$', startIndex + 1);
+
+      if (endIndex === -1) break;
+
+      // Add text before math
+      if (startIndex > 0) {
+        const beforeMath = currentText.substring(0, startIndex);
+        parts.push(
+          <span key={key++} dangerouslySetInnerHTML={{ __html: beforeMath }} />
+        );
+      }
+
+      // Add inline math
+      const mathContent = currentText.substring(startIndex + 1, endIndex);
+      parts.push(
+        <InlineMath key={key++} math={mathContent} />
+      );
+
+      // Continue with remaining text
+      currentText = currentText.substring(endIndex + 1);
+    }
+
+    // Add any remaining text
+    if (currentText) {
+      parts.push(
+        <span key={key++} dangerouslySetInnerHTML={{ __html: currentText }} />
+      );
+    }
+
+    return parts.length > 0 ? parts : <span dangerouslySetInnerHTML={{ __html: processedText }} />;
   }, [injectImageSources]);
 
   // Get current section - using 1-based indexing for proper boundaries - memoized

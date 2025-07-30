@@ -161,28 +161,13 @@ function ExamPage() {
       setShowSubmitModal(true);
     } else {
       const newIndex = current + 1;
-      
-      // Update current question index first
+      setCurrent(newIndex);
+      // Notify DrawingOverlay about question change
       window.currentQuestionIndex = newIndex;
-      
-      // Set state with a small delay to ensure proper rendering
-      setTimeout(() => {
-        setCurrent(newIndex);
-        
-        // Notify DrawingOverlay about question change
-        const event = new CustomEvent('questionChanged', { 
-          detail: { 
-            questionIndex: newIndex,
-            previousIndex: current
-          } 
-        });
-        window.dispatchEvent(event);
-      }, 50);
-      
-      // Force cleanup of current question resources
-      if (window.gc) {
-        window.gc();
-      }
+      const event = new CustomEvent('questionChanged', { 
+        detail: { questionIndex: newIndex } 
+      });
+      window.dispatchEvent(event);
     }
   }, [current, questions.length]);
 
@@ -192,23 +177,13 @@ function ExamPage() {
       setShowSubmitModal(true);
     } else {
       const newIndex = current - 1;
-      
-      // Update current question index first
+      setCurrent(newIndex);
+      // Notify DrawingOverlay about question change
       window.currentQuestionIndex = newIndex;
-      
-      // Set state with a small delay to ensure proper rendering
-      setTimeout(() => {
-        setCurrent(newIndex);
-        
-        // Notify DrawingOverlay about question change
-        const event = new CustomEvent('questionChanged', { 
-          detail: { 
-            questionIndex: newIndex,
-            previousIndex: current
-          } 
-        });
-        window.dispatchEvent(event);
-      }, 50);
+      const event = new CustomEvent('questionChanged', { 
+        detail: { questionIndex: newIndex } 
+      });
+      window.dispatchEvent(event);
     }
   }, [current]);
 
@@ -266,52 +241,7 @@ function ExamPage() {
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener('resize', onResize);
-    
-    // Add memory cleanup with better error handling
-    const memoryCleanup = setInterval(() => {
-      try {
-        // Clear temporary localStorage items
-        const keys = Object.keys(localStorage);
-        keys.forEach(key => {
-          if (key.startsWith('temp_') || key.startsWith('cache_') || key.startsWith('old_')) {
-            localStorage.removeItem(key);
-          }
-        });
-
-        // Limit localStorage size
-        const storageSize = JSON.stringify(localStorage).length;
-        if (storageSize > 5 * 1024 * 1024) { // 5MB limit
-          console.warn('LocalStorage size too large, cleaning up...');
-          ['questionScreenshots', 'questionDrawings'].forEach(key => {
-            try {
-              const data = JSON.parse(localStorage.getItem(key) || '{}');
-              const keys = Object.keys(data);
-              if (keys.length > 5) {
-                const sortedKeys = keys.sort((a, b) => Number(a) - Number(b));
-                const keysToKeep = sortedKeys.slice(-5);
-                const updated = {};
-                keysToKeep.forEach(k => updated[k] = data[k]);
-                localStorage.setItem(key, JSON.stringify(updated));
-              }
-            } catch (e) {
-              console.warn(`Error cleaning ${key}:`, e);
-            }
-          });
-        }
-
-        // Force garbage collection if available
-        if (window.gc) {
-          window.gc();
-        }
-      } catch (e) {
-        console.warn('Memory cleanup error:', e);
-      }
-    }, 3 * 60 * 1000); // Every 3 minutes
-    
-    return () => {
-      window.removeEventListener('resize', onResize);
-      clearInterval(memoryCleanup);
-    };
+    return () => window.removeEventListener('resize', onResize);
   }, []);
 
   useEffect(() => {
@@ -410,8 +340,6 @@ function ExamPage() {
     }
   }, [timeLeft, practiceMode, timeWarningDismissed, halfTimeWarningDismissed, quarterTimeWarningDismissed, EXAM_DURATION]);
 
-  const toggleReview = useCallback(() => setReview(r => ({ ...r, [current]: !r[current] })), [current]);
-
   const handleOption = useCallback(idx => {
     if (idx === undefined) {
       // Clear the answer for current question
@@ -424,6 +352,8 @@ function ExamPage() {
       setAnswers(a => ({ ...a, [current]: idx }));
     }
   }, [current]);
+
+  const toggleReview = useCallback(() => setReview(r => ({ ...r, [current]: !r[current] })), [current]);
 
   const handleNext = useCallback(() => {
     if (current === questions.length - 1) {
@@ -691,23 +621,13 @@ function ExamPage() {
                   answers={answers}
                   review={review}
                   onJump={(i) => {
-                    // Update global index first
+                    setCurrent(i);
+                    // Notify DrawingOverlay about question change
                     window.currentQuestionIndex = i;
-                    
-                    // Set current with proper timing
-                    setTimeout(() => {
-                      setCurrent(i);
-                      
-                      // Notify DrawingOverlay about question change
-                      const event = new CustomEvent('questionChanged', { 
-                        detail: { 
-                          questionIndex: i,
-                          previousIndex: current,
-                          source: 'navigator'
-                        } 
-                      });
-                      window.dispatchEvent(event);
-                    }, 50);
+                    const event = new CustomEvent('questionChanged', { 
+                      detail: { questionIndex: i } 
+                    });
+                    window.dispatchEvent(event);
                   }}
                 />
               </div>
