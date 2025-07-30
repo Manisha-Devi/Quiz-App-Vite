@@ -85,3 +85,63 @@
   opacity: 0.8;
   transform: scale(1.02);
 }
+
+/* PAGINATION STYLES */
+.pagination-info {
+  text-align: center;
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 8px;
+  padding: 4px 8px;
+  background: #f8f9fa;
+  border-radius: 12px;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 8px;
+  background: #f8f9fa;
+  border-radius: 12px;
+}
+
+.page-btn {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.page-btn:hover:not(:disabled) {
+  background: #007bff;
+  color: white;
+  transform: scale(1.05);
+}
+
+.page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.page-indicator {
+  font-size: 12px;
+  font-weight: 600;
+  color: #495057;
+  padding: 0 8px;
+  background: white;
+  border-radius: 4px;
+  border: 1px solid #dee2e6;
+  min-width: 50px;
+  text-align: center;
+  line-height: 30px;
+}

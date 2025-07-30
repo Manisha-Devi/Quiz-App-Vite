@@ -10,6 +10,8 @@ const QuestionNavigator = React.memo(function QuestionNavigator({
   onJump,
 }) {
   const [selectedTypes, setSelectedTypes] = React.useState([]);
+  const [currentPage, setCurrentPage] = React.useState(0);
+  const questionsPerPage = 20; // Show 20 questions per page
 
   const getStatus = (i) => {
     if (i === current) return "active";
@@ -81,10 +83,39 @@ const QuestionNavigator = React.memo(function QuestionNavigator({
     return false;
   });
 
+  // Pagination logic
+  const totalPages = Math.ceil(filteredIndexes.length / questionsPerPage);
+  const startIndex = currentPage * questionsPerPage;
+  const endIndex = Math.min(startIndex + questionsPerPage, filteredIndexes.length);
+  const currentPageQuestions = filteredIndexes.slice(startIndex, endIndex);
+
+  // Auto-navigate to page containing current question
+  React.useEffect(() => {
+    const currentQuestionIndex = filteredIndexes.indexOf(current);
+    if (currentQuestionIndex !== -1) {
+      const requiredPage = Math.floor(currentQuestionIndex / questionsPerPage);
+      if (requiredPage !== currentPage) {
+        setCurrentPage(requiredPage);
+      }
+    }
+  }, [current, filteredIndexes, currentPage, questionsPerPage]);
+
+  // Reset to first page when filters change
+  React.useEffect(() => {
+    setCurrentPage(0);
+  }, [selectedTypes]);
+
   return (
     <div className="question-navigator">
+      {/* Pagination Info */}
+      {totalPages > 1 && (
+        <div className="pagination-info">
+          Page {currentPage + 1} of {totalPages} ({filteredIndexes.length} questions)
+        </div>
+      )}
+
       <div className="navigator-grid">
-        {filteredIndexes.map((i) => (
+        {currentPageQuestions.map((i) => (
           <button
             key={i}
             className={`nav-dot ${getStatus(i)}`}
@@ -96,6 +127,47 @@ const QuestionNavigator = React.memo(function QuestionNavigator({
           </button>
         ))}
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="pagination-controls">
+          <button
+            className="page-btn"
+            onClick={() => setCurrentPage(0)}
+            disabled={currentPage === 0}
+            title="First Page"
+          >
+            ⏮️
+          </button>
+          <button
+            className="page-btn"
+            onClick={() => setCurrentPage(currentPage - 1)}
+            disabled={currentPage === 0}
+            title="Previous Page"
+          >
+            ⏪
+          </button>
+          <span className="page-indicator">
+            {currentPage + 1} / {totalPages}
+          </span>
+          <button
+            className="page-btn"
+            onClick={() => setCurrentPage(currentPage + 1)}
+            disabled={currentPage === totalPages - 1}
+            title="Next Page"
+          >
+            ⏩
+          </button>
+          <button
+            className="page-btn"
+            onClick={() => setCurrentPage(totalPages - 1)}
+            disabled={currentPage === totalPages - 1}
+            title="Last Page"
+          >
+            ⏭️
+          </button>
+        </div>
+      )}
 
       <div className="legend">
 
