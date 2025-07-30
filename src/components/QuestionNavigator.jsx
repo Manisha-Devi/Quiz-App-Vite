@@ -63,8 +63,10 @@ const QuestionNavigator = React.memo(function QuestionNavigator({
   ).filter((i) => {
     const status = getStatus(i);
 
+    // If no checkboxes are selected, show all questions
     if (selectedTypes.length === 0) return true;
 
+    // Show only selected types
     if (selectedTypes.includes("answered") && status === "answered")
       return true;
     if (selectedTypes.includes("review") && status === "review") return true;
@@ -79,113 +81,61 @@ const QuestionNavigator = React.memo(function QuestionNavigator({
     return false;
   });
 
-  const getStatusIcon = (status) => {
-    switch (status) {
-      case 'answered': return '✓';
-      case 'review': return '👁️';
-      case 'review-answered': return '✓👁️';
-      case 'active': return '🎯';
-      default: return '';
-    }
-  };
-
   return (
     <div className="question-navigator">
-      {/* Header Section */}
-      <div className="navigator-header">
-        <h3 className="navigator-title">Question Navigator</h3>
-        <div className="progress-bar">
-          <div 
-            className="progress-fill" 
-            style={{width: `${((Object.keys(answers).length / totalQuestions) * 100)}%`}}
-          ></div>
-        </div>
-        <div className="progress-text">
-          {Object.keys(answers).length}/{totalQuestions} Completed
-        </div>
+      <div className="navigator-grid">
+        {filteredIndexes.map((i) => (
+          <button
+            key={i}
+            className={`nav-dot ${getStatus(i)}`}
+            onClick={() => onJump(i)}
+            aria-label={`Question ${i + 1}`}
+            title={`Q${i + 1} - ${getStatus(i).replace("-", " ")}`}
+          >
+            {i + 1}
+          </button>
+        ))}
       </div>
 
-      {/* Stats Cards */}
-      <div className="stats-grid">
-        <div className="stat-card answered">
-          <div className="stat-icon">✓</div>
-          <div className="stat-info">
-            <div className="stat-number">{counts.answered}</div>
-            <div className="stat-label">Answered</div>
-          </div>
-        </div>
+      <div className="legend">
 
-        <div className="stat-card review">
-          <div className="stat-icon">👁️</div>
-          <div className="stat-info">
-            <div className="stat-number">{counts.reviewOnly}</div>
-            <div className="stat-label">Review</div>
-          </div>
-        </div>
 
-        <div className="stat-card review-answered">
-          <div className="stat-icon">✓👁️</div>
-          <div className="stat-info">
-            <div className="stat-number">{counts.reviewAnswered}</div>
-            <div className="stat-label">Both</div>
-          </div>
-        </div>
+        <label className="legend-pill answered">
+          <input
+            type="checkbox"
+            checked={selectedTypes.includes("answered")}
+            onChange={() => handleTypeToggle("answered")}
+          />
+          Answered ({counts.answered})
+        </label>
 
-        <div className="stat-card not-visited">
-          <div className="stat-icon">○</div>
-          <div className="stat-info">
-            <div className="stat-number">{counts.notVisited}</div>
-            <div className="stat-label">Pending</div>
-          </div>
-        </div>
-      </div>
+        <label className="legend-pill review">
+          <input
+            type="checkbox"
+            checked={selectedTypes.includes("review")}
+            onChange={() => handleTypeToggle("review")}
+          />
+          Review ({counts.reviewOnly})
+        </label>
 
-      {/* Filter Section */}
-      <div className="filter-section">
-        <div className="filter-title">Filter Questions:</div>
-        <div className="filter-chips">
-          {[
-            { type: 'answered', label: 'Answered', icon: '✓' },
-            { type: 'review', label: 'Review', icon: '👁️' },
-            { type: 'review-answered', label: 'Both', icon: '✓👁️' },
-            { type: 'not-visited', label: 'Pending', icon: '○' }
-          ].map(({type, label, icon}) => (
-            <button
-              key={type}
-              className={`filter-chip ${type} ${selectedTypes.includes(type) ? 'active' : ''}`}
-              onClick={() => handleTypeToggle(type)}
-            >
-              <span className="chip-icon">{icon}</span>
-              <span className="chip-label">{label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
+        <label className="legend-pill review-answered">
+          <input
+            type="checkbox"
+            checked={selectedTypes.includes("review-answered")}
+            onChange={() => handleTypeToggle("review-answered")}
+          />
+          Review + Answered ({counts.reviewAnswered})
+        </label>
 
-      {/* Questions Grid */}
-      <div className="questions-container">
-        <div className="questions-grid">
-          {Array.from({ length: totalQuestions }, (_, i) => i).map((i) => {
-            const status = getStatus(i);
-            const isVisible = selectedTypes.length === 0 || filteredIndexes.includes(i);
-
-            if (!isVisible) return null;
-
-            return (
-              <button
-                key={i}
-                className={`question-card ${status}`}
-                onClick={() => onJump(i)}
-                title={`Question ${i + 1} - ${status.replace('-', ' ')}`}
-              >
-                <div className="question-number">{i + 1}</div>
-                <div className="question-status-icon">
-                  {getStatusIcon(status)}
-                </div>
-              </button>
-            );
-          })}
-        </div>
+        <label className="legend-pill not-visited">
+          <input
+            type="checkbox"
+            checked={selectedTypes.includes("not-visited")}
+            onChange={() => handleTypeToggle("not-visited")}
+          />
+          Not Visited ({counts.notVisited})
+        </label>
+        <span className="legend-pill current">🎯Current</span>
       </div>
     </div>
   );
