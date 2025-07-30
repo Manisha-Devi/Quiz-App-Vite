@@ -86,8 +86,14 @@ const QuestionViewer = React.memo(function QuestionViewer({
     const shuffled = [...incorrectOptions].sort(() => Math.random() - 0.5);
     const optionsToHide = shuffled.slice(0, 2);
 
+    // Check if user's current answer will be hidden by 50/50
+    if (answer !== undefined && optionsToHide.includes(answer)) {
+      // Clear the user's answer if it will be hidden
+      onOptionClick(undefined); // This will clear the selection
+    }
+
     onFiftyFiftyUse(optionsToHide);
-  }, [isFiftyFiftyUsed, question, onFiftyFiftyUse]);
+  }, [isFiftyFiftyUsed, question, onFiftyFiftyUse, answer, onOptionClick]);
 
   // Make toggleShowAnswer available globally for keyboard shortcut
   React.useEffect(() => {

@@ -307,7 +307,18 @@ function ExamPage() {
     return `${h}:${m}:${sec}`;
   }, []);
 
-  const handleOption = useCallback(idx => setAnswers(a => ({ ...a, [current]: idx })), [current]);
+  const handleOption = useCallback(idx => {
+    if (idx === undefined) {
+      // Clear the answer for current question
+      setAnswers(a => {
+        const newAnswers = { ...a };
+        delete newAnswers[current];
+        return newAnswers;
+      });
+    } else {
+      setAnswers(a => ({ ...a, [current]: idx }));
+    }
+  }, [current]);
   const toggleReview = useCallback(() => setReview(r => ({ ...r, [current]: !r[current] })), [current]);
   const handleNext = useCallback(() => {
     if (current === questions.length - 1) {
