@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { storeImage } from "../utils/indexedDB";
 import useOfflineStorage from "../hooks/useOfflineStorage";
 import LocalJSONLibrary from "../components/LocalJSONLibrary";
-import CacheCleaner from "../components/CacheCleaner";
 import "../styles/UploadPage.css";
 import {
   openDb,
@@ -628,11 +627,6 @@ function UploadPage() {
             </div>
           </div>
         )}
-      </div>
-      
-      {/* Footer with CacheCleaner */}
-      <div className="upload-footer">
-        <CacheCleaner />
       </div>
     </div>
   );

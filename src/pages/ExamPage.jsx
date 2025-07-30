@@ -50,7 +50,6 @@ function ExamPage() {
   const [current, setCurrent] = useState(saved.current ?? 0);
   const [answers, setAnswers] = useState(saved.answers ?? {});
   const [review, setReview] = useState(saved.review ?? {});
-  const [fiftyFiftyUsed, setFiftyFiftyUsed] = useState(saved.fiftyFiftyUsed ?? {});
   const [timeLeft, setTimeLeft] = useState(() => {
     if (practiceMode) return Infinity;
     return meta.startedAt
@@ -125,19 +124,6 @@ function ExamPage() {
   }, [current, sections]);
 
   useEffect(() => {
-    // Clear ResultPage data when entering ExamPage
-    const RESULT_PAGE_KEYS = [
-      'examAnswers',
-      'reviewMarks',
-      'retryAnswers',
-      'retryCompleted',
-      'retryQuestions',
-      'currentRetryIndex',
-      'retryStats'
-    ];
-    
-    RESULT_PAGE_KEYS.forEach((key) => localStorage.removeItem(key));
-
     if (!meta.startedAt) {
       localStorage.setItem('examMeta', JSON.stringify({ startedAt: Date.now() }));
     }
@@ -166,13 +152,12 @@ function ExamPage() {
   }, [practiceMode]);
 
   useEffect(() => {
-    localStorage.setItem('examState', JSON.stringify({ answers, review, current, fiftyFiftyUsed }));
-  }, [answers, review, current, fiftyFiftyUsed]);
+    localStorage.setItem('examState', JSON.stringify({ answers, review, current }));
+  }, [answers, review, current]);
 
   const handleClear = useCallback(() => {
     setAnswers(a => { const c = { ...a }; delete c[current]; return c; });
-    setReview(r => { const c = { ...r }; delete r[current]; return c; });
-    setFiftyFiftyUsed(f => { const c = { ...f }; delete c[current]; return c; });
+    setReview(r => { const c = { ...r }; delete c[current]; return c; });
     // Clear all question states (50/50, show answer)
     if (window.clearQuestionStates) {
       window.clearQuestionStates();
@@ -327,8 +312,6 @@ function ExamPage() {
                   swipeHandlers={swipeHandlers}
                   practiceMode={practiceMode}
                   onClear={handleClear}
-                  fiftyFiftyUsed={fiftyFiftyUsed[current]}
-                  onFiftyFiftyUse={(hiddenOptions) => setFiftyFiftyUsed(prev => ({ ...prev, [current]: hiddenOptions }))}
                 />
               </div>
 
