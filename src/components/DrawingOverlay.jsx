@@ -1,6 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { Stage, Layer, Line } from 'react-konva';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 import './styles/DrawingOverlay.css';
 
 function DrawingOverlay() {
@@ -144,6 +146,167 @@ function DrawingOverlay() {
     window.dispatchEvent(event);
   };
 
+  // Generate PDF with all questions and drawings
+  const generatePDF = async () => {
+    try {
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      
+      // Get questions from localStorage
+      const questions = JSON.parse(localStorage.getItem('finalQuiz')) || [];
+      const answers = JSON.parse(localStorage.getItem('examAnswers')) || 
+                     JSON.parse(localStorage.getItem('examState'))?.answers || {};
+      
+      let isFirstPage = true;
+      
+      for (let questionIndex = 0; questionIndex < questions.length; questionIndex++) {
+        if (!isFirstPage) {
+          pdf.addPage();
+        }
+        isFirstPage = false;
+        
+        // Temporarily switch to the question
+        const originalIndex = currentQuestionIndex;
+        setCurrentQuestionIndex(questionIndex);
+        
+        // Wait for state to update
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // Capture the main exam content (question area)
+        const examContent = document.querySelector('.exam-left') || 
+                           document.querySelector('.question-viewer') ||
+                           document.querySelector('.exam-main-layout');
+        
+        if (examContent) {
+          try {
+            const canvas = await html2canvas(examContent, {
+              useCORS: true,
+              allowTaint: true,
+              scale: 2,
+              backgroundColor: '#ffffff',
+              width: examContent.offsetWidth,
+              height: examContent.offsetHeight
+            });
+            
+            const imgData = canvas.toDataURL('image/png');
+            const imgWidth = pageWidth - 20; // 10mm margin on each side
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            
+            // Add question content
+            pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, Math.min(imgHeight, pageHeight - 40));
+            
+            // Add question info
+            const question = questions[questionIndex];
+            const userAnswer = answers[questionIndex];
+            
+            let yPosition = Math.min(imgHeight + 20, pageHeight - 30);
+            
+            // Add question number
+            pdf.setFontSize(12);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(`Question ${questionIndex + 1}`, 10, yPosition);
+            
+            // Add user's answer if exists
+            if (userAnswer !== undefined) {
+              yPosition += 6;
+              pdf.setFont('helvetica', 'normal');
+              const answerText = question.options && question.options[userAnswer] 
+                ? `Answer: ${String.fromCharCode(65 + userAnswer)}) ${question.options[userAnswer]}`
+                : `Answer: ${userAnswer}`;
+              pdf.text(answerText, 10, yPosition);
+            }
+            
+            // Add correct answer
+            if (question.answer !== undefined) {
+              yPosition += 6;
+              pdf.setTextColor(0, 128, 0); // Green color
+              const correctText = question.options && question.options[question.answer]
+                ? `Correct: ${String.fromCharCode(65 + question.answer)}) ${question.options[question.answer]}`
+                : `Correct: ${question.answer}`;
+              pdf.text(correctText, 10, yPosition);
+              pdf.setTextColor(0, 0, 0); // Reset to black
+            }
+            
+          } catch (canvasError) {
+            console.error('Error capturing question:', questionIndex, canvasError);
+            // Add fallback text
+            pdf.setFontSize(14);
+            pdf.text(`Question ${questionIndex + 1} - Screenshot unavailable`, 10, 20);
+          }
+        }
+        
+        // Add drawing overlay if exists for this question
+        const questionDrawings = lines[questionIndex];
+        if (questionDrawings && Object.keys(questionDrawings).length > 0) {
+          try {
+            // Create a temporary canvas for drawing
+            const drawingCanvas = document.createElement('canvas');
+            drawingCanvas.width = window.innerWidth;
+            drawingCanvas.height = window.innerHeight;
+            const ctx = drawingCanvas.getContext('2d');
+            
+            // Set white background
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+            
+            // Draw all lines for this question
+            Object.values(questionDrawings).forEach(line => {
+              if (line.points && line.points.length >= 2) {
+                ctx.strokeStyle = line.color || '#000';
+                ctx.lineWidth = line.tool === 'pen' ? 3 : 30;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                
+                if (line.tool === 'eraser') {
+                  ctx.globalCompositeOperation = 'destination-out';
+                } else {
+                  ctx.globalCompositeOperation = 'source-over';
+                }
+                
+                ctx.beginPath();
+                ctx.moveTo(line.points[0], line.points[1]);
+                for (let i = 2; i < line.points.length; i += 2) {
+                  ctx.lineTo(line.points[i], line.points[i + 1]);
+                }
+                ctx.stroke();
+              }
+            });
+            
+            const drawingImgData = drawingCanvas.toDataURL('image/png');
+            
+            // Add new page for drawing
+            pdf.addPage();
+            pdf.setFontSize(12);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(`Question ${questionIndex + 1} - Drawing Notes`, 10, 15);
+            
+            const drawingImgWidth = pageWidth - 20;
+            const drawingImgHeight = (drawingCanvas.height * drawingImgWidth) / drawingCanvas.width;
+            
+            pdf.addImage(drawingImgData, 'PNG', 10, 25, drawingImgWidth, Math.min(drawingImgHeight, pageHeight - 35));
+            
+          } catch (drawingError) {
+            console.error('Error adding drawing for question:', questionIndex, drawingError);
+          }
+        }
+        
+        // Restore original question index
+        setCurrentQuestionIndex(originalIndex);
+      }
+      
+      // Save the PDF
+      const fileName = `Quiz_Questions_${new Date().toISOString().split('T')[0]}.pdf`;
+      pdf.save(fileName);
+      
+      alert(`PDF generated successfully! File saved as: ${fileName}`);
+      
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      alert('Error generating PDF. Please try again.');
+    }
+  };
+
   // Get current question's drawings
   const getCurrentQuestionLines = () => {
     return lines[currentQuestionIndex] || {};
@@ -187,6 +350,11 @@ function DrawingOverlay() {
           {/* Navigation buttons for questions */}
           <button onClick={prevQuestion} title="Previous Question">⬅️</button>
           <button onClick={nextQuestion} title="Next Question">➡️</button>
+          
+          {/* PDF Generation button */}
+          <button onClick={generatePDF} title="Generate PDF with all questions and drawings" className="pdf-btn">
+            📄 PDF
+          </button>
         </div>
       </div>
       <div id="scratchpad" style={{ display: visible ? 'block' : 'none' }}>

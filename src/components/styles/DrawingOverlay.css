@@ -103,7 +103,23 @@
 }
 
 .drawing-panel button:hover {
-  background: #eee;
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.pdf-btn {
+  background: #ff6b35 !important;
+  color: white !important;
+  font-weight: bold;
+  font-size: 12px !important;
+  padding: 8px 6px !important;
+  border-radius: 6px !important;
+  min-width: 55px !important;
+}
+
+.pdf-btn:hover {
+  background: #e55a2b !important;
+  transform: scale(1.05) !important;
 }
 
 /* Color picker buttons (only visible when pen is selected) */
