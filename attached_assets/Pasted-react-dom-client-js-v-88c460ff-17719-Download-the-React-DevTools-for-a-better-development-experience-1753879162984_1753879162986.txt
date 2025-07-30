@@ -1,0 +1,78 @@
+react-dom_client.js?v=88c460ff:17719 Download the React DevTools for a better development experience: https://react.dev/link/react-devtools
+ExamPage.jsx:414 Uncaught ReferenceError: Cannot access 'handleOption' before initialization
+    at ExamPage (ExamPage.jsx:414:128)
+    at react-stack-bottom-frame (react-dom_client.js?v=88c460ff:17156:20)
+    at renderWithHooks (react-dom_client.js?v=88c460ff:3938:24)
+    at updateFunctionComponent (react-dom_client.js?v=88c460ff:6351:21)
+    at beginWork (react-dom_client.js?v=88c460ff:7386:20)
+    at runWithFiberInDEV (react-dom_client.js?v=88c460ff:1217:72)
+    at performUnitOfWork (react-dom_client.js?v=88c460ff:10600:98)
+    at workLoopSync (react-dom_client.js?v=88c460ff:10460:43)
+    at renderRootSync (react-dom_client.js?v=88c460ff:10443:13)
+    at performWorkOnRoot (react-dom_client.js?v=88c460ff:10091:46)
+ExamPage @ ExamPage.jsx:414
+react-stack-bottom-frame @ react-dom_client.js?v=88c460ff:17156
+renderWithHooks @ react-dom_client.js?v=88c460ff:3938
+updateFunctionComponent @ react-dom_client.js?v=88c460ff:6351
+beginWork @ react-dom_client.js?v=88c460ff:7386
+runWithFiberInDEV @ react-dom_client.js?v=88c460ff:1217
+performUnitOfWork @ react-dom_client.js?v=88c460ff:10600
+workLoopSync @ react-dom_client.js?v=88c460ff:10460
+renderRootSync @ react-dom_client.js?v=88c460ff:10443
+performWorkOnRoot @ react-dom_client.js?v=88c460ff:10091
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=88c460ff:11355
+performWorkUntilDeadline @ chunk-PJMRTMRF.js?v=88c460ff:30
+<ExamPage>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=88c460ff:250
+App @ App.jsx:32
+react-stack-bottom-frame @ react-dom_client.js?v=88c460ff:17156
+renderWithHooks @ react-dom_client.js?v=88c460ff:3938
+updateFunctionComponent @ react-dom_client.js?v=88c460ff:6351
+beginWork @ react-dom_client.js?v=88c460ff:7386
+runWithFiberInDEV @ react-dom_client.js?v=88c460ff:1217
+performUnitOfWork @ react-dom_client.js?v=88c460ff:10600
+workLoopSync @ react-dom_client.js?v=88c460ff:10460
+renderRootSync @ react-dom_client.js?v=88c460ff:10443
+performWorkOnRoot @ react-dom_client.js?v=88c460ff:10091
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=88c460ff:11355
+performWorkUntilDeadline @ chunk-PJMRTMRF.js?v=88c460ff:30
+<App>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=88c460ff:250
+(anonymous) @ main.jsx:8Understand this error
+App.jsx:32 An error occurred in the <ExamPage> component.
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
+
+defaultOnUncaughtError @ react-dom_client.js?v=88c460ff:5961
+logUncaughtError @ react-dom_client.js?v=88c460ff:6015
+runWithFiberInDEV @ react-dom_client.js?v=88c460ff:1217
+lane.callback @ react-dom_client.js?v=88c460ff:6043
+callCallback @ react-dom_client.js?v=88c460ff:3829
+commitCallbacks @ react-dom_client.js?v=88c460ff:3841
+runWithFiberInDEV @ react-dom_client.js?v=88c460ff:1219
+commitLayoutEffectOnFiber @ react-dom_client.js?v=88c460ff:8761
+flushLayoutEffects @ react-dom_client.js?v=88c460ff:10906
+commitRoot @ react-dom_client.js?v=88c460ff:10812
+commitRootWhenReady @ react-dom_client.js?v=88c460ff:10244
+performWorkOnRoot @ react-dom_client.js?v=88c460ff:10189
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=88c460ff:11355
+performWorkUntilDeadline @ chunk-PJMRTMRF.js?v=88c460ff:30
+<ExamPage>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=88c460ff:250
+App @ App.jsx:32
+react-stack-bottom-frame @ react-dom_client.js?v=88c460ff:17156
+renderWithHooks @ react-dom_client.js?v=88c460ff:3938
+updateFunctionComponent @ react-dom_client.js?v=88c460ff:6351
+beginWork @ react-dom_client.js?v=88c460ff:7386
+runWithFiberInDEV @ react-dom_client.js?v=88c460ff:1217
+performUnitOfWork @ react-dom_client.js?v=88c460ff:10600
+workLoopSync @ react-dom_client.js?v=88c460ff:10460
+renderRootSync @ react-dom_client.js?v=88c460ff:10443
+performWorkOnRoot @ react-dom_client.js?v=88c460ff:10091
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=88c460ff:11355
+performWorkUntilDeadline @ chunk-PJMRTMRF.js?v=88c460ff:30
+<App>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=88c460ff:250
+(anonymous) @ main.jsx:8Understand this warning
+exam:1 Error while trying to use the following icon from the Manifest: https://74d32585-c90a-4cfa-8fac-9de0fa2d36d8-00-2l6773x25cwxc.sisko.replit.dev:3000/icons/icon-152x152.png (Download error or resource isn't a valid image)
