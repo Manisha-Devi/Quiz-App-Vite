@@ -423,22 +423,27 @@ function ExamPage() {
                     <button className="close-btn" onClick={closeTimeWarning}>✖️</button>
                   </div>
                 )}
-                <QuestionViewer
-                  question={q}
-                  currentIndex={current}
-                  answer={answers[current]}
-                  reviewMarked={review[current]}
-                  onOptionClick={handleOption}
-                  onToggleReview={toggleReview}
-                  injectImageSources={injectImageSources}
-                  hasMath={hasMath}
-                  isDarkMode={isDarkMode}
-                  swipeHandlers={swipeHandlers}
-                  practiceMode={practiceMode}
-                  onClear={handleClear}
-                  fiftyFiftyUsed={fiftyFiftyUsed[current]}
-                  onFiftyFiftyUse={(hiddenOptions) => setFiftyFiftyUsed(prev => ({ ...prev, [current]: hiddenOptions }))}
-                />
+                <div style={{ 
+                  paddingTop: (!practiceMode && (showTimeWarning || timeWarningAnimating) && timeLeft <= 300 && timeLeft > 0) ? '75px' : '0px',
+                  transition: 'padding-top 0.3s ease-in-out'
+                }}>
+                  <QuestionViewer
+                    question={q}
+                    currentIndex={current}
+                    answer={answers[current]}
+                    reviewMarked={review[current]}
+                    onOptionClick={handleOption}
+                    onToggleReview={toggleReview}
+                    injectImageSources={injectImageSources}
+                    hasMath={hasMath}
+                    isDarkMode={isDarkMode}
+                    swipeHandlers={swipeHandlers}
+                    practiceMode={practiceMode}
+                    onClear={handleClear}
+                    fiftyFiftyUsed={fiftyFiftyUsed[current]}
+                    onFiftyFiftyUse={(hiddenOptions) => setFiftyFiftyUsed(prev => ({ ...prev, [current]: hiddenOptions }))}
+                  />
+                </div>
               </div>
 
               <div className={`exam-right ${isSidebarOpen ? 'open' : 'closed'}`}>
