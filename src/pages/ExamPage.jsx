@@ -248,25 +248,46 @@ function ExamPage() {
     const onResize = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener('resize', onResize);
     
-    // Add periodic memory cleanup
+    // Add memory cleanup with better error handling
     const memoryCleanup = setInterval(() => {
-      // Clear unused localStorage items periodically
       try {
+        // Clear temporary localStorage items
         const keys = Object.keys(localStorage);
         keys.forEach(key => {
-          if (key.startsWith('temp_') || key.startsWith('cache_')) {
+          if (key.startsWith('temp_') || key.startsWith('cache_') || key.startsWith('old_')) {
             localStorage.removeItem(key);
           }
         });
+
+        // Limit localStorage size
+        const storageSize = JSON.stringify(localStorage).length;
+        if (storageSize > 5 * 1024 * 1024) { // 5MB limit
+          console.warn('LocalStorage size too large, cleaning up...');
+          ['questionScreenshots', 'questionDrawings'].forEach(key => {
+            try {
+              const data = JSON.parse(localStorage.getItem(key) || '{}');
+              const keys = Object.keys(data);
+              if (keys.length > 5) {
+                const sortedKeys = keys.sort((a, b) => Number(a) - Number(b));
+                const keysToKeep = sortedKeys.slice(-5);
+                const updated = {};
+                keysToKeep.forEach(k => updated[k] = data[k]);
+                localStorage.setItem(key, JSON.stringify(updated));
+              }
+            } catch (e) {
+              console.warn(`Error cleaning ${key}:`, e);
+            }
+          });
+        }
+
+        // Force garbage collection if available
+        if (window.gc) {
+          window.gc();
+        }
       } catch (e) {
-        console.warn('Memory cleanup warning:', e);
+        console.warn('Memory cleanup error:', e);
       }
-      
-      // Force garbage collection if available
-      if (window.gc) {
-        window.gc();
-      }
-    }, 2 * 60 * 1000); // Every 2 minutes
+    }, 3 * 60 * 1000); // Every 3 minutes
     
     return () => {
       window.removeEventListener('resize', onResize);
