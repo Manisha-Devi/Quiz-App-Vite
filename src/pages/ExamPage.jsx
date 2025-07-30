@@ -181,6 +181,17 @@ function ExamPage() {
 
   useEffect(() => {
     const handler = (e) => {
+      // Don't trigger shortcuts if user is typing in an input field, textarea, or contenteditable element
+      const activeElement = document.activeElement;
+      const isTyping = activeElement && (
+        activeElement.tagName === 'INPUT' ||
+        activeElement.tagName === 'TEXTAREA' ||
+        activeElement.contentEditable === 'true' ||
+        activeElement.isContentEditable
+      );
+      
+      if (isTyping) return;
+
       if (e.key >= '1' && e.key <= '4') handleOption(Number(e.key) - 1);
       if (e.key === '0') toggleReview();
       if (e.key === 'ArrowRight') goNext();
