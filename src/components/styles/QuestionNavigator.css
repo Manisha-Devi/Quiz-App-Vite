@@ -7,8 +7,7 @@
 
 /* SCROLLABLE BUTTON GRID */
 .navigator-grid {
-  flex: auto;
-  overflow-y: auto;
+  overflow-y: scroll;
   min-height: 0;
   padding-right: 4px;
   display: grid;
@@ -42,14 +41,13 @@
 
 /* LEGEND PILL STYLES */
 .legend {
-  margin-top: 12px;
+  margin-top: auto; /* Push to bottom in flex container */
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
   justify-content: center;  /* Centers horizontally */
-  align-items: center;      /* Centers vertically (optional, depending on your item height) */
+  align-items: center;      /* Centers vertically (optional) */
 }
-
 
 .legend-pill {
   font-size: 12px;
