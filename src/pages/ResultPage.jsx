@@ -13,6 +13,7 @@ function ResultPage() {
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return localStorage.getItem('darkMode') === 'true';
   });
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [showPerformanceChart, setShowPerformanceChart] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [retryMode, setRetryMode] = useState(false);
@@ -42,16 +43,28 @@ function ResultPage() {
     localStorage.setItem('darkMode', newDarkMode.toString());
   }, [isDarkMode]);
 
+  const toggleFullscreen = useCallback(() => {
+    if (isFullscreen) {
+      document.exitFullscreen();
+    } else {
+      document.documentElement.requestFullscreen();
+    }
+    setIsFullscreen(!isFullscreen);
+  }, [isFullscreen]);
+
   useEffect(() => {
     const handleKeyPress = (e) => {
       if (e.key.toLowerCase() === 'm') {
         toggleDarkMode();
       }
+      if (e.key.toLowerCase() === 'f') {
+        toggleFullscreen();
+      }
     };
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [toggleDarkMode]);
+  }, [toggleDarkMode, toggleFullscreen]);
 
   const handlePerformanceToggle = useCallback(() => {
     setShowPerformanceChart(prev => !prev);
@@ -272,6 +285,9 @@ function ResultPage() {
           </div>
           <button className="theme-toggle-btn" onClick={toggleDarkMode} title="Toggle Dark Mode">
             {isDarkMode ? '☀️' : '🌙'}
+          </button>
+          <button className="fullscreen-btn" onClick={toggleFullscreen} title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}>
+            <span className="fullscreen-icon">{isFullscreen ? "⤲" : "⛶"}</span>
           </button>
         </div>
       </header>

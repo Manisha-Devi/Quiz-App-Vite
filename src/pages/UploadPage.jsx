@@ -21,6 +21,7 @@ function UploadPage() {
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return localStorage.getItem("darkMode") === "true";
   });
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const navigate = useNavigate();
   const [showLocalJSON, setShowLocalJSON] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -54,6 +55,15 @@ function UploadPage() {
     const newDarkMode = !isDarkMode;
     setIsDarkMode(newDarkMode);
     localStorage.setItem("darkMode", newDarkMode.toString());
+  };
+
+  const toggleFullscreen = () => {
+    if (isFullscreen) {
+      document.exitFullscreen();
+    } else {
+      document.documentElement.requestFullscreen();
+    }
+    setIsFullscreen(!isFullscreen);
   };
 
   const handleFileChange = async (e) => {
@@ -305,6 +315,9 @@ function UploadPage() {
       if (e.key.toLowerCase() === 'm') {
         toggleDarkMode();
       }
+      if (e.key.toLowerCase() === 'f') {
+        toggleFullscreen();
+      }
     };
 
     window.addEventListener('keydown', handleKeyPress);
@@ -359,6 +372,9 @@ function UploadPage() {
             title="Local JSON Files"
           >
             {showLocalJSON ? "📁" : "📄"}
+          </button>
+          <button className="fullscreen-btn" onClick={toggleFullscreen} title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}>
+            <span className="fullscreen-icon">{isFullscreen ? "⤲" : "⛶"}</span>
           </button>
           <button
             className={`clear-database-btn ${loading ? 'loading' : ''}`}

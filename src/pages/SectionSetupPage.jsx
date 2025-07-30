@@ -13,6 +13,7 @@ function SectionSetupPage() {
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return localStorage.getItem('darkMode') === 'true';
   });
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [quizTime, setQuizTime] = useState(() => {
     const savedTime = localStorage.getItem('quizTime');
     return savedTime ? Number(savedTime) : 0;
@@ -82,6 +83,15 @@ function SectionSetupPage() {
     const newDarkMode = !isDarkMode;
     setIsDarkMode(newDarkMode);
     localStorage.setItem('darkMode', newDarkMode.toString());
+  };
+
+  const toggleFullscreen = () => {
+    if (isFullscreen) {
+      document.exitFullscreen();
+    } else {
+      document.documentElement.requestFullscreen();
+    }
+    setIsFullscreen(!isFullscreen);
   };
 
   const handleInputChange = (fileIndex, level, value) => {
@@ -169,6 +179,9 @@ function SectionSetupPage() {
       if (e.key.toLowerCase() === 'm') {
         toggleDarkMode();
       }
+      if (e.key.toLowerCase() === 'f') {
+        toggleFullscreen();
+      }
     };
 
     window.addEventListener('keydown', handleKeyPress);
@@ -190,6 +203,9 @@ function SectionSetupPage() {
           </div>
           <button className="theme-toggle-btn" onClick={toggleDarkMode}>
             {isDarkMode ? '☀️' : '🌙'}
+          </button>
+          <button className="fullscreen-btn" onClick={toggleFullscreen} title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}>
+            <span className="fullscreen-icon">{isFullscreen ? "⤲" : "⛶"}</span>
           </button>
         </div>
       </header>
