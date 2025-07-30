@@ -27,7 +27,7 @@ function ExamPage() {
     const newDarkMode = !isDarkMode;
     setIsDarkMode(newDarkMode);
     localStorage.setItem('darkMode', newDarkMode.toString());
-    
+
     // Force re-render by updating document class
     if (newDarkMode) {
       document.documentElement.classList.add('dark-mode');
@@ -76,7 +76,7 @@ function ExamPage() {
     // First, group questions by section maintaining order
     const sectionGroups = {};
     const sectionOrder = [];
-    
+
     questions.forEach((question, index) => {
       const sectionName = question.section || 'General';
       if (!sectionGroups[sectionName]) {
@@ -144,7 +144,7 @@ function ExamPage() {
       'currentRetryIndex',
       'retryStats'
     ];
-    
+
     RESULT_PAGE_KEYS.forEach((key) => localStorage.removeItem(key));
 
     if (!meta.startedAt) {
@@ -207,7 +207,7 @@ function ExamPage() {
         activeElement.contentEditable === 'true' ||
         activeElement.isContentEditable
       );
-      
+
       if (isTyping) return;
 
       if (e.key >= '1' && e.key <= '4') handleOption(Number(e.key) - 1);
@@ -220,7 +220,7 @@ function ExamPage() {
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [current, questions.length]);
+  }, [current, questions.length, toggleDarkMode, handleClear]);
 
   // Memoize image injection for performance
   const imageMap = useMemo(() => {
@@ -247,7 +247,7 @@ function ExamPage() {
       setCurrent(current + 1);
     }
   }, [current, questions.length]);
-  
+
   const goPrev = useCallback(() => {
     if (current === 0) {
       // If we're at the first question and trying to go back, show submit modal
@@ -315,7 +315,7 @@ function ExamPage() {
   return (
     <>
       <div className={`exam-ui ${isFullscreen ? 'fullscreen' : ''} ${isDarkMode ? 'dark-mode' : ''}`}>
-        
+
           <div className="exam-ui">
             <header className="exam-header">
               <div className="page-title">
@@ -383,7 +383,7 @@ function ExamPage() {
               </div>
             </footer>
           </div>
-        
+
         {enableDrawing && <DrawingOverlay />}
         <div className="fullscreen-btn-container">
           <button className="fullscreen-btn" onClick={toggleFullscreen} title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}>
