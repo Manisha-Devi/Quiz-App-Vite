@@ -508,8 +508,12 @@
     left: 0;
     z-index: 99;
     border-radius: 16px 16px 0 0;
+    transform: translateY(0%);
+    transition: all 0.3s ease-in-out;
+  }
+
+  .exam-right.closed {
     transform: translateY(100%);
-    transition: transform 0.3s ease-in-out;
   }
 
   .exam-right.open {

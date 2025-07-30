@@ -575,7 +575,7 @@ function ExamPage() {
                 />
               </div>
 
-              <div className={`exam-right ${isSidebarOpen ? 'open' : 'closed'}`}>
+              <div className={`exam-right ${isMobile ? (isSidebarOpen ? 'open' : 'closed') : (isSidebarOpen ? 'open' : 'closed')}`}>
                 <QuestionNavigator
                   totalQuestions={questions.length}
                   current={current}
