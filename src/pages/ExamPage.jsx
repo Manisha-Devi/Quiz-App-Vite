@@ -394,15 +394,14 @@ function ExamPage() {
               </div>
             </header>
 
-            {!practiceMode && showTimeWarning && timeLeft <= 300 && timeLeft > 0 && (
-              <div className="time-warning">
-                ⚠️ Only 5 minutes left. Please finish up!
-                <button className="close-btn" onClick={closeTimeWarning}>✖️</button>
-              </div>
-            )}
-
             <div className="exam-main-layout">
               <div className="exam-left">
+                {!practiceMode && showTimeWarning && timeLeft <= 300 && timeLeft > 0 && (
+                  <div className="time-warning">
+                    ⚠️ Only 5 minutes left. Please finish up!
+                    <button className="close-btn" onClick={closeTimeWarning}>✖️</button>
+                  </div>
+                )}
                 <QuestionViewer
                   question={q}
                   currentIndex={current}
