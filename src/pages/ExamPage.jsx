@@ -69,6 +69,7 @@ function ExamPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
   const [showTimeWarning, setShowTimeWarning] = useState(false); // Track visibility of the warning
+  const [timeWarningDismissed, setTimeWarningDismissed] = useState(false); // Track if warning was dismissed
   const [showSubmitModal, setShowSubmitModal] = useState(false);
 
   // Generate sections with proper numbering and grouping - memoized for performance
@@ -188,12 +189,12 @@ function ExamPage() {
     localStorage.setItem('examState', JSON.stringify({ answers, review, current, fiftyFiftyUsed }));
   }, [answers, review, current, fiftyFiftyUsed]);
 
-  // Show time warning when 5 minutes left
+  // Show time warning when 5 minutes left (only if not dismissed)
   useEffect(() => {
-    if (!practiceMode && timeLeft <= 300 && timeLeft > 0) {
+    if (!practiceMode && timeLeft <= 300 && timeLeft > 0 && !timeWarningDismissed) {
       setShowTimeWarning(true);
     }
-  }, [timeLeft, practiceMode]);
+  }, [timeLeft, practiceMode, timeWarningDismissed]);
 
   const handleClear = useCallback(() => {
     setAnswers(a => { const c = { ...a }; delete c[current]; return c; });
@@ -364,7 +365,8 @@ function ExamPage() {
   }, []);
 
   const closeTimeWarning = useCallback(() => {
-    setShowTimeWarning(false); // Only hide the warning
+    setShowTimeWarning(false); // Hide the warning
+    setTimeWarningDismissed(true); // Mark as dismissed so it won't show again
   }, []);
 
   if (!questions.length || !sections.length) return <div className="exam-ui">Loading exam…</div>;
