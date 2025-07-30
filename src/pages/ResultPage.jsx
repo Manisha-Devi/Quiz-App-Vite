@@ -13,6 +13,9 @@ function ResultPage() {
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return localStorage.getItem('darkMode') === 'true';
   });
+  const [isBoldMode, setIsBoldMode] = useState(() => {
+    return localStorage.getItem('boldMode') === 'true';
+  });
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showPerformanceChart, setShowPerformanceChart] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -56,11 +59,37 @@ function ResultPage() {
     };
   }, [navigate]);
 
+  // Sync bold mode with document classes
+  useEffect(() => {
+    if (isBoldMode) {
+      document.documentElement.classList.add('bold-mode');
+      document.body.classList.add('bold-mode');
+    } else {
+      document.documentElement.classList.remove('bold-mode');
+      document.body.classList.remove('bold-mode');
+    }
+  }, [isBoldMode]);
+
   const toggleDarkMode = useCallback(() => {
     const newDarkMode = !isDarkMode;
     setIsDarkMode(newDarkMode);
     localStorage.setItem('darkMode', newDarkMode.toString());
   }, [isDarkMode]);
+
+  const toggleBoldMode = useCallback(() => {
+    const newBoldMode = !isBoldMode;
+    setIsBoldMode(newBoldMode);
+    localStorage.setItem('boldMode', newBoldMode.toString());
+
+    // Force re-render by updating document class
+    if (newBoldMode) {
+      document.documentElement.classList.add('bold-mode');
+      document.body.classList.add('bold-mode');
+    } else {
+      document.documentElement.classList.remove('bold-mode');
+      document.body.classList.remove('bold-mode');
+    }
+  }, [isBoldMode]);
 
   const toggleFullscreen = useCallback(() => {
     if (isFullscreen) {
@@ -76,6 +105,9 @@ function ResultPage() {
       if (e.key.toLowerCase() === 'm') {
         toggleDarkMode();
       }
+      if (e.key.toLowerCase() === 'b') {
+        toggleBoldMode();
+      }
       if (e.key.toLowerCase() === 'f') {
         toggleFullscreen();
       }
@@ -83,7 +115,7 @@ function ResultPage() {
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [toggleDarkMode, toggleFullscreen]);
+  }, [toggleDarkMode, toggleBoldMode, toggleFullscreen]);
 
   const handlePerformanceToggle = useCallback(() => {
     setShowPerformanceChart(prev => !prev);
@@ -290,7 +322,7 @@ function ResultPage() {
   
 
   return (
-    <div className={`result-page ${isDarkMode ? 'dark-mode' : ''}`}>
+    <div className={`result-page ${isDarkMode ? 'dark-mode' : ''} ${isBoldMode ? 'bold-mode' : ''}`}>
       {/* Top Header Bar similar to ExamPage */}
       <header className="result-header">
         <div className="page-title">
@@ -304,6 +336,9 @@ function ResultPage() {
           </div>
           <button className="theme-toggle-btn" onClick={toggleDarkMode} title="Toggle Dark Mode">
             {isDarkMode ? '☀️' : '🌙'}
+          </button>
+          <button className={`bold-toggle-btn ${isBoldMode ? 'active' : ''}`} onClick={toggleBoldMode} title="Toggle Bold Mode">
+            <strong>B</strong>
           </button>
         </div>
       </header>

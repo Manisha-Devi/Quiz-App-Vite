@@ -84,10 +84,20 @@
   color: #2d2d30 !important;
 }
 
-.result-page.dark-mode .theme-toggle-btn {
-  background: #404040 !important;
-  color: #e0e0e0 !important;
-  border: 1px solid #555 !important;
+.result-page.dark-mode .theme-toggle-btn, .result-page.dark-mode .bold-toggle-btn {
+  border-color: #a78bfa !important;
+  color: #a78bfa !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.result-page.dark-mode .theme-toggle-btn:hover, .result-page.dark-mode .bold-toggle-btn:hover {
+  background: #a78bfa !important;
+  color: #1a1a1a !important;
+}
+
+.result-page.dark-mode .bold-toggle-btn.active {
+  background: #a78bfa !important;
+  color: #1a1a1a !important;
 }
 
 .page-title {
@@ -145,22 +155,37 @@
   gap: 12px;
 }
 
-.theme-toggle-btn {
-  background: rgba(102, 126, 234, 0.1);
-  color: white;
-  border: none;
-  border-radius: 12px;
-  padding: 10px 16px;
+.theme-toggle-btn, .bold-toggle-btn {
+  background: rgba(111, 66, 193, 0.1);
+  border: 2px solid #6f42c1;
+  color: #6f42c1;
+  padding: 8px 12px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  height: 44px;
+  box-shadow: 0 2px 4px rgba(111, 66, 193, 0.2);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
   margin-left: 10px;
 }
 
-.theme-toggle-btn:hover {
-  background: rgba(102, 126, 234, 0.2);
+.theme-toggle-btn:hover, .bold-toggle-btn:hover {
+  background: #6f42c1;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(111, 66, 193, 0.3);
+}
+
+.bold-toggle-btn.active {
+  background: #6f42c1;
+  color: white;
+  box-shadow: 0 4px 8px rgba(111, 66, 193, 0.4);
 }
 
 /* Retry Indicator */
@@ -1098,6 +1123,31 @@
 
 .result-page.dark-mode .katex-display * {
   color: #e0e0e0 !important;
+}
+
+/* Bold Mode Styles */
+.result-page.bold-mode .question-text {
+  font-weight: bold !important;
+}
+
+.result-page.bold-mode .question-text * {
+  font-weight: bold !important;
+}
+
+.result-page.bold-mode .option-text {
+  font-weight: bold !important;
+}
+
+.result-page.bold-mode .option-text * {
+  font-weight: bold !important;
+}
+
+.result-page.bold-mode .explanation-text {
+  font-weight: bold !important;
+}
+
+.result-page.bold-mode .explanation-text * {
+  font-weight: bold !important;
 }
 
 
