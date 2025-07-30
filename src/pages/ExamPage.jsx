@@ -340,6 +340,39 @@ function ExamPage() {
     }
   }, [timeLeft, practiceMode, timeWarningDismissed, halfTimeWarningDismissed, quarterTimeWarningDismissed, EXAM_DURATION]);
 
+  const handleOption = useCallback(idx => {
+    if (idx === undefined) {
+      // Clear the answer for current question
+      setAnswers(a => {
+        const newAnswers = { ...a };
+        delete newAnswers[current];
+        return newAnswers;
+      });
+    } else {
+      setAnswers(a => ({ ...a, [current]: idx }));
+    }
+  }, [current]);
+
+  const toggleReview = useCallback(() => setReview(r => ({ ...r, [current]: !r[current] })), [current]);
+
+  const handleNext = useCallback(() => {
+    if (current === questions.length - 1) {
+      setShowSubmitModal(true);
+    } else {
+      setCurrent(current + 1);
+    }
+  }, [current, questions.length]);
+
+  const handleSubmit = useCallback((auto = false) => {
+    if (!auto) {
+      setShowSubmitModal(true);
+      return;
+    }
+    localStorage.setItem('examAnswers', JSON.stringify(answers));
+    localStorage.setItem('reviewMarks', JSON.stringify(review));
+    navigate('/result');
+  }, [answers, review, navigate]);
+
   const handleClear = useCallback(() => {
     setAnswers(a => { const c = { ...a }; delete c[current]; return c; });
     setReview(r => { const c = { ...r }; delete c[current]; return c; });
@@ -474,39 +507,6 @@ function ExamPage() {
       return 'timer-normal';
     }
   }, [timeLeft, practiceMode, EXAM_DURATION]);
-
-  const handleOption = useCallback(idx => {
-    if (idx === undefined) {
-      // Clear the answer for current question
-      setAnswers(a => {
-        const newAnswers = { ...a };
-        delete newAnswers[current];
-        return newAnswers;
-      });
-    } else {
-      setAnswers(a => ({ ...a, [current]: idx }));
-    }
-  }, [current]);
-
-  const toggleReview = useCallback(() => setReview(r => ({ ...r, [current]: !r[current] })), [current]);
-
-  const handleNext = useCallback(() => {
-    if (current === questions.length - 1) {
-      setShowSubmitModal(true);
-    } else {
-      setCurrent(current + 1);
-    }
-  }, [current, questions.length]);
-
-  const handleSubmit = useCallback((auto = false) => {
-    if (!auto) {
-      setShowSubmitModal(true);
-      return;
-    }
-    localStorage.setItem('examAnswers', JSON.stringify(answers));
-    localStorage.setItem('reviewMarks', JSON.stringify(review));
-    navigate('/result');
-  }, [answers, review, navigate]);
 
   const confirmSubmit = useCallback(() => {
     setShowSubmitModal(false);
