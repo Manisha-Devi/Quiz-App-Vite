@@ -333,10 +333,22 @@ function ExamPage() {
   const q = questions[current] || {};
 
   const formatTime = useCallback(s => {
-    const h = String(Math.floor(s / 3600)).padStart(2, '0');
-    const m = String(Math.floor((s % 3600) / 60)).padStart(2, '0');
-    const sec = String(s % 60).padStart(2, '0');
-    return `${h}:${m}:${sec}`;
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    const sec = s % 60;
+    
+    // Show hours only if there are hours
+    if (h > 0) {
+      return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+    }
+    // Show minutes only if there are minutes or if more than 59 seconds
+    else if (m > 0 || s >= 60) {
+      return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+    }
+    // Show only seconds if less than 1 minute
+    else {
+      return `${String(sec).padStart(2, '0')}s`;
+    }
   }, []);
 
   const handleOption = useCallback(idx => {
