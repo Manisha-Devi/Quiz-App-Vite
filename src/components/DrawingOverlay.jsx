@@ -25,31 +25,44 @@ function DrawingOverlay() {
     const handleQuestionChange = (event) => {
       const newIndex = event.detail.questionIndex;
 
-      // Take screenshot of current question before switching
-      if (newIndex !== currentQuestionIndex) {
-        takeQuestionScreenshot(currentQuestionIndex);
+      // Take screenshot of current question before switching (with delay to ensure content is loaded)
+      if (newIndex !== currentQuestionIndex && currentQuestionIndex >= 0) {
+        setTimeout(() => {
+          takeQuestionScreenshot(currentQuestionIndex);
+        }, 300);
       }
 
       setCurrentQuestionIndex(newIndex);
       console.log('Question changed to:', newIndex);
+
+      // Take screenshot of new question after content loads
+      setTimeout(() => {
+        takeQuestionScreenshot(newIndex);
+      }, 800);
     };
 
     // Listen for custom events from ExamPage
     window.addEventListener('questionChanged', handleQuestionChange);
 
-    // Also check if there's a global current question index
-    const checkCurrentQuestion = () => {
-      if (window.currentQuestionIndex !== undefined) {
-        if (window.currentQuestionIndex !== currentQuestionIndex) {
+    // Sync with global current question index
+    const syncCurrentQuestion = () => {
+      if (window.currentQuestionIndex !== undefined && window.currentQuestionIndex !== currentQuestionIndex) {
+        // Take screenshot before changing
+        if (currentQuestionIndex >= 0) {
           takeQuestionScreenshot(currentQuestionIndex);
         }
         setCurrentQuestionIndex(window.currentQuestionIndex);
+        
+        // Take screenshot of new question
+        setTimeout(() => {
+          takeQuestionScreenshot(window.currentQuestionIndex);
+        }, 500);
       }
     };
 
-    // Check immediately and set up interval to sync
-    checkCurrentQuestion();
-    const interval = setInterval(checkCurrentQuestion, 100);
+    // Initial sync and periodic sync
+    syncCurrentQuestion();
+    const interval = setInterval(syncCurrentQuestion, 500);
 
     return () => {
       window.removeEventListener('questionChanged', handleQuestionChange);
@@ -59,42 +72,69 @@ function DrawingOverlay() {
 
   // Take screenshot of current question - capture full exam page
   const takeQuestionScreenshot = async (questionIndex) => {
-    // Prevent duplicate screenshots
-    if (questionScreenshots[questionIndex]) {
+    // Check if we already have a recent screenshot (within 2 seconds)
+    const existingScreenshot = questionScreenshots[questionIndex];
+    if (existingScreenshot && (Date.now() - existingScreenshot.timestamp) < 2000) {
+      console.log(`Recent screenshot exists for question ${questionIndex + 1}, skipping`);
       return;
     }
 
     try {
+      // Wait for content to fully load
+      await new Promise(resolve => setTimeout(resolve, 200));
+
       const examContent = document.querySelector('.exam-ui');
-      if (!examContent) return;
+      if (!examContent) {
+        console.log('Exam content not found');
+        return;
+      }
+
+      console.log(`Taking screenshot for question ${questionIndex + 1}...`);
 
       // Use optimized settings to prevent memory issues
       const canvas = await html2canvas(examContent, {
-        scale: 0.5, // Reduced scale to save memory
+        scale: 0.6, // Slightly better quality
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
         logging: false,
-        width: Math.min(examContent.offsetWidth, 1000),
-        height: Math.min(examContent.offsetHeight, 1200),
+        width: Math.min(examContent.offsetWidth, 1200),
+        height: Math.min(examContent.offsetHeight, 1400),
+        scrollX: 0,
+        scrollY: 0,
         onclone: (clonedDoc) => {
           // Remove heavy elements to reduce memory usage
           const scripts = clonedDoc.querySelectorAll('script, link[rel="stylesheet"]');
           scripts.forEach(el => el.remove());
+          
+          // Ensure visibility of elements
+          const hiddenElements = clonedDoc.querySelectorAll('[style*="display: none"]');
+          hiddenElements.forEach(el => {
+            if (!el.classList.contains('drawing-overlay')) {
+              el.style.display = 'block';
+            }
+          });
         }
       });
 
-      // Use JPEG with compression to reduce file size
-      const screenshotData = canvas.toDataURL('image/jpeg', 0.7);
+      // Use JPEG with good compression
+      const screenshotData = canvas.toDataURL('image/jpeg', 0.8);
 
-      setQuestionScreenshots(prev => ({
-        ...prev,
-        [questionIndex]: {
-          data: screenshotData,
-          timestamp: Date.now(),
-          visited: true
-        }
-      }));
+      setQuestionScreenshots(prev => {
+        const updated = {
+          ...prev,
+          [questionIndex]: {
+            data: screenshotData,
+            timestamp: Date.now(),
+            visited: true,
+            questionNumber: questionIndex + 1
+          }
+        };
+        
+        // Save to localStorage immediately
+        localStorage.setItem('questionScreenshots', JSON.stringify(updated));
+        return updated;
+      });
 
       // Clean up canvas immediately
       canvas.width = 1;
@@ -102,9 +142,9 @@ function DrawingOverlay() {
       const ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, 1, 1);
 
-      console.log(`Screenshot taken for question ${questionIndex + 1}`);
+      console.log(`✅ Screenshot saved for question ${questionIndex + 1}`);
     } catch (error) {
-      console.error('Error taking screenshot:', error);
+      console.error(`❌ Error taking screenshot for question ${questionIndex + 1}:`, error);
     }
   };
 
@@ -191,27 +231,33 @@ function DrawingOverlay() {
   };
 
   // Navigate to next question (if available)
-  const nextQuestion = () => {
-    // Take screenshot before navigating
-    takeQuestionScreenshot(currentQuestionIndex);
-
-    // Dispatch event to ExamPage to go to next question
-    const event = new CustomEvent('navigateQuestion', { 
-      detail: { direction: 'next' } 
-    });
-    window.dispatchEvent(event);
+  const nextQuestion = async () => {
+    // Take screenshot before navigating with proper timing
+    await takeQuestionScreenshot(currentQuestionIndex);
+    
+    // Small delay to ensure screenshot is processed
+    setTimeout(() => {
+      // Dispatch event to ExamPage to go to next question
+      const event = new CustomEvent('navigateQuestion', { 
+        detail: { direction: 'next' } 
+      });
+      window.dispatchEvent(event);
+    }, 200);
   };
 
   // Navigate to previous question (if available)
-  const prevQuestion = () => {
-    // Take screenshot before navigating
-    takeQuestionScreenshot(currentQuestionIndex);
-
-    // Dispatch event to ExamPage to go to previous question
-    const event = new CustomEvent('navigateQuestion', { 
-      detail: { direction: 'prev' } 
-    });
-    window.dispatchEvent(event);
+  const prevQuestion = async () => {
+    // Take screenshot before navigating with proper timing
+    await takeQuestionScreenshot(currentQuestionIndex);
+    
+    // Small delay to ensure screenshot is processed
+    setTimeout(() => {
+      // Dispatch event to ExamPage to go to previous question
+      const event = new CustomEvent('navigateQuestion', { 
+        detail: { direction: 'prev' } 
+      });
+      window.dispatchEvent(event);
+    }, 200);
   };
 
   // Generate PDF with optimized memory usage

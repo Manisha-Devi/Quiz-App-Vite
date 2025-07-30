@@ -162,18 +162,27 @@ function ExamPage() {
     } else {
       const newIndex = current + 1;
       
+      // Update current question index first
+      window.currentQuestionIndex = newIndex;
+      
+      // Set state with a small delay to ensure proper rendering
+      setTimeout(() => {
+        setCurrent(newIndex);
+        
+        // Notify DrawingOverlay about question change
+        const event = new CustomEvent('questionChanged', { 
+          detail: { 
+            questionIndex: newIndex,
+            previousIndex: current
+          } 
+        });
+        window.dispatchEvent(event);
+      }, 50);
+      
       // Force cleanup of current question resources
       if (window.gc) {
         window.gc();
       }
-      
-      setCurrent(newIndex);
-      // Notify DrawingOverlay about question change
-      window.currentQuestionIndex = newIndex;
-      const event = new CustomEvent('questionChanged', { 
-        detail: { questionIndex: newIndex } 
-      });
-      window.dispatchEvent(event);
     }
   }, [current, questions.length]);
 
@@ -183,13 +192,23 @@ function ExamPage() {
       setShowSubmitModal(true);
     } else {
       const newIndex = current - 1;
-      setCurrent(newIndex);
-      // Notify DrawingOverlay about question change
+      
+      // Update current question index first
       window.currentQuestionIndex = newIndex;
-      const event = new CustomEvent('questionChanged', { 
-        detail: { questionIndex: newIndex } 
-      });
-      window.dispatchEvent(event);
+      
+      // Set state with a small delay to ensure proper rendering
+      setTimeout(() => {
+        setCurrent(newIndex);
+        
+        // Notify DrawingOverlay about question change
+        const event = new CustomEvent('questionChanged', { 
+          detail: { 
+            questionIndex: newIndex,
+            previousIndex: current
+          } 
+        });
+        window.dispatchEvent(event);
+      }, 50);
     }
   }, [current]);
 
@@ -672,13 +691,23 @@ function ExamPage() {
                   answers={answers}
                   review={review}
                   onJump={(i) => {
-                    setCurrent(i);
-                    // Notify DrawingOverlay about question change
+                    // Update global index first
                     window.currentQuestionIndex = i;
-                    const event = new CustomEvent('questionChanged', { 
-                      detail: { questionIndex: i } 
-                    });
-                    window.dispatchEvent(event);
+                    
+                    // Set current with proper timing
+                    setTimeout(() => {
+                      setCurrent(i);
+                      
+                      // Notify DrawingOverlay about question change
+                      const event = new CustomEvent('questionChanged', { 
+                        detail: { 
+                          questionIndex: i,
+                          previousIndex: current,
+                          source: 'navigator'
+                        } 
+                      });
+                      window.dispatchEvent(event);
+                    }, 50);
                   }}
                 />
               </div>
