@@ -38,6 +38,13 @@ function ExamPage() {
     }
   };
 
+  const toggleDrawing = () => {
+    const currentDrawingState = localStorage.getItem('enableDrawing') !== 'false';
+    localStorage.setItem('enableDrawing', (!currentDrawingState).toString());
+    // Force re-render to show/hide drawing overlay
+    window.location.reload();
+  };
+
   const quizTimeRaw = localStorage.getItem('quizTime');
   const practiceMode = localStorage.getItem('practiceMode') === 'true';
   const enableDrawing = localStorage.getItem('enableDrawing') !== 'false';
@@ -217,10 +224,15 @@ function ExamPage() {
       if (e.key.toLowerCase() === 'c') handleClear();
       if (e.key.toLowerCase() === 'q') setIsSidebarOpen(prev => !prev);
       if (e.key.toLowerCase() === 'm') toggleDarkMode();
+      if (e.key === 'Enter') handleSubmit(false);
+      if (e.key.toLowerCase() === 's') handleNext();
+      if (e.key.toLowerCase() === 'h') setIsSidebarOpen(prev => !prev);
+      if (e.key.toLowerCase() === 'd') toggleDrawing();
+      if (e.key.toLowerCase() === 'f') toggleFullscreen();
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [current, questions.length, toggleDarkMode, handleClear]);
+  }, [current, questions.length, toggleDarkMode, handleClear, handleNext, handleSubmit, toggleFullscreen]);
 
   // Memoize image injection for performance
   const imageMap = useMemo(() => {
