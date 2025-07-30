@@ -14,14 +14,23 @@ function ExamPage() {
     return localStorage.getItem('darkMode') === 'true';
   });
 
-  const toggleFullscreen = () => {
+  const toggleFullscreen = useCallback(() => {
     if (isFullscreen) {
       document.exitFullscreen();
     } else {
       document.documentElement.requestFullscreen();
     }
-    setIsFullscreen(!isFullscreen);
-  };
+  }, [isFullscreen]);
+
+  // Handle fullscreen change events
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
 
   const toggleDarkMode = () => {
     const newDarkMode = !isDarkMode;
@@ -232,7 +241,7 @@ function ExamPage() {
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [current, questions.length, toggleDarkMode, handleClear, handleNext, handleSubmit, toggleFullscreen]);
+  }, [current, questions.length, toggleDarkMode, handleClear, handleNext, handleSubmit, toggleFullscreen, handleOption, goNext, goPrev, toggleReview]);
 
   // Memoize image injection for performance
   const imageMap = useMemo(() => {
