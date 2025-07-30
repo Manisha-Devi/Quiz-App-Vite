@@ -162,10 +162,8 @@
 }
 
 .title-text {
-  max-width: 60%;
-  overflow: hidden;
+  flex: 1;
   white-space: nowrap;
-  text-overflow: ellipsis;
 }
 
 @media (max-width: 768px) {

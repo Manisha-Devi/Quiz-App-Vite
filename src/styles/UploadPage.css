@@ -715,8 +715,12 @@
   font-weight: 700;
   letter-spacing: -0.5px;
   color: white;
-  flex-shrink: 0;
-  min-width: max-content;
+  flex: 1;
+}
+
+.title-text {
+  flex: 1;
+  white-space: nowrap;
 }
 
 .title-icon {
