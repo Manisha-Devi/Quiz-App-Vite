@@ -70,7 +70,7 @@ function DrawingOverlay() {
     };
   }, [currentQuestionIndex]);
 
-  // Take screenshot of current question - capture only main content
+  // Take screenshot of current question - capture full exam page with HD quality
   const takeQuestionScreenshot = async (questionIndex) => {
     // Check if we already have a recent screenshot (within 2 seconds)
     const existingScreenshot = questionScreenshots[questionIndex];
@@ -81,52 +81,67 @@ function DrawingOverlay() {
 
     try {
       // Wait for content to fully load
-      await new Promise(resolve => setTimeout(resolve, 200));
+      await new Promise(resolve => setTimeout(resolve, 300));
 
-      // Target only the main content area, not the entire exam UI
-      const examContent = document.querySelector('.exam-left') || document.querySelector('.exam-main-layout');
+      // Target the entire exam UI for full page screenshot
+      const examContent = document.querySelector('.exam-ui') || document.body;
       if (!examContent) {
         console.log('Exam content not found');
         return;
       }
 
-      console.log(`Taking screenshot for question ${questionIndex + 1}...`);
+      console.log(`Taking HD screenshot for question ${questionIndex + 1}...`);
 
-      // Use optimized settings for clean screenshots
+      // Temporarily hide drawing toggle button for clean screenshot
+      const drawingToggle = document.querySelector('.drawing-toggle');
+      const toggleDisplay = drawingToggle ? drawingToggle.style.display : null;
+      if (drawingToggle) drawingToggle.style.display = 'none';
+
+      // Use high quality settings for full page screenshot
       const canvas = await html2canvas(examContent, {
-        scale: 0.8, // Good quality
+        scale: 1.0, // Full HD quality
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
         logging: false,
-        width: examContent.offsetWidth,
-        height: examContent.offsetHeight,
+        width: window.innerWidth,
+        height: window.innerHeight,
         scrollX: 0,
         scrollY: 0,
-        ignoreElements: (element) => {
-          // Ignore drawing overlay, navigation, and other UI elements
-          return element.classList.contains('drawing-overlay') ||
-                 element.classList.contains('drawing-toggle') ||
-                 element.classList.contains('exam-header') ||
-                 element.classList.contains('exam-footer') ||
-                 element.classList.contains('exam-right') ||
-                 element.classList.contains('fullscreen-btn-container');
-        },
+        foreignObjectRendering: true,
         onclone: (clonedDoc) => {
-          // Remove navigation and UI elements
+          // Ensure all content is visible in the cloned document
+          const body = clonedDoc.body;
+          if (body) {
+            body.style.transform = 'none';
+            body.style.overflow = 'visible';
+          }
+          
+          // Remove only unwanted UI elements but keep drawing canvas
           const elementsToRemove = clonedDoc.querySelectorAll(
-            '.drawing-overlay, .drawing-toggle, .exam-header, .exam-footer, .exam-right, .fullscreen-btn-container, script, link[rel="stylesheet"]'
+            '.drawing-toggle, .fullscreen-btn-container, script'
           );
           elementsToRemove.forEach(el => el.remove());
           
-          // Clean up any hidden elements
-          const hiddenElements = clonedDoc.querySelectorAll('[style*="display: none"]');
-          hiddenElements.forEach(el => el.remove());
+          // Make sure drawing canvas is visible if it exists
+          const drawingCanvas = clonedDoc.querySelector('#scratchpad canvas');
+          if (drawingCanvas) {
+            drawingCanvas.style.display = 'block';
+            drawingCanvas.style.visibility = 'visible';
+            drawingCanvas.style.opacity = '1';
+          }
         }
       });
 
-      // Use JPEG with good compression
-      const screenshotData = canvas.toDataURL('image/jpeg', 0.9);
+      // Restore drawing toggle visibility
+      if (drawingToggle && toggleDisplay !== null) {
+        drawingToggle.style.display = toggleDisplay;
+      } else if (drawingToggle) {
+        drawingToggle.style.display = 'block';
+      }
+
+      // Use PNG for better quality with drawing elements
+      const screenshotData = canvas.toDataURL('image/png', 1.0);
 
       setQuestionScreenshots(prev => {
         const updated = {
@@ -268,7 +283,7 @@ function DrawingOverlay() {
     }, 200);
   };
 
-  // Generate PDF with optimized memory usage
+  // Generate PDF with only HD screenshots
   const generatePDF = async () => {
     try {
       // Take screenshot of current question first
@@ -286,106 +301,41 @@ function DrawingOverlay() {
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
-      const margin = 10;
-      const availableWidth = pageWidth - (2 * margin);
+      const margin = 5; // Minimal margin for more space
 
-      let totalPagesAdded = 1;
-      let screenshotsOnCurrentPage = 0;
-      let currentYPosition = margin;
-
-      // Add title
-      pdf.setFontSize(16);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('Quiz Screenshots', pageWidth / 2, 25, { align: 'center' });
-      pdf.setFontSize(10);
-      pdf.text(`Total: ${visitedQuestions.length} questions`, pageWidth / 2, 35, { align: 'center' });
-      
-      currentYPosition = 50;
+      let totalPagesAdded = 0;
 
       for (let i = 0; i < visitedQuestions.length; i++) {
         const questionIndex = visitedQuestions[i];
         const screenshot = questionScreenshots[questionIndex];
 
-        // Check if we need a new page (2 screenshots per page max)
-        if (screenshotsOnCurrentPage >= 2) {
+        // Add new page for each screenshot
+        if (i > 0) {
           pdf.addPage();
-          totalPagesAdded++;
-          screenshotsOnCurrentPage = 0;
-          currentYPosition = margin;
         }
+        totalPagesAdded++;
 
-        // Calculate image dimensions
-        const maxImageHeight = (pageHeight - 40) / 2; // Space for 2 images
-        const imageWidth = availableWidth * 0.9;
-        
-        // Add question header
-        pdf.setFontSize(12);
-        pdf.setFont('helvetica', 'bold');
-        pdf.text(`Q${questionIndex + 1}`, margin, currentYPosition);
-        currentYPosition += 10;
-
-        // Add screenshot
+        // Add screenshot - full page size
         if (screenshot && screenshot.data) {
           try {
-            // Use fixed dimensions to prevent aspect ratio issues
-            let imgWidth = imageWidth;
-            let imgHeight = maxImageHeight - 20;
+            // Calculate dimensions to fit full page
+            const availableWidth = pageWidth - (2 * margin);
+            const availableHeight = pageHeight - (2 * margin);
+            
+            // Use full available space for HD screenshot
+            const imgWidth = availableWidth;
+            const imgHeight = availableHeight;
 
-            // Center the image
-            const xPosition = (pageWidth - imgWidth) / 2;
+            // Center the screenshot on page
+            const xPosition = margin;
+            const yPosition = margin;
 
-            pdf.addImage(screenshot.data, 'JPEG', xPosition, currentYPosition, imgWidth, imgHeight);
-            currentYPosition += imgHeight + 5;
-
-            // Add simple drawing overlay if exists
-            const questionDrawings = lines[questionIndex];
-            if (questionDrawings && Object.keys(questionDrawings).length > 0) {
-              try {
-                // Create simplified drawing overlay
-                const drawingCanvas = document.createElement('canvas');
-                drawingCanvas.width = 800; // Fixed width
-                drawingCanvas.height = 600; // Fixed height
-                const ctx = drawingCanvas.getContext('2d');
-
-                // Draw simplified lines
-                Object.values(questionDrawings).forEach(line => {
-                  if (line.points && line.points.length >= 2) {
-                    ctx.strokeStyle = line.color || '#FF0000';
-                    ctx.lineWidth = 3;
-                    ctx.lineCap = 'round';
-                    ctx.beginPath();
-                    ctx.moveTo(line.points[0] * 0.8, line.points[1] * 0.6);
-                    for (let j = 2; j < line.points.length; j += 2) {
-                      ctx.lineTo(line.points[j] * 0.8, line.points[j + 1] * 0.6);
-                    }
-                    ctx.stroke();
-                  }
-                });
-
-                const drawingData = drawingCanvas.toDataURL('image/png');
-                pdf.addImage(drawingData, 'PNG', xPosition, currentYPosition - imgHeight, imgWidth, imgHeight);
-
-                // Clean up canvas
-                drawingCanvas.width = 1;
-                drawingCanvas.height = 1;
-              } catch (drawingError) {
-                console.warn('Drawing overlay error:', drawingError);
-              }
-            }
+            // Add high quality screenshot
+            pdf.addImage(screenshot.data, 'PNG', xPosition, yPosition, imgWidth, imgHeight);
 
           } catch (imgError) {
             console.error('Error adding screenshot:', imgError);
-            pdf.setFontSize(10);
-            pdf.text('Screenshot error', margin, currentYPosition);
-            currentYPosition += 15;
           }
-        }
-
-        screenshotsOnCurrentPage++;
-        
-        // Add spacing if this is the first screenshot on page
-        if (screenshotsOnCurrentPage === 1) {
-          currentYPosition += 10;
         }
       }
 
