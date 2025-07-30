@@ -217,6 +217,12 @@ function ExamPage() {
       if (e.key.toLowerCase() === 'c') handleClear();
       if (e.key.toLowerCase() === 'q') setIsSidebarOpen(prev => !prev);
       if (e.key.toLowerCase() === 'm') toggleDarkMode();
+      if (e.key.toLowerCase() === 'h' && practiceMode) {
+        // Toggle show answer in practice mode
+        if (window.toggleShowAnswer) {
+          window.toggleShowAnswer();
+        }
+      }
       if (e.key.toLowerCase() === 'd' && enableDrawing) {
         // Toggle drawing overlay if drawing is enabled
         const drawingOverlay = document.querySelector('.drawing-toggle button');

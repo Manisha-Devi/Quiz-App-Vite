@@ -69,6 +69,18 @@ const QuestionViewer = React.memo(function QuestionViewer({
     setShowAnswer(!showAnswer);
   }, [showAnswer]);
 
+  // Make toggleShowAnswer available globally for keyboard shortcut
+  React.useEffect(() => {
+    if (practiceMode) {
+      window.toggleShowAnswer = handleShowAnswer;
+    }
+    return () => {
+      if (window.toggleShowAnswer) {
+        delete window.toggleShowAnswer;
+      }
+    };
+  }, [handleShowAnswer, practiceMode]);
+
   const handleFiftyFifty = useCallback(() => {
     if (isFiftyFiftyUsed || !question.options || question.options.length !== 4 || !onFiftyFiftyUse) return;
 
