@@ -229,6 +229,63 @@ function ExamPage() {
     };
   }, [practiceMode, answers, review, navigate]);
 
+  // Prevent browser back button during exam (only in exam mode)
+  useEffect(() => {
+    if (practiceMode) return;
+
+    // Push a dummy state to prevent back navigation
+    const preventBack = () => {
+      window.history.pushState(null, null, window.location.pathname);
+    };
+
+    // Handle popstate event (back button pressed)
+    const handlePopState = (event) => {
+      event.preventDefault();
+      
+      // Show warning and push state again to stay on exam page
+      setTabLeaveWarnings(prev => {
+        const newCount = prev + 1;
+        
+        if (newCount >= 3) {
+          // Force submit after 3 warnings
+          setTimeout(() => {
+            localStorage.setItem('examAnswers', JSON.stringify(answers));
+            localStorage.setItem('reviewMarks', JSON.stringify(review));
+            navigate('/result');
+          }, 100);
+        } else {
+          // Show warning popup
+          setShowTabLeaveWarning(true);
+        }
+        
+        return newCount;
+      });
+      
+      // Push state again to prevent going back
+      window.history.pushState(null, null, window.location.pathname);
+    };
+
+    // Initial push to set up prevention
+    preventBack();
+    
+    // Listen for back button attempts
+    window.addEventListener('popstate', handlePopState);
+    
+    // Prevent page unload/refresh during exam
+    const handleBeforeUnload = (event) => {
+      event.preventDefault();
+      event.returnValue = 'Your exam is in progress. Are you sure you want to leave?';
+      return 'Your exam is in progress. Are you sure you want to leave?';
+    };
+    
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [practiceMode, answers, review, navigate]);
+
   // Show time warnings at different intervals
   useEffect(() => {
     if (practiceMode) return;
