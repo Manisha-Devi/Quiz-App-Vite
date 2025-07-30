@@ -107,47 +107,28 @@
   transform: scale(1.1);
 }
 
-.pdf-btn {
-  background: #ff6b35 !important;
-  color: white !important;
-  font-weight: bold;
-  font-size: 12px !important;
-  padding: 8px 6px !important;
-  border-radius: 6px !important;
-  min-width: 55px !important;
-}
-
-.pdf-btn:hover {
-  background: #e55a2b !important;
-  transform: scale(1.05) !important;
-}
-
-.screenshot-btn {
-  background: #28a745 !important;
-  color: white !important;
-  font-weight: bold;
-  font-size: 16px !important;
-  padding: 8px !important;
-  border-radius: 6px !important;
-  width: 36px !important;
-  height: 36px !important;
-}
-
-.screenshot-btn:hover {
-  background: #218838 !important;
-  transform: scale(1.05) !important;
-}
-
-.page-counter {
+.page-counter-circle {
   background: #007bff;
   color: white;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: bold;
-  padding: 4px 8px;
-  border-radius: 12px;
+  padding: 0;
+  border-radius: 50%;
   text-align: center;
-  min-width: 55px;
-  white-space: nowrap;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid #0056b3;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.15);
+}
+
+.page-counter-circle:hover {
+  background: #0056b3;
+  transform: scale(1.1);
 }
 
 /* Color picker buttons (only visible when pen is selected) */

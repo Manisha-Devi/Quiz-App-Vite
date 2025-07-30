@@ -417,23 +417,9 @@ function DrawingOverlay() {
           <button onClick={prevQuestion} title="Previous Question">⬅️</button>
           <button onClick={nextQuestion} title="Next Question">➡️</button>
           
-          {/* Screenshot button */}
-          <button 
-            onClick={() => takeQuestionScreenshot(currentQuestionIndex)} 
-            title="Take Screenshot of Current Question"
-            className="screenshot-btn"
-          >
-            📸
-          </button>
-          
-          {/* PDF Generation button with counter */}
-          <button onClick={generatePDF} title="Generate PDF with all questions, screenshots and drawings" className="pdf-btn">
-            📄 PDF
-          </button>
-          
-          {/* Page counter display */}
-          <div className="page-counter">
-            📄 Pages: {Object.keys(questionScreenshots).length}
+          {/* Page counter display as circular icon */}
+          <div className="page-counter-circle" title={`Screenshots captured: ${Object.keys(questionScreenshots).length}`}>
+            {Object.keys(questionScreenshots).length}
           </div>
         </div>
       </div>
