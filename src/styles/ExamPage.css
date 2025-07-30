@@ -98,16 +98,13 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  height: 8vh;
-  max-height: 80px;
-  min-height: 60px;
+  height: 80px;
   flex-shrink: 0;
   margin: 0;
   width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
   white-space: nowrap;
-  min-width: 100%;
 }
 
 .page-title {
@@ -183,19 +180,14 @@
   max-height: 20px;
 }
 
-/* Main Layout - 78% of screen height */
+/* Main Layout - Flexible height */
 .exam-main-layout {
   flex: 1;
   display: flex;
   gap: 20px;
   overflow: hidden;
-  padding: 0 20px;
-  height: 80vh;
-  /* Fixed 78% of viewport height */
-  /* max-height: 78vh; */
-  margin-top:1vh;
-  margin-bottom: 1vh;
-  /* Add margin to prevent footer overlap */
+  padding: 20px;
+  height: calc(100vh - 160px);
   transition: background-color 0.3s ease;
 }
 
@@ -203,9 +195,8 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  /* height: 100%;
+  height: 100%;
   max-height: 100%;
-  padding: 10px 0; */
 }
 
 .exam-right {
@@ -218,8 +209,8 @@
   flex-direction: column;
   border: 2px solid #e0e0e0;
   transition: all 0.3s ease-in-out;
-  /* height: 100%;
-  max-height: 100%; */
+  height: 100%;
+  max-height: 100%;
   overflow: hidden;
 }
 
@@ -239,7 +230,7 @@
   max-height: 20px;
 }
 
-/* Footer - 10% of screen height */
+/* Footer - Fixed height */
 .exam-footer {
   background: white;
   padding: 12px 24px;
@@ -249,11 +240,7 @@
   border-top: 1px solid #ccc;
   position: relative;
   z-index: 10;
-  height: 10vh;
-  /* Fixed 10% of viewport height */
-  /* min-height: 60px;
-  max-height: 80px;
-  margin-top: auto; */
+  height: 80px;
   flex-shrink: 0;
 }
 
@@ -311,10 +298,8 @@
   text-align: center;
   font-weight: bold;
   border-radius: 6px;
-  margin-bottom: 10px;
   position: fixed;
-  top: 8vh;
-  /* Place it just below the header */
+  top: 80px;
   left: 0;
   width: 100%;
   z-index: 20;
@@ -339,9 +324,7 @@
     overflow-y: hidden;
     scrollbar-width: none;
     -ms-overflow-style: none;
-    height: 8vh;
-    max-height: 70px;
-    min-height: 50px;
+    height: 70px;
   }
 
   .exam-header::-webkit-scrollbar {
@@ -349,16 +332,16 @@
   }
 
   .exam-main-layout {
-    /* flex-direction: column; */
     gap: 10px;
-    padding: 0 10px;
+    padding: 10px;
+    height: calc(100vh - 150px);
   }
 
   .exam-right {
     width: 100%;
     height: 50%;
     position: fixed;
-    bottom: 0;
+    bottom: 80px;
     left: 0;
     z-index: 99;
     border-radius: 16px 16px 0 0;
@@ -373,8 +356,8 @@
   .exam-footer {
     flex-direction: column;
     align-items: center;
-    height: 17vh;
-    /* Slightly more on mobile */
+    height: 120px;
+    padding: 8px 16px;
   }
 
   .footer-left,
@@ -383,11 +366,16 @@
     display: flex;
     justify-content: center;
     gap: 10px;
-    margin-top: 10px;
+    margin-top: 8px;
   }
 
   .exam-footer button {
     width: 100%;
+    padding: 8px 12px;
+  }
+
+  .time-warning {
+    top: 70px;
   }
 }
 
