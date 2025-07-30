@@ -1,0 +1,46 @@
+Uncaught ReferenceError: Cannot access 'handleOption' before initialization
+    at ExamPage (ExamPage.jsx:414:128)
+    at react-stack-bottom-frame (react-dom_client.js?v=88c460ff:17156:20)
+    at renderWithHooks (react-dom_client.js?v=88c460ff:3938:24)
+    at updateFunctionComponent (react-dom_client.js?v=88c460ff:6351:21)
+    at beginWork (react-dom_client.js?v=88c460ff:7386:20)
+    at runWithFiberInDEV (react-dom_client.js?v=88c460ff:1217:72)
+    at performUnitOfWork (react-dom_client.js?v=88c460ff:10600:98)
+    at workLoopSync (react-dom_client.js?v=88c460ff:10460:43)
+    at renderRootSync (react-dom_client.js?v=88c460ff:10443:13)
+    at performWorkOnRoot (react-dom_client.js?v=88c460ff:10091:46)
+ExamPage @ ExamPage.jsx:414
+react-stack-bottom-frame @ react-dom_client.js?v=88c460ff:17156
+renderWithHooks @ react-dom_client.js?v=88c460ff:3938
+updateFunctionComponent @ react-dom_client.js?v=88c460ff:6351
+beginWork @ react-dom_client.js?v=88c460ff:7386
+runWithFiberInDEV @ react-dom_client.js?v=88c460ff:1217
+performUnitOfWork @ react-dom_client.js?v=88c460ff:10600
+workLoopSync @ react-dom_client.js?v=88c460ff:10460
+renderRootSync @ react-dom_client.js?v=88c460ff:10443
+performWorkOnRoot @ react-dom_client.js?v=88c460ff:10091
+performSyncWorkOnRoot @ react-dom_client.js?v=88c460ff:11367
+flushSyncWorkAcrossRoots_impl @ react-dom_client.js?v=88c460ff:11268
+processRootScheduleInMicrotask @ react-dom_client.js?v=88c460ff:11290
+(anonymous) @ react-dom_client.js?v=88c460ff:11381
+<ExamPage>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=88c460ff:250
+App @ App.jsx:32
+react-stack-bottom-frame @ react-dom_client.js?v=88c460ff:17156
+renderWithHooks @ react-dom_client.js?v=88c460ff:3938
+updateFunctionComponent @ react-dom_client.js?v=88c460ff:6351
+beginWork @ react-dom_client.js?v=88c460ff:7386
+runWithFiberInDEV @ react-dom_client.js?v=88c460ff:1217
+performUnitOfWork @ react-dom_client.js?v=88c460ff:10600
+workLoopSync @ react-dom_client.js?v=88c460ff:10460
+renderRootSync @ react-dom_client.js?v=88c460ff:10443
+performWorkOnRoot @ react-dom_client.js?v=88c460ff:10062
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=88c460ff:11355
+performWorkUntilDeadline @ chunk-PJMRTMRF.js?v=88c460ff:30
+<App>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=88c460ff:250
+(anonymous) @ main.jsx:8Understand this error
+App.jsx:32 An error occurred in the <ExamPage> component.
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
