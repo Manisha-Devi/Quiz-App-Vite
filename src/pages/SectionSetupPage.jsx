@@ -304,9 +304,6 @@ function SectionSetupPage() {
           <button className="theme-toggle-btn" onClick={toggleDarkMode}>
             {isDarkMode ? '☀️' : '🌙'}
           </button>
-          <button className="fullscreen-btn" onClick={toggleFullscreen} title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}>
-            <span className="fullscreen-icon">{isFullscreen ? "⤲" : "⛶"}</span>
-          </button>
         </div>
       </header>
 
