@@ -406,23 +406,24 @@ function ExamPage() {
               </div>
             </header>
 
+            {!practiceMode && (showTimeWarning || timeWarningAnimating) && timeLeft <= 300 && timeLeft > 0 && (
+              <div 
+                className="time-warning"
+                style={{
+                  transform: showTimeWarning ? 'translateY(0)' : 'translateY(-100%)',
+                  opacity: showTimeWarning ? 1 : 0,
+                  maxHeight: showTimeWarning ? '60px' : '0px',
+                  marginBottom: showTimeWarning ? '15px' : '0px',
+                  padding: showTimeWarning ? '12px' : '0px'
+                }}
+              >
+                ⚠️ Only 5 minutes left. Please finish up!
+                <button className="close-btn" onClick={closeTimeWarning}>✖️</button>
+              </div>
+            )}
+
             <div className="exam-main-layout">
               <div className="exam-left">
-                {!practiceMode && (showTimeWarning || timeWarningAnimating) && timeLeft <= 300 && timeLeft > 0 && (
-                  <div 
-                    className="time-warning"
-                    style={{
-                      transform: showTimeWarning ? 'translateY(0)' : 'translateY(-100%)',
-                      opacity: showTimeWarning ? 1 : 0,
-                      maxHeight: showTimeWarning ? '60px' : '0px',
-                      marginBottom: showTimeWarning ? '15px' : '0px',
-                      padding: showTimeWarning ? '12px' : '0px'
-                    }}
-                  >
-                    ⚠️ Only 5 minutes left. Please finish up!
-                    <button className="close-btn" onClick={closeTimeWarning}>✖️</button>
-                  </div>
-                )}
                 <QuestionViewer
                   question={q}
                   currentIndex={current}
