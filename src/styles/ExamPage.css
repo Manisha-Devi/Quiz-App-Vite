@@ -1,6 +1,5 @@
 .exam-ui {
-  background: #ffffff;
-  color: #333333;
+  background:transparent;
   min-height: 100vh;
   max-height: 100vh;
   font-family: 'Segoe UI', sans-serif;
@@ -11,55 +10,59 @@
 }
 
 .exam-ui.dark-mode {
-  background: #1a1a1a;
-  color: #e0e0e0;
+  background: #1a1a1a !important;
+  color: #e0e0e0 !important;
+  min-height: 100vh !important;
+  max-height: 100vh !important;
+  overflow: hidden !important;
 }
 
 .exam-ui.dark-mode .exam-header {
-  background: rgba(26, 26, 46, 0.8);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  color: white;
+  background: rgba(26, 26, 46, 0.8) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  color: white !important;
 }
 
 .exam-ui.dark-mode .page-title {
-  color: white;
+  color: white !important;
 }
 
 .exam-ui.dark-mode .title-text {
-  color: white;
+  color: white !important;
 }
 
 .exam-ui.dark-mode .timer-box {
-  background: #e0e0e0;
-  color: #2d2d30;
+  background: #e0e0e0 !important;
+  color: #2d2d30 !important;
 }
 
 .exam-ui.dark-mode .exam-right {
-  background: #2d2d30;
-  border: 2px solid #404040;
-  color: #e0e0e0;
+  background: #2d2d30 !important;
+  border: 2px solid #404040 !important;
+  color: #e0e0e0 !important;
+  overflow: hidden !important;
 }
 
 .exam-ui.dark-mode .exam-footer {
-  background: #2d2d30;
-  border-top: 1px solid #404040;
-  color: #e0e0e0;
+  background: #2d2d30 !important;
+  border-top: 1px solid #404040 !important;
+  color: #e0e0e0 !important;
 }
 
 .exam-ui.dark-mode .exam-footer button {
-  background: #404040;
-  color: #e0e0e0;
-  border: 1px solid #555;
+  background: #404040 !important;
+  color: #e0e0e0 !important;
+  border: 1px solid #555 !important;
 }
 
 .exam-ui.dark-mode .primary {
-  background: #5a4fcf;
-  color: white;
+  background: #5a4fcf !important;
+  color: white !important;
 }
 
 .exam-ui.dark-mode .submit {
-  background: #28a745;
-  color: white;
+  background: #28a745 !important;
+  color: white !important;
 }
 
 .exam-ui.dark-mode .toggle-btn,
@@ -105,7 +108,6 @@
   overflow-y: hidden;
   white-space: nowrap;
   min-width: 100%;
-  transition: background 0.3s ease, color 0.3s ease;
 }
 
 .page-title {
