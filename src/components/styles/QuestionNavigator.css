@@ -3,10 +3,10 @@
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  padding: 16px;
+  padding: 20px;
   background: #f8f9fa;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
 }
 
 /* SCROLLABLE BUTTON GRID */
@@ -14,41 +14,43 @@
   flex: 1;
   overflow-y: auto;
   min-height: 0;
-  padding: 8px;
+  padding: 16px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
   justify-content: center;
-  margin-bottom: 16px;
-  border-radius: 8px;
+  margin-bottom: 20px;
+  border-radius: 12px;
   background: white;
-  border: 2px solid #e9ecef;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .nav-dot {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
-  font-weight: 700;
-  font-size: 14px;
-  border: 2px solid transparent;
+  font-weight: 600;
+  font-size: 15px;
+  border: none;
   color: white;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .nav-dot:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
 .nav-dot:active {
-  transform: scale(0.95);
+  transform: translateY(0);
 }
 
 .answered { 
@@ -77,34 +79,37 @@
 /* LEGEND PILL STYLES */
 .legend {
   margin-top: auto;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  gap: 6px;
-  padding: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 16px;
   background: white;
   border-radius: 12px;
-  border: 2px solid #e9ecef;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   flex-shrink: 0;
 }
 
 .legend-pill {
-  font-size: 10px;
-  padding: 6px 8px;
-  border-radius: 16px;
-  font-weight: 600;
+  font-size: 12px;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-weight: 500;
   color: white;
   white-space: nowrap;
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 6px;
   cursor: pointer;
   user-select: none;
-  border: 2px solid transparent;
-  min-height: 28px;
+  border: none;
+  min-height: 36px;
   text-align: center;
+  flex: 1;
+  min-width: 120px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .legend-pill.answered { 
@@ -130,82 +135,84 @@
 }
 
 .legend-pill input[type="checkbox"] {
-  width: 12px;
-  height: 12px;
+  width: 16px;
+  height: 16px;
   cursor: pointer;
   accent-color: white;
   margin: 0;
-  border-radius: 2px;
+  border-radius: 3px;
   flex-shrink: 0;
 }
 
 .legend-pill:hover:not(.current) {
-  opacity: 0.9;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
   .question-navigator {
-    padding: 12px;
+    padding: 16px;
   }
   
   .navigator-grid {
-    grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
-    gap: 8px;
-    padding: 6px;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 6px;
+    padding: 12px;
   }
   
   .nav-dot {
-    width: 36px;
-    height: 36px;
-    font-size: 12px;
+    width: 38px;
+    height: 38px;
+    font-size: 13px;
   }
   
   .legend {
-    gap: 4px;
-    padding: 6px;
+    gap: 6px;
+    padding: 12px;
+    flex-direction: column;
   }
   
   .legend-pill {
-    font-size: 9px;
-    padding: 4px 6px;
-    min-height: 24px;
+    font-size: 11px;
+    padding: 6px 10px;
+    min-height: 32px;
+    min-width: auto;
   }
   
   .legend-pill input[type="checkbox"] {
-    width: 10px;
-    height: 10px;
+    width: 14px;
+    height: 14px;
   }
 }
 
 @media (max-width: 480px) {
   .navigator-grid {
-    grid-template-columns: repeat(6, 1fr);
-    gap: 6px;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+    padding: 8px;
   }
   
   .nav-dot {
-    width: 32px;
-    height: 32px;
-    font-size: 11px;
+    width: 34px;
+    height: 34px;
+    font-size: 12px;
   }
   
   .legend {
-    gap: 3px;
-    padding: 4px;
+    gap: 4px;
+    padding: 8px;
   }
   
   .legend-pill {
-    font-size: 8px;
-    padding: 3px 4px;
-    min-height: 20px;
-    gap: 2px;
+    font-size: 10px;
+    padding: 4px 8px;
+    min-height: 28px;
+    gap: 3px;
   }
   
   .legend-pill input[type="checkbox"] {
-    width: 8px;
-    height: 8px;
+    width: 12px;
+    height: 12px;
   }
 }
