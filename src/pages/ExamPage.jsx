@@ -407,7 +407,7 @@ function ExamPage() {
             </header>
 
             <div className="exam-main-layout">
-              <div className={`exam-left ${(showTimeWarning || timeWarningAnimating) && timeLeft <= 300 && timeLeft > 0 ? 'with-warning' : ''}`}>
+              <div className={`exam-left ${(showTimeWarning || timeWarningAnimating) && timeLeft <= 300 && timeLeft > 0 ? 'with-warning' : ''} ${timeWarningDismissed && timeLeft <= 300 && timeLeft > 0 ? 'warning-dismissed' : ''}`}>
                 {!practiceMode && (showTimeWarning || timeWarningAnimating) && timeLeft <= 300 && timeLeft > 0 && (
                   <div 
                     className="time-warning"
