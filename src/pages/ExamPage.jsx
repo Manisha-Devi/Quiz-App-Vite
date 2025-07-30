@@ -217,10 +217,17 @@ function ExamPage() {
       if (e.key.toLowerCase() === 'c') handleClear();
       if (e.key.toLowerCase() === 'q') setIsSidebarOpen(prev => !prev);
       if (e.key.toLowerCase() === 'm') toggleDarkMode();
+      if (e.key.toLowerCase() === 'd' && enableDrawing) {
+        // Toggle drawing overlay if drawing is enabled
+        const drawingOverlay = document.querySelector('.drawing-toggle button');
+        if (drawingOverlay) {
+          drawingOverlay.click();
+        }
+      }
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [current, questions.length, toggleDarkMode, handleClear]);
+  }, [current, questions.length, toggleDarkMode, handleClear, enableDrawing]);
 
   // Memoize image injection for performance
   const imageMap = useMemo(() => {
