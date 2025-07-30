@@ -21,7 +21,7 @@ function SectionSetupPage() {
   const [practiceMode, setPracticeMode] = useState(false);
   const [enableDrawing, setEnableDrawing] = useState(false);
   const [retryMode, setRetryMode] = useState(false);
-  
+  const [noShuffle, setNoShuffle] = useState(false);
   const [questionRanges, setQuestionRanges] = useState({});
   const [sectionShuffleSettings, setSectionShuffleSettings] = useState({});
   const navigate = useNavigate();
@@ -186,19 +186,37 @@ function SectionSetupPage() {
     const selectedQuestions = [];
 
     quizData.forEach((file, fileIndex) => {
-      const sectionQuestions = [];
+      const isNoShuffle = sectionShuffleSettings[fileIndex] || false;
+      
+      if (isNoShuffle) {
+        // No shuffle mode for this section - select questions by range in original order
+        const range = questionRanges[fileIndex];
+        if (range && range.startIndex && range.endIndex) {
+          const startIdx = range.startIndex - 1; // Convert to 0-based index
+          const endIdx = range.endIndex - 1;     // Convert to 0-based index
+          
+          const rangeQuestions = file.questions
+            .slice(startIdx, endIdx + 1)
+            .map(q => ({ ...q, section: file.name }));
+          
+          selectedQuestions.push(...rangeQuestions);
+        }
+      } else {
+        // Shuffle mode for this section
+        const sectionQuestions = [];
 
-      [0, 1, 2].forEach(level => {
-        const count = questionCounts[fileIndex][level] || 0;
-        const filtered = file.questions.filter(q => q.level === level);
-        shuffleArray(filtered);
-        const picked = filtered.slice(0, count).map(q => ({ ...q, section: file.name }));
-        sectionQuestions.push(...picked);
-      });
+        [0, 1, 2].forEach(level => {
+          const count = questionCounts[fileIndex][level] || 0;
+          const filtered = file.questions.filter(q => q.level === level);
+          shuffleArray(filtered);
+          const picked = filtered.slice(0, count).map(q => ({ ...q, section: file.name }));
+          sectionQuestions.push(...picked);
+        });
 
-      // Shuffle within section
-      shuffleArray(sectionQuestions);
-      selectedQuestions.push(...sectionQuestions);
+        // Shuffle within section only
+        shuffleArray(sectionQuestions);
+        selectedQuestions.push(...sectionQuestions);
+      }
     });
 
     if (selectedQuestions.length === 0) {
@@ -212,13 +230,14 @@ function SectionSetupPage() {
     localStorage.setItem('practiceMode', String(practiceMode));
     localStorage.setItem('enableDrawing', String(enableDrawing));
     localStorage.setItem('retryMode', String(retryMode));
-    
+    localStorage.setItem('noShuffle', String(noShuffle));
     
     console.log('Quiz settings saved:', {
       quizTime: validQuizTime,
       practiceMode,
       enableDrawing,
-      retryMode
+      retryMode,
+      noShuffle
     });
 
     localStorage.setItem('finalQuiz', JSON.stringify(selectedQuestions));
@@ -239,8 +258,15 @@ function SectionSetupPage() {
 
   const getTotalSelected = () => {
     return quizData.reduce((total, file, fileIndex) => {
-      const counts = questionCounts[fileIndex] || {};
-      return total + Object.values(counts).reduce((sum, count) => sum + count, 0);
+      const isNoShuffle = sectionShuffleSettings[fileIndex] || false;
+      
+      if (isNoShuffle) {
+        const range = questionRanges[fileIndex];
+        return total + (range ? range.endIndex - range.startIndex + 1 : 0);
+      } else {
+        const counts = questionCounts[fileIndex] || {};
+        return total + Object.values(counts).reduce((sum, count) => sum + count, 0);
+      }
     }, 0);
   };
 
@@ -294,7 +320,9 @@ function SectionSetupPage() {
             const levelCounts = { 0: 0, 1: 0, 2: 0 };
             file.questions.forEach(q => levelCounts[q.level]++);
 
-            const selectedTotal = Object.values(questionCounts[fileIndex] || {}).reduce((a, b) => a + b, 0);
+            const selectedTotal = sectionShuffleSettings[fileIndex] 
+              ? (questionRanges[fileIndex] ? questionRanges[fileIndex].endIndex - questionRanges[fileIndex].startIndex + 1 : 0)
+              : Object.values(questionCounts[fileIndex] || {}).reduce((a, b) => a + b, 0);
             const fileName = `${file.name}.json`;
             const images = fileImageMap[fileName] || [];
 
@@ -319,12 +347,24 @@ function SectionSetupPage() {
                       <span className="selected-count">{selectedTotal} Selected</span>
                     </div>
                     
-                    
+                    <div className="section-shuffle-toggle">
+                      <label className="shuffle-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={sectionShuffleSettings[fileIndex] || false}
+                          onChange={(e) => handleSectionShuffleToggle(fileIndex, e.target.checked)}
+                        />
+                        <span className="checkbox-custom"></span>
+                        <span className="shuffle-label">📐 No Shuffle</span>
+                      </label>
+                    </div>
                   </div>
                 </div>
 
                 <div className="difficulty-controls">
-                  {[0, 1, 2].map(level => {
+                  {!sectionShuffleSettings[fileIndex] ? (
+                    // Original difficulty-based selection
+                    [0, 1, 2].map(level => {
                       const labels = ['Easy', 'Medium', 'Hard'];
                       const icons = ['🟢', '🟠', '🔴'];
                       const maxAvailable = levelCounts[level];
@@ -369,7 +409,85 @@ function SectionSetupPage() {
                         </div>
                       );
                     })
-                  }
+                  ) : (
+                    // Range-based selection for this section's no-shuffle mode
+                    <div className="range-selection">
+                      <div className="range-header">
+                        <span className="range-icon">📋</span>
+                        <div className="range-info">
+                          <span className="range-name">Question Range</span>
+                          <span className="range-counter">
+                            Q{questionRanges[fileIndex]?.startIndex || 1} - Q{questionRanges[fileIndex]?.endIndex || file.questions.length}
+                            ({(questionRanges[fileIndex]?.endIndex || file.questions.length) - (questionRanges[fileIndex]?.startIndex || 1) + 1} questions)
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="range-controls">
+                        <div className="range-group">
+                          <label className="range-label">Start Question:</label>
+                          <div className="slider-container">
+                            <button 
+                              className="control-button"
+                              onClick={() => handleRangeChange(fileIndex, 'start', (questionRanges[fileIndex]?.startIndex || 1) - 1)}
+                              disabled={(questionRanges[fileIndex]?.startIndex || 1) <= 1}
+                              title="Decrease Start"
+                            >
+                              −
+                            </button>
+                            <input
+                              type="range"
+                              min="1"
+                              max={questionRanges[fileIndex]?.endIndex || file.questions.length}
+                              value={questionRanges[fileIndex]?.startIndex || 1}
+                              onChange={(e) => handleRangeChange(fileIndex, 'start', e.target.value)}
+                              className="question-slider"
+                            />
+                            <button 
+                              className="control-button"
+                              onClick={() => handleRangeChange(fileIndex, 'start', (questionRanges[fileIndex]?.startIndex || 1) + 1)}
+                              disabled={(questionRanges[fileIndex]?.startIndex || 1) >= (questionRanges[fileIndex]?.endIndex || file.questions.length)}
+                              title="Increase Start"
+                            >
+                              +
+                            </button>
+                          </div>
+                          <span className="range-value">Q{questionRanges[fileIndex]?.startIndex || 1}</span>
+                        </div>
+
+                        <div className="range-group">
+                          <label className="range-label">End Question:</label>
+                          <div className="slider-container">
+                            <button 
+                              className="control-button"
+                              onClick={() => handleRangeChange(fileIndex, 'end', (questionRanges[fileIndex]?.endIndex || file.questions.length) - 1)}
+                              disabled={(questionRanges[fileIndex]?.endIndex || file.questions.length) <= (questionRanges[fileIndex]?.startIndex || 1)}
+                              title="Decrease End"
+                            >
+                              −
+                            </button>
+                            <input
+                              type="range"
+                              min={questionRanges[fileIndex]?.startIndex || 1}
+                              max={file.questions.length}
+                              value={questionRanges[fileIndex]?.endIndex || file.questions.length}
+                              onChange={(e) => handleRangeChange(fileIndex, 'end', e.target.value)}
+                              className="question-slider"
+                            />
+                            <button 
+                              className="control-button"
+                              onClick={() => handleRangeChange(fileIndex, 'end', (questionRanges[fileIndex]?.endIndex || file.questions.length) + 1)}
+                              disabled={(questionRanges[fileIndex]?.endIndex || file.questions.length) >= file.questions.length}
+                              title="Increase End"
+                            >
+                              +
+                            </button>
+                          </div>
+                          <span className="range-value">Q{questionRanges[fileIndex]?.endIndex || file.questions.length}</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             );
@@ -436,7 +554,18 @@ function SectionSetupPage() {
               </label>
             </div>
 
-            
+            <div className="config-item">
+              <span className="config-icon">📐</span>
+              <label className="config-checkbox">
+                <input
+                  type="checkbox"
+                  checked={noShuffle}
+                  onChange={(e) => setNoShuffle(e.target.checked)}
+                />
+                <span className="checkbox-custom"></span>
+                <span className="config-label">No Shuffle</span>
+              </label>
+            </div>
           </div>
         </div>
 
