@@ -305,9 +305,6 @@ function ResultPage() {
           <button className="theme-toggle-btn" onClick={toggleDarkMode} title="Toggle Dark Mode">
             {isDarkMode ? '☀️' : '🌙'}
           </button>
-          <button className="fullscreen-btn" onClick={toggleFullscreen} title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}>
-            <span className="fullscreen-icon">{isFullscreen ? "⤲" : "⛶"}</span>
-          </button>
         </div>
       </header>
 
