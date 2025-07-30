@@ -501,9 +501,9 @@ function DrawingOverlay() {
 
   return (
     <>
-      <div className="drawing-toggle">
-        <button onClick={toggleOverlay}>✍️</button>
-        <div className={`drawing-panel ${visible ? 'open' : ''}`}>
+      <div className="drawing-toggle" style={{ zIndex: 10000, pointerEvents: 'auto' }}>
+        <button onClick={toggleOverlay} style={{ zIndex: 10001 }}>✍️</button>
+        <div className={`drawing-panel ${visible ? 'open' : ''}`} style={{ zIndex: 9999 }}>
           <button onClick={() => setTool('pen')}>🖊️</button>
           {tool === 'pen' && (
             <div className="color-picker">
