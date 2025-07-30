@@ -3,7 +3,6 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSwipeable } from 'react-swipeable';
 import QuestionCard from '../components/QuestionCard';
-import DrawingOverlay from '../components/DrawingOverlay';
 import '../styles/ResultPage.css';
 
 function ResultPage() {
@@ -435,9 +434,6 @@ function ResultPage() {
           <span className="fullscreen-icon">{isFullscreen ? "⤲" : "⛶"}</span>
         </button>
       </div>
-
-      {/* Drawing Overlay */}
-      <DrawingOverlay currentQuestionIndex={currentQuestionIndex} />
     </div>
   );
 }
