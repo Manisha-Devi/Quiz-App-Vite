@@ -1,4 +1,3 @@
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import './styles/QuestionNavigator.css';
@@ -115,7 +114,7 @@ const QuestionNavigator = React.memo(function QuestionNavigator({
             <div className="stat-label">Answered</div>
           </div>
         </div>
-        
+
         <div className="stat-card review">
           <div className="stat-icon">👁️</div>
           <div className="stat-info">
@@ -123,7 +122,7 @@ const QuestionNavigator = React.memo(function QuestionNavigator({
             <div className="stat-label">Review</div>
           </div>
         </div>
-        
+
         <div className="stat-card review-answered">
           <div className="stat-icon">✓👁️</div>
           <div className="stat-info">
@@ -131,7 +130,7 @@ const QuestionNavigator = React.memo(function QuestionNavigator({
             <div className="stat-label">Both</div>
           </div>
         </div>
-        
+
         <div className="stat-card not-visited">
           <div className="stat-icon">○</div>
           <div className="stat-info">
@@ -166,14 +165,18 @@ const QuestionNavigator = React.memo(function QuestionNavigator({
       {/* Questions Grid */}
       <div className="questions-container">
         <div className="questions-grid">
-          {filteredIndexes.map((i) => {
+          {Array.from({ length: totalQuestions }, (_, i) => i).map((i) => {
             const status = getStatus(i);
+            const isVisible = selectedTypes.length === 0 || filteredIndexes.includes(i);
+
+            if (!isVisible) return null;
+
             return (
               <button
                 key={i}
                 className={`question-card ${status}`}
                 onClick={() => onJump(i)}
-                title={`Question ${i + 1} - ${status.replace("-", " ")}`}
+                title={`Question ${i + 1} - ${status.replace('-', ' ')}`}
               >
                 <div className="question-number">{i + 1}</div>
                 <div className="question-status-icon">
