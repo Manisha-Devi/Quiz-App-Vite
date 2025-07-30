@@ -335,6 +335,12 @@
   position: relative;
 }
 
+.filter-tabs::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
 /* Dark mode for filter tabs */
 .result-page.dark-mode .filter-tabs {
   background: #404040 !important;
@@ -1616,6 +1622,8 @@
   }
 
   .result-header::-webkit-scrollbar {
+    width: 0;
+    height: 0;
     display: none;
   }
 
