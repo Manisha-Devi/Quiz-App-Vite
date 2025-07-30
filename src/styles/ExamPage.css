@@ -82,26 +82,6 @@
   background: #1a1a1a !important;
 }
 
-.modal-instructions {
-  margin-top: 10px;
-  font-size: 14px;
-  color: #666;
-  font-style: italic;
-}
-
-.modal-instructions strong {
-  color: #333;
-  font-weight: 600;
-}
-
-.exam-ui.dark-mode .modal-instructions {
-  color: #ccc;
-}
-
-.exam-ui.dark-mode .modal-instructions strong {
-  color: #e0e0e0;
-}
-
 /* Header - 8% of screen height */
 .exam-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
