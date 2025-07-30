@@ -263,7 +263,7 @@ function UploadPage() {
     navigate("/sections");
   };
 
-  
+
 
   // Function to clear all data
   const clearAllData = async () => {
@@ -296,6 +296,20 @@ function UploadPage() {
       return false;
     }
   };
+
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if (e.key.toLowerCase() === 'l') {
+        setShowLocalJSON(prev => !prev);
+      }
+      if (e.key.toLowerCase() === 'm') {
+        toggleDarkMode();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [toggleDarkMode]);
 
 
   return (
@@ -351,21 +365,21 @@ function UploadPage() {
             onClick={async (e) => {
               // Prevent multiple clicks
               if (loading) return;
-              
+
               const confirmed = window.confirm(
                 "⚠️ Are you sure you want to clear ALL app data? This will delete IndexedDB, localStorage, sessionStorage, caches, and cookies. This action cannot be undone."
               );
-              
+
               if (confirmed) {
                 setLoading(true);
                 e.target.disabled = true;
-                
+
                 try {
                   console.log("Starting data clearing process...");
-                  
+
                   // Step 1: Close any existing IndexedDB connections
                   console.log("Closing IndexedDB connections...");
-                  
+
                   // Force close any existing database connections
                   const dbClosePromise = new Promise((resolve) => {
                     const request = indexedDB.open("quizDatabase");
@@ -380,17 +394,17 @@ function UploadPage() {
                       resolve();
                     };
                   });
-                  
+
                   await dbClosePromise;
-                  
+
                   // Step 2: Wait a bit for connections to properly close
                   await new Promise(resolve => setTimeout(resolve, 100));
-                  
+
                   // Step 3: Clear IndexedDB with retry mechanism
                   console.log("Clearing IndexedDB...");
                   let deleteAttempts = 0;
                   const maxAttempts = 3;
-                  
+
                   while (deleteAttempts < maxAttempts) {
                     try {
                       await deleteDatabase();
@@ -399,23 +413,23 @@ function UploadPage() {
                     } catch (dbError) {
                       deleteAttempts++;
                       console.log(`IndexedDB deletion attempt ${deleteAttempts} failed:`, dbError);
-                      
+
                       if (deleteAttempts >= maxAttempts) {
                         throw new Error("Failed to delete IndexedDB after multiple attempts");
                       }
-                      
+
                       // Wait longer between retries
                       await new Promise(resolve => setTimeout(resolve, 1000));
                     }
                   }
-                  
+
                   // Step 4: Clear other storage types
                   console.log("Clearing localStorage...");
                   localStorage.clear();
-                  
+
                   console.log("Clearing sessionStorage...");
                   sessionStorage.clear();
-                  
+
                   // Clear cookies
                   console.log("Clearing cookies...");
                   const cookies = document.cookie.split(";");
@@ -427,22 +441,22 @@ function UploadPage() {
                       document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
                     }
                   }
-                  
+
                   // Clear cache storage
                   if ('caches' in window) {
                     console.log("Clearing cache storage...");
                     const cacheKeys = await caches.keys();
                     await Promise.all(cacheKeys.map(key => caches.delete(key)));
                   }
-                  
+
                   console.log("All data cleared successfully!");
                   alert("✅ All app data cleared successfully! Page will reload now.");
-                  
+
                   // Force reload with cache bypass
                   setTimeout(() => {
                     window.location.href = window.location.href;
                   }, 1000);
-                  
+
                 } catch (error) {
                   console.error('Error clearing all data:', error);
                   alert(`❌ Failed to clear all data: ${error.message}. Please try again.`);
@@ -629,7 +643,7 @@ function UploadPage() {
           </div>
         )}
       </div>
-      
+
       {/* Footer with CacheCleaner */}
       <div className="upload-footer">
         <CacheCleaner />

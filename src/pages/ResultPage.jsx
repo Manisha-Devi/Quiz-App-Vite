@@ -42,6 +42,17 @@ function ResultPage() {
     localStorage.setItem('darkMode', newDarkMode.toString());
   }, [isDarkMode]);
 
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if (e.key.toLowerCase() === 'm') {
+        toggleDarkMode();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [toggleDarkMode]);
+
   const handlePerformanceToggle = useCallback(() => {
     setShowPerformanceChart(prev => !prev);
   }, []);

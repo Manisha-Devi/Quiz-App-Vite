@@ -36,7 +36,7 @@ function SectionSetupPage() {
       'currentRetryIndex',
       'retryStats'
     ];
-    
+
     FUTURE_PAGES_KEYS.forEach((key) => localStorage.removeItem(key));
 
     const loadData = async () => {
@@ -160,6 +160,20 @@ function SectionSetupPage() {
   const getTotalAvailable = () => {
     return quizData.reduce((total, file) => total + file.questions.length, 0);
   };
+
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if (e.key === 'Escape') {
+        setSelectedQuestionIndex(null);
+      }
+      if (e.key.toLowerCase() === 'm') {
+        toggleDarkMode();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [toggleDarkMode]);
 
   return (
     <div className={`section-page ${isDarkMode ? 'dark-mode' : ''}`}>
