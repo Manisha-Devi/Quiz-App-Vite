@@ -161,6 +161,12 @@ function ExamPage() {
       setShowSubmitModal(true);
     } else {
       const newIndex = current + 1;
+      
+      // Force cleanup of current question resources
+      if (window.gc) {
+        window.gc();
+      }
+      
       setCurrent(newIndex);
       // Notify DrawingOverlay about question change
       window.currentQuestionIndex = newIndex;
@@ -241,7 +247,31 @@ function ExamPage() {
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
+    
+    // Add periodic memory cleanup
+    const memoryCleanup = setInterval(() => {
+      // Clear unused localStorage items periodically
+      try {
+        const keys = Object.keys(localStorage);
+        keys.forEach(key => {
+          if (key.startsWith('temp_') || key.startsWith('cache_')) {
+            localStorage.removeItem(key);
+          }
+        });
+      } catch (e) {
+        console.warn('Memory cleanup warning:', e);
+      }
+      
+      // Force garbage collection if available
+      if (window.gc) {
+        window.gc();
+      }
+    }, 2 * 60 * 1000); // Every 2 minutes
+    
+    return () => {
+      window.removeEventListener('resize', onResize);
+      clearInterval(memoryCleanup);
+    };
   }, []);
 
   useEffect(() => {

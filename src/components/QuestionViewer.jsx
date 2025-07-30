@@ -123,6 +123,12 @@ const QuestionViewer = React.memo(function QuestionViewer({
   const renderMathAndHTML = useCallback((text) => {
     if (!text) return null;
 
+    // Limit text length to prevent memory issues
+    if (text.length > 50000) {
+      console.warn('Text too long, truncating to prevent memory issues');
+      text = text.substring(0, 50000) + '...';
+    }
+
     // Process the text with image sources first
     const processedText = injectImageSources(text);
 
