@@ -231,6 +231,12 @@ function ExamPage() {
         // Submit Test
         handleSubmit(false);
       }
+      if (e.key === '5' && !practiceMode) {
+        // Activate 50/50 lifeline in exam mode
+        if (window.triggerFiftyFifty) {
+          window.triggerFiftyFifty();
+        }
+      }
       if (e.key.toLowerCase() === 'd' && enableDrawing) {
         // Toggle drawing overlay if drawing is enabled
         const drawingOverlay = document.querySelector('.drawing-toggle button');

@@ -81,6 +81,18 @@ const QuestionViewer = React.memo(function QuestionViewer({
     };
   }, [handleShowAnswer, practiceMode]);
 
+  // Make 50/50 function available globally for keyboard shortcut
+  React.useEffect(() => {
+    if (!practiceMode) {
+      window.triggerFiftyFifty = handleFiftyFifty;
+    }
+    return () => {
+      if (window.triggerFiftyFifty) {
+        delete window.triggerFiftyFifty;
+      }
+    };
+  }, [handleFiftyFifty, practiceMode]);
+
   const handleFiftyFifty = useCallback(() => {
     if (isFiftyFiftyUsed || !question.options || question.options.length !== 4 || !onFiftyFiftyUse) return;
 
