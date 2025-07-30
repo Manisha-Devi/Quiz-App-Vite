@@ -216,6 +216,7 @@ function ExamPage() {
       if (e.key.toLowerCase() === 'r') toggleReview();
       if (e.key.toLowerCase() === 'c') handleClear();
       if (e.key.toLowerCase() === 'q') setIsSidebarOpen(prev => !prev);
+      if (e.key.toLowerCase() === 'h') setIsSidebarOpen(prev => !prev);
       if (e.key.toLowerCase() === 'm') toggleDarkMode();
       if (e.key.toLowerCase() === 'd' && enableDrawing) {
         // Toggle drawing overlay if drawing is enabled
