@@ -13,6 +13,9 @@ function ExamPage() {
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return localStorage.getItem('darkMode') === 'true';
   });
+  const [isBoldMode, setIsBoldMode] = useState(() => {
+    return localStorage.getItem('boldMode') === 'true';
+  });
 
   const toggleFullscreen = () => {
     if (isFullscreen) {
@@ -35,6 +38,21 @@ function ExamPage() {
     } else {
       document.documentElement.classList.remove('dark-mode');
       document.body.classList.remove('dark-mode');
+    }
+  };
+
+  const toggleBoldMode = () => {
+    const newBoldMode = !isBoldMode;
+    setIsBoldMode(newBoldMode);
+    localStorage.setItem('boldMode', newBoldMode.toString());
+
+    // Force re-render by updating document class
+    if (newBoldMode) {
+      document.documentElement.classList.add('bold-mode');
+      document.body.classList.add('bold-mode');
+    } else {
+      document.documentElement.classList.remove('bold-mode');
+      document.body.classList.remove('bold-mode');
     }
   };
 
@@ -233,6 +251,15 @@ function ExamPage() {
       document.body.classList.remove('dark-mode');
     }
 
+    // Sync bold mode with document classes
+    if (isBoldMode) {
+      document.documentElement.classList.add('bold-mode');
+      document.body.classList.add('bold-mode');
+    } else {
+      document.documentElement.classList.remove('bold-mode');
+      document.body.classList.remove('bold-mode');
+    }
+
     return () => {
       window.removeEventListener('navigateQuestion', handleDrawingNavigation);
     };
@@ -410,6 +437,7 @@ function ExamPage() {
       if (e.key.toLowerCase() === 'c') handleClear();
       if (e.key.toLowerCase() === 'q') setIsSidebarOpen(prev => !prev);
       if (e.key.toLowerCase() === 'm') toggleDarkMode();
+      if (e.key.toLowerCase() === 'b') toggleBoldMode();
       if (e.key.toLowerCase() === 'h' && practiceMode) {
         // Toggle show answer in practice mode
         if (window.toggleShowAnswer) {
@@ -444,7 +472,7 @@ function ExamPage() {
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [current, questions.length, toggleDarkMode, handleClear, enableDrawing, toggleFullscreen, goNext, goPrev, fiftyFiftyUsed, handleOption, practiceMode, toggleReview, handleNext, handleSubmit]);
+  }, [current, questions.length, toggleDarkMode, toggleBoldMode, handleClear, enableDrawing, toggleFullscreen, goNext, goPrev, fiftyFiftyUsed, handleOption, practiceMode, toggleReview, handleNext, handleSubmit]);
 
   // Memoize image injection for performance
   const imageMap = useMemo(() => {
@@ -559,6 +587,9 @@ function ExamPage() {
                 <button className="theme-toggle-btn" onClick={toggleDarkMode} title="Toggle Dark Mode">
                   {isDarkMode ? '☀️' : '🌙'}
                 </button>
+                <button className={`bold-toggle-btn ${isBoldMode ? 'active' : ''}`} onClick={toggleBoldMode} title="Toggle Bold Mode">
+                  <strong>B</strong>
+                </button>
                 <button className="toggle-btn" onClick={() => setIsSidebarOpen(o => !o)}>
                   {isMobile ? (isSidebarOpen ? '⬇️' : '⬆️') : (isSidebarOpen ? '⬅️' : '➡️')}
                 </button>
@@ -606,6 +637,7 @@ function ExamPage() {
                   injectImageSources={injectImageSources}
                   hasMath={hasMath}
                   isDarkMode={isDarkMode}
+                  isBoldMode={isBoldMode}
                   swipeHandlers={swipeHandlers}
                   practiceMode={practiceMode}
                   onClear={handleClear}

@@ -14,6 +14,7 @@ const QuestionViewer = React.memo(function QuestionViewer({
   injectImageSources,
   hasMath,
   isDarkMode,
+  isBoldMode,
   swipeHandlers,
   practiceMode = false,
   onClear,
@@ -202,7 +203,7 @@ const QuestionViewer = React.memo(function QuestionViewer({
   }, [currentIndex]);
 
   return (
-    <div className="question-box">
+    <div className={`question-box ${isBoldMode ? 'bold-mode' : ''}`}>
       <div className="section-name-display">
         <div className="section-placeholder"></div>
         <div className="section-navigation-horizontal">
@@ -307,6 +308,7 @@ QuestionViewer.propTypes = {
   injectImageSources: PropTypes.func.isRequired,
   hasMath: PropTypes.func.isRequired,
   isDarkMode: PropTypes.bool,
+  isBoldMode: PropTypes.bool,
   swipeHandlers: PropTypes.object,
   onClear: PropTypes.func,
   fiftyFiftyUsed: PropTypes.array,

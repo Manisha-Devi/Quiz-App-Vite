@@ -407,7 +407,6 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  animation: warningPulse 2s infinite;
 }
 
 /* Half time warning - Blue theme */
@@ -729,4 +728,46 @@
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+}
+
+.theme-toggle-btn, .bold-toggle-btn {
+  background: none;
+  border: 2px solid #6f42c1;
+  color: #6f42c1;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  height: 44px;
+}
+
+.theme-toggle-btn:hover, .bold-toggle-btn:hover {
+  background: #6f42c1;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.bold-toggle-btn.active {
+  background: #6f42c1;
+  color: white;
+}
+
+.dark-mode .theme-toggle-btn, .dark-mode .bold-toggle-btn {
+  border-color: #a78bfa;
+  color: #a78bfa;
+}
+
+.dark-mode .theme-toggle-btn:hover, .dark-mode .bold-toggle-btn:hover {
+  background: #a78bfa;
+  color: #1a1a1a;
+}
+
+.dark-mode .bold-toggle-btn.active {
+  background: #a78bfa;
+  color: #1a1a1a;
 }

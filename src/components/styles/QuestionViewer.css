@@ -137,6 +137,31 @@
   -ms-overflow-style: none; /* Internet Explorer 10+ */
 }
 
+/* Bold Mode Styles */
+.question-box.bold-mode .q-text {
+  font-weight: bold !important;
+}
+
+.question-box.bold-mode .q-text * {
+  font-weight: bold !important;
+}
+
+.question-box.bold-mode .option {
+  font-weight: bold !important;
+}
+
+.question-box.bold-mode .option * {
+  font-weight: bold !important;
+}
+
+.question-box.bold-mode .explanation-content {
+  font-weight: bold !important;
+}
+
+.question-box.bold-mode .explanation-content * {
+  font-weight: bold !important;
+}
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(5px); }
   to { opacity: 1; transform: translateY(0); }
