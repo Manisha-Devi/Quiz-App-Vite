@@ -94,16 +94,6 @@ function SectionSetupPage() {
     setIsFullscreen(!isFullscreen);
   };
 
-  // Handle fullscreen change events
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
-    };
-
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
-  }, []);
-
   const handleInputChange = (fileIndex, level, value) => {
     const updated = { ...questionCounts };
     const max = quizData[fileIndex].questions.filter(q => q.level === level).length;
@@ -184,12 +174,6 @@ function SectionSetupPage() {
   useEffect(() => {
     const handleKeyPress = (e) => {
       if (e.key === 'Escape') {
-        // Only allow Esc for closing modals, not fullscreen
-        if (document.fullscreenElement) {
-          e.preventDefault();
-          e.stopPropagation();
-          return false;
-        }
         setSelectedQuestionIndex(null);
       }
       if (e.key.toLowerCase() === 'm') {

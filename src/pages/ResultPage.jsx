@@ -52,16 +52,6 @@ function ResultPage() {
     setIsFullscreen(!isFullscreen);
   }, [isFullscreen]);
 
-  // Handle fullscreen change events
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
-    };
-
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
-  }, []);
-
   useEffect(() => {
     const handleKeyPress = (e) => {
       if (e.key.toLowerCase() === 'm') {
@@ -69,12 +59,6 @@ function ResultPage() {
       }
       if (e.key.toLowerCase() === 'f') {
         toggleFullscreen();
-      }
-      if (e.key === 'Escape') {
-        // Prevent Esc from exiting fullscreen
-        e.preventDefault();
-        e.stopPropagation();
-        return false;
       }
     };
 
