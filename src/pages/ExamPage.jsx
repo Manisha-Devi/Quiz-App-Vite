@@ -171,7 +171,7 @@ function ExamPage() {
 
   const handleClear = useCallback(() => {
     setAnswers(a => { const c = { ...a }; delete c[current]; return c; });
-    // Don't clear review mark - only clear the answer
+    setReview(r => { const c = { ...r }; delete c[current]; return c; });
     // Don't clear fiftyFiftyUsed - it should remain used even after clearing response
     // Clear other question states (show answer) but keep 50/50 state
     if (window.clearQuestionStates) {
