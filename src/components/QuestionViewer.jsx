@@ -69,6 +69,26 @@ const QuestionViewer = React.memo(function QuestionViewer({
     setShowAnswer(!showAnswer);
   }, [showAnswer]);
 
+  const handleFiftyFifty = useCallback(() => {
+    if (isFiftyFiftyUsed || !question.options || question.options.length !== 4 || !onFiftyFiftyUse) return;
+
+    const correctAnswer = question.answer;
+    const incorrectOptions = [];
+
+    // Find all incorrect options
+    question.options.forEach((_, index) => {
+      if (index !== correctAnswer) {
+        incorrectOptions.push(index);
+      }
+    });
+
+    // Randomly select 2 incorrect options to hide
+    const shuffled = [...incorrectOptions].sort(() => Math.random() - 0.5);
+    const optionsToHide = shuffled.slice(0, 2);
+
+    onFiftyFiftyUse(optionsToHide);
+  }, [isFiftyFiftyUsed, question, onFiftyFiftyUse]);
+
   // Make toggleShowAnswer available globally for keyboard shortcut
   React.useEffect(() => {
     if (practiceMode) {
@@ -92,26 +112,6 @@ const QuestionViewer = React.memo(function QuestionViewer({
       }
     };
   }, [handleFiftyFifty, practiceMode]);
-
-  const handleFiftyFifty = useCallback(() => {
-    if (isFiftyFiftyUsed || !question.options || question.options.length !== 4 || !onFiftyFiftyUse) return;
-
-    const correctAnswer = question.answer;
-    const incorrectOptions = [];
-
-    // Find all incorrect options
-    question.options.forEach((_, index) => {
-      if (index !== correctAnswer) {
-        incorrectOptions.push(index);
-      }
-    });
-
-    // Randomly select 2 incorrect options to hide
-    const shuffled = [...incorrectOptions].sort(() => Math.random() - 0.5);
-    const optionsToHide = shuffled.slice(0, 2);
-
-    onFiftyFiftyUse(optionsToHide);
-  }, [isFiftyFiftyUsed, question, onFiftyFiftyUse]);
 
   // Function to render text with both KaTeX math and HTML - memoized for performance
   const renderMathAndHTML = useCallback((text) => {
