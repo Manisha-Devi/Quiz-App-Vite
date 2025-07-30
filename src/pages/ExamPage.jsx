@@ -487,7 +487,9 @@ function ExamPage() {
       setAnswers(a => ({ ...a, [current]: idx }));
     }
   }, [current]);
+
   const toggleReview = useCallback(() => setReview(r => ({ ...r, [current]: !r[current] })), [current]);
+
   const handleNext = useCallback(() => {
     if (current === questions.length - 1) {
       setShowSubmitModal(true);
