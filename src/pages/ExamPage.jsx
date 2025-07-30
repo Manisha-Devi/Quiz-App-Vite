@@ -223,6 +223,14 @@ function ExamPage() {
           window.toggleShowAnswer();
         }
       }
+      if (e.key.toLowerCase() === 's') {
+        // Save & Next
+        handleNext();
+      }
+      if (e.key === 'Enter') {
+        // Submit Test
+        handleSubmit(false);
+      }
       if (e.key.toLowerCase() === 'd' && enableDrawing) {
         // Toggle drawing overlay if drawing is enabled
         const drawingOverlay = document.querySelector('.drawing-toggle button');
