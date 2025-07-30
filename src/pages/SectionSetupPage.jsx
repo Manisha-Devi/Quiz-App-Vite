@@ -224,12 +224,21 @@ function SectionSetupPage() {
       return;
     }
 
-    // Save quiz settings
-    localStorage.setItem('quizTime', String(quizTime));
+    // Save quiz settings with validation
+    const validQuizTime = Math.max(1, parseInt(quizTime) || 60); // Ensure at least 1 minute
+    localStorage.setItem('quizTime', String(validQuizTime));
     localStorage.setItem('practiceMode', String(practiceMode));
     localStorage.setItem('enableDrawing', String(enableDrawing));
     localStorage.setItem('retryMode', String(retryMode));
     localStorage.setItem('noShuffle', String(noShuffle));
+    
+    console.log('Quiz settings saved:', {
+      quizTime: validQuizTime,
+      practiceMode,
+      enableDrawing,
+      retryMode,
+      noShuffle
+    });
 
     localStorage.setItem('finalQuiz', JSON.stringify(selectedQuestions));
     navigate('/exam');

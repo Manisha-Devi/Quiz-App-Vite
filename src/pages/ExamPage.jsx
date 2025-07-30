@@ -42,12 +42,20 @@ function ExamPage() {
   const practiceMode = localStorage.getItem('practiceMode') === 'true';
   const enableDrawing = localStorage.getItem('enableDrawing') !== 'false';
 
-  if (!quizTimeRaw) throw new Error("❌ quizTime not found in localStorage.");
-  const quizTimeMinutes = Number(quizTimeRaw);
-  if (isNaN(quizTimeMinutes) || quizTimeMinutes <= 0) {
-    throw new Error("❌ Invalid quizTime in localStorage.");
+  if (!quizTimeRaw) {
+    console.error("❌ quizTime not found in localStorage.");
+    // Set default time if not found
+    localStorage.setItem('quizTime', '60');
   }
-  const EXAM_DURATION = practiceMode ? Infinity : quizTimeMinutes * 60;
+  
+  const quizTimeMinutes = Number(quizTimeRaw || '60');
+  if (isNaN(quizTimeMinutes) || quizTimeMinutes <= 0) {
+    console.error("❌ Invalid quizTime in localStorage, using default 60 minutes.");
+    localStorage.setItem('quizTime', '60');
+  }
+  
+  const validQuizTime = Math.max(1, quizTimeMinutes); // Ensure at least 1 minute
+  const EXAM_DURATION = practiceMode ? Infinity : validQuizTime * 60;
 
   const mathConfig = { loader: { load: ['input/tex', 'output/chtml'] } };
   const hasMath = (text = '') => /\\\(|\\\[|\\begin|\\frac|\\sqrt/.test(text);
@@ -62,6 +70,13 @@ function ExamPage() {
   const [fiftyFiftyUsed, setFiftyFiftyUsed] = useState(saved.fiftyFiftyUsed ?? {});
   const [timeLeft, setTimeLeft] = useState(() => {
     if (practiceMode) return Infinity;
+    
+    // Ensure EXAM_DURATION is valid
+    if (!EXAM_DURATION || EXAM_DURATION <= 0) {
+      console.warn("Invalid EXAM_DURATION, using 60 minutes as fallback");
+      return 3600; // 60 minutes fallback
+    }
+    
     return meta.startedAt
       ? Math.max(0, EXAM_DURATION - Math.floor((Date.now() - meta.startedAt) / 1000))
       : EXAM_DURATION;
