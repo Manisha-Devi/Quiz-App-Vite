@@ -21,7 +21,6 @@ function SectionSetupPage() {
   const [practiceMode, setPracticeMode] = useState(false);
   const [enableDrawing, setEnableDrawing] = useState(false);
   const [retryMode, setRetryMode] = useState(false);
-  const [noShuffle, setNoShuffle] = useState(false);
   const [questionRanges, setQuestionRanges] = useState({});
   const [sectionShuffleSettings, setSectionShuffleSettings] = useState({});
   const navigate = useNavigate();
@@ -230,14 +229,12 @@ function SectionSetupPage() {
     localStorage.setItem('practiceMode', String(practiceMode));
     localStorage.setItem('enableDrawing', String(enableDrawing));
     localStorage.setItem('retryMode', String(retryMode));
-    localStorage.setItem('noShuffle', String(noShuffle));
     
     console.log('Quiz settings saved:', {
       quizTime: validQuizTime,
       practiceMode,
       enableDrawing,
-      retryMode,
-      noShuffle
+      retryMode
     });
 
     localStorage.setItem('finalQuiz', JSON.stringify(selectedQuestions));
@@ -551,19 +548,6 @@ function SectionSetupPage() {
                 />
                 <span className="checkbox-custom"></span>
                 <span className="config-label">Retry</span>
-              </label>
-            </div>
-
-            <div className="config-item">
-              <span className="config-icon">📐</span>
-              <label className="config-checkbox">
-                <input
-                  type="checkbox"
-                  checked={noShuffle}
-                  onChange={(e) => setNoShuffle(e.target.checked)}
-                />
-                <span className="checkbox-custom"></span>
-                <span className="config-label">No Shuffle</span>
               </label>
             </div>
           </div>
