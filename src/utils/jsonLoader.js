@@ -157,6 +157,20 @@ export const loadJSONImagesFromFolders = async () => {
     const { getAllImagesForJSONFile } = await import('./indexedDB');
     const storedImages = await getAllImagesForJSONFile('Image_Demo');
     console.log('📋 Images stored for Image_Demo:', storedImages);
+    
+    // Additional verification - check individual images
+    if (storedImages.length > 0) {
+      for (const img of storedImages) {
+        console.log(`✅ Found image: ${img.imageName} (${img.data ? 'has data' : 'no data'})`);
+      }
+    } else {
+      console.log('❌ No images found in jsonImages store!');
+      console.log('🔍 Let me check what image files were found during glob...');
+      
+      // Re-check glob results
+      const debugImageModules = import.meta.glob('../json/**/*.{png,jpg,jpeg,gif,webp,svg}');
+      console.log('🖼️ Available image modules:', Object.keys(debugImageModules));
+    }
 
   } catch (error) {
     console.error('❌ Error loading JSON images:', error);

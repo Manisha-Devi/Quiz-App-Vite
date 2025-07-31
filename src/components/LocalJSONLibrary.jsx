@@ -18,7 +18,34 @@ function LocalJSONLibrary({ onFileSelect, refreshTrigger = 0 }) {
 
   useEffect(() => {
     loadLocalFiles();
+    debugJsonImagesStore(); // Debug function to check stored images
   }, []);
+
+  // Debug function to check what's in jsonImages store
+  const debugJsonImagesStore = async () => {
+    try {
+      console.log('🔍 Debugging jsonImages store...');
+      
+      // Check for Image_Demo specifically
+      const images = await dataManager.getAllImagesForJSONFile('Image_Demo');
+      console.log('📋 Images found for Image_Demo:', images);
+      
+      if (images.length === 0) {
+        console.log('⚠️ No images found in jsonImages store for Image_Demo');
+        console.log('🔄 Attempting to reload images...');
+        
+        // Try to reload images
+        const { loadJSONImagesFromFolders } = await import('../utils/jsonLoader');
+        await loadJSONImagesFromFolders();
+        
+        // Check again after reload
+        const reloadedImages = await dataManager.getAllImagesForJSONFile('Image_Demo');
+        console.log('📋 Images found after reload:', reloadedImages);
+      }
+    } catch (error) {
+      console.error('❌ Error debugging jsonImages store:', error);
+    }
+  };
 
   // Auto refresh when refreshTrigger changes
   useEffect(() => {
@@ -94,58 +121,39 @@ function LocalJSONLibrary({ onFileSelect, refreshTrigger = 0 }) {
       dataManager.setFileImageMap({})
     ]);
 
-    const handleFileSelect = async (selectedFiles, time) => {
-    try {
-      console.log('Selected files for quiz:', selectedFiles);
+    // Load associated images for selected JSON files
+    console.log('🖼️ Loading associated images for selected files...');
+    const fileImageMap = {};
 
-      // Transform selected files data to match expected format
-      const quizData = selectedFiles.map(file => ({
-        name: file.filename,
-        questions: file.data
-      }));
+    for (const file of selectedFiles) {
+      try {
+        console.log(`Loading images for ${file.filename}...`);
 
-      console.log('Transformed quiz data:', quizData);
+        // Get images from jsonImages store
+        const images = await dataManager.getAllImagesForJSONFile(file.filename);
 
-      // Load associated images for selected JSON files
-      console.log('🖼️ Loading associated images for selected files...');
-      const fileImageMap = {};
-
-      for (const file of selectedFiles) {
-        try {
-          console.log(`Loading images for ${file.filename}...`);
-
-          // Get images from jsonImages store
-          const images = await dataManager.getAllImagesForJSONFile(file.filename);
-
-          if (images && images.length > 0) {
-            // Transform images to match expected format
-            fileImageMap[`${file.filename}.json`] = images.map(img => ({
-              name: img.imageName,
-              data: img.data
-            }));
-            console.log(`✅ Loaded ${images.length} images for ${file.filename}`);
-          } else {
-            console.log(`No images found for ${file.filename}`);
-          }
-        } catch (error) {
-          console.error(`Error loading images for ${file.filename}:`, error);
+        if (images && images.length > 0) {
+          // Transform images to match expected format
+          fileImageMap[`${file.filename}.json`] = images.map(img => ({
+            name: img.imageName,
+            data: img.data
+          }));
+          console.log(`✅ Loaded ${images.length} images for ${file.filename}`);
+        } else {
+          console.log(`No images found for ${file.filename}`);
         }
+      } catch (error) {
+        console.error(`Error loading images for ${file.filename}:`, error);
       }
-
-      console.log('Final fileImageMap:', fileImageMap);
-
-      // Store fileImageMap in dataManager
-      if (Object.keys(fileImageMap).length > 0) {
-        await dataManager.setFileImageMap(fileImageMap);
-        console.log('✅ Stored fileImageMap in dataManager');
-      }
-
-      // Call the parent's onFileSelect with the transformed data
-      onFileSelect(quizData, time);
-    } catch (error) {
-      console.error('Error in handleFileSelect:', error);
     }
-  };
+
+    console.log('Final fileImageMap:', fileImageMap);
+
+    // Store fileImageMap in dataManager
+    if (Object.keys(fileImageMap).length > 0) {
+      await dataManager.setFileImageMap(fileImageMap);
+      console.log('✅ Stored fileImageMap in dataManager');
+    }
 
     onFileSelect(formattedData, quizTime);
   };
@@ -250,6 +258,26 @@ function LocalJSONLibrary({ onFileSelect, refreshTrigger = 0 }) {
       <div className="library-header">
         <h2>📁 Select Quiz Files</h2>
         <p>Choose from available JSON files to start your quiz</p>
+        <button 
+          className="debug-reload-btn"
+          onClick={async () => {
+            console.log('🔄 Manual image reload triggered...');
+            const { loadJSONImagesFromFolders } = await import('../utils/jsonLoader');
+            await loadJSONImagesFromFolders();
+            await debugJsonImagesStore();
+          }}
+          style={{
+            padding: '8px 16px',
+            margin: '8px 0',
+            backgroundColor: '#007bff',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer'
+          }}
+        >
+          🔄 Reload Images (Debug)
+        </button>
       </div>
 
       {/* Enhanced Search and Filters */}
