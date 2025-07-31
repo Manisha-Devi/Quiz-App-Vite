@@ -5,14 +5,14 @@ import CustomPopup from './CustomPopup';
 const CacheCleaner = ({ onDataChange }) => {
   const [loading, setLoading] = useState(false);
   const [currentOperation, setCurrentOperation] = useState('');
-  const [popup, setPopup] = useState({ isVisible: false, message: '', type: 'info' });
+  const [popup, setPopup] = useState({ isVisible: false, message: '', type: 'info', onConfirm: null, onCancel: null });
 
-  const showPopup = (message, type = 'info') => {
-    setPopup({ isVisible: true, message, type });
+  const showPopup = (message, type = 'info', onConfirm = null, onCancel = null) => {
+    setPopup({ isVisible: true, message, type, onConfirm, onCancel });
   };
 
   const closePopup = () => {
-    setPopup({ isVisible: false, message: '', type: 'info' });
+    setPopup({ isVisible: false, message: '', type: 'info', onConfirm: null, onCancel: null });
   };
 
   const fetchJSONData = async () => {
@@ -85,251 +85,260 @@ const CacheCleaner = ({ onDataChange }) => {
   const clearIndexedDBStores = async () => {
     if (loading) return;
 
-    const confirmed = window.confirm(
-      "⚠️ Are you sure you want to CLEAR all IndexedDB stores? This will empty all data but keep the database structure intact."
-    );
+    showPopup(
+      "⚠️ Are you sure you want to CLEAR all IndexedDB stores? This will empty all data but keep the database structure intact.",
+      'info',
+      async () => { // onConfirm
+        try {
+          setLoading(true);
+          setCurrentOperation('clearing');
+          console.log('Starting IndexedDB stores clearing process...');
 
-    if (confirmed) {
-      try {
-        setLoading(true);
-        setCurrentOperation('clearing');
-        console.log('Starting IndexedDB stores clearing process...');
+          const success = await dataManager.clearAllAppData();
 
-        const success = await dataManager.clearAllAppData();
+          if (success) {
+            console.log('✅ All IndexedDB stores cleared successfully');
+            showPopup('All IndexedDB stores cleared successfully!', 'success');
 
-        if (success) {
-          console.log('✅ All IndexedDB stores cleared successfully');
-          showPopup('All IndexedDB stores cleared successfully!', 'success');
-
-          if (onDataChange) {
-            onDataChange();
+            if (onDataChange) {
+              onDataChange();
+            }
+          } else {
+            throw new Error('Failed to clear IndexedDB stores');
           }
-        } else {
-          throw new Error('Failed to clear IndexedDB stores');
-        }
 
-      } catch (error) {
-        console.error('Error clearing IndexedDB stores:', error);
-        showPopup(`Error clearing IndexedDB stores: ${error.message || 'Unknown error occurred.'}`, 'error');
-      } finally {
-        setLoading(false);
-        setCurrentOperation('');
+        } catch (error) {
+          console.error('Error clearing IndexedDB stores:', error);
+          showPopup(`Error clearing IndexedDB stores: ${error.message || 'Unknown error occurred.'}`, 'error');
+        } finally {
+          setLoading(false);
+          setCurrentOperation('');
+        }
+      },
+      () => { // onCancel
+        closePopup();
       }
-    }
+    );
   };
 
   const clearBrowserStorage = async () => {
     if (loading) return;
 
-    const confirmed = window.confirm(
-      "⚠️ Are you sure you want to CLEAR all browser storage? This will remove localStorage, sessionStorage, and cookies for this domain."
-    );
+    showPopup(
+      "⚠️ Are you sure you want to CLEAR all browser storage? This will remove localStorage, sessionStorage, and cookies for this domain.",
+      'info',
+      async () => { // onConfirm
+        try {
+          setLoading(true);
+          setCurrentOperation('storage');
+          console.log('Starting browser storage clearing process...');
 
-    if (confirmed) {
-      try {
-        setLoading(true);
-        setCurrentOperation('storage');
-        console.log('Starting browser storage clearing process...');
+          // Clear localStorage
+          const localStorageCount = localStorage.length;
+          localStorage.clear();
+          console.log(`✅ localStorage cleared (${localStorageCount} items removed)`);
 
-        // Clear localStorage
-        const localStorageCount = localStorage.length;
-        localStorage.clear();
-        console.log(`✅ localStorage cleared (${localStorageCount} items removed)`);
+          // Clear sessionStorage
+          const sessionStorageCount = sessionStorage.length;
+          sessionStorage.clear();
+          console.log(`✅ sessionStorage cleared (${sessionStorageCount} items removed)`);
 
-        // Clear sessionStorage
-        const sessionStorageCount = sessionStorage.length;
-        sessionStorage.clear();
-        console.log(`✅ sessionStorage cleared (${sessionStorageCount} items removed)`);
+          // Clear cookies
+          const cookies = document.cookie.split(";");
+          let cookiesCleared = 0;
 
-        // Clear cookies
-        const cookies = document.cookie.split(";");
-        let cookiesCleared = 0;
-
-        for (let cookie of cookies) {
-          const eqPos = cookie.indexOf("=");
-          const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
-          if (name) {
-            // Clear cookie for current domain
-            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
-            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=${window.location.hostname}`;
-            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=.${window.location.hostname}`;
-            cookiesCleared++;
+          for (let cookie of cookies) {
+            const eqPos = cookie.indexOf("=");
+            const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+            if (name) {
+              // Clear cookie for current domain
+              document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+              document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=${window.location.hostname}`;
+              document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=.${window.location.hostname}`;
+              cookiesCleared++;
+            }
           }
-        }
-        console.log(`✅ Cookies cleared (${cookiesCleared} cookies removed)`);
+          console.log(`✅ Cookies cleared (${cookiesCleared} cookies removed)`);
 
-        // Clear cache if available
-        let cacheCount = 0;
-        if ('caches' in window) {
-          try {
-            const cacheNames = await caches.keys();
-            cacheCount = cacheNames.length;
-            await Promise.all(
-              cacheNames.map(cacheName => caches.delete(cacheName))
-            );
-            console.log(`✅ Cache cleared (${cacheCount} caches removed)`);
-          } catch (cacheError) {
-            console.warn('Warning: Could not clear cache:', cacheError);
+          // Clear cache if available
+          let cacheCount = 0;
+          if ('caches' in window) {
+            try {
+              const cacheNames = await caches.keys();
+              cacheCount = cacheNames.length;
+              await Promise.all(
+                cacheNames.map(cacheName => caches.delete(cacheName))
+              );
+              console.log(`✅ Cache cleared (${cacheCount} caches removed)`);
+            } catch (cacheError) {
+              console.warn('Warning: Could not clear cache:', cacheError);
+            }
           }
+
+          const summary = [
+            `✅ Browser storage cleared successfully!`,
+            ``,
+            `📊 Summary:`,
+            `• localStorage: ${localStorageCount} items removed`,
+            `• sessionStorage: ${sessionStorageCount} items removed`,
+            `• Cookies: ${cookiesCleared} cookies removed`,
+            `• Cache: ${cacheCount} caches cleared`
+          ].join('\n');
+
+          showPopup(summary, 'success');
+
+          if (onDataChange) {
+            onDataChange();
+          }
+
+        } catch (error) {
+          console.error('Error clearing browser storage:', error);
+          showPopup(`Error clearing browser storage: ${error.message || 'Unknown error occurred.'}`, 'error');
+        } finally {
+          setLoading(false);
+          setCurrentOperation('');
         }
-
-        const summary = [
-          `✅ Browser storage cleared successfully!`,
-          ``,
-          `📊 Summary:`,
-          `• localStorage: ${localStorageCount} items removed`,
-          `• sessionStorage: ${sessionStorageCount} items removed`, 
-          `• Cookies: ${cookiesCleared} cookies removed`,
-          `• Cache: ${cacheCount} caches cleared`
-        ].join('\n');
-
-        showPopup(summary, 'success');
-
-        if (onDataChange) {
-          onDataChange();
-        }
-
-      } catch (error) {
-        console.error('Error clearing browser storage:', error);
-        showPopup(`Error clearing browser storage: ${error.message || 'Unknown error occurred.'}`, 'error');
-      } finally {
-        setLoading(false);
-        setCurrentOperation('');
+      },
+      () => { // onCancel
+        closePopup();
       }
-    }
+    );
   };
 
   const deleteIndexedDB = async () => {
     if (loading) return;
 
-    const confirmed = window.confirm(
-      "⚠️ Are you sure you want to DELETE the entire IndexedDB database? This will remove ALL data and you'll need to reload the page to recreate the database. This action cannot be undone."
-    );
-
-    if (confirmed) {
-      try {
-        setLoading(true);
-        setCurrentOperation('deleting');
-        console.log('Starting IndexedDB database deletion process...');
-
-        // Step 1: Force close all database connections
+    showPopup(
+      "⚠️ Are you sure you want to DELETE the entire IndexedDB database? This will remove ALL data and you'll need to reload the page to recreate the database. This action cannot be undone.",
+      'info',
+      async () => { // onConfirm
         try {
-          // Close dataManager connection
-          const db = await dataManager.dbPromise;
-          if (db && !db.closed) {
-            db.close();
-            console.log('DataManager database connection closed');
-          }
+          setLoading(true);
+          setCurrentOperation('deleting');
+          console.log('Starting IndexedDB database deletion process...');
 
-          // Clear the promise to prevent reopening
-          dataManager.dbPromise = null;
-
-          // Force garbage collection if available
-          if (window.gc) {
-            window.gc();
-          }
-
-          console.log('All database connections should be closed now');
-        } catch (closeError) {
-          console.warn('Error closing connections:', closeError);
-        }
-
-        // Step 2: Wait longer for connections to fully close
-        console.log('Waiting for database connections to close...');
-        await new Promise(resolve => setTimeout(resolve, 2000));
-
-        // Step 3: Multiple attempts to delete with increasing delays
-        let attempts = 0;
-        const maxAttempts = 3;
-        let deleteSuccess = false;
-
-        while (attempts < maxAttempts && !deleteSuccess) {
-          attempts++;
-          console.log(`Delete attempt ${attempts}/${maxAttempts}...`);
-
+          // Step 1: Force close all database connections
           try {
-            const result = await new Promise((resolve, reject) => {
-              const deleteReq = indexedDB.deleteDatabase("quizDatabase");
+            // Close dataManager connection
+            const db = await dataManager.dbPromise;
+            if (db && !db.closed) {
+              db.close();
+              console.log('DataManager database connection closed');
+            }
 
-              deleteReq.onsuccess = () => {
-                console.log('✅ Database deleted successfully on attempt', attempts);
-                resolve('Database deleted successfully');
-              };
+            // Clear the promise to prevent reopening
+            dataManager.dbPromise = null;
 
-              deleteReq.onerror = (event) => {
-                console.error('❌ Delete error on attempt', attempts, ':', event.target.error);
-                reject(new Error(`Delete failed: ${event.target.error?.message || 'Unknown error'}`));
-              };
+            // Force garbage collection if available
+            if (window.gc) {
+              window.gc();
+            }
 
-              deleteReq.onblocked = () => {
-                console.warn('⚠️ Database deletion blocked on attempt', attempts);
-                reject(new Error('BLOCKED'));
-              };
+            console.log('All database connections should be closed now');
+          } catch (closeError) {
+            console.warn('Error closing connections:', closeError);
+          }
 
-              // Shorter timeout for retry attempts
-              setTimeout(() => {
-                reject(new Error('TIMEOUT'));
-              }, 5000);
-            });
+          // Step 2: Wait longer for connections to fully close
+          console.log('Waiting for database connections to close...');
+          await new Promise(resolve => setTimeout(resolve, 2000));
 
-            deleteSuccess = true;
-            console.log('Database deletion result:', result);
-            showPopup('IndexedDB database "quizDatabase" deleted successfully!', 'success');
+          // Step 3: Multiple attempts to delete with increasing delays
+          let attempts = 0;
+          const maxAttempts = 3;
+          let deleteSuccess = false;
 
-            // Force hard reload to recreate database
-            // setTimeout(() => {
-            //   window.location.href = window.location.href;
-            // }, 2000);
+          while (attempts < maxAttempts && !deleteSuccess) {
+            attempts++;
+            console.log(`Delete attempt ${attempts}/${maxAttempts}...`);
 
-          } catch (attemptError) {
-            if (attemptError.message === 'BLOCKED' && attempts < maxAttempts) {
-              console.log(`Attempt ${attempts} blocked, waiting before retry...`);
-              await new Promise(resolve => setTimeout(resolve, 3000));
-              continue;
-            } else if (attemptError.message === 'TIMEOUT' && attempts < maxAttempts) {
-              console.log(`Attempt ${attempts} timed out, retrying...`);
-              await new Promise(resolve => setTimeout(resolve, 1000));
-              continue;
-            } else {
-              throw attemptError;
+            try {
+              const result = await new Promise((resolve, reject) => {
+                const deleteReq = indexedDB.deleteDatabase("quizDatabase");
+
+                deleteReq.onsuccess = () => {
+                  console.log('✅ Database deleted successfully on attempt', attempts);
+                  resolve('Database deleted successfully');
+                };
+
+                deleteReq.onerror = (event) => {
+                  console.error('❌ Delete error on attempt', attempts, ':', event.target.error);
+                  reject(new Error(`Delete failed: ${event.target.error?.message || 'Unknown error'}`));
+                };
+
+                deleteReq.onblocked = () => {
+                  console.warn('⚠️ Database deletion blocked on attempt', attempts);
+                  reject(new Error('BLOCKED'));
+                };
+
+                // Shorter timeout for retry attempts
+                setTimeout(() => {
+                  reject(new Error('TIMEOUT'));
+                }, 5000);
+              });
+
+              deleteSuccess = true;
+              console.log('Database deletion result:', result);
+              showPopup('IndexedDB database "quizDatabase" deleted successfully!', 'success');
+
+              // Force hard reload to recreate database
+              // setTimeout(() => {
+              //   window.location.href = window.location.href;
+              // }, 2000);
+
+            } catch (attemptError) {
+              if (attemptError.message === 'BLOCKED' && attempts < maxAttempts) {
+                console.log(`Attempt ${attempts} blocked, waiting before retry...`);
+                await new Promise(resolve => setTimeout(resolve, 3000));
+                continue;
+              } else if (attemptError.message === 'TIMEOUT' && attempts < maxAttempts) {
+                console.log(`Attempt ${attempts} timed out, retrying...`);
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                continue;
+              } else {
+                throw attemptError;
+              }
             }
           }
+
+          if (!deleteSuccess) {
+            throw new Error('All delete attempts failed');
+          }
+
+        } catch (error) {
+          console.error('Error during database deletion:', error);
+
+          let errorMessage = '❌ Database deletion failed.\n\n';
+
+          if (error.message === 'BLOCKED' || error.message.includes('blocked')) {
+            errorMessage += '🔒 The database is still open in another tab or window.\n\n';
+            errorMessage += 'Please try these steps:\n';
+            errorMessage += '1. Close ALL other tabs/windows with this application\n';
+            errorMessage += '2. Wait 10 seconds\n';
+            errorMessage += '3. Try again\n\n';
+            errorMessage += 'If the problem persists, restart your browser completely.';
+          } else if (error.message.includes('timeout') || error.message === 'TIMEOUT') {
+            errorMessage += '⏱️ The operation timed out.\n\n';
+            errorMessage += 'This usually means the database is busy.\n';
+            errorMessage += 'Please refresh the page and try again.';
+          } else {
+            errorMessage += `❓ Unexpected error: ${error.message || 'Unknown error occurred.'}\n\n`;
+            errorMessage += 'Try refreshing the page and attempting again.';
+          }
+
+          showPopup(errorMessage, 'error');
+        } finally {
+          if (onDataChange) {
+            onDataChange();
+          }
+          setLoading(false);
+          setCurrentOperation('');
         }
-
-        if (!deleteSuccess) {
-          throw new Error('All delete attempts failed');
-        }
-
-      } catch (error) {
-        console.error('Error during database deletion:', error);
-
-        let errorMessage = '❌ Database deletion failed.\n\n';
-
-        if (error.message === 'BLOCKED' || error.message.includes('blocked')) {
-          errorMessage += '🔒 The database is still open in another tab or window.\n\n';
-          errorMessage += 'Please try these steps:\n';
-          errorMessage += '1. Close ALL other tabs/windows with this application\n';
-          errorMessage += '2. Wait 10 seconds\n';
-          errorMessage += '3. Try again\n\n';
-          errorMessage += 'If the problem persists, restart your browser completely.';
-        } else if (error.message.includes('timeout') || error.message === 'TIMEOUT') {
-          errorMessage += '⏱️ The operation timed out.\n\n';
-          errorMessage += 'This usually means the database is busy.\n';
-          errorMessage += 'Please refresh the page and try again.';
-        } else {
-          errorMessage += `❓ Unexpected error: ${error.message || 'Unknown error occurred.'}\n\n`;
-          errorMessage += 'Try refreshing the page and attempting again.';
-        }
-
-        showPopup(errorMessage, 'error');
-      } finally {
-        if (onDataChange) {
-          onDataChange();
-        }
-        setLoading(false);
-        setCurrentOperation('');
+      },
+      () => { // onCancel
+        closePopup();
       }
-    }
+    );
   };
 
   return (
@@ -386,11 +395,13 @@ const CacheCleaner = ({ onDataChange }) => {
         <span className="btn-description">Remove all IndexedDB data</span>
       </button>
 
-      <CustomPopup 
+      <CustomPopup
         message={popup.message}
         type={popup.type}
         isVisible={popup.isVisible}
         onClose={closePopup}
+        onConfirm={popup.onConfirm}
+        onCancel={popup.onCancel}
       />
     </>
   );
