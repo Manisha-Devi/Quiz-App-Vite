@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import dataManager from '../utils/dataManager';
 import CustomPopup from './CustomPopup';
@@ -10,6 +11,7 @@ const CacheCleaner = ({ onDataChange }) => {
     type: 'info',
     isVisible: false,
     onConfirm: null,
+    onCancel: null,
     showConfirm: false
   });
 
@@ -30,6 +32,7 @@ const CacheCleaner = ({ onDataChange }) => {
       type: 'info',
       isVisible: false,
       onConfirm: null,
+      onCancel: null,
       showConfirm: false
     });
   };
@@ -41,6 +44,7 @@ const CacheCleaner = ({ onDataChange }) => {
       "⚠️ Are you sure you want to Fetch Data? This will fetch data from the server.",
       'info',
       async () => {
+        closePopup();
         try {
           setLoading(true);
           setCurrentOperation('fetching');
@@ -87,25 +91,24 @@ const CacheCleaner = ({ onDataChange }) => {
             }
 
             console.log(`Successfully stored ${loadedData.length} JSON files in dedicated jsonFiles IndexedDB store`);
-            showPopup(`Successfully loaded ${loadedData.length} JSON files into jsonFiles IndexedDB store!`, 'success');
+            showPopup(`✅ Successfully loaded ${loadedData.length} JSON files into jsonFiles IndexedDB store!`, 'success');
 
             if (onDataChange) {
               onDataChange();
             }
           } else {
-            showPopup('No JSON files could be loaded', 'warning');
+            showPopup('⚠️ No JSON files could be loaded', 'warning');
           }
         } catch (error) {
           console.error('Error fetching JSON data:', error);
-          showPopup('Error loading JSON files. Please try again.', 'error');
+          showPopup(`❌ Error loading JSON files: ${error.message || 'Please try again.'}`, 'error');
         } finally {
           setLoading(false);
           setCurrentOperation('');
         }
       },
       () => {
-        // Cancel action - do nothing
-        console.log('Fetch data operation cancelled by user');
+        // Cancel action - just close popup
         closePopup();
       }
     );
@@ -117,7 +120,8 @@ const CacheCleaner = ({ onDataChange }) => {
     showPopup(
       "⚠️ Are you sure you want to CLEAR all IndexedDB stores? This will empty all data but keep the database structure intact.",
       'info',
-      async () => { // onConfirm
+      async () => {
+        closePopup();
         try {
           setLoading(true);
           setCurrentOperation('clearing');
@@ -127,7 +131,7 @@ const CacheCleaner = ({ onDataChange }) => {
 
           if (success) {
             console.log('✅ All IndexedDB stores cleared successfully');
-            showPopup('All IndexedDB stores cleared successfully!', 'success');
+            showPopup('✅ All IndexedDB stores cleared successfully!', 'success');
 
             if (onDataChange) {
               onDataChange();
@@ -138,13 +142,13 @@ const CacheCleaner = ({ onDataChange }) => {
 
         } catch (error) {
           console.error('Error clearing IndexedDB stores:', error);
-          showPopup(`Error clearing IndexedDB stores: ${error.message || 'Unknown error occurred.'}`, 'error');
+          showPopup(`❌ Error clearing IndexedDB stores: ${error.message || 'Unknown error occurred.'}`, 'error');
         } finally {
           setLoading(false);
           setCurrentOperation('');
         }
       },
-      () => { // onCancel
+      () => {
         closePopup();
       }
     );
@@ -156,7 +160,8 @@ const CacheCleaner = ({ onDataChange }) => {
     showPopup(
       "⚠️ Are you sure you want to CLEAR all browser storage? This will remove localStorage, sessionStorage, and cookies for this domain.",
       'info',
-      async () => { // onConfirm
+      async () => {
+        closePopup();
         try {
           setLoading(true);
           setCurrentOperation('storage');
@@ -222,13 +227,13 @@ const CacheCleaner = ({ onDataChange }) => {
 
         } catch (error) {
           console.error('Error clearing browser storage:', error);
-          showPopup(`Error clearing browser storage: ${error.message || 'Unknown error occurred.'}`, 'error');
+          showPopup(`❌ Error clearing browser storage: ${error.message || 'Unknown error occurred.'}`, 'error');
         } finally {
           setLoading(false);
           setCurrentOperation('');
         }
       },
-      () => { // onCancel
+      () => {
         closePopup();
       }
     );
@@ -240,7 +245,8 @@ const CacheCleaner = ({ onDataChange }) => {
     showPopup(
       "⚠️ Are you sure you want to DELETE the entire IndexedDB database? This will remove ALL data and you'll need to reload the page to recreate the database. This action cannot be undone.",
       'info',
-      async () => { // onConfirm
+      async () => {
+        closePopup();
         try {
           setLoading(true);
           setCurrentOperation('deleting');
@@ -308,12 +314,7 @@ const CacheCleaner = ({ onDataChange }) => {
 
               deleteSuccess = true;
               console.log('Database deletion result:', result);
-              showPopup('IndexedDB database "quizDatabase" deleted successfully!', 'success');
-
-              // Force hard reload to recreate database
-              // setTimeout(() => {
-              //   window.location.href = window.location.href;
-              // }, 2000);
+              showPopup('✅ IndexedDB database "quizDatabase" deleted successfully!', 'success');
 
             } catch (attemptError) {
               if (attemptError.message === 'BLOCKED' && attempts < maxAttempts) {
@@ -364,7 +365,7 @@ const CacheCleaner = ({ onDataChange }) => {
           setCurrentOperation('');
         }
       },
-      () => { // onCancel
+      () => {
         closePopup();
       }
     );
