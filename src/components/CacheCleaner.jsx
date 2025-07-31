@@ -5,16 +5,23 @@ import dataManager from '../utils/dataManager';
 const CacheCleaner = () => {
   const clearBrowserCache = async () => {
     try {
-      // Clear all app data
-      await dataManager.clearAllAppData();
+      console.log('Starting data clearing process...');
       
-      // Force reload without cache
-      window.location.reload(true);
+      // Clear all app data from IndexedDB stores (without dropping database)
+      const success = await dataManager.clearAllAppData();
       
-      alert('Cache cleared! Page will refresh.');
+      if (success) {
+        console.log('All IndexedDB stores cleared successfully');
+        alert('✅ All data cleared successfully! Page will refresh.');
+        
+        // Force reload without cache
+        window.location.reload(true);
+      } else {
+        throw new Error('Failed to clear IndexedDB data');
+      }
     } catch (error) {
       console.error('Error clearing cache:', error);
-      alert('Error clearing cache. Try manual browser refresh.');
+      alert('❌ Error clearing data. Please try again or refresh manually.');
     }
   };
 
@@ -55,8 +62,9 @@ const CacheCleaner = () => {
           cursor: 'pointer',
           transition: 'all 0.3s ease'
         }}
+        title="Clear all data from IndexedDB stores (keeps database structure)"
       >
-        🗑️ Clear All Data
+        🧹 Clear App Data
       </button>
       <button 
         onClick={forceRefresh} 
