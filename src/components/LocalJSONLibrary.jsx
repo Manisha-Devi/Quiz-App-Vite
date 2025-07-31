@@ -279,17 +279,7 @@ function LocalJSONLibrary({ onFileSelect }) {
             </div>
           </div>
           
-          <div className="filter-group">
-            <button 
-              className="refresh-btn"
-              onClick={() => loadLocalFiles(true)}
-              disabled={loading}
-              title="Refresh files"
-            >
-              {loading ? '⟳' : '🔄'} Refresh
-            </button>
           </div>
-        </div>
       </div>
 
       {/* Selected Files Section */}
