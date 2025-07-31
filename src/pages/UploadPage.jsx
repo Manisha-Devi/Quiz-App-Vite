@@ -48,16 +48,43 @@ function UploadPage() {
   ];
 
   useEffect(() => {
-    // Initialize data manager and load settings only
+    // Initialize data manager and auto-clear exam data
     const initializeData = async () => {
-      console.log('Initializing UploadPage - IndexedDB should be empty...');
+      console.log('Initializing UploadPage - auto-clearing exam data...');
+
+      // Auto-clear examData and examResults stores
+      try {
+        const examDataKeys = [
+          'quizData', 'finalQuiz', 'examState', 'examMeta', 
+          'fileImageMap', 'quizSetup'
+        ];
+        
+        const examResultsKeys = [
+          'examAnswers', 'reviewMarks', 'retryAnswers', 
+          'retryCompleted', 'retryQuestions', 'currentRetryIndex', 'retryStats'
+        ];
+
+        // Clear examData store
+        for (const key of examDataKeys) {
+          await dataManager.deleteExamData(key);
+        }
+
+        // Clear examResults store  
+        for (const key of examResultsKeys) {
+          await dataManager.deleteExamResults(key);
+        }
+
+        console.log('✅ Auto-cleared examData and examResults stores');
+      } catch (error) {
+        console.error('Error auto-clearing exam data:', error);
+      }
 
       // Load only user settings from IndexedDB (keep user preferences)
       const darkModeValue = await dataManager.getUserSetting('darkMode', false);
       setIsDarkMode(darkModeValue);
       console.log('Dark mode loaded:', darkModeValue);
 
-      console.log('UploadPage initialization completed - IndexedDB ready for user decision');
+      console.log('UploadPage initialization completed - exam data cleared, ready for fresh start');
     };
 
     initializeData();
