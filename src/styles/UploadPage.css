@@ -1497,37 +1497,6 @@
 .btn-text {
   font-size: 18px;
   font-weight: 600;
-
-.clear-exam-data-btn {
-  background: linear-gradient(135deg, #ff6b6b, #ee5a52);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 12px;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
-}
-
-.clear-exam-data-btn:hover {
-  background: linear-gradient(135deg, #ff5252, #e53935);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
-}
-
-.upload-page.dark-mode .clear-exam-data-btn {
-  background: linear-gradient(135deg, #ff6b6b, #ee5a52);
-}
-
-.upload-page.dark-mode .clear-exam-data-btn:hover {
-  background: linear-gradient(135deg, #ff5252, #e53935);
-}
-
 }
 
 .btn-icon {

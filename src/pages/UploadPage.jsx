@@ -50,26 +50,14 @@ function UploadPage() {
   useEffect(() => {
     // Initialize data manager and load settings only
     const initializeData = async () => {
-      console.log('Initializing UploadPage - preserving existing data...');
+      console.log('Initializing UploadPage - IndexedDB should be empty...');
 
       // Load only user settings from IndexedDB (keep user preferences)
       const darkModeValue = await dataManager.getUserSetting('darkMode', false);
       setIsDarkMode(darkModeValue);
       console.log('Dark mode loaded:', darkModeValue);
 
-      // Check if existing quiz data exists
-      const existingQuizData = await dataManager.getExamData('quizData');
-      const existingFinalQuiz = await dataManager.getExamData('finalQuiz');
-      const existingAnswers = await dataManager.getExamResults('examAnswers');
-      const existingReviewMarks = await dataManager.getExamResults('reviewMarks');
-
-      if (existingQuizData || existingFinalQuiz || Object.keys(existingAnswers || {}).length > 0 || Object.keys(existingReviewMarks || {}).length > 0) {
-        console.log('Found existing data - data preserved');
-      } else {
-        console.log('No existing data found');
-      }
-
-      console.log('UploadPage initialization completed - existing data preserved');
+      console.log('UploadPage initialization completed - IndexedDB ready for user decision');
     };
 
     initializeData();
@@ -571,27 +559,6 @@ function UploadPage() {
           </div>
           <div className="developer-tools-row">
             <CacheCleaner onDataChange={handleDataChange} />
-            <button 
-              className="clear-exam-data-btn"
-              onClick={async () => {
-                if (confirm('Clear all exam data? This will remove quiz data, answers, and review marks.')) {
-                  await dataManager.deleteExamData('quizData');
-                  await dataManager.deleteExamData('finalQuiz');
-                  await dataManager.deleteExamData('examState');
-                  await dataManager.deleteExamData('examMeta');
-                  await dataManager.deleteExamResults('examAnswers');
-                  await dataManager.deleteExamResults('reviewMarks');
-                  await dataManager.deleteExamResults('retryAnswers');
-                  await dataManager.deleteExamResults('retryCompleted');
-                  console.log('Exam data cleared manually');
-                  alert('Exam data cleared successfully!');
-                  handleDataChange();
-                }
-              }}
-              title="Clear Exam Data"
-            >
-              🗑️ Clear Exam Data
-            </button>
           </div>
         </div>
       </div>
