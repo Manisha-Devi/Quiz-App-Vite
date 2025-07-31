@@ -43,10 +43,16 @@ const CacheCleaner = () => {
       }
 
       if (loadedData.length > 0) {
-        // Store in IndexedDB
-        await dataManager.setExamData('quizData', loadedData);
-        console.log(`Successfully stored ${loadedData.length} JSON files in IndexedDB`);
-        alert(`✅ Successfully loaded ${loadedData.length} JSON files into IndexedDB!`);
+        // Store each file in dedicated jsonFiles store
+        const { storeJSONFile } = await import('../utils/indexedDB');
+        
+        for (const fileData of loadedData) {
+          await storeJSONFile(fileData.name, fileData.questions);
+          console.log(`Stored ${fileData.name} in jsonFiles store with ${fileData.questions.length} questions`);
+        }
+        
+        console.log(`Successfully stored ${loadedData.length} JSON files in dedicated jsonFiles IndexedDB store`);
+        alert(`✅ Successfully loaded ${loadedData.length} JSON files into jsonFiles IndexedDB store!`);
       } else {
         alert('⚠️ No JSON files could be loaded');
       }
