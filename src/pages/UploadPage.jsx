@@ -319,8 +319,8 @@ function UploadPage() {
           document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
       });
 
-      // Clear cache storage
-      if (caches) {
+      // Clear cache storage if available
+      if ('caches' in window) {
         const cacheKeys = await caches.keys();
         for (const key of cacheKeys) {
           await caches.delete(key);

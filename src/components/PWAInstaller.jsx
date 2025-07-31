@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 
 const PWAInstaller = () => {
@@ -47,11 +46,11 @@ const PWAInstaller = () => {
 
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
-    
+
     if (outcome === 'accepted') {
       console.log('User accepted the install prompt');
     }
-    
+
     setDeferredPrompt(null);
     setShowInstallBanner(false);
   };
@@ -98,7 +97,7 @@ const PWAInstaller = () => {
             >
               ✕
             </button>
-            
+
             <div className="text-center">
               <div className="mb-3">
                 <span style={{ fontSize: '48px' }}>📱</span>
@@ -133,7 +132,7 @@ const PWAInstaller = () => {
           </div>
         </div>
       )}
-      
+
       {/* Backdrop */}
       {showInstallBanner && (
         <div 

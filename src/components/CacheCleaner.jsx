@@ -142,7 +142,7 @@ const CacheCleaner = ({ onDataChange }) => {
         }
         console.log(`✅ Cookies cleared (${cookiesCleared} cookies removed)`);
 
-        // Clear cache if available (Service Worker cache)
+        // Clear cache if available
         if ('caches' in window) {
           try {
             const cacheNames = await caches.keys();
