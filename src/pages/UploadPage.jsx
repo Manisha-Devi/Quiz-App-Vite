@@ -428,7 +428,7 @@ function UploadPage() {
               if (loading) return;
 
               const confirmed = window.confirm(
-                "⚠️ Are you sure you want to clear ALL app data? This will delete IndexedDB, localStorage, sessionStorage, caches, and cookies. This action cannot be undone."
+                "⚠️ Are you sure you want to clear ALL app data? This will clear all data from IndexedDB stores (keeping database structure intact). This action cannot be undone."
               );
 
               if (confirmed) {
@@ -438,58 +438,14 @@ function UploadPage() {
                 try {
                   console.log("Starting data clearing process...");
 
-                  // Step 1: Close any existing IndexedDB connections
-                  console.log("Closing IndexedDB connections...");
-
-                  // Force close any existing database connections
-                  const dbClosePromise = new Promise((resolve) => {
-                    const request = indexedDB.open("quizDatabase");
-                    request.onsuccess = (event) => {
-                      const db = event.target.result;
-                      db.close();
-                      console.log("Database connection closed");
-                      resolve();
-                    };
-                    request.onerror = () => {
-                      console.log("No existing database to close");
-                      resolve();
-                    };
-                  });
-
-                  await dbClosePromise;
-
-                  // Step 2: Wait a bit for connections to properly close
-                  await new Promise(resolve => setTimeout(resolve, 100));
-
-                  // Step 3: Clear IndexedDB with retry mechanism
-                  console.log("Clearing IndexedDB...");
-                  let deleteAttempts = 0;
-                  const maxAttempts = 3;
-
-                  while (deleteAttempts < maxAttempts) {
-                    try {
-                      await deleteDatabase();
-                      console.log("IndexedDB deleted successfully");
-                      break;
-                    } catch (dbError) {
-                      deleteAttempts++;
-                      console.log(`IndexedDB deletion attempt ${deleteAttempts} failed:`, dbError);
-
-                      if (deleteAttempts >= maxAttempts) {
-                        throw new Error("Failed to delete IndexedDB after multiple attempts");
-                      }
-
-                      // Wait longer between retries
-                      await new Promise(resolve => setTimeout(resolve, 1000));
-                    }
+                  // Clear all IndexedDB stores (keeps database structure)
+                  const success = await dataManager.clearAllAppData();
+                  
+                  if (success) {
+                    console.log("✅ All IndexedDB data cleared successfully");
+                  } else {
+                    throw new Error("Failed to clear IndexedDB data");
                   }
-
-                  // Step 4: Clear other storage types
-                  console.log("Clearing localStorage...");
-                  localStorage.clear();
-
-                  console.log("Clearing sessionStorage...");
-                  sessionStorage.clear();
 
                   // Clear cookies
                   console.log("Clearing cookies...");

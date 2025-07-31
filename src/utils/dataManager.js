@@ -160,22 +160,40 @@ class DataManager {
     }
   }
 
-  // Clear all data for fresh start
+  // Clear all data for fresh start (keeps database structure intact)
   async clearAllAppData() {
     try {
       const db = await this.dbPromise;
       const stores = ['userSettings', 'examData', 'examResults', 'jsonFiles', 'jsonImages'];
 
+      // Clear each store individually without dropping database
       for (const storeName of stores) {
-        const transaction = db.transaction([storeName], 'readwrite');
-        const store = transaction.objectStore(storeName);
-        await store.clear();
+        try {
+          const transaction = db.transaction([storeName], 'readwrite');
+          const store = transaction.objectStore(storeName);
+          
+          // Wait for the clear operation to complete
+          await new Promise((resolve, reject) => {
+            const clearRequest = store.clear();
+            clearRequest.onsuccess = () => {
+              console.log(`Store ${storeName} cleared successfully`);
+              resolve();
+            };
+            clearRequest.onerror = () => {
+              console.error(`Error clearing store ${storeName}:`, clearRequest.error);
+              reject(clearRequest.error);
+            };
+          });
+        } catch (storeError) {
+          console.error(`Failed to clear store ${storeName}:`, storeError);
+          // Continue with other stores even if one fails
+        }
       }
 
-      console.log('All IndexedDB data cleared successfully');
+      console.log('All IndexedDB stores cleared successfully - database structure preserved');
       return true;
     } catch (error) {
-      console.error('Error clearing all app data:', error);
+      console.error('Error clearing app data:', error);
       return false;
     }
   }
