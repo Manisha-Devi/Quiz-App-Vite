@@ -2,7 +2,7 @@
 [
     {
         "id": 1,
-        "question": "Study the given Venn Diagram Carefully and answer the question that folows:<br><img id='Question1.png' alt='Image Missing' style='max-width: 100%; height: auto; margin: 10px 0; border: 1px solid #ccc;'><br> The number in different section indicates the number of persons. How many plumbers are there who are also hairdressers and judges.  ",
+        "question": "Study the given Venn Diagram Carefully and answer the question that folows:<br><img id='Question1.png' alt='Image Missing'><br> The number in different section indicates the number of persons. How many plumbers are there who are also hairdressers and judges.  ",
         "options": [
             "19", 
             "11", 

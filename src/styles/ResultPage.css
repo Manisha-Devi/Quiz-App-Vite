@@ -1118,6 +1118,32 @@
   color: #f0e0a0 !important;
 }
 
+/* Question Image Styling */
+.question-text img,
+.option-text img,
+.explanation-text img {
+  max-width: 100%;
+  height: auto;
+  min-height: 200px;
+  max-height: 400px;
+  width: auto;
+  margin: 15px 0;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  display: block;
+  object-fit: contain;
+  background-color: #f8f9fa;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.result-page.dark-mode .question-text img,
+.result-page.dark-mode .option-text img,
+.result-page.dark-mode .explanation-text img {
+  border-color: #555 !important;
+  background-color: #404040 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
 /* KaTeX Dark Mode Fixes */
 .result-page.dark-mode .katex {
   color: #e0e0e0 !important;
