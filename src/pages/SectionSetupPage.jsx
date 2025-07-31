@@ -57,7 +57,7 @@ function SectionSetupPage() {
         setIsDarkMode(settings.darkMode || false);
         setQuizTime(settings.quizTime || 0);
         setPracticeMode(settings.practiceMode || false);
-        setEnableDrawing(settings.enableDrawing !== false);
+        setEnableDrawing(settings.enableDrawing || false);
         setRetryMode(settings.retryMode || false);
 
         // Load quiz data with retry mechanism
