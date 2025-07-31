@@ -1,4 +1,4 @@
-import { storeJSONFile, storeJSONImage, getAllJSONFiles, clearJSONFiles } from './indexedDB';
+import { storeJSONFile, storeJSONImage, getAllJSONFiles, clearJSONFiles, storeImageInJSONImagesStore } from './indexedDB';
 
 // Helper function to get available JSON file names
 export const getAvailableJSONFiles = () => {
@@ -112,9 +112,9 @@ export const loadJSONImagesFromFolders = async () => {
             reader.readAsDataURL(blob);
           });
 
-          // Store image in by_filename IndexedDB store
-          await storeJSONImage(jsonFileName, imageName, base64Data);
-          console.log(`✅ Successfully stored image ${imageName} for ${jsonFileName} in IndexedDB by_filename store`);
+          // Store image in jsonImages IndexedDB store
+          await storeImageInJSONImagesStore(jsonFileName, imageName, base64Data);
+          console.log(`✅ Successfully stored image ${imageName} for ${jsonFileName} in IndexedDB jsonImages store`);
 
         } catch (error) {
           console.error(`Error loading image ${imagePath}:`, error);
