@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import dataManager from '../utils/dataManager';
-import { deleteDatabase } from '../utils/indexedDB';
 
 const CacheCleaner = () => {
   const [loading, setLoading] = useState(false);
@@ -70,21 +69,69 @@ const CacheCleaner = () => {
     if (confirmed) {
       try {
         setLoading(true);
-        console.log('Deleting entire IndexedDB database...');
+        console.log('Starting IndexedDB database deletion process...');
 
-        await deleteDatabase();
+        // First try to close any existing connections
+        try {
+          const db = await dataManager.dbPromise;
+          if (db && !db.closed) {
+            db.close();
+            console.log('Existing database connection closed');
+          }
+        } catch (closeError) {
+          console.warn('Could not close existing connection:', closeError);
+        }
 
-        console.log('IndexedDB database deleted successfully');
-        alert('✅ IndexedDB database deleted! Page will reload now.');
+        // Wait a bit for connections to close
+        await new Promise(resolve => setTimeout(resolve, 500));
 
-        // Force reload to recreate database
+        // Now delete the database
+        const result = await new Promise((resolve, reject) => {
+          console.log('Attempting to delete database "quizDatabase"...');
+          const deleteReq = indexedDB.deleteDatabase("quizDatabase");
+          
+          deleteReq.onsuccess = () => {
+            console.log('✅ Database deleted successfully');
+            resolve('Database deleted successfully');
+          };
+          
+          deleteReq.onerror = (event) => {
+            console.error('❌ Error deleting database:', event.target.error);
+            reject(new Error(`Delete failed: ${event.target.error?.message || 'Unknown error'}`));
+          };
+          
+          deleteReq.onblocked = () => {
+            console.warn('⚠️ Database deletion blocked - likely open in another tab');
+            reject(new Error('Database deletion blocked. Please close all other tabs/windows with this application and try again.'));
+          };
+
+          // Timeout after 10 seconds
+          setTimeout(() => {
+            reject(new Error('Database deletion timed out after 10 seconds'));
+          }, 10000);
+        });
+
+        console.log('Database deletion result:', result);
+        alert('✅ IndexedDB database "quizDatabase" deleted successfully! Page will reload now.');
+
+        // Force hard reload to recreate database
         setTimeout(() => {
-          window.location.reload(true);
+          window.location.href = window.location.href;
         }, 1000);
 
       } catch (error) {
-        console.error('Error deleting database:', error);
-        alert('❌ Error deleting database. Please try again or refresh manually.');
+        console.error('Error during database deletion:', error);
+        
+        let errorMessage = '❌ Error deleting database: ';
+        if (error.message.includes('blocked')) {
+          errorMessage += 'Database is open in another tab. Please close all other tabs and try again.';
+        } else if (error.message.includes('timed out')) {
+          errorMessage += 'Operation timed out. Please refresh the page and try again.';
+        } else {
+          errorMessage += error.message || 'Unknown error occurred.';
+        }
+        
+        alert(errorMessage);
         setLoading(false);
       }
     }
