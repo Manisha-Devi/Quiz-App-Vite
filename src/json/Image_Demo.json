@@ -2,16 +2,15 @@
 [
     {
         "id": 1,
-        "question": "Look at this diagram and identify the email flow:<br><img id='email-flow.png' alt='Email Flow Diagram' style='max-width: 100%; height: auto; margin: 10px 0; border: 1px solid #ccc;'>",
+        "question": "replace spaces with underscores if needed:<br><img id='Question1.png' alt='Image Missing' style='max-width: 100%; height: auto; margin: 10px 0; border: 1px solid #ccc;'><br> The number in different section indicates the number of persons. How many plumbers are there who are also hairdressers and judges.  ",
         "options": [
-            "Sender → SMTP Server → Recipient", 
-            "Sender → POP3 → Recipient", 
-            "Sender → IMAP → Recipient", 
-            "Direct connection"
+            "19", 
+            "11", 
+            "23", 
+            "12"
         ],
         "answer": 0,
-        "level": 1,
-        "explanation": "The correct email flow is shown in the diagram above. Here's a detailed view:<br><img id='detailed-smtp.png' alt='Detailed SMTP Process' style='max-width: 100%; height: auto; margin: 10px 0;'>"
+        "level": 1
     },
     {
         "id": 2,
