@@ -428,7 +428,7 @@ function UploadPage() {
               if (loading) return;
 
               const confirmed = window.confirm(
-                "⚠️ Are you sure you want to clear ALL app data? This will clear all data from IndexedDB stores (keeping database structure intact). This action cannot be undone."
+                "⚠️ Are you sure you want to clear IndexedDB stores? This will clear all data from IndexedDB stores only (database structure will remain intact). This action cannot be undone."
               );
 
               if (confirmed) {
@@ -436,38 +436,20 @@ function UploadPage() {
                 e.target.disabled = true;
 
                 try {
-                  console.log("Starting data clearing process...");
+                  console.log("Starting IndexedDB stores clearing process...");
 
-                  // Clear all IndexedDB stores (keeps database structure)
+                  // Clear all IndexedDB stores only (keeps database structure intact)
                   const success = await dataManager.clearAllAppData();
                   
                   if (success) {
-                    console.log("✅ All IndexedDB data cleared successfully");
+                    console.log("✅ All IndexedDB stores cleared successfully - database structure preserved");
                   } else {
-                    throw new Error("Failed to clear IndexedDB data");
+                    throw new Error("Failed to clear IndexedDB stores");
                   }
 
-                  // Clear cookies
-                  console.log("Clearing cookies...");
-                  const cookies = document.cookie.split(";");
-                  for (let cookie of cookies) {
-                    const eqPos = cookie.indexOf("=");
-                    const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
-                    if (name) {
-                      document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=${window.location.hostname}`;
-                      document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
-                    }
-                  }
-
-                  // Clear cache storage
-                  if ('caches' in window) {
-                    console.log("Clearing cache storage...");
-                    const cacheKeys = await caches.keys();
-                    await Promise.all(cacheKeys.map(key => caches.delete(key)));
-                  }
-
-                  console.log("All data cleared successfully!");
-                  alert("✅ All app data cleared successfully! Page will reload now.");
+                  console.log("IndexedDB stores clearing completed");
+                  console.log("IndexedDB stores cleared successfully!");
+                  alert("✅ IndexedDB stores cleared successfully! Page will reload now.");
 
                   // Force reload with cache bypass
                   setTimeout(() => {
@@ -483,7 +465,7 @@ function UploadPage() {
               }
             }}
             disabled={loading}
-            title="Clear All Data"
+            title="Clear IndexedDB Stores"
           >
             {loading ? "🔄" : "🗑️"}
           </button>
