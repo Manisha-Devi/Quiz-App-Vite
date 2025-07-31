@@ -1,12 +1,12 @@
 
 import React from 'react';
-import { clearAllAppData } from '../utils/dataManager';
+import dataManager from '../utils/dataManager';
 
 const CacheCleaner = () => {
   const clearBrowserCache = async () => {
     try {
       // Clear all app data
-      await clearAllAppData();
+      await dataManager.clearAllAppData();
       
       // Force reload without cache
       window.location.reload(true);
