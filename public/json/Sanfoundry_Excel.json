@@ -1,0 +1,587 @@
+[
+    {
+        "id": 1,
+        "question": "What is Microsoft Excel?",
+        "options": ["A web browser", "A word processing program", "A graphic design tool", "A spreadsheet application"],
+        "answer": 3,
+        "level": 0,
+        "explanation": "Microsoft Excel is a spreadsheet application used for organizing, analyzing, and visualizing data through tables, charts, and formulas."
+    },
+    {
+        "id": 2,
+        "question": "Who invented MS Excel and in which year?",
+        "options": ["Richard Brodie, 1985", "Steve Jobs, 1985", "Bill Gates, 1983", "Gary Kildall, 1980"],
+        "answer": 0,
+        "level": 0,
+        "explanation": "MS Excel was developed by Richard Brodie and was first released in 1985 as part of the Microsoft Office suite."
+    },
+    {
+        "id": 3,
+        "question": "What is the default file extension for an Excel workbook?",
+        "options": [".xlsx", ".xls", ".txt", ".csv"],
+        "answer": 0,
+        "level": 0,
+        "explanation": "The default file extension for Excel workbooks is .xlsx, which is the format for Excel workbooks without macros."
+    },
+    {
+        "id": 4,
+        "question": "Which file format is used to save Excel workbooks with macros?",
+        "options": [".xlsx", ".xlsb", ".xlsm", ".csv"],
+        "answer": 2,
+        "level": 0,
+        "explanation": "Workbooks with macros are saved with the .xlsm file extension."
+    },
+    {
+        "id": 5,
+        "question": "What function is used to calculate the sum of a range of cells?",
+        "options": ["ADD", "SUM", "AVERAGE", "COUNT"],
+        "answer": 1,
+        "level": 0,
+        "explanation": "The SUM function is used to add the values of a range of cells in Excel."
+    },
+    {
+        "id": 6,
+        "question": "What is the purpose of the Filter feature in Excel?",
+        "options": ["To sort the data", "To delete data", "To display only the data that meets certain criteria", "To add rows"],
+        "answer": 2,
+        "level": 0,
+        "explanation": "The Filter feature allows users to view only rows that match specified criteria, hiding the rest."
+    },
+    {
+        "id": 7,
+        "question": "How do you start a formula in Excel?",
+        "options": ["By typing @", "By typing #", "By typing +", "By typing ="],
+        "answer": 3,
+        "level": 0,
+        "explanation": "Formulas in Excel always begin with an equal sign (=)."
+    },
+    {
+        "id": 8,
+        "question": "Which function is used to count the number of numerical values in a range?",
+        "options": ["COUNT()", "COUNTBLANK()", "COUNTIF()", "COUNTA()"],
+        "answer": 0,
+        "level": 0,
+        "explanation": "The COUNT() function counts only numerical values in a range of cells."
+    },
+    {
+        "id": 9,
+        "question": "How do you insert a new worksheet in an Excel workbook?",
+        "options": ["Press Ctrl + N", "Right-click on a worksheet tab and select Insert", "Right-click on the cell and select Insert", "Use the Insert tab in the Ribbon"],
+        "answer": 1,
+        "level": 0,
+        "explanation": "To insert a new worksheet, right-click on a worksheet tab and choose 'Insert' or click the '+' button at the bottom of the sheet tabs."
+    },
+    {
+        "id": 10,
+        "question": "What is an Excel Cell?",
+        "options": ["A chart type in Excel", "A toolbar in Excel", "A type of formula", "An individual box in a worksheet for data entry"],
+        "answer": 3,
+        "level": 0,
+        "explanation": "An Excel cell is the basic unit of a worksheet, where data like text, numbers, or formulas can be entered."
+    },
+    {
+        "id": 11,
+        "question": "What is an Excel Spreadsheet?",
+        "options": ["A toolbar for formatting cells", "A type of chart in Excel", "A grid of rows and columns for organizing and analyzing data", "A collection of documents"],
+        "answer": 2,
+        "level": 0,
+        "explanation": "An Excel spreadsheet is a grid of rows and columns used to organize, calculate, and analyze data. It is the main interface of Microsoft Excel."
+    },
+    {
+        "id": 12,
+        "question": "What is an Excel Worksheet?",
+        "options": ["A collection of multiple spreadsheets", "A single sheet within an Excel workbook", "A chart tool in Excel", "A type of formula for calculations"],
+        "answer": 1,
+        "level": 0,
+        "explanation": "An Excel worksheet is a single sheet in a workbook consisting of a grid of rows and columns where data, formulas, and charts can be organized and analyzed."
+    },
+    {
+        "id": 13,
+        "question": "What is an Excel Workbook?",
+        "options": ["A formula for calculations", "A collection of worksheets in a single file", "A type of chart in Excel", "A single sheet in Excel"],
+        "answer": 1,
+        "level": 0,
+        "explanation": "An Excel workbook is a file that contains one or more worksheets, allowing users to organize and analyze data across multiple sheets in a single document."
+    },
+    {
+        "id": 14,
+        "question": "What is an Excel Macro?",
+        "options": ["A set of recorded actions to automate tasks", "A function for formatting text", "A type of formula for calculations", "A tool for creating charts"],
+        "answer": 0,
+        "level": 0,
+        "explanation": "An Excel Macro is a set of recorded actions or code that automates repetitive tasks in Excel, written in VBA (Visual Basic for Applications)."
+    },
+    {
+        "id": 15,
+        "question": "What is an Excel Graph?",
+        "options": ["A type of worksheet", "A table of numbers", "A visual representation of data (similar to a chart)", "A tool for creating formulas"],
+        "answer": 2,
+        "level": 0,
+        "explanation": "An Excel graph is essentially the same as an Excel chart, providing a visual representation of data to help analyze trends and relationships."
+    },
+    {
+        "id": 16,
+        "question": "What is an Excel Range?",
+        "options": ["A formatting style", "A collection of multiple workbooks", "A group of selected cells in a worksheet", "A specific type of chart"],
+        "answer": 2,
+        "level": 0,
+        "explanation": "An Excel range refers to a selection of cells in a worksheet, which can be used for data entry, formatting, or calculations."
+    },
+    {
+        "id": 17,
+        "question": "What is an Excel Data Table?",
+        "options": ["A tool for creating charts", "A table that only stores text data", "A type of worksheet", "A structured range of data used for analysis and calculations"],
+        "answer": 3,
+        "level": 0,
+        "explanation": "An Excel data table is a structured range of data used to organize information and perform calculations or analysis, such as for financial models or what-if scenarios."
+    },
+    {
+        "id": 18,
+        "question": "Which function is used to calculate the average in a range of cells?",
+        "options": ["SUM()", "MAX()", "AVERAGE()", "COUNT()"],
+        "answer": 2,
+        "level": 0,
+        "explanation": "The AVERAGE() function computes the arithmetic mean of the specified range of cells."
+    },
+    {
+        "id": 19,
+        "question": "Which shortcut key is used to save an Excel workbook?",
+        "options": ["Ctrl + S", "Ctrl + P", "Ctrl + C", "Ctrl + V"],
+        "answer": 0,
+        "level": 0,
+        "explanation": "Ctrl + S is the shortcut for saving an Excel workbook."
+    },
+    {
+        "id": 20,
+        "question": "What does the VLOOKUP function do?",
+        "options": ["Deletes a row", "Searches for data in columns", "Searches for data in rows", "Calculates a vertical sum"],
+        "answer": 1,
+        "level": 0,
+        "explanation": "The VLOOKUP function searches for a value in the first column of a table and returns a value in the same row from another column."
+    },
+    {
+        "id": 21,
+        "question": "How do you change the background color of a cell in Excel?",
+        "options": ["Press Ctrl + B", "Use the “Fill Color” button in the ribbon", "Right-click and select “Background Color”", "Use the “Font Color” button"],
+        "answer": 1,
+        "level": 0,
+        "explanation": "The “Fill Color” button in the ribbon is used to change the background color of a cell."
+    },
+    {
+        "id": 22,
+        "question": "Where is the Excel Solver?",
+        "options": ["In the View tab", "In the Insert tab", "In the Formulas tab", "In the Home tab"],
+        "answer": 2,
+        "level": 0,
+        "explanation": "The Excel Solver tool is located in the “Formulas” tab and is used to find an optimal solution to a problem by changing the values in a set of cells."
+    },
+    {
+        "id": 23,
+        "question": "How are cells named in MS Excel?",
+        "options": ["By using a formula", "By column letter only", "By combining column letter and row number", "By row number only"],
+        "answer": 2,
+        "level": 0,
+        "explanation": "Cells in MS Excel are named using a combination of the column letter and row number, such as A1, where “A” is the column and “1” is the row."
+    },
+    {
+        "id": 24,
+        "question": "How do you merge two or more cells in Excel?",
+        "options": ["Use the SUM function", "Click Merge & Center in the Home tab", "Use Ctrl + M", "Right-click and select Merge"],
+        "answer": 1,
+        "level": 0,
+        "explanation": "The Merge & Center option in the Home tab merges selected cells into one."
+    },
+    {
+        "id": 25,
+        "question": "What is an Excel Template?",
+        "options": ["A pre-designed spreadsheet for a specific task", "A set of formulas", "A collection of charts", "A tool for analyzing data"],
+        "answer": 0,
+        "level": 0,
+        "explanation": "An Excel template is a pre-designed spreadsheet that can be used for specific tasks, such as budgeting, scheduling, or invoicing, allowing users to fill in their own data."
+    },
+    {
+        "id": 26,
+        "question": "What does the Freeze Panes feature do?",
+        "options": ["Changes the font style", "Locks specific rows and columns in place", "Hides the Ribbon", "Deletes unwanted data"],
+        "answer": 1,
+        "level": 0,
+        "explanation": "The Freeze Panes feature locks specified rows or columns, making them visible while scrolling."
+    },
+    {
+        "id": 27,
+        "question": "How do you apply a formula to all cells in a column?",
+        "options": ["Use Ctrl + F", "Copy and paste", "Right-click and select Apply Formula", "Drag the fill handle down"],
+        "answer": 3,
+        "level": 0,
+        "explanation": "Dragging the fill handle down applies the formula to all selected cells in a column."
+    },
+    {
+        "id": 28,
+        "question": "How do you hide a row in Excel?",
+        "options": ["Right-click the row number and select “Hide”", "Right-click on the worksheet tab and select “Hide Row”", "Press Ctrl + H", "Use the “Home” tab in the ribbon"],
+        "answer": 0,
+        "level": 0,
+        "explanation": "You can hide a row by right-clicking the row number and selecting “Hide.”"
+    },
+    {
+        "id": 29,
+        "question": "What is an Excel Chart?",
+        "options": ["A tool for creating formulas", "A visual representation of data", "A table of data", "A type of worksheet"],
+        "answer": 1,
+        "level": 0,
+        "explanation": "An Excel chart is a graphical representation of data, such as a bar, line, or pie chart, used to visually analyze and present information."
+    },
+    {
+        "id": 30,
+        "question": "What is the Excel Ribbon?",
+        "options": ["A specific sheet in a workbook", "A cell formatting option", "A type of formula", "A bar at the top of the Excel window that contains various tools and commands"],
+        "answer": 3,
+        "level": 0,
+        "explanation": "The Excel Ribbon is the toolbar located at the top of the Excel window that organizes commands and tools into tabs, such as Home, Insert, and Formulas."
+    },
+    {
+        "id": 31,
+        "question": "How can you download MS Excel for free?",
+        "options": ["By using the trial version from the Microsoft website", "By downloading from unofficial websites", "By purchasing it from a third-party retailer", "By using a pirated version"],
+        "answer": 0,
+        "level": 0,
+        "explanation": "Microsoft offers a free trial version of Excel through its official website, which allows users to access all features for a limited time. Additionally, Excel can be used for free through the web-based version of Office 365 with a Microsoft account."
+    },
+    {
+        "id": 32,
+        "question": "What is an Excel Dashboard?",
+        "options": ["A tool for editing cell data", "A collection of charts and tables to visualize data in one view", "A type of Excel formula", "A way to organize worksheets"],
+        "answer": 1,
+        "level": 0,
+        "explanation": "An Excel dashboard is a visual display of key data points, often using charts, graphs, and tables, to help monitor and analyze data in a concise and interactive way."
+    },
+    {
+        "id": 33,
+        "question": "What is the Excel formula for calculating percentage?",
+        "options": ["=A1*100/B1", "=A1/B1", "=A1*B1", "=A1+B1"],
+        "answer": 0,
+        "level": 0,
+        "explanation": "The formula =A1*100/B1 calculates the percentage of A1 relative to B1 by multiplying the result by 100."
+    },
+    {
+        "id": 34,
+        "question": "What is the Excel formula for multiplication?",
+        "options": ["=A1+B1", "=A1*B1", "=A1-B1", "=A1/B1"],
+        "answer": 1,
+        "level": 0,
+        "explanation": "The formula =A1*B1 multiplies the values in cells A1 and B1 in Excel."
+    },
+    {
+        "id": 35,
+        "question": "How can you quickly select an entire column in Excel?",
+        "options": ["Press Alt + C", "Press Ctrl + C", "Click on the column header", "Double-click any cell in the column"],
+        "answer": 2,
+        "level": 0,
+        "explanation": "Clicking on the column header selects the entire column in Excel."
+    },
+    {
+        "id": 36,
+        "question": "Which Excel function is used to join two or more text strings?",
+        "options": ["TEXTJOIN", "CONCATENATE", "MERGE", "JOIN"],
+        "answer": 1,
+        "level": 0,
+        "explanation": "The CONCATENATE function combines two or more text strings into one. For example, =CONCATENATE(“Hello”, ” “, “World”) results in “Hello World”. In newer Excel versions, the TEXTJOIN function is also available for advanced text joining."
+    },
+    {
+        "id": 37,
+        "question": "Which type of chart is best for showing trends over time in Excel?",
+        "options": ["Scatter chart", "Bar chart", "Line chart", "Pie chart"],
+        "answer": 2,
+        "level": 0,
+        "explanation": "A line chart is ideal for showing trends over time, as it displays data points connected by lines, making changes over intervals easily visible."
+    },
+    {
+        "id": 38,
+        "question": "What does the TRIM function do?",
+        "options": ["Converts text to uppercase", "Removes spaces from the text, except single spaces between words", "Rounds a number to a specific decimal", "Finds the length of text"],
+        "answer": 1,
+        "level": 0,
+        "explanation": "The TRIM function removes extra spaces from text, leaving only single spaces between words. For example, =TRIM(” Hello World “) results in “Hello World”."
+    },
+    {
+        "id": 39,
+        "question": "How can you combine data from multiple sheets into one in Excel?",
+        "options": ["By copying and pasting", "By using VLOOKUP", "By using Flash Fill", "By using Consolidate"],
+        "answer": 3,
+        "level": 0,
+        "explanation": "The Consolidate feature combines data from multiple sheets or ranges, useful for summarizing large datasets."
+    },
+    {
+        "id": 40,
+        "question": "What does the NOW() function return?",
+        "options": ["A specific timestamp", "The current date only", "The current date and time", "The current time only"],
+        "answer": 2,
+        "level": 0,
+        "explanation": "The NOW() function returns the current date and time based on the system’s clock."
+    },
+    {
+        "id": 41,
+        "question": "How do you remove duplicate values in a range?",
+        "options": ["Delete manually", "Use Data -> Remove Duplicates", "Use Sort", "Use Filter"],
+        "answer": 1,
+        "level": 0,
+        "explanation": "The Remove Duplicates option in the Data tab eliminates duplicate values from the selected range."
+    },
+    {
+        "id": 42,
+        "question": "What is the purpose of the HLOOKUP function?",
+        "options": ["To search for data in columns", "To search for data in rows", "To create horizontal tables", "To sort horizontal data"],
+        "answer": 1,
+        "level": 0,
+        "explanation": "The HLOOKUP function searches for a value in the first row of a range and returns a value in the same column from another row."
+    },
+    {
+        "id": 43,
+        "question": "How can you freeze the top row in Excel?",
+        "options": ["View -> Freeze Panes -> Freeze Top Row", "View -> Split -> Top Row", "Insert -> Freeze Top Row", "Data -> Freeze Panes"],
+        "answer": 0,
+        "level": 0,
+        "explanation": "You can freeze the top row via the Freeze Panes option in the View tab."
+    },
+    {
+        "id": 44,
+        "question": "Which function is used to find the largest value in a range?",
+        "options": ["MIN()", "AVERAGE()", "MAX()", "LARGE()"],
+        "answer": 2,
+        "level": 0,
+        "explanation": "The MAX() function returns the highest value in a specified range."
+    },
+    {
+        "id": 45,
+        "question": "Which feature allows you to summarize data in Excel?",
+        "options": ["Goal Seek", "Conditional Formatting", "Pivot Table", "Data Validation"],
+        "answer": 2,
+        "level": 0,
+        "explanation": "Pivot Tables help summarize and analyze large datasets."
+    },
+    {
+        "id": 46,
+        "question": "What does the IF function do?",
+        "options": ["Formats cells", "Performs logical tests", "Finds average values", "Sorts data"],
+        "answer": 1,
+        "level": 0,
+        "explanation": "The IF function checks conditions and returns different values based on the result."
+    },
+    {
+        "id": 47,
+        "question": "How do you apply a predefined style to cells in Excel?",
+        "options": ["Right-click the cell and select “Style”", "Press Ctrl + Alt + S", "Use the Styles group in the Home tab", "Click Insert -> Style"],
+        "answer": 2,
+        "level": 0,
+        "explanation": "Predefined styles can be applied through the Styles group in the Home tab."
+    },
+    {
+        "id": 48,
+        "question": "What does the Excel function =SUMIF(A1:A10, '>10') do?",
+        "options": ["Returns the average of values greater than 10 in A1:A10", "Adds all values in the range A1:A10", "Adds only values greater than 10 from the range A1:A10", "Returns the number of values greater than 10 in A1:A10"],
+        "answer": 2,
+        "level": 0,
+        "explanation": "The =SUMIF function adds all values in the range A1:A10 that are greater than 10."
+    },
+    {
+        "id": 49,
+        "question": "How can you sort data in Excel?",
+        "options": ["Use the Sort option in the Data tab", "Use the Wrap Text option", "Use Ctrl + S", "Use the Format menu"],
+        "answer": 0,
+        "level": 0,
+        "explanation": "The Sort option in the Data tab allows you to arrange data in ascending or descending order."
+    },
+    {
+        "id": 50,
+        "question": "What happens when you press Ctrl + T in Excel?",
+        "options": ["Opens the Format Cells dialog box", "Converts a range of cells into a table", "Inserts a new worksheet", "Deletes the selected cells"],
+        "answer": 1,
+        "level": 0,
+        "explanation": "Ctrl + T converts the selected range into a table with built-in sorting and filtering features."
+    },
+    {
+        "id": 51,
+        "question": "In Excel, how do you reference a cell from another worksheet in the same workbook?",
+        "options": ["=Sheet1(A1)", "=A1(Sheet1)", "=Sheet1.A1", "=Sheet1!A1"],
+        "answer": 3,
+        "level": 0,
+        "explanation": "To reference a cell in another worksheet, the syntax is =Sheet1!A1, where “Sheet1” is the name of the worksheet and “A1” is the cell reference."
+    },
+    {
+        "id": 52,
+        "question": "In Excel, how can you prevent a formula from changing when you copy it to another cell?",
+        "options": ["Use relative references (A1)", "Use mixed references (A$1)", "Use absolute references ($A$1)", "Use the formula bar"],
+        "answer": 2,
+        "level": 0,
+        "explanation": "Absolute references ($A$1) prevent the formula from changing when copied to another cell."
+    },
+    {
+        "id": 53,
+        "question": "How do you perform a multiple condition lookup in Excel using the 'INDEX MATCH' combination?",
+        "options": ["By adding additional MATCH functions in the formula", "By using the SUMPRODUCT function with INDEX", "By combining multiple IF functions in the INDEX formula", "By using wildcards in the MATCH function"],
+        "answer": 0,
+        "level": 0,
+        "explanation": "To perform a multiple condition lookup, you can use multiple MATCH functions inside the INDEX function to evaluate more than one condition."
+    },
+    {
+        "id": 54,
+        "question": "What is the difference between MS Word and MS Excel?",
+        "options": ["MS Word is for graphical design, while MS Excel is for coding", "MS Word focuses on text editing, while MS Excel focuses on data analysis and calculations", "MS Word is used for spreadsheets, while MS Excel is used for documents", "MS Word is only available in the cloud, while MS Excel is not"],
+        "answer": 1,
+        "level": 0,
+        "explanation": "MS Word is primarily a word processing software used for text editing and formatting, while MS Excel is a spreadsheet program used for data organization, analysis, and calculation."
+    },
+    {
+        "id": 55,
+        "question": "What does the Ctrl + Z shortcut do in Excel?",
+        "options": ["Save the workbook", "Undo the last action", "Close the workbook", "Redo the last action"],
+        "answer": 1,
+        "level": 0,
+        "explanation": "Ctrl + Z is the universal shortcut for undoing the most recent action in Excel and many other applications."
+    },
+    {
+        "id": 56,
+        "question": "What happens if you press Ctrl + Shift + L in Excel?",
+        "options": ["A new worksheet is created", "Filters are applied or removed", "A new row is added", "The worksheet is saved"],
+        "answer": 1,
+        "level": 0,
+        "explanation": "Ctrl + Shift + L toggles filters on or off for the active range of cells, making it easier to filter and sort data."
+    },
+    {
+        "id": 57,
+        "question": "Which shortcut is used to open the Format Cells dialog box?",
+        "options": ["Ctrl + 1", "Ctrl + Shift + F", "Ctrl + F", "Ctrl + Alt + C"],
+        "answer": 0,
+        "level": 0,
+        "explanation": "Ctrl + 1 opens the Format Cells dialog box, where you can change the appearance of numbers, text, alignment, and other cell properties."
+    },
+    {
+        "id": 58,
+        "question": "How do you insert a comment in Excel?",
+        "options": ["Press Ctrl + C", "Right-click on a cell and select 'Insert Comment'", "Use the Insert tab", "Click on Review > Insert Comment"],
+        "answer": 3,
+        "level": 0,
+        "explanation": "Comments can be inserted via the Review tab by selecting 'Insert Comment,' allowing notes to be added to cells."
+    },
+    {
+        "id": 59,
+        "question": "Which key combination is used to create a new worksheet?",
+        "options": ["Shift + F11", "Ctrl + N", "Ctrl + F11", "Alt + W"],
+        "answer": 0,
+        "level": 0,
+        "explanation": "Shift + F11 creates a new worksheet in Excel."
+    },
+    {
+        "id": 60,
+        "question": "How can you quickly move to the last cell in a worksheet?",
+        "options": ["Alt + End", "Ctrl + End", "Ctrl + Shift", "Ctrl + Home"],
+        "answer": 1,
+        "level": 0,
+        "explanation": "Ctrl + End moves the cursor to the last used cell in a worksheet."
+    },
+    {
+        "id": 61,
+        "question": "What is the shortcut to insert a new row in Excel?",
+        "options": ["Ctrl + Shift + Minus (-)", "Ctrl + Shift + Plus (+)", "Ctrl + Alt + Plus (+)", "Alt + Enter"],
+        "answer": 1,
+        "level": 0,
+        "explanation": "Ctrl + Shift + Plus (+) inserts a new row above the selected cell."
+    },
+    {
+        "id": 62,
+        "question": "Which key is used to edit the content of a cell?",
+        "options": ["F2", "F1", "F4", "F3"],
+        "answer": 0,
+        "level": 0,
+        "explanation": "Pressing F2 allows you to edit the content of the currently selected cell."
+    },
+    {
+        "id": 63,
+        "question": "What does the Ctrl + D shortcut do in Excel?",
+        "options": ["Deletes the selected row", "Creates a chart", "Duplicates the worksheet", "Fills down data or formula from the cell above"],
+        "answer": 3,
+        "level": 0,
+        "explanation": "Ctrl + D copies data or a formula from the cell above into the current cell or selected range."
+    },
+    {
+        "id": 64,
+        "question": "How can you quickly insert the current date in a cell?",
+        "options": ["Ctrl + Shift + ;", "Ctrl + ;", "Ctrl + D", "Ctrl + T"],
+        "answer": 1,
+        "level": 0,
+        "explanation": "Ctrl + ; inserts the current date into the selected cell."
+    },
+    {
+        "id": 65,
+        "question": "What does Alt + = do in Excel?",
+        "options": ["Opens the file menu", "Auto-formats the cells", "Inserts the SUM function", "Opens the formula bar"],
+        "answer": 2,
+        "level": 0,
+        "explanation": "Alt + = inserts the SUM function automatically for the selected range."
+    },
+    {
+        "id": 66,
+        "question": "How do you close an Excel workbook using a shortcut?",
+        "options": ["Ctrl + E", "Ctrl + W", "Ctrl + D", "Ctrl + Q"],
+        "answer": 1,
+        "level": 0,
+        "explanation": "Ctrl + W closes the currently active workbook in Excel."
+    },
+    {
+        "id": 67,
+        "question": "What does Ctrl + H do in Excel?",
+        "options": ["Opens the Replace dialog box", "Opens the Home tab", "Deletes rows", "Highlights cells"],
+        "answer": 0,
+        "level": 0,
+        "explanation": "Ctrl + H opens the Replace dialog box, allowing you to find and replace text or data."
+    },
+    {
+        "id": 68,
+        "question": "What does the shortcut Ctrl + '-' do in Excel?",
+        "options": ["Cuts the selected row or column", "Deletes the selected row or column", "Formats the selected row or column", "Copies the selected row or column"],
+        "answer": 1,
+        "level": 0,
+        "explanation": "The shortcut Ctrl + '-' is used to delete the selected row or column in Excel."
+    },
+    {
+        "id": 69,
+        "question": "How do you insert a hyperlink in Excel using a shortcut?",
+        "options": ["Ctrl + I", "Ctrl + P", "Ctrl + K", "Ctrl + H"],
+        "answer": 2,
+        "level": 0,
+        "explanation": "Ctrl + K inserts a hyperlink in Excel."
+    },
+    {
+        "id": 70,
+        "question": "How do you select the entire row in Excel using a shortcut?",
+        "options": ["Ctrl + A", "Ctrl + Spacebar", "Alt + Spacebar", "Shift + Spacebar"],
+        "answer": 3,
+        "level": 0,
+        "explanation": "Shift + Spacebar selects the entire row of the active cell in Excel."
+    },
+    {
+        "id": 71,
+        "question": "How do you select the entire column in Excel using a shortcut?",
+        "options": ["Ctrl + A", "Ctrl + P", "Shift + Spacebar", "Ctrl + Spacebar"],
+        "answer": 3,
+        "level": 0,
+        "explanation": "Ctrl + Spacebar selects the entire column of the active cell in Excel."
+    },
+    {
+        "id": 72,
+        "question": "How do you open the 'Paste Special' dialog box in Excel using a shortcut?",
+        "options": ["Ctrl + V", "Ctrl + Shift + V", "Alt + E, S, V", "Ctrl + Z"],
+        "answer": 2,
+        "level": 0,
+        "explanation": "Alt + E, S, V opens the 'Paste Special' dialog box in Excel."
+    },
+    {
+        "id": 73,
+        "question": "How do you open the 'Go To' dialog box in Excel using a shortcut?",
+        "options": ["Ctrl + H", "Ctrl + G", "Ctrl + N", "Ctrl + F"],
+        "answer": 1,
+        "level": 0,
+        "explanation": "Ctrl + G opens the 'Go To' dialog box in Excel."
+    }
+]
+
