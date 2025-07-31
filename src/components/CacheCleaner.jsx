@@ -1,10 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import dataManager from '../utils/dataManager';
 
 const CacheCleaner = ({ onDataChange }) => {
   const [loading, setLoading] = useState(false);
   const [currentOperation, setCurrentOperation] = useState('');
-
 
   const fetchJSONData = async () => {
     if (loading) return;
@@ -297,38 +297,34 @@ const CacheCleaner = ({ onDataChange }) => {
           throw new Error('All delete attempts failed');
         }
 
-        console.log('Database deletion result:', result);
-        alert('✅ IndexedDB database "quizDatabase" deleted successfully!');
-
       } catch (error) {
         console.error('Error during database deletion:', error);
 
         let errorMessage = '❌ Database deletion failed.\n\n';
 
-          if (error.message === 'BLOCKED' || error.message.includes('blocked')) {
-            errorMessage += '🔒 The database is still open in another tab or window.\n\n';
-            errorMessage += 'Please try these steps:\n';
-            errorMessage += '1. Close ALL other tabs/windows with this application\n';
-            errorMessage += '2. Wait 10 seconds\n';
-            errorMessage += '3. Try again\n\n';
-            errorMessage += 'If the problem persists, restart your browser completely.';
-          } else if (error.message.includes('timeout') || error.message === 'TIMEOUT') {
-            errorMessage += '⏱️ The operation timed out.\n\n';
-            errorMessage += 'This usually means the database is busy.\n';
-            errorMessage += 'Please refresh the page and try again.';
-          } else {
-            errorMessage += `❓ Unexpected error: ${error.message || 'Unknown error occurred.'}\n\n`;
-            errorMessage += 'Try refreshing the page and attempting again.';
-          }
-
-          alert(errorMessage);
-        } finally {
-          if (onDataChange) {
-            onDataChange();
-          }
-          setLoading(false);
-          setCurrentOperation('');
+        if (error.message === 'BLOCKED' || error.message.includes('blocked')) {
+          errorMessage += '🔒 The database is still open in another tab or window.\n\n';
+          errorMessage += 'Please try these steps:\n';
+          errorMessage += '1. Close ALL other tabs/windows with this application\n';
+          errorMessage += '2. Wait 10 seconds\n';
+          errorMessage += '3. Try again\n\n';
+          errorMessage += 'If the problem persists, restart your browser completely.';
+        } else if (error.message.includes('timeout') || error.message === 'TIMEOUT') {
+          errorMessage += '⏱️ The operation timed out.\n\n';
+          errorMessage += 'This usually means the database is busy.\n';
+          errorMessage += 'Please refresh the page and try again.';
+        } else {
+          errorMessage += `❓ Unexpected error: ${error.message || 'Unknown error occurred.'}\n\n`;
+          errorMessage += 'Try refreshing the page and attempting again.';
         }
+
+        alert(errorMessage);
+      } finally {
+        if (onDataChange) {
+          onDataChange();
+        }
+        setLoading(false);
+        setCurrentOperation('');
       }
     }
   };
@@ -382,8 +378,6 @@ const CacheCleaner = ({ onDataChange }) => {
           {loading && currentOperation === 'deleting' ? 'Deleting' : 'Delete'}
         </span>
       </button>
-
-
     </>
   );
 };
