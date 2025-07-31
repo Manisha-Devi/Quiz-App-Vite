@@ -1,7 +1,0 @@
-
-[This would be an actual PNG image file showing email client interface 1]
-
-To use real images:
-1. Replace this .txt file with an actual interface1.png image
-2. Show email interface with Inbox, Compose, Settings
-3. Make sure the filename matches exactly: interface1.png

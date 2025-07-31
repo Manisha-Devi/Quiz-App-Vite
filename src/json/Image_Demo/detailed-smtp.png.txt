@@ -1,7 +1,0 @@
-
-[This would be an actual PNG image file showing detailed SMTP process]
-
-To use real images:
-1. Replace this .txt file with an actual detailed-smtp.png image  
-2. The image should show detailed SMTP server communication steps
-3. Make sure the filename matches exactly: detailed-smtp.png
