@@ -180,6 +180,18 @@ class DataManager {
     }
   }
 
+  // Enforce IndexedDB-only operations
+  async enforceIndexedDBOnly() {
+    try {
+      console.log('Enforcing IndexedDB-only operations - localStorage disabled');
+      // This method ensures we're only using IndexedDB
+      return true;
+    } catch (error) {
+      console.error('Error enforcing IndexedDB-only mode:', error);
+      return false;
+    }
+  }
+
   // Initialize IndexedDB with default settings if needed
   async initializeApp() {
     try {

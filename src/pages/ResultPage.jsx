@@ -47,14 +47,20 @@ function ResultPage() {
           dataManager.getUserSetting('boldMode', false)
         ]);
 
-      setQuestions(questions || []);
+        console.log('Data loaded in ResultPage:', {
+          questionsCount: questions?.length || 0,
+          answersCount: Object.keys(answers || {}).length,
+          reviewMarksCount: Object.keys(reviewMarks || {}).length
+        });
+
+        setQuestions(questions || []);
         setAnswers(answers || {});
         setReviewMarks(reviewMarks || {});
-        setRetryMode(retryMode);
+        setRetryMode(retryMode || false);
         setRetryAnswers(retryAnswers || {});
         setRetryCompleted(retryCompleted || {});
-        setIsDarkMode(darkMode);
-        setIsBoldMode(boldMode);
+        setIsDarkMode(darkMode || false);
+        setIsBoldMode(boldMode || false);
         
         console.log('ResultPage loaded - using IndexedDB exclusively');
       } catch (error) {
