@@ -260,20 +260,34 @@ function UploadPage() {
       }
 
       // Store data in IndexedDB
+      console.log('Storing quiz data:', allData);
       await dataManager.setExamData('quizData', allData);
       await dataManager.setUserSetting('quizTime', quizTime);
-      await dataManager.setFileImageMap(fileImageMap);
-
-      // Store individual quiz texts and images
-      const db = await openDb();
-      allData.forEach((item) => {
-        storeText(item.questions, item.name);
-      });
-
-      for (const [filename, images] of Object.entries(fileImageMap)) {
-        images.forEach((image) => storeImage(image.data, filename));
+      
+      // Store file image map if it exists
+      if (Object.keys(fileImageMap).length > 0) {
+        await dataManager.setFileImageMap(fileImageMap);
+        console.log('Stored file image map:', fileImageMap);
       }
 
+      // Store individual quiz texts and images in IndexedDB
+      const db = await openDb();
+      
+      // Store texts for each quiz file
+      for (const item of allData) {
+        await storeText(item.questions, item.name);
+        console.log(`Stored text data for ${item.name}`);
+      }
+
+      // Store images if they exist
+      for (const [filename, images] of Object.entries(fileImageMap)) {
+        for (const image of images) {
+          await storeImage(image.data, image.name, filename);
+          console.log(`Stored image ${image.name} for ${filename}`);
+        }
+      }
+
+      console.log('All data stored successfully, navigating to sections page');
       navigate("/sections");
     } catch (err) {
       console.error(err);

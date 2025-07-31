@@ -39,57 +39,93 @@ function SectionSetupPage() {
     FUTURE_PAGES_KEYS.forEach((key) => localStorage.removeItem(key));
 
     const loadData = async () => {
-      // Load user settings
-      const settings = await dataManager.getUserSettings();
-      setIsDarkMode(settings.darkMode || false);
-      setQuizTime(settings.quizTime || 0);
-      setPracticeMode(settings.practiceMode || false);
-      setEnableDrawing(settings.enableDrawing !== false);
-      setRetryMode(settings.retryMode || false);
+      try {
+        console.log('Loading data in SectionSetupPage...');
+        
+        // Load user settings
+        const settings = await dataManager.getUserSettings();
+        console.log('Loaded settings:', settings);
+        
+        setIsDarkMode(settings.darkMode || false);
+        setQuizTime(settings.quizTime || 0);
+        setPracticeMode(settings.practiceMode || false);
+        setEnableDrawing(settings.enableDrawing !== false);
+        setRetryMode(settings.retryMode || false);
 
-      // Load quiz data
-      const data = await dataManager.getExamData('quizData');
-      if (!data) {
-        alert("⚠️ No data found. Please upload files first.");
-        navigate('/');
-        return;
-      }
+        // Load quiz data with retry mechanism
+        let data = await dataManager.getExamData('quizData');
+        console.log('Loaded quiz data:', data);
+        
+        // If no data found, try with a small delay (for async operations)
+        if (!data || !Array.isArray(data) || data.length === 0) {
+          console.log('No data found, retrying...');
+          await new Promise(resolve => setTimeout(resolve, 100));
+          data = await dataManager.getExamData('quizData');
+          console.log('Retry result:', data);
+        }
+        
+        if (!data || !Array.isArray(data) || data.length === 0) {
+          console.error('No valid quiz data found');
+          alert("⚠️ No data found. Please upload files first.");
+          navigate('/');
+          return;
+        }
 
-      setQuizData(data);
+        setQuizData(data);
+        console.log('Quiz data set successfully:', data.length, 'files loaded');
 
       // Load images from IndexedDB for each JSON file
-      const imageMap = {};
-      for (const file of data) {
-        try {
-          const images = await getAllJSONImages(file.name);
-          if (images && images.length > 0) {
-            imageMap[`${file.name}.json`] = images.map(img => ({
-              name: img.imageName,
-              data: img.imageData
-            }));
+        const imageMap = {};
+        for (const file of data) {
+          try {
+            console.log(`Loading images for ${file.name}...`);
+            const images = await getAllJSONImages(file.name);
+            if (images && images.length > 0) {
+              imageMap[`${file.name}.json`] = images.map(img => ({
+                name: img.imageName,
+                data: img.imageData
+              }));
+              console.log(`Loaded ${images.length} images for ${file.name}`);
+            }
+          } catch (error) {
+            console.log(`No images found for ${file.name}:`, error);
           }
-        } catch (error) {
-          console.log(`No images found for ${file.name}:`, error);
         }
+
+        setFileImageMap(imageMap);
+        console.log('Image map loaded:', Object.keys(imageMap).length, 'files with images');
+
+      // Initialize settings for each file
+        const initialCounts = {};
+        const initialRanges = {};
+        const initialShuffleSettings = {};
+        
+        data.forEach((file, index) => {
+          if (!file.questions || !Array.isArray(file.questions)) {
+            console.error(`Invalid questions data for file ${file.name}:`, file.questions);
+            return;
+          }
+          
+          initialCounts[index] = { 0: 0, 1: 0, 2: 0 };
+          initialRanges[index] = { 
+            startIndex: 1, 
+            endIndex: file.questions.length,
+            maxQuestions: file.questions.length
+          };
+          initialShuffleSettings[index] = false; // Default: shuffle enabled (false means no-shuffle is off)
+          console.log(`Initialized settings for ${file.name}: ${file.questions.length} questions`);
+        });
+        
+        setQuestionCounts(initialCounts);
+        setQuestionRanges(initialRanges);
+        setSectionShuffleSettings(initialShuffleSettings);
+        
+        console.log('Section setup completed successfully');
+      } catch (error) {
+        console.error('Error loading data in SectionSetupPage:', error);
+        alert(`⚠️ Error loading data: ${error.message}. Please try uploading files again.`);
+        navigate('/');
       }
-
-      setFileImageMap(imageMap);
-
-      const initialCounts = {};
-      const initialRanges = {};
-      const initialShuffleSettings = {};
-      data.forEach((file, index) => {
-        initialCounts[index] = { 0: 0, 1: 0, 2: 0 };
-        initialRanges[index] = { 
-          startIndex: 1, 
-          endIndex: file.questions.length,
-          maxQuestions: file.questions.length
-        };
-        initialShuffleSettings[index] = false; // Default: shuffle enabled (false means no-shuffle is off)
-      });
-      setQuestionCounts(initialCounts);
-      setQuestionRanges(initialRanges);
-      setSectionShuffleSettings(initialShuffleSettings);
     };
 
     loadData();
