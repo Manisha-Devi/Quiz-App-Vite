@@ -11,57 +11,5 @@
         ],
         "answer": 0,
         "level": 1
-    },
-    {
-        "id": 2,
-        "question": "Which option shows the correct email header format?",
-        "options": [
-            "<img id='header1.png' alt='Header Option 1' style='max-width: 200px; height: auto;'>", 
-            "<img id='header2.png' alt='Header Option 2' style='max-width: 200px; height: auto;'>", 
-            "<img id='header3.png' alt='Header Option 3' style='max-width: 200px; height: auto;'>", 
-            "<img id='header4.png' alt='Header Option 4' style='max-width: 200px; height: auto;'>"
-        ],
-        "answer": 1,
-        "level": 2,
-        "explanation": "Option B shows the correct email header format with proper To:, From:, and Subject: fields."
-    },
-    {
-        "id": 3,
-        "question": "What is shown in this network diagram?<br><img id='network-diagram.png' alt='Network Diagram' style='max-width: 100%; height: auto; margin: 10px 0;'>",
-        "options": [
-            "A simple home network",
-            "A corporate email infrastructure", 
-            "A social media platform",
-            "A file storage system"
-        ],
-        "answer": 1,
-        "level": 1,
-        "explanation": "This diagram shows a corporate email infrastructure with multiple servers and security layers.<br><img id='server-details.png' alt='Server Details' style='max-width: 100%; height: auto; margin: 10px 0;'>"
-    },
-    {
-        "id": 4,
-        "question": "Identify the components in this email client interface:",
-        "options": [
-            "<img id='interface1.png' alt='Interface 1' style='max-width: 150px; height: auto; margin: 5px;'><br>Inbox, Compose, Settings",
-            "<img id='interface2.png' alt='Interface 2' style='max-width: 150px; height: auto; margin: 5px;'><br>Folders, Search, Archive", 
-            "<img id='interface3.png' alt='Interface 3' style='max-width: 150px; height: auto; margin: 5px;'><br>Calendar, Tasks, Contacts",
-            "<img id='interface4.png' alt='Interface 4' style='max-width: 150px; height: auto; margin: 5px;'><br>All of the above"
-        ],
-        "answer": 3,
-        "level": 0,
-        "explanation": "Modern email clients include all these components for comprehensive email management."
-    },
-    {
-        "id": 5,
-        "question": "What does this security icon represent in email systems?<br><img id='security-icon.png' alt='Security Icon' style='max-width: 50px; height: auto; margin: 10px 0;'>",
-        "options": [
-            "Email is deleted",
-            "Email is encrypted", 
-            "Email is spam",
-            "Email is forwarded"
-        ],
-        "answer": 1,
-        "level": 1,
-        "explanation": "This padlock icon typically indicates that the email is encrypted and secure.<br><img id='encryption-process.png' alt='Encryption Process' style='max-width: 100%; height: auto; margin: 10px 0;'>"
     }
 ]
