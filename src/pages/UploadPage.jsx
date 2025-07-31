@@ -386,14 +386,6 @@ function UploadPage() {
       <div className="upload-content">
         {showLocalJSON ? (
           <div className="library-section">
-            {/* <div className="section-header">
-              <h2>📁 Local JSON Files</h2>
-              <p>Select from JSON files automatically loaded from your project</p>
-            </div> */}
-            <div className="upload-instructions">
-              <h3>📁 Select Quiz Files</h3>
-              <p>Select from below files to load your Quiz</p>
-            </div>
             <LocalJSONLibrary onFileSelect={handleLocalJSONSelect} />
           </div>
         ) : (
