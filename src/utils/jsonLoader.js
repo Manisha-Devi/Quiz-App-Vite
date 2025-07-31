@@ -72,59 +72,75 @@ export const getAvailableJSONFiles = () => {
 // Function to load images from JSON-associated folders into IndexedDB
 export const loadJSONImagesFromFolders = async () => {
   try {
-    console.log('Loading JSON images from folders...');
+    console.log('🔍 Loading JSON images from folders...');
 
-    // Get all image files from the folders that match JSON file names
-    const allImageModules = import.meta.glob('../json/*/!(*.json)');
+    // Get all image files from json folder and its subfolders
+    const allImageModules = import.meta.glob('../json/**/*.{png,jpg,jpeg,gif,webp,svg}');
 
-    console.log('Found image modules:', Object.keys(allImageModules));
+    console.log('📁 Found image modules:', Object.keys(allImageModules));
 
     // Process each image
     for (const imagePath of Object.keys(allImageModules)) {
-      console.log(`Processing: ${imagePath}`);
+      console.log(`🖼️ Processing: ${imagePath}`);
 
-      // Extract folder name which should match the JSON file name
+      // Parse the path to extract folder structure
+      // Example: ../json/Image_Demo/Question1.png
       const pathParts = imagePath.split('/');
-      const folderName = pathParts[pathParts.length - 2]; // Get folder name
-      const jsonFileName = folderName; // Folder name should match JSON file name
 
-      console.log(`Folder: ${folderName}, JSON File: ${jsonFileName}`);
+      // Find the folder name after 'json'
+      const jsonIndex = pathParts.findIndex(part => part === 'json');
 
-      if (jsonFileName && jsonFileName !== 'json') {
+      if (jsonIndex !== -1 && jsonIndex + 1 < pathParts.length) {
+        const folderName = pathParts[jsonIndex + 1]; // Folder name after 'json'
+        const imageName = pathParts[pathParts.length - 1]; // Image file name
+
+        // Use folder name as jsonFileName
+        const jsonFileName = folderName;
+
+        console.log(`📂 Folder: ${folderName}`);
+        console.log(`📄 JSON File Name: ${jsonFileName}`);
+        console.log(`🖼️ Image Name: ${imageName}`);
+
+        // Skip if it's directly in json folder (not in a subfolder)
+        if (pathParts.length <= jsonIndex + 2) {
+          console.log(`⏭️ Skipping ${imagePath} - not in a subfolder`);
+          continue;
+        }
+
         try {
-          // Get the image file name
-          const imageName = imagePath.split('/').pop();
-
-          console.log(`Processing image ${imageName} for JSON file ${jsonFileName}`);
-
           // Import the image as a URL
           const imageModule = await allImageModules[imagePath]();
           const imageUrl = imageModule.default;
 
-          // Convert image URL to blob data and store immediately
+          console.log(`📥 Loading image from URL: ${imageUrl}`);
+
+          // Convert image URL to blob data
           const response = await fetch(imageUrl);
           const blob = await response.blob();
 
           // Convert blob to base64 data URL
-          const base64Data = await new Promise((resolve) => {
+          const base64Data = await new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.onload = () => resolve(reader.result);
+            reader.onerror = () => reject(new Error('Failed to read file'));
             reader.readAsDataURL(blob);
           });
 
           // Store image in jsonImages IndexedDB store
           await storeImageInJSONImagesStore(jsonFileName, imageName, base64Data);
-          console.log(`✅ Successfully stored image ${imageName} for ${jsonFileName} in IndexedDB jsonImages store`);
+          console.log(`✅ Successfully stored image ${imageName} for ${jsonFileName} in jsonImages store`);
 
         } catch (error) {
-          console.error(`Error loading image ${imagePath}:`, error);
+          console.error(`❌ Error loading image ${imagePath}:`, error);
         }
+      } else {
+        console.log(`⏭️ Skipping ${imagePath} - invalid path structure`);
       }
     }
 
-    console.log('All JSON images loaded into by_filename IndexedDB store');
+    console.log('✅ All JSON images processing completed');
   } catch (error) {
-    console.error('Error loading JSON images:', error);
+    console.error('❌ Error loading JSON images:', error);
   }
 };
 

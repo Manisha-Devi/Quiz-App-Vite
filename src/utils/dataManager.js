@@ -175,7 +175,9 @@ class DataManager {
   async getImageFromJSONImagesStore(jsonFileName, imageName) {
     try {
       const { getImageFromJSONImagesStore } = await import('./indexedDB');
-      return await getImageFromJSONImagesStore(jsonFileName, imageName);
+      const imageData = await getImageFromJSONImagesStore(jsonFileName, imageName);
+      console.log(`🖼️ Fetched image ${imageName} for ${jsonFileName}:`, imageData ? 'Found' : 'Not found');
+      return imageData;
     } catch (error) {
       console.error('Error fetching image from jsonImages store:', error);
       return null;
