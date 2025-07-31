@@ -258,26 +258,7 @@ function LocalJSONLibrary({ onFileSelect, refreshTrigger = 0 }) {
       <div className="library-header">
         <h2>📁 Select Quiz Files</h2>
         <p>Choose from available JSON files to start your quiz</p>
-        <button 
-          className="debug-reload-btn"
-          onClick={async () => {
-            console.log('🔄 Manual image reload triggered...');
-            const { loadJSONImagesFromFolders } = await import('../utils/jsonLoader');
-            await loadJSONImagesFromFolders();
-            await debugJsonImagesStore();
-          }}
-          style={{
-            padding: '8px 16px',
-            margin: '8px 0',
-            backgroundColor: '#007bff',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer'
-          }}
-        >
-          🔄 Reload Images (Debug)
-        </button>
+        
       </div>
 
       {/* Enhanced Search and Filters */}
