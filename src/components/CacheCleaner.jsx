@@ -37,68 +37,78 @@ const CacheCleaner = ({ onDataChange }) => {
   const fetchJSONData = async () => {
     if (loading) return;
 
-    try {
-      setLoading(true);
-      setCurrentOperation('fetching');
-      console.log('Fetching JSON files data and storing in IndexedDB...');
-
-      // Dynamic import of JSON files and store them in IndexedDB
-      const jsonFiles = [
-        { name: 'Art and Culture jk', path: '../json/Art and Culture jk.json' },
-        { name: 'Email', path: '../json/Email.json' },
-        { name: 'Image_Demo', path: '../json/Image_Demo.json' },
-        { name: 'KaTeX Demo', path: '../json/KaTeX Demo.json' },
-        { name: 'Operating_System', path: '../json/Operating_System.json' },
-        { name: 'Sanfoundry_Excel', path: '../json/Sanfoundry_Excel.json' },
-        { name: 'Sanfoundry_Office', path: '../json/Sanfoundry_Office.json' },
-        { name: 'Sanfoundry_PowerPoint', path: '../json/Sanfoundry_PowerPoint.json' },
-        { name: 'Sanfoundry_Word', path: '../json/Sanfoundry_Word.json' }
-      ];
-
-      const loadedData = [];
-
-      for (const file of jsonFiles) {
+    showPopup(
+      "⚠️ Are you sure you want to Fetch Data? This will fetch data from the server.",
+      'info',
+      async () => {
         try {
-          const response = await fetch(`/src/json/${file.name}.json`);
-          if (response.ok) {
-            const data = await response.json();
-            loadedData.push({
-              name: file.name,
-              questions: data
-            });
-            console.log(`Loaded ${file.name}: ${data.length} questions`);
+          setLoading(true);
+          setCurrentOperation('fetching');
+          console.log('Fetching JSON files data and storing in IndexedDB...');
+
+          // Dynamic import of JSON files and store them in IndexedDB
+          const jsonFiles = [
+            { name: 'Art and Culture jk', path: '../json/Art and Culture jk.json' },
+            { name: 'Email', path: '../json/Email.json' },
+            { name: 'Image_Demo', path: '../json/Image_Demo.json' },
+            { name: 'KaTeX Demo', path: '../json/KaTeX Demo.json' },
+            { name: 'Operating_System', path: '../json/Operating_System.json' },
+            { name: 'Sanfoundry_Excel', path: '../json/Sanfoundry_Excel.json' },
+            { name: 'Sanfoundry_Office', path: '../json/Sanfoundry_Office.json' },
+            { name: 'Sanfoundry_PowerPoint', path: '../json/Sanfoundry_PowerPoint.json' },
+            { name: 'Sanfoundry_Word', path: '../json/Sanfoundry_Word.json' }
+          ];
+
+          const loadedData = [];
+
+          for (const file of jsonFiles) {
+            try {
+              const response = await fetch(`/src/json/${file.name}.json`);
+              if (response.ok) {
+                const data = await response.json();
+                loadedData.push({
+                  name: file.name,
+                  questions: data
+                });
+                console.log(`Loaded ${file.name}: ${data.length} questions`);
+              }
+            } catch (error) {
+              console.warn(`Could not load ${file.name}:`, error);
+            }
+          }
+
+          if (loadedData.length > 0) {
+            // Store each file in dedicated jsonFiles store
+            const { storeJSONFile } = await import('../utils/indexedDB');
+
+            for (const fileData of loadedData) {
+              await storeJSONFile(fileData.name, fileData.questions);
+              console.log(`Stored ${fileData.name} in jsonFiles store with ${fileData.questions.length} questions`);
+            }
+
+            console.log(`Successfully stored ${loadedData.length} JSON files in dedicated jsonFiles IndexedDB store`);
+            showPopup(`Successfully loaded ${loadedData.length} JSON files into jsonFiles IndexedDB store!`, 'success');
+
+            if (onDataChange) {
+              onDataChange();
+            }
+          } else {
+            showPopup('No JSON files could be loaded', 'warning');
           }
         } catch (error) {
-          console.warn(`Could not load ${file.name}:`, error);
+          console.error('Error fetching JSON data:', error);
+          showPopup('Error loading JSON files. Please try again.', 'error');
+        } finally {
+          setLoading(false);
+          setCurrentOperation('');
         }
+      },
+      () => {
+        // Cancel action - do nothing
+        console.log('Fetch data operation cancelled by user');
+        closePopup();
       }
-
-      if (loadedData.length > 0) {
-        // Store each file in dedicated jsonFiles store
-        const { storeJSONFile } = await import('../utils/indexedDB');
-
-        for (const fileData of loadedData) {
-          await storeJSONFile(fileData.name, fileData.questions);
-          console.log(`Stored ${fileData.name} in jsonFiles store with ${fileData.questions.length} questions`);
-        }
-
-        console.log(`Successfully stored ${loadedData.length} JSON files in dedicated jsonFiles IndexedDB store`);
-        showPopup(`Successfully loaded ${loadedData.length} JSON files into jsonFiles IndexedDB store!`, 'success');
-
-        if (onDataChange) {
-          onDataChange();
-        }
-      } else {
-        showPopup('No JSON files could be loaded', 'warning');
-      }
-
-    } catch (error) {
-      console.error('Error fetching JSON data:', error);
-      showPopup('Error loading JSON files. Please try again.', 'error');
-    } finally {
-      setLoading(false);
-      setCurrentOperation('');
-    }
+    );
   };
 
   const clearIndexedDBStores = async () => {
