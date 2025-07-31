@@ -41,9 +41,9 @@ export const openDb = () => {
       jsonFilesStore.createIndex("by_filename", "filename", { unique: true });
 
       // JSON Images store - dedicated store for images associated with JSON files
-      const jsonImagesStore = db.createObjectStore("jsonImages", { keyPath: "folderName" });
-      jsonImagesStore.createIndex("by_imagename", "images.name", { unique: false });
-      jsonImagesStore.createIndex("by_json_file", "folderName", { unique: false });
+      const byFilenameStore = db.createObjectStore("by_filename", { keyPath: "folderName" });
+      byFilenameStore.createIndex("by_imagename", "images.name", { unique: false });
+      byFilenameStore.createIndex("by_json_file", "folderName", { unique: false });
 
       // Exam data store - for exam state, questions, meta data
       db.createObjectStore("examData", { keyPath: "id" });
@@ -209,8 +209,8 @@ export const clearJSONFiles = async () => {
 export const storeJSONImage = async (jsonFileName, imageName, imageData) => {
   try {
     const db = await openDb();
-    const transaction = db.transaction(['jsonImages'], 'readwrite');
-    const store = transaction.objectStore('jsonImages');
+    const transaction = db.transaction(['by_filename'], 'readwrite');
+    const store = transaction.objectStore('by_filename');
 
     // Get existing folder data or create new
     const existingData = await new Promise((resolve) => {
@@ -251,8 +251,8 @@ export const storeJSONImage = async (jsonFileName, imageName, imageData) => {
 export const getJSONImages = async (jsonFileName) => {
   try {
     const db = await openDb();
-    const transaction = db.transaction(['jsonImages'], 'readonly');
-    const store = transaction.objectStore('jsonImages');
+    const transaction = db.transaction(['by_filename'], 'readonly');
+    const store = transaction.objectStore('by_filename');
 
     const folderData = await new Promise((resolve) => {
       const request = store.get(jsonFileName);
@@ -271,8 +271,8 @@ export const getJSONImages = async (jsonFileName) => {
 export const getJSONImage = async (jsonFileName, imageName) => {
   try {
     const db = await openDb();
-    const transaction = db.transaction("jsonImages", "readonly");
-    const store = transaction.objectStore("jsonImages");
+    const transaction = db.transaction("by_filename", "readonly");
+    const store = transaction.objectStore("by_filename");
 
     const folderData = await new Promise((resolve, reject) => {
       const request = store.get(jsonFileName);
@@ -296,8 +296,8 @@ export const getJSONImage = async (jsonFileName, imageName) => {
 export const getAllJSONImages = async (jsonFileName) => {
   try {
     const db = await openDb();
-    const transaction = db.transaction("jsonImages", "readonly");
-    const store = transaction.objectStore("jsonImages");
+    const transaction = db.transaction("by_filename", "readonly");
+    const store = transaction.objectStore("by_filename");
 
     const folderData = await new Promise((resolve, reject) => {
       const request = store.get(jsonFileName);
@@ -316,8 +316,8 @@ export const getAllJSONImages = async (jsonFileName) => {
 export const clearJSONImages = async (jsonFileName) => {
   try {
     const db = await openDb();
-    const transaction = db.transaction("jsonImages", "readwrite");
-    const store = transaction.objectStore("jsonImages");
+    const transaction = db.transaction("by_filename", "readwrite");
+    const store = transaction.objectStore("by_filename");
 
     await new Promise((resolve, reject) => {
       const request = store.delete(jsonFileName);
@@ -334,8 +334,8 @@ export const clearJSONImages = async (jsonFileName) => {
 // Clear all JSON images from dedicated jsonImages store
 export const clearAllJSONImages = async () => {
   const db = await openDb();
-  const transaction = db.transaction("jsonImages", "readwrite");
-  const store = transaction.objectStore("jsonImages");
+  const transaction = db.transaction("by_filename", "readwrite");
+  const store = transaction.objectStore("by_filename");
   return store.clear();
 };
 
@@ -355,7 +355,7 @@ export const deleteData = async (storeName, id) => {
 // Clear entire database
 export const clearDatabase = async () => {
   const db = await openDb();
-  const stores = ['userSettings', 'examData', 'examResults', 'jsonFiles', 'jsonImages', 'images', 'texts'];
+  const stores = ['userSettings', 'examData', 'examResults', 'jsonFiles', 'by_filename', 'images', 'texts'];
   
   for (const storeName of stores) {
     try {
