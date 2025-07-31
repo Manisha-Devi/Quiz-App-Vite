@@ -18,15 +18,15 @@ const CacheCleaner = ({ onDataChange }) => {
 
         // Dynamic import of JSON files and store them in IndexedDB
         const jsonFiles = [
-          { name: 'Art and Culture jk', path: '../json/Art and Culture jk.json' },
-          { name: 'Email', path: '../json/Email.json' },
-          { name: 'Image_Demo', path: '../json/Image_Demo.json' },
-          { name: 'KaTeX Demo', path: '../json/KaTeX Demo.json' },
-          { name: 'Operating_System', path: '../json/Operating_System.json' },
-          { name: 'Sanfoundry_Excel', path: '../json/Sanfoundry_Excel.json' },
-          { name: 'Sanfoundry_Office', path: '../json/Sanfoundry_Office.json' },
-          { name: 'Sanfoundry_PowerPoint', path: '../json/Sanfoundry_PowerPoint.json' },
-          { name: 'Sanfoundry_Word', path: '../json/Sanfoundry_Word.json' }
+          { name: 'Art and Culture jk', path: '/json/Art and Culture jk.json' },
+          { name: 'Email', path: '/json/Email.json' },
+          { name: 'Image_Demo', path: '/json/Image_Demo.json' },
+          { name: 'KaTeX Demo', path: '/json/KaTeX Demo.json' },
+          { name: 'Operating_System', path: '/json/Operating_System.json' },
+          { name: 'Sanfoundry_Excel', path: '/json/Sanfoundry_Excel.json' },
+          { name: 'Sanfoundry_Office', path: '/json/Sanfoundry_Office.json' },
+          { name: 'Sanfoundry_PowerPoint', path: '/json/Sanfoundry_PowerPoint.json' },
+          { name: 'Sanfoundry_Word', path: '/json/Sanfoundry_Word.json' }
         ];
 
         const loadedData = [];
