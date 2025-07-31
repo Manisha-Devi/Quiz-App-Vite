@@ -1,4 +1,3 @@
-
 import { storeJSONFile, storeJSONImage, getAllJSONFiles, clearJSONFiles, storeImageInJSONImagesStore } from './indexedDB';
 
 // Helper function to get available JSON file names
@@ -17,7 +16,7 @@ export const loadJSONFilesToStorage = async () => {
     const jsonModules = import.meta.glob('../../json/*.json');
 
     console.log('Found JSON files:', Object.keys(jsonModules));
-    
+
     // Fallback for production if glob doesn't work
     if (Object.keys(jsonModules).length === 0) {
       console.log('No files found via glob, trying production fallback...');
@@ -121,7 +120,7 @@ export const loadJSONImagesFromFolders = async () => {
             if (!response.ok) {
               throw new Error(`HTTP error! status: ${response.status}`);
             }
-            
+
             const blob = await response.blob();
             console.log(`📦 Blob size: ${blob.size} bytes`);
 
@@ -158,13 +157,13 @@ export const loadJSONImagesFromFolders = async () => {
     }
 
     console.log('\n✅ All JSON images processing completed');
-    
+
     // Final verification - check what's in the store
     console.log('\n🔍 Final verification - checking stored images:');
     const { getAllImagesForJSONFile } = await import('./indexedDB');
     const storedImages = await getAllImagesForJSONFile('Image_Demo');
     console.log('📋 Images stored for Image_Demo:', storedImages);
-    
+
     // Additional verification - check individual images
     if (storedImages.length > 0) {
       for (const img of storedImages) {
@@ -173,7 +172,7 @@ export const loadJSONImagesFromFolders = async () => {
     } else {
       console.log('❌ No images found in jsonImages store!');
       console.log('🔍 Let me check what image files were found during glob...');
-      
+
       // Re-check glob results
       const debugImageModules = import.meta.glob('../../json/**/*.{png,jpg,jpeg,gif,webp,svg}');
       console.log('🖼️ Available image modules:', Object.keys(debugImageModules));
