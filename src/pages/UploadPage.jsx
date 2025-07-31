@@ -14,7 +14,7 @@ import {
 } from "../utils/indexedDB";
 
 function UploadPage() {
-  const [showLocalJSON, setShowLocalJSON] = useState(false);
+  const [showLocalJSON, setShowLocalJSON] = useState(true);
   const [files, setFiles] = useState([]);
   const [fileImageMap, setFileImageMap] = useState({});
   const [quizTime, setQuizTime] = useState(0);
