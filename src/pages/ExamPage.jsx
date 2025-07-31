@@ -1,11 +1,12 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MathJaxContext } from 'better-react-mathjax';
 import { useSwipeable } from 'react-swipeable';
 import QuestionViewer from '../components/QuestionViewer';
 import QuestionNavigator from '../components/QuestionNavigator';
-import '../styles/ExamPage.css';
 import DrawingOverlay from '../components/DrawingOverlay';
+import dataManager from '../utils/dataManager';
+import '../styles/ExamPage.css';
 import { storeData, getData, openDb } from '../utils/indexedDB';
 
 function ExamPage() {
@@ -26,7 +27,7 @@ function ExamPage() {
   const toggleDarkMode = async () => {
     const newDarkMode = !isDarkMode;
     setIsDarkMode(newDarkMode);
-    
+
     try {
       await storeData('userSettings', { id: 'darkMode', value: newDarkMode });
     } catch (error) {
@@ -46,7 +47,7 @@ function ExamPage() {
   const toggleBoldMode = async () => {
     const newBoldMode = !isBoldMode;
     setIsBoldMode(newBoldMode);
-    
+
     try {
       await storeData('userSettings', { id: 'boldMode', value: newBoldMode });
     } catch (error) {
@@ -66,77 +67,122 @@ function ExamPage() {
   const [quizTime, setQuizTime] = useState(60);
   const [practiceMode, setPracticeMode] = useState(false);
   const [enableDrawing, setEnableDrawing] = useState(true);
+  const [retryMode, setRetryMode] = useState(false);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [startTime, setStartTime] = useState(Date.now());
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [showSummary, setShowSummary] = useState(false);
+  const [examFinished, setExamFinished] = useState(false);
+  const [navigationHistory, setNavigationHistory] = useState([]);
+  const [questionStartTimes, setQuestionStartTimes] = useState({});
+  const [questionTimeSpent, setQuestionTimeSpent] = useState({});
+  const [answers, setAnswers] = useState({});
+  const [reviewMarks, setReviewMarks] = useState({});
+  const [examMeta, setExamMeta] = useState({});
+  const [questions, setQuestions] = useState([]);
 
-  // Load exam settings from IndexedDB
   useEffect(() => {
-    const loadExamSettings = async () => {
-      try {
-        const db = await openDb();
-        const transaction = db.transaction('userSettings', 'readonly');
-        const store = transaction.objectStore('userSettings');
-        
-        const quizTimeResult = await new Promise((resolve) => {
-          const request = store.get('quizTime');
-          request.onsuccess = () => resolve(request.result?.value || 60);
-          request.onerror = () => resolve(60);
-        });
-        
-        const practiceModeResult = await new Promise((resolve) => {
-          const request = store.get('practiceMode');
-          request.onsuccess = () => resolve(request.result?.value || false);
-          request.onerror = () => resolve(false);
-        });
-        
-        const enableDrawingResult = await new Promise((resolve) => {
-          const request = store.get('enableDrawing');
-          request.onsuccess = () => resolve(request.result?.value !== false);
-          request.onerror = () => resolve(true);
-        });
-        
-        const darkModeResult = await new Promise((resolve) => {
-          const request = store.get('darkMode');
-          request.onsuccess = () => resolve(request.result?.value || false);
-          request.onerror = () => resolve(false);
-        });
-        
-        const boldModeResult = await new Promise((resolve) => {
-          const request = store.get('boldMode');
-          request.onsuccess = () => resolve(request.result?.value || false);
-          request.onerror = () => resolve(false);
-        });
-        
-        setQuizTime(Number(quizTimeResult) || 60);
-        setPracticeMode(practiceModeResult);
-        setEnableDrawing(enableDrawingResult);
-        setIsDarkMode(darkModeResult);
-        setIsBoldMode(boldModeResult);
-        
-      } catch (error) {
-        console.error('Error loading exam settings from IndexedDB:', error);
-        setQuizTime(60);
-        setPracticeMode(false);
-        setEnableDrawing(true);
+    const loadExamData = async () => {
+      const [
+        storedQuestions,
+        storedTime,
+        storedPracticeMode,
+        storedEnableDrawing,
+        storedRetryMode,
+        storedDarkMode,
+        storedBoldMode,
+        storedState,
+        storedMeta,
+        storedAnswers,
+        storedReviewMarks
+      ] = await Promise.all([
+        dataManager.getExamData('finalQuiz'),
+        dataManager.getUserSetting('quizTime', 60),
+        dataManager.getUserSetting('practiceMode', false),
+        dataManager.getUserSetting('enableDrawing', true),
+        dataManager.getUserSetting('retryMode', false),
+        dataManager.getUserSetting('darkMode', false),
+        dataManager.getUserSetting('boldMode', false),
+        dataManager.getExamData('examState'),
+        dataManager.getExamData('examMeta'),
+        dataManager.getExamResults('examAnswers'),
+        dataManager.getExamResults('reviewMarks')
+      ]);
+
+      if (!storedQuestions || storedQuestions.length === 0) {
+        alert('⚠️ No questions found. Please set up your quiz first.');
+        navigate('/');
+        return;
       }
+
+      setQuestions(storedQuestions);
+      setQuizTime(storedTime);
+      setPracticeMode(storedPracticeMode);
+      setEnableDrawing(storedEnableDrawing);
+      setRetryMode(storedRetryMode);
+      setIsDarkMode(storedDarkMode);
+      setIsBoldMode(storedBoldMode);
+
+      if (storedState?.currentQuestionIndex !== undefined) {
+        setCurrentQuestionIndex(storedState.currentQuestionIndex);
+        setStartTime(storedState.startTime || Date.now());
+        setElapsedTime(storedState.elapsedTime || 0);
+        setShowSummary(storedState.showSummary || false);
+        setExamFinished(storedState.examFinished || false);
+        setNavigationHistory(storedState.navigationHistory || []);
+        setQuestionStartTimes(storedState.questionStartTimes || {});
+        setQuestionTimeSpent(storedState.questionTimeSpent || {});
+      }
+
+      if (storedMeta?.isResumed !== undefined) {
+        setExamMeta(storedMeta);
+      }
+
+      setAnswers(storedAnswers || {});
+      setReviewMarks(storedReviewMarks || {});
     };
-    
-    loadExamSettings();
-  }, []);
 
-  const quizTimeMinutes = Number(quizTime || 60);
-  if (isNaN(quizTimeMinutes) || quizTimeMinutes <= 0) {
-    console.error("❌ Invalid quizTime, using default 60 minutes.");
-  }
+    loadExamData();
+  }, [navigate]);
 
-  const validQuizTime = Math.max(1, quizTimeMinutes); // Ensure at least 1 minute
+  const saveExamState = useCallback(async () => {
+    const state = {
+      currentQuestionIndex,
+      startTime,
+      elapsedTime,
+      showSummary,
+      examFinished,
+      navigationHistory,
+      questionStartTimes,
+      questionTimeSpent
+    };
+
+    await Promise.all([
+      dataManager.setExamData('examState', state),
+      dataManager.setExamResults('examAnswers', answers),
+      dataManager.setExamResults('reviewMarks', reviewMarks)
+    ]);
+  }, [currentQuestionIndex, startTime, elapsedTime, showSummary, examFinished, navigationHistory, questionStartTimes, questionTimeSpent, answers, reviewMarks]);
+
+  const toggleDarkMode = useCallback(async () => {
+    const newDarkMode = !isDarkMode;
+    setIsDarkMode(newDarkMode);
+    await dataManager.setUserSetting('darkMode', newDarkMode);
+  }, [isDarkMode]);
+
+  const toggleBoldMode = useCallback(async () => {
+    const newBoldMode = !isBoldMode;
+    setIsBoldMode(newBoldMode);
+    await dataManager.setUserSetting('boldMode', newBoldMode);
+  }, [isBoldMode]);
+
+  const validQuizTime = Math.max(1, Number(quizTime || 60));
   const EXAM_DURATION = practiceMode ? Infinity : validQuizTime * 60;
 
   const mathConfig = { loader: { load: ['input/tex', 'output/chtml'] } };
   const hasMath = (text = '') => /\\\(|\\\[|\\begin|\\frac|\\sqrt/.test(text);
 
-  const [examMeta, setExamMeta] = useState({});
-  const [questions, setQuestions] = useState([]);
   const [current, setCurrent] = useState(0);
-  const [answers, setAnswers] = useState({});
   const [review, setReview] = useState({});
   const [fiftyFiftyUsed, setFiftyFiftyUsed] = useState({});
 
@@ -147,37 +193,37 @@ function ExamPage() {
         const db = await openDb();
         const transaction = db.transaction(['examData'], 'readonly');
         const store = transaction.objectStore('examData');
-        
+
         const metaResult = await new Promise((resolve) => {
           const request = store.get('examMeta');
           request.onsuccess = () => resolve(request.result?.data || {});
           request.onerror = () => resolve({});
         });
-        
+
         const questionsResult = await new Promise((resolve) => {
           const request = store.get('finalQuiz');
           request.onsuccess = () => resolve(request.result?.data || []);
           request.onerror = () => resolve([]);
         });
-        
+
         const stateResult = await new Promise((resolve) => {
           const request = store.get('examState');
           request.onsuccess = () => resolve(request.result?.data || {});
           request.onerror = () => resolve({});
         });
-        
+
         setExamMeta(metaResult);
         setQuestions(questionsResult);
         setCurrent(stateResult.current ?? 0);
         setAnswers(stateResult.answers ?? {});
         setReview(stateResult.review ?? {});
         setFiftyFiftyUsed(stateResult.fiftyFiftyUsed ?? {});
-        
+
       } catch (error) {
         console.error('Error loading exam data from IndexedDB:', error);
       }
     };
-    
+
     loadExamData();
   }, []);
 
@@ -189,7 +235,7 @@ function ExamPage() {
     }
 
     const EXAM_DURATION = validQuizTime * 60;
-    
+
     if (!EXAM_DURATION || EXAM_DURATION <= 0) {
       console.warn("Invalid EXAM_DURATION, using 60 minutes as fallback");
       setTimeLeft(3600);
@@ -199,7 +245,7 @@ function ExamPage() {
     const calculatedTimeLeft = examMeta.startedAt
       ? Math.max(0, EXAM_DURATION - Math.floor((Date.now() - examMeta.startedAt) / 1000))
       : EXAM_DURATION;
-      
+
     setTimeLeft(calculatedTimeLeft);
   }, [examMeta, practiceMode, validQuizTime]);
   const [timeLeft, setTimeLeft] = useState(Infinity);
@@ -405,7 +451,7 @@ function ExamPage() {
         console.error('Error saving exam state to IndexedDB:', error);
       }
     };
-    
+
     if (Object.keys(answers).length > 0 || Object.keys(review).length > 0 || current > 0) {
       saveExamState();
     }
@@ -514,7 +560,7 @@ function ExamPage() {
       setShowSubmitModal(true);
       return;
     }
-    
+
     try {
       await storeData('examResults', { id: 'examAnswers', data: answers });
       await storeData('examResults', { id: 'reviewMarks', data: review });
@@ -601,31 +647,31 @@ function ExamPage() {
 
   // Memoize image injection for performance
   const [imageMap, setImageMap] = useState({});
-  
+
   useEffect(() => {
     const loadImageMap = async () => {
       try {
         const db = await openDb();
         const transaction = db.transaction(['examData'], 'readonly');
         const store = transaction.objectStore('examData');
-        
+
         const mapResult = await new Promise((resolve) => {
           const request = store.get('fileImageMap');
           request.onsuccess = () => resolve(request.result?.data || {});
           request.onerror = () => resolve({});
         });
-        
+
         const flatMap = {};
         Object.values(mapResult).flat().forEach(({ name, data }) => {
           flatMap[name] = data;
         });
         setImageMap(flatMap);
-        
+
       } catch (error) {
         console.error('Error loading image map from IndexedDB:', error);
       }
     };
-    
+
     loadImageMap();
   }, []);
 
@@ -683,7 +729,7 @@ function ExamPage() {
 
   const confirmSubmit = useCallback(async () => {
     setShowSubmitModal(false);
-    
+
     try {
       await storeData('examResults', { id: 'examAnswers', data: answers });
       await storeData('examResults', { id: 'reviewMarks', data: review });
@@ -843,7 +889,8 @@ function ExamPage() {
                   {timeLeft <= 0 ? "⏰ Time's Up!" : "Are You Sure?"}
                 </h3>
               </div>
-              <div className="submit-modal-body">
+              <div```text
+  className="submit-modal-body">
                 <p>
                   {timeLeft <= 0 
                     ? "Your exam time has ended. Your responses have been saved and will be submitted." 

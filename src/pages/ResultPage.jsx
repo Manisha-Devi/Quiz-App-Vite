@@ -3,6 +3,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSwipeable } from 'react-swipeable';
 import QuestionCard from '../components/QuestionCard';
+import dataManager from '../utils/dataManager';
 import '../styles/ResultPage.css';
 
 function ResultPage() {
@@ -10,12 +11,8 @@ function ResultPage() {
   const [answers, setAnswers] = useState({});
   const [reviewMarks, setReviewMarks] = useState({});
   const [currentFilter, setCurrentFilter] = useState('all');
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    return localStorage.getItem('darkMode') === 'true';
-  });
-  const [isBoldMode, setIsBoldMode] = useState(() => {
-    return localStorage.getItem('boldMode') === 'true';
-  });
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isBoldMode, setIsBoldMode] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showPerformanceChart, setShowPerformanceChart] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -25,19 +22,38 @@ function ResultPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const q = JSON.parse(localStorage.getItem('finalQuiz') || '[]');
-    const a = JSON.parse(localStorage.getItem('examAnswers') || '{}');
-    const r = JSON.parse(localStorage.getItem('reviewMarks') || '{}');
-    const retry = localStorage.getItem('retryMode') === 'true';
-    const retryAns = JSON.parse(localStorage.getItem('retryAnswers') || '{}');
-    const retryComp = JSON.parse(localStorage.getItem('retryCompleted') || '{}');
+    const loadResultData = async () => {
+      const [
+        questions,
+        answers,
+        reviewMarks,
+        retryMode,
+        retryAnswers,
+        retryCompleted,
+        darkMode,
+        boldMode
+      ] = await Promise.all([
+        dataManager.getExamData('finalQuiz'),
+        dataManager.getExamResults('examAnswers'),
+        dataManager.getExamResults('reviewMarks'),
+        dataManager.getUserSetting('retryMode', false),
+        dataManager.getExamResults('retryAnswers'),
+        dataManager.getExamResults('retryCompleted'),
+        dataManager.getUserSetting('darkMode', false),
+        dataManager.getUserSetting('boldMode', false)
+      ]);
 
-    setQuestions(q);
-    setAnswers(a);
-    setReviewMarks(r);
-    setRetryMode(retry);
-    setRetryAnswers(retryAns);
-    setRetryCompleted(retryComp);
+      setQuestions(questions || []);
+      setAnswers(answers || {});
+      setReviewMarks(reviewMarks || {});
+      setRetryMode(retryMode);
+      setRetryAnswers(retryAnswers || {});
+      setRetryCompleted(retryCompleted || {});
+      setIsDarkMode(darkMode);
+      setIsBoldMode(boldMode);
+    };
+
+    loadResultData();
   }, []);
 
   // Prevent browser back button and redirect to UploadPage
@@ -70,16 +86,16 @@ function ResultPage() {
     }
   }, [isBoldMode]);
 
-  const toggleDarkMode = useCallback(() => {
+  const toggleDarkMode = useCallback(async () => {
     const newDarkMode = !isDarkMode;
     setIsDarkMode(newDarkMode);
-    localStorage.setItem('darkMode', newDarkMode.toString());
+    await dataManager.setUserSetting('darkMode', newDarkMode);
   }, [isDarkMode]);
 
-  const toggleBoldMode = useCallback(() => {
+  const toggleBoldMode = useCallback(async () => {
     const newBoldMode = !isBoldMode;
     setIsBoldMode(newBoldMode);
-    localStorage.setItem('boldMode', newBoldMode.toString());
+    await dataManager.setUserSetting('boldMode', newBoldMode);
 
     // Force re-render by updating document class
     if (newBoldMode) {
@@ -145,13 +161,15 @@ function ResultPage() {
     return userAnswer === questions[idx].answer ? 'correct' : 'incorrect';
   };
 
-  const handleRetryAnswer = (questionIndex, selectedOption) => {
+  const handleRetryAnswer = async (questionIndex, selectedOption) => {
     const newRetryAnswers = { ...retryAnswers, [questionIndex]: selectedOption };
     const newRetryCompleted = { ...retryCompleted, [questionIndex]: true };
     setRetryAnswers(newRetryAnswers);
     setRetryCompleted(newRetryCompleted);
-    localStorage.setItem('retryAnswers', JSON.stringify(newRetryAnswers));
-    localStorage.setItem('retryCompleted', JSON.stringify(newRetryCompleted));
+    await Promise.all([
+      dataManager.setExamResults('retryAnswers', newRetryAnswers),
+      dataManager.setExamResults('retryCompleted', newRetryCompleted)
+    ]);
   };
 
   const filteredQuestions = questions.filter((q, idx) => {
@@ -454,8 +472,8 @@ function ResultPage() {
           <button className="btn-secondary" onClick={() => navigate('/')}>
             🏠 Home
           </button>
-          <button className="btn-primary" onClick={() => {
-            localStorage.clear();
+          <button className="btn-primary" onClick={async () => {
+            await dataManager.clearAllAppData();
             navigate('/');
           }}>
             🔄 Retake Quiz

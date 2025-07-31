@@ -67,7 +67,7 @@ function LocalJSONLibrary({ onFileSelect }) {
 
 
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (selectedFiles.length === 0) {
       alert('⚠️ Please select at least one file');
       return;
@@ -78,8 +78,13 @@ function LocalJSONLibrary({ onFileSelect }) {
       questions: file.data
     }));
 
-    localStorage.setItem('quizTime', String(quizTime));
-    localStorage.setItem('fileImageMap', JSON.stringify({}));
+    // Import dataManager dynamically to avoid circular imports
+    const { default: dataManager } = await import('../utils/dataManager');
+    
+    await Promise.all([
+      dataManager.setUserSetting('quizTime', quizTime),
+      dataManager.setFileImageMap({})
+    ]);
 
     onFileSelect(formattedData, quizTime);
   };

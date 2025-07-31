@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAllJSONImages } from '../utils/indexedDB';
+import dataManager from '../utils/dataManager';
 import '../styles/SectionSetupPage.css';
 
 function SectionSetupPage() {
@@ -10,14 +11,9 @@ function SectionSetupPage() {
   const [showModal, setShowModal] = useState(false);
   const [modalImages, setModalImages] = useState([]);
   const [modalIndex, setModalIndex] = useState(0);
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    return localStorage.getItem('darkMode') === 'true';
-  });
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [quizTime, setQuizTime] = useState(() => {
-    const savedTime = localStorage.getItem('quizTime');
-    return savedTime ? Number(savedTime) : 0;
-  });
+  const [quizTime, setQuizTime] = useState(0);
   const [practiceMode, setPracticeMode] = useState(false);
   const [enableDrawing, setEnableDrawing] = useState(false);
   const [retryMode, setRetryMode] = useState(false);
@@ -43,8 +39,16 @@ function SectionSetupPage() {
     FUTURE_PAGES_KEYS.forEach((key) => localStorage.removeItem(key));
 
     const loadData = async () => {
-      const data = JSON.parse(localStorage.getItem('quizData'));
+      // Load user settings
+      const settings = await dataManager.getUserSettings();
+      setIsDarkMode(settings.darkMode || false);
+      setQuizTime(settings.quizTime || 0);
+      setPracticeMode(settings.practiceMode || false);
+      setEnableDrawing(settings.enableDrawing !== false);
+      setRetryMode(settings.retryMode || false);
 
+      // Load quiz data
+      const data = await dataManager.getExamData('quizData');
       if (!data) {
         alert("⚠️ No data found. Please upload files first.");
         navigate('/');
@@ -91,10 +95,10 @@ function SectionSetupPage() {
     loadData();
   }, [navigate]);
 
-  const toggleDarkMode = () => {
+  const toggleDarkMode = async () => {
     const newDarkMode = !isDarkMode;
     setIsDarkMode(newDarkMode);
-    localStorage.setItem('darkMode', newDarkMode.toString());
+    await dataManager.setUserSetting('darkMode', newDarkMode);
   };
 
   const toggleFullscreen = () => {
@@ -225,10 +229,10 @@ function SectionSetupPage() {
 
     // Save quiz settings with validation
     const validQuizTime = Math.max(1, parseInt(quizTime) || 60); // Ensure at least 1 minute
-    localStorage.setItem('quizTime', String(validQuizTime));
-    localStorage.setItem('practiceMode', String(practiceMode));
-    localStorage.setItem('enableDrawing', String(enableDrawing));
-    localStorage.setItem('retryMode', String(retryMode));
+    await dataManager.setUserSetting('quizTime', validQuizTime);
+    await dataManager.setUserSetting('practiceMode', practiceMode);
+    await dataManager.setUserSetting('enableDrawing', enableDrawing);
+    await dataManager.setUserSetting('retryMode', retryMode);
     
     console.log('Quiz settings saved:', {
       quizTime: validQuizTime,
@@ -237,7 +241,7 @@ function SectionSetupPage() {
       retryMode
     });
 
-    localStorage.setItem('finalQuiz', JSON.stringify(selectedQuestions));
+    await dataManager.setExamData('finalQuiz', selectedQuestions);
     navigate('/exam');
   };
 

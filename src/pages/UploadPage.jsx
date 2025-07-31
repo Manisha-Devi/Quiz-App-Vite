@@ -4,6 +4,7 @@ import { storeImage } from "../utils/indexedDB";
 import useOfflineStorage from "../hooks/useOfflineStorage";
 import LocalJSONLibrary from "../components/LocalJSONLibrary";
 import CacheCleaner from "../components/CacheCleaner";
+import dataManager from "../utils/dataManager";
 import "../styles/UploadPage.css";
 import {
   openDb,
@@ -18,9 +19,7 @@ function UploadPage() {
   const [quizTime, setQuizTime] = useState(0);
   const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    return localStorage.getItem("darkMode") === "true";
-  });
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const navigate = useNavigate();
   const [showLocalJSON, setShowLocalJSON] = useState(false);
@@ -48,13 +47,32 @@ function UploadPage() {
   ];
 
   useEffect(() => {
-    KEYS_TO_CLEAR.forEach((key) => localStorage.removeItem(key));
+    // Initialize data manager and load settings
+    const initializeData = async () => {
+      await dataManager.checkMigrationStatus();
+      const darkModeValue = await dataManager.getUserSetting('darkMode', false);
+      setIsDarkMode(darkModeValue);
+      
+      // Clear exam-related data for fresh start
+      const examKeysToDelete = [
+        'quizData', 'quizTime', 'finalQuiz', 'examState', 'examMeta', 
+        'examAnswers', 'reviewMarks', 'fileImageMap', 'practiceMode', 
+        'enableDrawing', 'retryMode', 'retryAnswers', 'retryCompleted'
+      ];
+      
+      for (const key of examKeysToDelete) {
+        await dataManager.deleteExamData(key);
+        await dataManager.deleteExamResults(key);
+      }
+    };
+    
+    initializeData();
   }, []);
 
-  const toggleDarkMode = () => {
+  const toggleDarkMode = async () => {
     const newDarkMode = !isDarkMode;
     setIsDarkMode(newDarkMode);
-    localStorage.setItem("darkMode", newDarkMode.toString());
+    await dataManager.setUserSetting('darkMode', newDarkMode);
   };
 
   const toggleFullscreen = () => {
@@ -112,7 +130,7 @@ function UploadPage() {
       const updated = { ...prev };
       if (updated[filename]) {
         delete updated[filename];
-        localStorage.setItem("fileImageMap", JSON.stringify(updated));
+        dataManager.setFileImageMap(updated);
       }
       return updated;
     });
@@ -142,13 +160,13 @@ function UploadPage() {
       });
     });
 
-    Promise.all(imagePromises).then((images) => {
+    Promise.all(imagePromises).then(async (images) => {
       const updated = {
         ...fileImageMap,
         [filename]: [...(fileImageMap[filename] || []), ...images],
       };
       setFileImageMap(updated);
-      localStorage.setItem("fileImageMap", JSON.stringify(updated));
+      await dataManager.setFileImageMap(updated);
     });
   };
 
@@ -241,21 +259,20 @@ function UploadPage() {
         });
       }
 
+      // Store data in IndexedDB
+      await dataManager.setExamData('quizData', allData);
+      await dataManager.setUserSetting('quizTime', quizTime);
+      await dataManager.setFileImageMap(fileImageMap);
+
+      // Store individual quiz texts and images
       const db = await openDb();
       allData.forEach((item) => {
         storeText(item.questions, item.name);
       });
 
-      storeText(String(quizTime), "quizTime");
-      storeText(JSON.stringify(fileImageMap), "fileImageMap");
-
       for (const [filename, images] of Object.entries(fileImageMap)) {
         images.forEach((image) => storeImage(image.data, filename));
       }
-
-      localStorage.setItem("quizData", JSON.stringify(allData));
-      localStorage.setItem("quizTime", String(quizTime));
-      localStorage.setItem("fileImageMap", JSON.stringify(fileImageMap));
 
       navigate("/sections");
     } catch (err) {
@@ -266,10 +283,10 @@ function UploadPage() {
     }
   };
 
-  const handleLocalJSONSelect = (jsonData, selectedTime) => {
-    localStorage.setItem("quizData", JSON.stringify(jsonData));
-    localStorage.setItem("quizTime", String(selectedTime || quizTime));
-    localStorage.setItem("fileImageMap", JSON.stringify({}));
+  const handleLocalJSONSelect = async (jsonData, selectedTime) => {
+    await dataManager.setExamData('quizData', jsonData);
+    await dataManager.setUserSetting('quizTime', selectedTime || quizTime);
+    await dataManager.setFileImageMap({});
     navigate("/sections");
   };
 

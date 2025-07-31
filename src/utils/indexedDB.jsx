@@ -302,6 +302,48 @@ export const clearAllJSONImages = async () => {
   return store.clear();
 };
 
+// Get data from any store
+export const getData = async (storeName, id) => {
+  const db = await openDb();
+  const transaction = db.transaction(storeName, "readonly");
+  const store = transaction.objectStore(storeName);
+
+  return new Promise((resolve, reject) => {
+    const request = store.get(id);
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject("Error getting data");
+  });
+};
+
+// Delete data from any store
+export const deleteData = async (storeName, id) => {
+  const db = await openDb();
+  const transaction = db.transaction(storeName, "readwrite");
+  const store = transaction.objectStore(storeName);
+
+  return new Promise((resolve, reject) => {
+    const request = store.delete(id);
+    request.onsuccess = () => resolve("Data deleted successfully");
+    request.onerror = () => reject("Error deleting data");
+  });
+};
+
+// Clear entire database
+export const clearDatabase = async () => {
+  const db = await openDb();
+  const stores = ['userSettings', 'examData', 'examResults', 'jsonFiles', 'jsonImages', 'images', 'texts'];
+  
+  for (const storeName of stores) {
+    try {
+      const transaction = db.transaction([storeName], 'readwrite');
+      const store = transaction.objectStore(storeName);
+      await store.clear();
+    } catch (error) {
+      console.error(`Error clearing store ${storeName}:`, error);
+    }
+  }
+};
+
 // Delete the IndexedDB database entirely
 export const deleteDatabase = () => {
   return new Promise((resolve, reject) => {
