@@ -302,18 +302,7 @@ export const clearAllJSONImages = async () => {
   return store.clear();
 };
 
-// Get data from any store
-export const getData = async (storeName, id) => {
-  const db = await openDb();
-  const transaction = db.transaction(storeName, "readonly");
-  const store = transaction.objectStore(storeName);
-
-  return new Promise((resolve, reject) => {
-    const request = store.get(id);
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject("Error getting data");
-  });
-};
+// Get data from any store (already defined above, removing duplicate)
 
 // Delete data from any store
 export const deleteData = async (storeName, id) => {

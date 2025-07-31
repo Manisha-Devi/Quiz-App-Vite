@@ -185,7 +185,7 @@ function SectionSetupPage() {
     }
   };
 
-  const handleStartExam = () => {
+  const handleStartExam = async () => {
     const selectedQuestions = [];
 
     quizData.forEach((file, fileIndex) => {
