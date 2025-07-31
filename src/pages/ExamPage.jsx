@@ -164,18 +164,6 @@ function ExamPage() {
     ]);
   }, [currentQuestionIndex, startTime, elapsedTime, showSummary, examFinished, navigationHistory, questionStartTimes, questionTimeSpent, answers, reviewMarks]);
 
-  const toggleDarkMode = useCallback(async () => {
-    const newDarkMode = !isDarkMode;
-    setIsDarkMode(newDarkMode);
-    await dataManager.setUserSetting('darkMode', newDarkMode);
-  }, [isDarkMode]);
-
-  const toggleBoldMode = useCallback(async () => {
-    const newBoldMode = !isBoldMode;
-    setIsBoldMode(newBoldMode);
-    await dataManager.setUserSetting('boldMode', newBoldMode);
-  }, [isBoldMode]);
-
   const validQuizTime = Math.max(1, Number(quizTime || 60));
   const EXAM_DURATION = practiceMode ? Infinity : validQuizTime * 60;
 

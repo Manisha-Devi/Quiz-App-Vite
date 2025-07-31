@@ -150,14 +150,7 @@ export const getText = async (key) => {
   });
 };
 
-// Clear all data in IndexedDB (both images and texts)
-export const clearDatabase = async () => {
-  const db = await openDb();
-  const transaction = db.transaction(["images", "texts"], "readwrite");
 
-  transaction.objectStore("images").clear(); // Clear images store
-  transaction.objectStore("texts").clear(); // Clear texts store
-};
 
 // Store JSON file data in dedicated jsonFiles store
 export const storeJSONFile = async (filename, jsonData) => {
