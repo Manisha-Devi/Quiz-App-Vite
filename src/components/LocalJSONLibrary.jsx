@@ -285,8 +285,7 @@ function LocalJSONLibrary({ onFileSelect }) {
               {loading ? '⟳' : '🔄'} Refresh
             </button>
           </div>
-        </div></div>
-      </div>
+        </div>
       </div>
 
       {/* Selected Files Section */}
