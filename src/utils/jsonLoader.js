@@ -73,18 +73,36 @@ export const loadJSONImagesFromFolders = async () => {
   try {
     console.log('🔍 Loading JSON images from folders...');
 
-    // Get all image files from json folder and its subfolders
-    const allImageModules = import.meta.glob('../../json/**/*.{png,jpg,jpeg,gif,webp,svg}');
+    // Try development pattern first
+    let allImageModules = import.meta.glob('../../json/**/*.{png,jpg,jpeg,gif,webp,svg}');
+    
+    // If no images found, try public folder pattern for production
+    if (Object.keys(allImageModules).length === 0) {
+      console.log('🔄 No images found in development pattern, trying production pattern...');
+      allImageModules = import.meta.glob('/public/json/**/*.{png,jpg,jpeg,gif,webp,svg}');
+    }
+    
+    // If still no images, try relative to public
+    if (Object.keys(allImageModules).length === 0) {
+      console.log('🔄 Trying relative public pattern...');
+      allImageModules = import.meta.glob('../public/json/**/*.{png,jpg,jpeg,gif,webp,svg}');
+    }
 
     console.log('📁 Found image modules:', Object.keys(allImageModules));
     console.log('📊 Total images found:', Object.keys(allImageModules).length);
+
+    // If still no images found via glob, try production fallback
+    if (Object.keys(allImageModules).length === 0) {
+      console.log('🔄 No images found via glob, using production fallback...');
+      await loadImagesFromPublicFolder();
+      return;
+    }
 
     // Process each image
     for (const imagePath of Object.keys(allImageModules)) {
       console.log(`\n🖼️ Processing: ${imagePath}`);
 
       // Parse the path to extract folder structure
-      // Example: ../json/Image_Demo/Question1.png
       const pathParts = imagePath.split('/');
       console.log('📂 Path parts:', pathParts);
 
@@ -171,11 +189,6 @@ export const loadJSONImagesFromFolders = async () => {
       }
     } else {
       console.log('❌ No images found in jsonImages store!');
-      console.log('🔍 Let me check what image files were found during glob...');
-
-      // Re-check glob results
-      const debugImageModules = import.meta.glob('../../json/**/*.{png,jpg,jpeg,gif,webp,svg}');
-      console.log('🖼️ Available image modules:', Object.keys(debugImageModules));
     }
 
   } catch (error) {
@@ -350,5 +363,59 @@ const loadJSONFilesFromPublic = async () => {
     } catch (error) {
       console.error(`Failed to load ${fileName}:`, error);
     }
+  }
+};
+
+// Production fallback for loading images from public folder
+const loadImagesFromPublicFolder = async () => {
+  try {
+    console.log('🔄 Loading images from public folder (production fallback)...');
+    
+    // Define known image folders and their images
+    const imageMap = {
+      'Image_Demo': [
+        'Question1.png',
+        'Question1 (copy).png', 
+        'Question1 (copy) 1.png'
+      ]
+    };
+
+    for (const [folderName, imageFiles] of Object.entries(imageMap)) {
+      console.log(`📂 Processing folder: ${folderName}`);
+      
+      for (const imageName of imageFiles) {
+        try {
+          const imageUrl = `/json/${folderName}/${imageName}`;
+          console.log(`🖼️ Fetching image: ${imageUrl}`);
+          
+          const response = await fetch(imageUrl);
+          if (response.ok) {
+            const blob = await response.blob();
+            
+            // Convert blob to base64 data URL
+            const base64Data = await new Promise((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(reader.result);
+              reader.onerror = () => reject(new Error('Failed to read file'));
+              reader.readAsDataURL(blob);
+            });
+
+            // Store image in jsonImages IndexedDB store
+            await storeImageInJSONImagesStore(folderName, imageName, base64Data);
+            console.log(`✅ Stored image ${imageName} for ${folderName} from public folder`);
+            
+          } else {
+            console.log(`⚠️ Image not found: ${imageUrl} (${response.status})`);
+          }
+        } catch (error) {
+          console.error(`❌ Error loading image ${imageName}:`, error);
+        }
+      }
+    }
+    
+    console.log('✅ Production image loading completed');
+    
+  } catch (error) {
+    console.error('❌ Error in production image loading:', error);
   }
 };

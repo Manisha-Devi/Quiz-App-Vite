@@ -11,5 +11,5 @@ export default defineConfig({
     ],
   },
   publicDir: "public",
-  assetsInclude: ["**/*.json", "json/**/*"],
+  assetsInclude: ["**/*.json", "json/**/*", "**/*.png", "**/*.jpg", "**/*.jpeg", "**/*.gif", "**/*.webp", "**/*.svg"],
 });
