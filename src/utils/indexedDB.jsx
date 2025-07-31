@@ -41,9 +41,9 @@ export const openDb = () => {
       jsonFilesStore.createIndex("by_filename", "filename", { unique: true });
 
       // JSON Images store - dedicated store for images associated with JSON files
-      const jsonImagesStore = db.createObjectStore("jsonImages", { keyPath: "id" });
-      jsonImagesStore.createIndex("by_json_file", "jsonFileName", { unique: false });
-      jsonImagesStore.createIndex("by_image_name", "imageName", { unique: false });
+      const jsonImagesStore = db.createObjectStore("jsonImages", { keyPath: "folderName" });
+      jsonImagesStore.createIndex("by_imagename", "images.name", { unique: false });
+      jsonImagesStore.createIndex("by_json_file", "folderName", { unique: false });
 
       // Exam data store - for exam state, questions, meta data
       db.createObjectStore("examData", { keyPath: "id" });
@@ -212,15 +212,36 @@ export const storeJSONImage = async (jsonFileName, imageName, imageData) => {
     const transaction = db.transaction(['jsonImages'], 'readwrite');
     const store = transaction.objectStore('jsonImages');
 
-    await store.put({
-      id: `${jsonFileName}_${imageName}`,
-      jsonFileName,
-      imageName,
-      imageData,
-      timestamp: Date.now()
+    // Get existing folder data or create new
+    const existingData = await new Promise((resolve) => {
+      const request = store.get(jsonFileName);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => resolve(null);
     });
 
-    console.log(`Image ${imageName} stored for ${jsonFileName}`);
+    const folderData = existingData || {
+      folderName: jsonFileName,
+      images: [],
+      timestamp: Date.now()
+    };
+
+    // Check if image already exists, if not add it
+    const existingImageIndex = folderData.images.findIndex(img => img.name === imageName);
+    const imageObj = {
+      name: imageName,
+      data: imageData,
+      timestamp: Date.now()
+    };
+
+    if (existingImageIndex >= 0) {
+      folderData.images[existingImageIndex] = imageObj;
+    } else {
+      folderData.images.push(imageObj);
+    }
+
+    await store.put(folderData);
+
+    console.log(`Image ${imageName} stored for folder ${jsonFileName}`);
   } catch (error) {
     console.error('Error storing JSON image:', error);
   }
@@ -232,14 +253,14 @@ export const getJSONImages = async (jsonFileName) => {
     const db = await openDb();
     const transaction = db.transaction(['jsonImages'], 'readonly');
     const store = transaction.objectStore('jsonImages');
-    const index = store.index('by_json_file');
 
-    const images = await index.getAll(jsonFileName);
+    const folderData = await new Promise((resolve) => {
+      const request = store.get(jsonFileName);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => resolve(null);
+    });
 
-    return images.map(image => ({
-      name: image.imageName,
-      data: image.imageData
-    }));
+    return folderData ? folderData.images : [];
   } catch (error) {
     console.error('Error retrieving JSON images:', error);
     return [];
@@ -248,47 +269,66 @@ export const getJSONImages = async (jsonFileName) => {
 
 // Get image associated with JSON file from dedicated jsonImages store
 export const getJSONImage = async (jsonFileName, imageName) => {
-  const db = await openDb();
-  const transaction = db.transaction("jsonImages", "readonly");
-  const store = transaction.objectStore("jsonImages");
+  try {
+    const db = await openDb();
+    const transaction = db.transaction("jsonImages", "readonly");
+    const store = transaction.objectStore("jsonImages");
 
-  return new Promise((resolve, reject) => {
-    const request = store.get(`${jsonFileName}_${imageName}`);
-    request.onsuccess = () => resolve(request.result?.imageData || null);
-    request.onerror = () => reject("Error fetching JSON image");
-  });
+    const folderData = await new Promise((resolve, reject) => {
+      const request = store.get(jsonFileName);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject("Error fetching JSON image");
+    });
+
+    if (folderData && folderData.images) {
+      const image = folderData.images.find(img => img.name === imageName);
+      return image ? image.data : null;
+    }
+    
+    return null;
+  } catch (error) {
+    console.error("Error fetching JSON image:", error);
+    return null;
+  }
 };
 
 // Get all images for a specific JSON file
 export const getAllJSONImages = async (jsonFileName) => {
-  const db = await openDb();
-  const transaction = db.transaction("jsonImages", "readonly");
-  const store = transaction.objectStore("jsonImages");
-  const index = store.index("by_json_file");
+  try {
+    const db = await openDb();
+    const transaction = db.transaction("jsonImages", "readonly");
+    const store = transaction.objectStore("jsonImages");
 
-  return new Promise((resolve, reject) => {
-    const request = index.getAll(jsonFileName);
-    request.onsuccess = () => resolve(request.result || []);
-    request.onerror = () => reject("Error fetching JSON images");
-  });
+    const folderData = await new Promise((resolve, reject) => {
+      const request = store.get(jsonFileName);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject("Error fetching JSON images");
+    });
+
+    return folderData ? folderData.images : [];
+  } catch (error) {
+    console.error("Error fetching JSON images:", error);
+    return [];
+  }
 };
 
 // Clear all images for a specific JSON file
 export const clearJSONImages = async (jsonFileName) => {
-  const db = await openDb();
-  const transaction = db.transaction("jsonImages", "readwrite");
-  const store = transaction.objectStore("jsonImages");
-  const index = store.index("by_json_file");
+  try {
+    const db = await openDb();
+    const transaction = db.transaction("jsonImages", "readwrite");
+    const store = transaction.objectStore("jsonImages");
 
-  return new Promise((resolve, reject) => {
-    const request = index.getAll(jsonFileName);
-    request.onsuccess = () => {
-      const images = request.result;
-      const deletePromises = images.map(image => store.delete(image.id));
-      Promise.all(deletePromises).then(() => resolve()).catch(reject);
-    };
-    request.onerror = () => reject("Error clearing JSON images");
-  });
+    await new Promise((resolve, reject) => {
+      const request = store.delete(jsonFileName);
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject("Error clearing JSON images");
+    });
+
+    console.log(`Cleared all images for ${jsonFileName}`);
+  } catch (error) {
+    console.error("Error clearing JSON images:", error);
+  }
 };
 
 // Clear all JSON images from dedicated jsonImages store
