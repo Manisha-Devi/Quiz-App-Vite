@@ -80,6 +80,21 @@ function ExamPage() {
   const [reviewMarks, setReviewMarks] = useState({});
   const [examMeta, setExamMeta] = useState({});
   const [questions, setQuestions] = useState([]);
+  const [current, setCurrent] = useState(0);
+  const [review, setReview] = useState({});
+  const [fiftyFiftyUsed, setFiftyFiftyUsed] = useState({});
+  const [timeLeft, setTimeLeft] = useState(Infinity);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
+  const [showTimeWarning, setShowTimeWarning] = useState(false);
+  const [timeWarningDismissed, setTimeWarningDismissed] = useState(false);
+  const [showHalfTimeWarning, setShowHalfTimeWarning] = useState(false);
+  const [halfTimeWarningDismissed, setHalfTimeWarningDismissed] = useState(false);
+  const [showQuarterTimeWarning, setShowQuarterTimeWarning] = useState(false);
+  const [quarterTimeWarningDismissed, setQuarterTimeWarningDismissed] = useState(false);
+  const [showSubmitModal, setShowSubmitModal] = useState(false);
+  const [tabLeaveWarnings, setTabLeaveWarnings] = useState(0);
+  const [showTabLeaveWarning, setShowTabLeaveWarning] = useState(false);
 
   useEffect(() => {
     const loadExamData = async () => {
@@ -170,50 +185,7 @@ function ExamPage() {
   const mathConfig = { loader: { load: ['input/tex', 'output/chtml'] } };
   const hasMath = (text = '') => /\\\(|\\\[|\\begin|\\frac|\\sqrt/.test(text);
 
-  const [current, setCurrent] = useState(0);
-  const [review, setReview] = useState({});
-  const [fiftyFiftyUsed, setFiftyFiftyUsed] = useState({});
-
-  // Load exam data from IndexedDB
-  useEffect(() => {
-    const loadExamData = async () => {
-      try {
-        const db = await openDb();
-        const transaction = db.transaction(['examData'], 'readonly');
-        const store = transaction.objectStore('examData');
-
-        const metaResult = await new Promise((resolve) => {
-          const request = store.get('examMeta');
-          request.onsuccess = () => resolve(request.result?.data || {});
-          request.onerror = () => resolve({});
-        });
-
-        const questionsResult = await new Promise((resolve) => {
-          const request = store.get('finalQuiz');
-          request.onsuccess = () => resolve(request.result?.data || []);
-          request.onerror = () => resolve([]);
-        });
-
-        const stateResult = await new Promise((resolve) => {
-          const request = store.get('examState');
-          request.onsuccess = () => resolve(request.result?.data || {});
-          request.onerror = () => resolve({});
-        });
-
-        setExamMeta(metaResult);
-        setQuestions(questionsResult);
-        setCurrent(stateResult.current ?? 0);
-        setAnswers(stateResult.answers ?? {});
-        setReview(stateResult.review ?? {});
-        setFiftyFiftyUsed(stateResult.fiftyFiftyUsed ?? {});
-
-      } catch (error) {
-        console.error('Error loading exam data from IndexedDB:', error);
-      }
-    };
-
-    loadExamData();
-  }, []);
+  
 
   // Calculate time left based on loaded data
   useEffect(() => {
@@ -236,18 +208,6 @@ function ExamPage() {
 
     setTimeLeft(calculatedTimeLeft);
   }, [examMeta, practiceMode, validQuizTime]);
-  const [timeLeft, setTimeLeft] = useState(Infinity);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
-  const [showTimeWarning, setShowTimeWarning] = useState(false); // Track visibility of the warning
-  const [timeWarningDismissed, setTimeWarningDismissed] = useState(false); // Track if warning was dismissed
-  const [showHalfTimeWarning, setShowHalfTimeWarning] = useState(false);
-  const [halfTimeWarningDismissed, setHalfTimeWarningDismissed] = useState(false);
-  const [showQuarterTimeWarning, setShowQuarterTimeWarning] = useState(false);
-  const [quarterTimeWarningDismissed, setQuarterTimeWarningDismissed] = useState(false)
-  const [showSubmitModal, setShowSubmitModal] = useState(false);
-  const [tabLeaveWarnings, setTabLeaveWarnings] = useState(0);
-  const [showTabLeaveWarning, setShowTabLeaveWarning] = useState(false);
 
   // Generate sections with proper numbering and grouping - memoized for performance
   const sections = useMemo(() => {
@@ -313,12 +273,10 @@ function ExamPage() {
 
   const goNext = useCallback(() => {
     if (current >= questions.length - 1) {
-      // If we're at or past the last question, show submit modal
       setShowSubmitModal(true);
     } else {
       const newIndex = current + 1;
       setCurrent(newIndex);
-      // Notify DrawingOverlay about question change
       window.currentQuestionIndex = newIndex;
       const event = new CustomEvent('questionChanged', { 
         detail: { questionIndex: newIndex } 
@@ -329,12 +287,10 @@ function ExamPage() {
 
   const goPrev = useCallback(() => {
     if (current === 0) {
-      // If we're at the first question and trying to go back, show submit modal
       setShowSubmitModal(true);
     } else {
       const newIndex = current - 1;
       setCurrent(newIndex);
-      // Notify DrawingOverlay about question change
       window.currentQuestionIndex = newIndex;
       const event = new CustomEvent('questionChanged', { 
         detail: { questionIndex: newIndex } 
@@ -344,33 +300,18 @@ function ExamPage() {
   }, [current]);
 
   useEffect(() => {
-    // Clear ResultPage data when entering ExamPage
-    const RESULT_PAGE_KEYS = [
-      'examAnswers',
-      'reviewMarks',
-      'retryAnswers',
-      'retryCompleted',
-      'retryQuestions',
-      'currentRetryIndex',
-      'retryStats'
-    ];
-
-    RESULT_PAGE_KEYS.forEach((key) => localStorage.removeItem(key));
-
     if (!examMeta.startedAt) {
       const newMeta = { startedAt: Date.now() };
       setExamMeta(newMeta);
-      storeData('examData', { id: 'examMeta', data: newMeta });
+      dataManager.setExamData('examMeta', newMeta);
     }
 
-    // Set initial question index for DrawingOverlay
     window.currentQuestionIndex = current;
     const event = new CustomEvent('questionChanged', { 
       detail: { questionIndex: current } 
     });
     window.dispatchEvent(event);
 
-    // Listen for navigation events from DrawingOverlay
     const handleDrawingNavigation = (event) => {
       const direction = event.detail.direction;
       if (direction === 'next') {
@@ -382,7 +323,6 @@ function ExamPage() {
 
     window.addEventListener('navigateQuestion', handleDrawingNavigation);
 
-    // Sync dark mode with document classes
     if (isDarkMode) {
       document.documentElement.classList.add('dark-mode');
       document.body.classList.add('dark-mode');
@@ -391,7 +331,6 @@ function ExamPage() {
       document.body.classList.remove('dark-mode');
     }
 
-    // Sync bold mode with document classes
     if (isBoldMode) {
       document.documentElement.classList.add('bold-mode');
       document.body.classList.add('bold-mode');
@@ -403,7 +342,7 @@ function ExamPage() {
     return () => {
       window.removeEventListener('navigateQuestion', handleDrawingNavigation);
     };
-  }, [isDarkMode, current, goNext, goPrev]);
+  }, [isDarkMode, isBoldMode, current, examMeta.startedAt, goNext, goPrev]);
 
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth <= 768);
@@ -431,12 +370,9 @@ function ExamPage() {
   useEffect(() => {
     const saveExamState = async () => {
       try {
-        await storeData('examData', { 
-          id: 'examState', 
-          data: { answers, review, current, fiftyFiftyUsed } 
-        });
+        await dataManager.setExamData('examState', { answers, review, current, fiftyFiftyUsed });
       } catch (error) {
-        console.error('Error saving exam state to IndexedDB:', error);
+        console.error('Error saving exam state:', error);
       }
     };
 
@@ -550,11 +486,11 @@ function ExamPage() {
     }
 
     try {
-      await storeData('examResults', { id: 'examAnswers', data: answers });
-      await storeData('examResults', { id: 'reviewMarks', data: review });
+      await dataManager.setExamResults('examAnswers', answers);
+      await dataManager.setExamResults('reviewMarks', review);
       navigate('/result');
     } catch (error) {
-      console.error('Error saving exam results to IndexedDB:', error);
+      console.error('Error saving exam results:', error);
       navigate('/result');
     }
   }, [answers, review, navigate]);
@@ -639,24 +575,14 @@ function ExamPage() {
   useEffect(() => {
     const loadImageMap = async () => {
       try {
-        const db = await openDb();
-        const transaction = db.transaction(['examData'], 'readonly');
-        const store = transaction.objectStore('examData');
-
-        const mapResult = await new Promise((resolve) => {
-          const request = store.get('fileImageMap');
-          request.onsuccess = () => resolve(request.result?.data || {});
-          request.onerror = () => resolve({});
-        });
-
+        const mapResult = await dataManager.getFileImageMap();
         const flatMap = {};
         Object.values(mapResult).flat().forEach(({ name, data }) => {
           flatMap[name] = data;
         });
         setImageMap(flatMap);
-
       } catch (error) {
-        console.error('Error loading image map from IndexedDB:', error);
+        console.error('Error loading image map:', error);
       }
     };
 
@@ -719,11 +645,11 @@ function ExamPage() {
     setShowSubmitModal(false);
 
     try {
-      await storeData('examResults', { id: 'examAnswers', data: answers });
-      await storeData('examResults', { id: 'reviewMarks', data: review });
+      await dataManager.setExamResults('examAnswers', answers);
+      await dataManager.setExamResults('reviewMarks', review);
       navigate('/result');
     } catch (error) {
-      console.error('Error saving exam results to IndexedDB:', error);
+      console.error('Error saving exam results:', error);
       navigate('/result');
     }
   }, [answers, review, navigate]);
