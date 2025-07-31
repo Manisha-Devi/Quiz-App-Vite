@@ -291,15 +291,19 @@ const CacheCleaner = ({ onDataChange }) => {
               throw attemptError;
             }
           }
+        }
 
-          if (!deleteSuccess) {
-            throw new Error('All delete attempts failed');
-          }
+        if (!deleteSuccess) {
+          throw new Error('All delete attempts failed');
+        }
 
-        } catch (error) {
-          console.error('Error during database deletion:', error);
+        console.log('Database deletion result:', result);
+        alert('✅ IndexedDB database "quizDatabase" deleted successfully!');
 
-          let errorMessage = '❌ Database deletion failed.\n\n';
+      } catch (error) {
+        console.error('Error during database deletion:', error);
+
+        let errorMessage = '❌ Database deletion failed.\n\n';
 
           if (error.message === 'BLOCKED' || error.message.includes('blocked')) {
             errorMessage += '🔒 The database is still open in another tab or window.\n\n';
