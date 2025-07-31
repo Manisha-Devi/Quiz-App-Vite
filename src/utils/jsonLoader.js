@@ -3,7 +3,7 @@ import { storeJSONFile, storeJSONImage, getAllJSONFiles, clearJSONFiles, storeIm
 // Helper function to get available JSON file names
 export const getAvailableJSONFiles = () => {
   // Get JSON files from the glob pattern
-  const jsonModules = import.meta.glob('../../json/*.json');
+  const jsonModules = import.meta.glob('/json/*.json');
   return Object.keys(jsonModules).map(path => 
     path.split('/').pop().replace('.json', '')
   );
@@ -13,7 +13,7 @@ export const getAvailableJSONFiles = () => {
 export const loadJSONFilesToStorage = async () => {
   try {
     // Import all JSON files from the json folder
-    const jsonModules = import.meta.glob('../../json/*.json');
+    const jsonModules = import.meta.glob('/json/*.json');
 
     console.log('Found JSON files:', Object.keys(jsonModules));
 
@@ -74,7 +74,7 @@ export const loadJSONImagesFromFolders = async () => {
     console.log('🔍 Loading JSON images from folders...');
 
     // Get all image files from json folder and its subfolders
-    const allImageModules = import.meta.glob('../../json/**/*.{png,jpg,jpeg,gif,webp,svg}');
+    const allImageModules = import.meta.glob('/json/**/*.{png,jpg,jpeg,gif,webp,svg}');
 
     console.log('📁 Found image modules:', Object.keys(allImageModules));
     console.log('📊 Total images found:', Object.keys(allImageModules).length);
@@ -189,7 +189,7 @@ export const loadJSONFiles = async () => {
     console.log('Loading JSON files into dedicated jsonFiles IndexedDB store...');
 
     // Get all JSON files
-    const jsonModules = import.meta.glob('../../json/*.json');
+    const jsonModules = import.meta.glob('/json/*.json');
 
     console.log('Found JSON files:', Object.keys(jsonModules));
 
@@ -238,7 +238,7 @@ export const loadImagesForJSONFile = async (jsonFileName) => {
     console.log(`Loading images specifically for ${jsonFileName}...`);
 
     // Get all image files from json directory
-    const allImageModules = import.meta.glob('../../json/**/*.{png,jpg,jpeg,gif,webp}', { eager: false });
+    const allImageModules = import.meta.glob('/json/**/*.{png,jpg,jpeg,gif,webp}', { eager: false });
 
     // Try multiple folder name variations to match with JSON file
     const possibleFolderNames = [
