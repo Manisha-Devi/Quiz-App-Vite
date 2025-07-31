@@ -449,6 +449,7 @@ const CacheCleaner = ({ onDataChange }) => {
         onConfirm={popup.onConfirm}
         onCancel={popup.onCancel}
         showConfirm={popup.showConfirm}
+        contained={true}
       />
     </>
   );
