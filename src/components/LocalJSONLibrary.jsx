@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getAllJSONFiles } from '../utils/indexedDB';
 import '../components/styles/LocalJSONLibrary.css';
+import dataManager from '../utils/dataManager';
 
 function LocalJSONLibrary({ onFileSelect, refreshTrigger = 0 }) {
   const [localFiles, setLocalFiles] = useState([]);
@@ -87,11 +88,64 @@ function LocalJSONLibrary({ onFileSelect, refreshTrigger = 0 }) {
 
     // Import dataManager dynamically to avoid circular imports
     const { default: dataManager } = await import('../utils/dataManager');
-    
+
     await Promise.all([
       dataManager.setUserSetting('quizTime', quizTime),
       dataManager.setFileImageMap({})
     ]);
+
+    const handleFileSelect = async (selectedFiles, time) => {
+    try {
+      console.log('Selected files for quiz:', selectedFiles);
+
+      // Transform selected files data to match expected format
+      const quizData = selectedFiles.map(file => ({
+        name: file.filename,
+        questions: file.data
+      }));
+
+      console.log('Transformed quiz data:', quizData);
+
+      // Load associated images for selected JSON files
+      console.log('🖼️ Loading associated images for selected files...');
+      const fileImageMap = {};
+
+      for (const file of selectedFiles) {
+        try {
+          console.log(`Loading images for ${file.filename}...`);
+
+          // Get images from jsonImages store
+          const images = await dataManager.getAllImagesForJSONFile(file.filename);
+
+          if (images && images.length > 0) {
+            // Transform images to match expected format
+            fileImageMap[`${file.filename}.json`] = images.map(img => ({
+              name: img.imageName,
+              data: img.data
+            }));
+            console.log(`✅ Loaded ${images.length} images for ${file.filename}`);
+          } else {
+            console.log(`No images found for ${file.filename}`);
+          }
+        } catch (error) {
+          console.error(`Error loading images for ${file.filename}:`, error);
+        }
+      }
+
+      console.log('Final fileImageMap:', fileImageMap);
+
+      // Store fileImageMap in dataManager
+      if (Object.keys(fileImageMap).length > 0) {
+        await dataManager.setFileImageMap(fileImageMap);
+        console.log('✅ Stored fileImageMap in dataManager');
+      }
+
+      // Call the parent's onFileSelect with the transformed data
+      onFileSelect(quizData, time);
+    } catch (error) {
+      console.error('Error in handleFileSelect:', error);
+    }
+  };
 
     onFileSelect(formattedData, quizTime);
   };
@@ -268,7 +322,7 @@ function LocalJSONLibrary({ onFileSelect, refreshTrigger = 0 }) {
               </button>
             </div>
           </div>
-          
+
           </div>
       </div>
 
@@ -332,7 +386,7 @@ function LocalJSONLibrary({ onFileSelect, refreshTrigger = 0 }) {
         </div>
       )}
 
-      
+
 
       {/* Library Stats - Moved above files */}
       {filteredFiles.length > 0 && (
