@@ -61,13 +61,7 @@ export const loadJSONFilesToStorage = async () => {
   }
 };
 
-// Function to get available JSON file names
-export const getAvailableJSONFiles = () => {
-  const jsonModules = import.meta.glob('../json/*.json');
-  return Object.keys(jsonModules).map(path => 
-    path.split('/').pop().replace('.json', '')
-  );
-};
+
 
 // Function to load images from JSON-associated folders into IndexedDB
 export const loadJSONImagesFromFolders = async () => {
