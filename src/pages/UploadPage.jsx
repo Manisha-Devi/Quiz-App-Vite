@@ -14,6 +14,7 @@ import {
 } from "../utils/indexedDB";
 
 function UploadPage() {
+  const [showLocalJSON, setShowLocalJSON] = useState(true);
   const [files, setFiles] = useState([]);
   const [fileImageMap, setFileImageMap] = useState({});
   const [quizTime, setQuizTime] = useState(0);
@@ -22,9 +23,8 @@ function UploadPage() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const navigate = useNavigate();
-  const [showLocalJSON, setShowLocalJSON] = useState(true);
-  const [showSuccess, setShowSuccess] = useState(false);
   const { isOnline } = useOfflineStorage();
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const KEYS_TO_CLEAR = [
     "quizData",
@@ -297,6 +297,9 @@ function UploadPage() {
     navigate("/sections");
   };
 
+  const handleDataChange = () => {
+    setRefreshTrigger(prev => prev + 1); // Increment to trigger refresh
+  };
 
 
   // Function to clear all data
@@ -386,7 +389,7 @@ function UploadPage() {
       <div className="upload-content">
         {showLocalJSON ? (
           <div className="library-section">
-            <LocalJSONLibrary onFileSelect={handleLocalJSONSelect} />
+            <LocalJSONLibrary onFileSelect={handleLocalJSONSelect} refreshTrigger={refreshTrigger}/>
           </div>
         ) : (
           <div className="upload-section">
@@ -555,7 +558,7 @@ function UploadPage() {
             <p>Development utilities for managing application data</p>
           </div>
           <div className="developer-tools-actions">
-            <CacheCleaner />
+            <CacheCleaner onDataChange={handleDataChange} />
           </div>
         </div>
       </div>

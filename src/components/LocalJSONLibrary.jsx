@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getAllJSONFiles } from '../utils/indexedDB';
 import '../components/styles/LocalJSONLibrary.css';
 
-function LocalJSONLibrary({ onFileSelect }) {
+function LocalJSONLibrary({ onFileSelect, refreshTrigger = 0 }) {
   const [localFiles, setLocalFiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -18,6 +18,13 @@ function LocalJSONLibrary({ onFileSelect }) {
   useEffect(() => {
     loadLocalFiles();
   }, []);
+
+  // Auto refresh when refreshTrigger changes
+  useEffect(() => {
+    if (refreshTrigger > 0) {
+      loadLocalFiles();
+    }
+  }, [refreshTrigger]);
 
   const loadLocalFiles = async (forceReload = false) => {
     try {
