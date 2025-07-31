@@ -1,6 +1,15 @@
 
 import { storeJSONFile, storeJSONImage, getAllJSONFiles, clearJSONFiles } from './indexedDB';
 
+// Helper function to get available JSON file names
+export const getAvailableJSONFiles = () => {
+  // Get JSON files from the glob pattern
+  const jsonModules = import.meta.glob('../json/*.json');
+  return Object.keys(jsonModules).map(path => 
+    path.split('/').pop().replace('.json', '')
+  );
+};
+
 // Function to dynamically import all JSON files from the json folder
 export const loadJSONFilesToStorage = async () => {
   try {
@@ -73,23 +82,32 @@ export const loadJSONImagesFromFolders = async () => {
     const jsonFiles = getAvailableJSONFiles();
     
     for (const jsonFileName of jsonFiles) {
-      // Create folder name by replacing spaces with underscores
-      const folderName = jsonFileName.replace(/\s+/g, '_');
+      // Try multiple folder name variations to match with JSON file
+      const possibleFolderNames = [
+        jsonFileName, // Exact match
+        jsonFileName.replace(/\s+/g, '_'), // Replace spaces with underscores
+        jsonFileName.replace(/\s+/g, ''), // Remove spaces
+        jsonFileName.replace(/\s+/g, '-'), // Replace spaces with hyphens
+      ];
+      
+      console.log(`Looking for folder variations for ${jsonFileName}:`, possibleFolderNames);
       
       // Filter images that belong to this JSON file's folder
       const jsonFolderImages = Object.keys(allImageModules).filter(path => {
         const pathParts = path.split('/');
-        // Check if the path contains the folder name for this JSON file
-        return pathParts.includes(folderName);
+        // Check if the path contains any of the possible folder names for this JSON file
+        return possibleFolderNames.some(folderName => pathParts.includes(folderName));
       });
       
-      console.log(`Found images for ${jsonFileName} (${folderName}):`, jsonFolderImages);
+      console.log(`Found images for ${jsonFileName}:`, jsonFolderImages);
       
       // Process each image file for this JSON
       for (const imagePath of jsonFolderImages) {
         try {
           // Get the image file name
           const imageName = imagePath.split('/').pop();
+          
+          console.log(`Processing image ${imageName} for JSON file ${jsonFileName}`);
           
           // Import the image as a URL
           const imageModule = await allImageModules[imagePath]();
@@ -101,9 +119,17 @@ export const loadJSONImagesFromFolders = async () => {
           const reader = new FileReader();
           
           reader.onload = async () => {
-            // Store image in jsonImages IndexedDB store
-            await storeJSONImage(jsonFileName, imageName, reader.result);
-            console.log(`Stored image ${imageName} for ${jsonFileName} in jsonImages store`);
+            try {
+              // Store image in jsonImages IndexedDB store with the JSON file name as reference
+              await storeJSONImage(jsonFileName, imageName, reader.result);
+              console.log(`✅ Successfully stored image ${imageName} for ${jsonFileName} in IndexedDB`);
+            } catch (error) {
+              console.error(`❌ Error storing image ${imageName} for ${jsonFileName}:`, error);
+            }
+          };
+          
+          reader.onerror = () => {
+            console.error(`❌ Error reading image ${imageName} for ${jsonFileName}`);
           };
           
           reader.readAsDataURL(blob);
@@ -121,6 +147,79 @@ export const loadJSONImagesFromFolders = async () => {
 
 // Function to get JSON file from dedicated jsonFiles store
 export const getJSONFileFromStore = async (filename) => {
+
+
+// Function to load images for a specific JSON file
+export const loadImagesForJSONFile = async (jsonFileName) => {
+  try {
+    console.log(`Loading images specifically for ${jsonFileName}...`);
+    
+    // Get all image files from json directory
+    const allImageModules = import.meta.glob('../json/**/*.{png,jpg,jpeg,gif,webp}', { eager: false });
+    
+    // Try multiple folder name variations to match with JSON file
+    const possibleFolderNames = [
+      jsonFileName, // Exact match
+      jsonFileName.replace(/\s+/g, '_'), // Replace spaces with underscores
+      jsonFileName.replace(/\s+/g, ''), // Remove spaces
+      jsonFileName.replace(/\s+/g, '-'), // Replace spaces with hyphens
+    ];
+    
+    // Filter images that belong to this JSON file's folder
+    const jsonFolderImages = Object.keys(allImageModules).filter(path => {
+      const pathParts = path.split('/');
+      return possibleFolderNames.some(folderName => pathParts.includes(folderName));
+    });
+    
+    console.log(`Found ${jsonFolderImages.length} images for ${jsonFileName}`);
+    
+    let loadedCount = 0;
+    
+    // Process each image file
+    for (const imagePath of jsonFolderImages) {
+      try {
+        // Get the image file name
+        const imageName = imagePath.split('/').pop();
+        
+        // Import the image as a URL
+        const imageModule = await allImageModules[imagePath]();
+        const imageUrl = imageModule.default;
+        
+        // Convert image URL to blob data
+        const response = await fetch(imageUrl);
+        const blob = await response.blob();
+        
+        // Convert to data URL and store
+        const reader = new FileReader();
+        reader.onload = async () => {
+          try {
+            await storeJSONImage(jsonFileName, imageName, reader.result);
+            loadedCount++;
+            console.log(`✅ Stored image ${imageName} for ${jsonFileName} (${loadedCount}/${jsonFolderImages.length})`);
+          } catch (error) {
+            console.error(`❌ Error storing image ${imageName}:`, error);
+          }
+        };
+        
+        reader.onerror = () => {
+          console.error(`❌ Error reading image ${imageName}`);
+        };
+        
+        reader.readAsDataURL(blob);
+        
+      } catch (error) {
+        console.error(`Error processing image ${imagePath}:`, error);
+      }
+    }
+    
+    return loadedCount;
+    
+  } catch (error) {
+    console.error(`Error loading images for ${jsonFileName}:`, error);
+    return 0;
+  }
+};
+
   try {
     const { getJSONFile } = await import('./indexedDB');
     return await getJSONFile(filename);
