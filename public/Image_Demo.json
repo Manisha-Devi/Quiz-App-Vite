@@ -16,10 +16,10 @@
         "id": 2,
         "question": "Which option shows the correct email header format?",
         "options": [
-            "<img id='header1.png' alt='Header Option 1' style='max-width: 200px; height: auto;'>", 
-            "<img id='header2.png' alt='Header Option 2' style='max-width: 200px; height: auto;'>", 
-            "<img id='header3.png' alt='Header Option 3' style='max-width: 200px; height: auto;'>", 
-            "<img id='header4.png' alt='Header Option 4' style='max-width: 200px; height: auto;'>"
+            "<img id='header1.png' alt='Header Option 1'>", 
+            "<img id='header2.png' alt='Header Option 2'>", 
+            "<img id='header3.png' alt='Header Option 3'>", 
+            "<img id='header4.png' alt='Header Option 4'>"
         ],
         "answer": 1,
         "level": 2,
@@ -27,7 +27,7 @@
     },
     {
         "id": 3,
-        "question": "What is shown in this network diagram?<br><img id='network-diagram.png' alt='Network Diagram' style='max-width: 100%; height: auto; margin: 10px 0;'>",
+        "question": "What is shown in this network diagram?<br><img id='network-diagram.png' alt='Network Diagram'>",
         "options": [
             "A simple home network",
             "A corporate email infrastructure", 
