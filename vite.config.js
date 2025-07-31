@@ -11,10 +11,5 @@ export default defineConfig({
     ],
   },
   publicDir: "public",
-  assetsInclude: ["**/*.json"],
-  resolve: {
-    alias: {
-      '/json': '/json'
-    }
-  },
+  assetsInclude: ["**/*.json", "json/**/*"],
 });
