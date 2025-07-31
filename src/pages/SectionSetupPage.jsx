@@ -56,9 +56,9 @@ function SectionSetupPage() {
 
         setIsDarkMode(settings.darkMode || false);
         setQuizTime(settings.quizTime || 0);
-        setPracticeMode(settings.practiceMode || false);
-        setEnableDrawing(settings.enableDrawing || false);
-        setRetryMode(settings.retryMode || false);
+        setPracticeMode(false); // Always start unchecked
+        setEnableDrawing(false); // Always start unchecked
+        setRetryMode(false); // Always start unchecked
 
         // Load quiz data with retry mechanism
         let data = await dataManager.getExamData('quizData');
