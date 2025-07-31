@@ -13,9 +13,8 @@
 }
 
 .popup-backdrop.contained {
-  position: absolute;
+  position: fixed;
   background: rgba(0, 0, 0, 0.7);
-  border-radius: 24px;
   backdrop-filter: blur(8px);
 }
 
@@ -42,7 +41,6 @@
   min-width: 300px;
   max-height: 80%;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-  transform: scale(0.95);
 }
 
 @keyframes slideIn {
