@@ -390,23 +390,6 @@ function UploadPage() {
             </span>
           </div>
           <button
-            className="refresh-btn"
-            onClick={async () => {
-              try {
-                // Clear JSON files cache first
-                await clearDatabase();
-                // Force reload the page
-                window.location.reload(true);
-              } catch (error) {
-                console.error('Error during refresh:', error);
-                window.location.reload();
-              }
-            }}
-            title="Refresh Page"
-          >
-            🔄
-          </button>
-          <button
             className="theme-toggle-btn"
             onClick={toggleDarkMode}
             title="Toggle Dark Mode"
@@ -419,55 +402,6 @@ function UploadPage() {
             title="Local JSON Files"
           >
             {showLocalJSON ? "📁" : "📄"}
-          </button>
-
-          <button
-            className={`clear-database-btn ${loading ? 'loading' : ''}`}
-            onClick={async (e) => {
-              // Prevent multiple clicks
-              if (loading) return;
-
-              const confirmed = window.confirm(
-                "⚠️ Are you sure you want to clear IndexedDB stores? This will clear all data from IndexedDB stores only (database structure will remain intact). This action cannot be undone."
-              );
-
-              if (confirmed) {
-                setLoading(true);
-                e.target.disabled = true;
-
-                try {
-                  console.log("Starting IndexedDB stores clearing process...");
-
-                  // Clear all IndexedDB stores only (keeps database structure intact)
-                  const success = await dataManager.clearAllAppData();
-                  
-                  if (success) {
-                    console.log("✅ All IndexedDB stores cleared successfully - database structure preserved");
-                  } else {
-                    throw new Error("Failed to clear IndexedDB stores");
-                  }
-
-                  console.log("IndexedDB stores clearing completed");
-                  console.log("IndexedDB stores cleared successfully!");
-                  alert("✅ IndexedDB stores cleared successfully! Page will reload now.");
-
-                  // Force reload with cache bypass
-                  setTimeout(() => {
-                    window.location.href = window.location.href;
-                  }, 1000);
-
-                } catch (error) {
-                  console.error('Error clearing all data:', error);
-                  alert(`❌ Failed to clear all data: ${error.message}. Please try again.`);
-                  setLoading(false);
-                  e.target.disabled = false;
-                }
-              }
-            }}
-            disabled={loading}
-            title="Clear IndexedDB Stores"
-          >
-            {loading ? "🔄" : "🗑️"}
           </button>
         </div>
       </header>
