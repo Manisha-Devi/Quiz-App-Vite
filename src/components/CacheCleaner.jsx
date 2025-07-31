@@ -96,11 +96,11 @@ const CacheCleaner = ({ onDataChange }) => {
         console.log('Starting IndexedDB stores clearing process...');
 
         const success = await dataManager.clearAllAppData();
-        
+
         if (success) {
           console.log('✅ All IndexedDB stores cleared successfully');
           showPopup('All IndexedDB stores cleared successfully!', 'success');
-          
+
           if (onDataChange) {
             onDataChange();
           }
@@ -144,7 +144,7 @@ const CacheCleaner = ({ onDataChange }) => {
         // Clear cookies
         const cookies = document.cookie.split(";");
         let cookiesCleared = 0;
-        
+
         for (let cookie of cookies) {
           const eqPos = cookie.indexOf("=");
           const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
@@ -184,7 +184,7 @@ const CacheCleaner = ({ onDataChange }) => {
         ].join('\n');
 
         showPopup(summary, 'success');
-        
+
         if (onDataChange) {
           onDataChange();
         }
@@ -274,12 +274,12 @@ const CacheCleaner = ({ onDataChange }) => {
 
             deleteSuccess = true;
             console.log('Database deletion result:', result);
-            showPopup('IndexedDB database "quizDatabase" deleted successfully! Page will reload in a moment.', 'success');
+            showPopup('IndexedDB database "quizDatabase" deleted successfully!', 'success');
 
             // Force hard reload to recreate database
-            setTimeout(() => {
-              window.location.href = window.location.href;
-            }, 2000);
+            // setTimeout(() => {
+            //   window.location.href = window.location.href;
+            // }, 2000);
 
           } catch (attemptError) {
             if (attemptError.message === 'BLOCKED' && attempts < maxAttempts) {

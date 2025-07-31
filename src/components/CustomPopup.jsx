@@ -2,7 +2,7 @@
 import React from 'react';
 import '../styles/CustomPopup.css';
 
-const CustomPopup = ({ message, type, onClose, isVisible }) => {
+const CustomPopup = ({ message, type, onClose, isVisible, showConfirm, onConfirm }) => {
   if (!isVisible) return null;
 
   const getIcon = () => {
@@ -38,9 +38,20 @@ const CustomPopup = ({ message, type, onClose, isVisible }) => {
         </div>
         
         <div className="popup-actions">
-          <button className="popup-close-btn" onClick={onClose}>
-            OK
-          </button>
+          {showConfirm ? (
+            <>
+              <button className="popup-cancel-btn" onClick={onClose}>
+                Cancel
+              </button>
+              <button className="popup-confirm-btn" onClick={onConfirm}>
+                Confirm
+              </button>
+            </>
+          ) : (
+            <button className="popup-close-btn" onClick={onClose}>
+              OK
+            </button>
+          )}
         </div>
       </div>
     </div>
