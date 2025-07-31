@@ -1,9 +1,19 @@
 import React, { useState } from 'react';
 import dataManager from '../utils/dataManager';
+import CustomPopup from './CustomPopup';
 
 const CacheCleaner = ({ onDataChange }) => {
   const [loading, setLoading] = useState(false);
   const [currentOperation, setCurrentOperation] = useState('');
+  const [popup, setPopup] = useState({ isVisible: false, message: '', type: 'info' });
+
+  const showPopup = (message, type = 'info') => {
+    setPopup({ isVisible: true, message, type });
+  };
+
+  const closePopup = () => {
+    setPopup({ isVisible: false, message: '', type: 'info' });
+  };
 
   const fetchJSONData = async () => {
     if (loading) return;
@@ -54,18 +64,18 @@ const CacheCleaner = ({ onDataChange }) => {
         }
 
         console.log(`Successfully stored ${loadedData.length} JSON files in dedicated jsonFiles IndexedDB store`);
-        alert(`✅ Successfully loaded ${loadedData.length} JSON files into jsonFiles IndexedDB store!`);
+        showPopup(`Successfully loaded ${loadedData.length} JSON files into jsonFiles IndexedDB store!`, 'success');
 
         if (onDataChange) {
           onDataChange();
         }
       } else {
-        alert('⚠️ No JSON files could be loaded');
+        showPopup('No JSON files could be loaded', 'warning');
       }
 
     } catch (error) {
       console.error('Error fetching JSON data:', error);
-      alert('❌ Error loading JSON files. Please try again.');
+      showPopup('Error loading JSON files. Please try again.', 'error');
     } finally {
       setLoading(false);
       setCurrentOperation('');
@@ -89,7 +99,7 @@ const CacheCleaner = ({ onDataChange }) => {
         
         if (success) {
           console.log('✅ All IndexedDB stores cleared successfully');
-          alert('✅ All IndexedDB stores cleared successfully!');
+          showPopup('All IndexedDB stores cleared successfully!', 'success');
           
           if (onDataChange) {
             onDataChange();
@@ -100,7 +110,7 @@ const CacheCleaner = ({ onDataChange }) => {
 
       } catch (error) {
         console.error('Error clearing IndexedDB stores:', error);
-        alert(`❌ Error clearing IndexedDB stores: ${error.message || 'Unknown error occurred.'}`);
+        showPopup(`Error clearing IndexedDB stores: ${error.message || 'Unknown error occurred.'}`, 'error');
       } finally {
         setLoading(false);
         setCurrentOperation('');
@@ -173,7 +183,7 @@ const CacheCleaner = ({ onDataChange }) => {
           `• Cache: ${cacheCount} caches cleared`
         ].join('\n');
 
-        alert(summary);
+        showPopup(summary, 'success');
         
         if (onDataChange) {
           onDataChange();
@@ -181,7 +191,7 @@ const CacheCleaner = ({ onDataChange }) => {
 
       } catch (error) {
         console.error('Error clearing browser storage:', error);
-        alert(`❌ Error clearing browser storage: ${error.message || 'Unknown error occurred.'}`);
+        showPopup(`Error clearing browser storage: ${error.message || 'Unknown error occurred.'}`, 'error');
       } finally {
         setLoading(false);
         setCurrentOperation('');
@@ -264,12 +274,12 @@ const CacheCleaner = ({ onDataChange }) => {
 
             deleteSuccess = true;
             console.log('Database deletion result:', result);
-            alert('✅ IndexedDB database "quizDatabase" deleted successfully! Page will reload now.');
+            showPopup('IndexedDB database "quizDatabase" deleted successfully! Page will reload in a moment.', 'success');
 
             // Force hard reload to recreate database
             setTimeout(() => {
               window.location.href = window.location.href;
-            }, 1000);
+            }, 2000);
 
           } catch (attemptError) {
             if (attemptError.message === 'BLOCKED' && attempts < maxAttempts) {
@@ -311,7 +321,7 @@ const CacheCleaner = ({ onDataChange }) => {
           errorMessage += 'Try refreshing the page and attempting again.';
         }
 
-        alert(errorMessage);
+        showPopup(errorMessage, 'error');
       } finally {
         if (onDataChange) {
           onDataChange();
@@ -375,6 +385,13 @@ const CacheCleaner = ({ onDataChange }) => {
         </span>
         <span className="btn-description">Remove all IndexedDB data</span>
       </button>
+
+      <CustomPopup 
+        message={popup.message}
+        type={popup.type}
+        isVisible={popup.isVisible}
+        onClose={closePopup}
+      />
     </>
   );
 };
