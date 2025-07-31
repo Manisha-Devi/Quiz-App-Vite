@@ -18,7 +18,6 @@ function LocalJSONLibrary({ onFileSelect, refreshTrigger = 0 }) {
 
   useEffect(() => {
     loadLocalFiles();
-    debugJsonImagesStore(); // Debug function to check stored images
     debugProductionMode(); // Debug production vs development
   }, []);
 
