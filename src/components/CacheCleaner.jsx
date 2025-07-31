@@ -73,7 +73,14 @@ const CacheCleaner = ({ onDataChange }) => {
           }
 
           console.log(`Successfully stored ${loadedData.length} JSON files in dedicated jsonFiles IndexedDB store`);
-          alert(`✅ Successfully loaded ${loadedData.length} JSON files into jsonFiles IndexedDB store!`);
+
+          // Now also fetch and store images associated with JSON files
+          console.log('🖼️ Starting to load associated images...');
+          const { loadJSONImagesFromFolders } = await import('../utils/jsonLoader');
+          await loadJSONImagesFromFolders();
+          console.log('✅ Images loading process completed');
+
+          alert(`✅ Successfully loaded:\n📄 ${loadedData.length} JSON files\n🖼️ Associated images\n\nAll data stored in IndexedDB!`);
 
           if (onDataChange) {
             onDataChange();
