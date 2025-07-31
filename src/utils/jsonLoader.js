@@ -233,7 +233,7 @@ export const loadImagesForJSONFile = async (jsonFileName) => {
       }
     }
 
-    return loadedCount;
+    return 0;
 
   } catch (error) {
     console.error(`Error loading images for ${jsonFileName}:`, error);
