@@ -556,7 +556,16 @@ function UploadPage() {
 
       {/* Footer with CacheCleaner */}
       <div className="upload-footer">
-        <CacheCleaner />
+        {/* Developer Tools Card */}
+        <div className="developer-tools-card">
+          <div className="developer-tools-header">
+            <h3>🔧 Developer Tools</h3>
+            <p>Development utilities for managing application data</p>
+          </div>
+          <div className="developer-tools-actions">
+            <CacheCleaner />
+          </div>
+        </div>
       </div>
 
       {/* Fullscreen Button Container */}

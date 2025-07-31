@@ -187,54 +187,29 @@ const CacheCleaner = () => {
   };
 
   return (
-    <div style={{
-      position: 'fixed',
-      bottom: '20px',
-      right: '20px',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '10px',
-      zIndex: 1000
-    }}>
+    <>
       <button 
         onClick={fetchJSONData}
         disabled={loading}
-        style={{
-          background: loading ? '#ccc' : 'linear-gradient(135deg, #4CAF50, #45a049)',
-          color: 'white',
-          border: 'none',
-          padding: '12px 16px',
-          borderRadius: '8px',
-          fontWeight: '600',
-          fontSize: '14px',
-          cursor: loading ? 'not-allowed' : 'pointer',
-          transition: 'all 0.3s ease',
-          opacity: loading ? 0.7 : 1
-        }}
+        className="dev-tool-btn fetch-btn"
         title="Fetch JSON files from project and store in IndexedDB"
       >
-        {loading ? '⏳ Loading...' : '📥 Fetch Data'}
+        <span className="btn-icon">{loading ? '⏳' : '📥'}</span>
+        <span className="btn-text">{loading ? 'Loading...' : 'Fetch Data'}</span>
+        <span className="btn-description">Load JSON files into IndexedDB</span>
       </button>
+      
       <button 
         onClick={deleteIndexedDB}
         disabled={loading}
-        style={{
-          background: loading ? '#ccc' : 'linear-gradient(135deg, #ff6b6b, #ee5a24)',
-          color: 'white',
-          border: 'none',
-          padding: '12px 16px',
-          borderRadius: '8px',
-          fontWeight: '600',
-          fontSize: '14px',
-          cursor: loading ? 'not-allowed' : 'pointer',
-          transition: 'all 0.3s ease',
-          opacity: loading ? 0.7 : 1
-        }}
+        className="dev-tool-btn delete-btn"
         title="Delete entire IndexedDB database (requires page reload)"
       >
-        {loading ? '⏳ Deleting...' : '🗑️ Delete DB'}
+        <span className="btn-icon">{loading ? '⏳' : '🗑️'}</span>
+        <span className="btn-text">{loading ? 'Deleting...' : 'Delete DB'}</span>
+        <span className="btn-description">Remove all IndexedDB data</span>
       </button>
-    </div>
+    </>
   );
 };
 
