@@ -14,7 +14,14 @@ const CacheCleaner = ({ onDataChange }) => {
   });
 
   const showPopup = (message, type = 'info', onConfirm = null, onCancel = null) => {
-    setPopup({ isVisible: true, message, type, onConfirm, onCancel });
+    setPopup({ 
+      isVisible: true, 
+      message, 
+      type, 
+      onConfirm, 
+      onCancel,
+      showConfirm: onConfirm !== null 
+    });
   };
 
   const closePopup = () => {
@@ -414,6 +421,7 @@ const CacheCleaner = ({ onDataChange }) => {
         onClose={closePopup}
         onConfirm={popup.onConfirm}
         onCancel={popup.onCancel}
+        showConfirm={popup.showConfirm}
       />
     </>
   );
