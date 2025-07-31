@@ -27,17 +27,17 @@ function SectionSetupPage() {
       const examKeysToDelete = [
         'finalQuiz', 'examState', 'examMeta'
       ];
-      
+
       const resultKeysToDelete = [
         'examAnswers', 'reviewMarks', 'retryAnswers', 'retryCompleted',
         'retryQuestions', 'currentRetryIndex', 'retryStats'
       ];
-      
+
       // Clear exam data
       for (const key of examKeysToDelete) {
         await dataManager.deleteExamData(key);
       }
-      
+
       // Clear exam results
       for (const key of resultKeysToDelete) {
         await dataManager.deleteExamResults(key);
@@ -49,11 +49,11 @@ function SectionSetupPage() {
     const loadData = async () => {
       try {
         console.log('Loading data in SectionSetupPage...');
-        
+
         // Load user settings
         const settings = await dataManager.getUserSettings();
         console.log('Loaded settings:', settings);
-        
+
         setIsDarkMode(settings.darkMode || false);
         setQuizTime(settings.quizTime || 0);
         setPracticeMode(settings.practiceMode || false);
@@ -63,7 +63,7 @@ function SectionSetupPage() {
         // Load quiz data with retry mechanism
         let data = await dataManager.getExamData('quizData');
         console.log('Loaded quiz data:', data);
-        
+
         // If no data found, try with a small delay (for async operations)
         if (!data || !Array.isArray(data) || data.length === 0) {
           console.log('No data found, retrying...');
@@ -71,7 +71,7 @@ function SectionSetupPage() {
           data = await dataManager.getExamData('quizData');
           console.log('Retry result:', data);
         }
-        
+
         if (!data || !Array.isArray(data) || data.length === 0) {
           console.error('No valid quiz data found');
           alert("⚠️ No data found. Please upload files first.");
@@ -107,13 +107,13 @@ function SectionSetupPage() {
         const initialCounts = {};
         const initialRanges = {};
         const initialShuffleSettings = {};
-        
+
         data.forEach((file, index) => {
           if (!file.questions || !Array.isArray(file.questions)) {
             console.error(`Invalid questions data for file ${file.name}:`, file.questions);
             return;
           }
-          
+
           initialCounts[index] = { 0: 0, 1: 0, 2: 0 };
           initialRanges[index] = { 
             startIndex: 1, 
@@ -123,11 +123,11 @@ function SectionSetupPage() {
           initialShuffleSettings[index] = false; // Default: shuffle enabled (false means no-shuffle is off)
           console.log(`Initialized settings for ${file.name}: ${file.questions.length} questions`);
         });
-        
+
         setQuestionCounts(initialCounts);
         setQuestionRanges(initialRanges);
         setSectionShuffleSettings(initialShuffleSettings);
-        
+
         console.log('Section setup completed successfully');
       } catch (error) {
         console.error('Error loading data in SectionSetupPage:', error);
@@ -177,7 +177,7 @@ function SectionSetupPage() {
   const handleRangeChange = (fileIndex, type, value) => {
     const updated = { ...questionRanges };
     const maxQuestions = quizData[fileIndex].questions.length;
-    
+
     if (type === 'start') {
       const newStart = Math.max(1, Math.min(parseInt(value) || 1, updated[fileIndex].endIndex));
       updated[fileIndex].startIndex = newStart;
@@ -185,7 +185,7 @@ function SectionSetupPage() {
       const newEnd = Math.max(updated[fileIndex].startIndex, Math.min(parseInt(value) || maxQuestions, maxQuestions));
       updated[fileIndex].endIndex = newEnd;
     }
-    
+
     setQuestionRanges(updated);
 
     // Auto-calculate total selected questions across all sections
@@ -234,18 +234,18 @@ function SectionSetupPage() {
 
     quizData.forEach((file, fileIndex) => {
       const isNoShuffle = sectionShuffleSettings[fileIndex] || false;
-      
+
       if (isNoShuffle) {
         // No shuffle mode for this section - select questions by range in original order
         const range = questionRanges[fileIndex];
         if (range && range.startIndex && range.endIndex) {
           const startIdx = range.startIndex - 1; // Convert to 0-based index
           const endIdx = range.endIndex - 1;     // Convert to 0-based index
-          
+
           const rangeQuestions = file.questions
             .slice(startIdx, endIdx + 1)
             .map(q => ({ ...q, section: file.name }));
-          
+
           selectedQuestions.push(...rangeQuestions);
         }
       } else {
@@ -277,7 +277,7 @@ function SectionSetupPage() {
     await dataManager.setUserSetting('practiceMode', practiceMode);
     await dataManager.setUserSetting('enableDrawing', enableDrawing);
     await dataManager.setUserSetting('retryMode', retryMode);
-    
+
     console.log('Quiz settings saved:', {
       quizTime: validQuizTime,
       practiceMode,
@@ -304,7 +304,7 @@ function SectionSetupPage() {
   const getTotalSelected = () => {
     return quizData.reduce((total, file, fileIndex) => {
       const isNoShuffle = sectionShuffleSettings[fileIndex] || false;
-      
+
       if (isNoShuffle) {
         const range = questionRanges[fileIndex];
         return total + (range ? range.endIndex - range.startIndex + 1 : 0);
@@ -336,7 +336,27 @@ function SectionSetupPage() {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [toggleDarkMode]);
 
-  return (
+  useEffect(() => {
+    const loadStoredData = async () => {
+      try {
+        // Ensure IndexedDB-only operations
+        await dataManager.enforceIndexedDBOnly();
+
+        const [
+          storedQuizSetup,
+          storedDarkMode,
+          storedBoldMode,
+          storedQuizTime,
+          storedPracticeMode
+        ] = await Promise.all([
+          dataManager.getQuizSetup(),
+          dataManager.getUserSetting('darkMode', false),
+          dataManager.getUserSetting('boldMode', false),
+          dataManager.getUserSetting('quizTime', 60),
+          dataManager.getUserSetting('practiceMode', false)
+        ]);
+
+    return (
     <div className={`section-page ${isDarkMode ? 'dark-mode' : ''}`}>
       {/* Header */}
       <header className="section-header">
@@ -382,13 +402,13 @@ function SectionSetupPage() {
                       </button>
                     )}
                   </div>
-                  
+
                   <div className="section-controls-row">
                     <div className="section-stats">
                       <span className="total-questions">{file.questions.length} Total</span>
                       <span className="selected-count">{selectedTotal} Selected</span>
                     </div>
-                    
+
                     <div className="section-shuffle-toggle">
                       <label className="shuffle-checkbox">
                         <input

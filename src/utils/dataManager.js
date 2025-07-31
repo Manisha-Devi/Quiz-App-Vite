@@ -237,21 +237,78 @@ class DataManager {
       // Mark migration as complete
       await this.setUserSetting('migrationComplete', true);
       
-      console.log('Migration from localStorage to IndexedDB completed');
+      console.log('Migration from localStorage to IndexedDB completed successfully');
+      console.log('From now on, all data operations will use IndexedDB exclusively');
+      
       return true;
     } catch (error) {
       console.error('Migration failed:', error);
+      // Don't mark as complete if migration failed
       return false;
     }
   }
 
-  // Check if migration is needed
-  async checkMigrationStatus() {
+  // Utility method to check if we should use IndexedDB (always true after migration)
+  async shouldUseIndexedDB() {
     const migrationComplete = await this.getUserSetting('migrationComplete', false);
-    if (!migrationComplete) {
-      await this.migrateFromLocalStorage();
+    return migrationComplete;
+  }
+
+  // Method to ensure no localStorage usage throughout the app
+  async enforceIndexedDBOnly() {
+    const migrationComplete = await this.getUserSetting('migrationComplete', false);
+    
+    if (migrationComplete && localStorage.length > 0) {
+      console.warn('localStorage data detected after migration - clearing to maintain IndexedDB-only policy');
+      localStorage.clear();
+    }
+    
+    return migrationComplete;
+  }
+
+  // Check if migration is needed - more robust version
+  async checkMigrationStatus() {
+    try {
+      const migrationComplete = await this.getUserSetting('migrationComplete', false);
+      
+      if (!migrationComplete) {
+        console.log('Migration not complete, starting migration...');
+        const migrationSuccess = await this.migrateFromLocalStorage();
+        
+        if (migrationSuccess) {
+          // Clear localStorage completely after successful migration
+          try {
+            localStorage.clear();
+            console.log('localStorage cleared after migration');
+          } catch (error) {
+            console.warn('Could not clear localStorage:', error);
+          }
+        }
+        
+        return migrationSuccess;
+      }
+      
+      console.log('Migration already completed, using IndexedDB exclusively');
+      return true;
+    } catch (error) {
+      console.error('Error checking migration status:', error);
+      return false;
     }
   }
+
+  // Enhanced migration with better error handling
+  async migrateFromLocalStorage() {
+    try {
+      console.log('Starting migration from localStorage to IndexedDB...');
+      
+      // Check if there's any localStorage data to migrate
+      const hasLocalStorageData = localStorage.length > 0;
+      
+      if (!hasLocalStorageData) {
+        console.log('No localStorage data found, marking migration as complete');
+        await this.setUserSetting('migrationComplete', true);
+        return true;
+      }
 }
 
 // Create singleton instance

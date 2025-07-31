@@ -50,38 +50,38 @@ function UploadPage() {
     // Initialize data manager and load settings
     const initializeData = async () => {
       console.log('Initializing UploadPage...');
-      
+
       // Force migration check and run if needed
       await dataManager.checkMigrationStatus();
       console.log('Migration check completed');
-      
+
       // Load settings from IndexedDB
       const darkModeValue = await dataManager.getUserSetting('darkMode', false);
       setIsDarkMode(darkModeValue);
       console.log('Dark mode loaded:', darkModeValue);
-      
+
       // Clear exam-related data for fresh start
       const examKeysToDelete = [
         'quizData', 'finalQuiz', 'examState', 'examMeta', 'fileImageMap'
       ];
-      
+
       const resultKeysToDelete = [
         'examAnswers', 'reviewMarks', 'retryAnswers', 'retryCompleted'
       ];
-      
+
       // Clear exam data
       for (const key of examKeysToDelete) {
         await dataManager.deleteExamData(key);
       }
-      
+
       // Clear exam results
       for (const key of resultKeysToDelete) {
         await dataManager.deleteExamResults(key);
       }
-      
+
       console.log('UploadPage initialization completed');
     };
-    
+
     initializeData();
   }, []);
 
@@ -279,7 +279,7 @@ function UploadPage() {
       console.log('Storing quiz data:', allData);
       await dataManager.setExamData('quizData', allData);
       await dataManager.setUserSetting('quizTime', quizTime);
-      
+
       // Store file image map if it exists
       if (Object.keys(fileImageMap).length > 0) {
         await dataManager.setFileImageMap(fileImageMap);
@@ -288,7 +288,7 @@ function UploadPage() {
 
       // Store individual quiz texts and images in IndexedDB
       const db = await openDb();
-      
+
       // Store texts for each quiz file
       for (const item of allData) {
         await storeText(item.questions, item.name);
@@ -420,7 +420,7 @@ function UploadPage() {
           >
             {showLocalJSON ? "📁" : "📄"}
           </button>
-          
+
           <button
             className={`clear-database-btn ${loading ? 'loading' : ''}`}
             onClick={async (e) => {

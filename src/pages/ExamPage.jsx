@@ -675,6 +675,74 @@ function ExamPage() {
     setShowTabLeaveWarning(false);
   }, []);
 
+  useEffect(() => {
+    const loadStoredData = async () => {
+      try {
+        // Ensure IndexedDB-only operations
+        await dataManager.enforceIndexedDBOnly();
+
+        const [
+          storedQuizData,
+          storedQuizTime,
+          storedPracticeMode,
+          storedDrawing,
+          storedDarkMode,
+          storedBoldMode,
+          storedFullscreen
+        ] = await Promise.all([
+          dataManager.getExamData('finalQuiz'),
+          dataManager.getUserSetting('quizTime', 60),
+          dataManager.getUserSetting('practiceMode', false),
+          dataManager.getUserSetting('enableDrawing', true),
+          dataManager.getUserSetting('darkMode', false),
+          dataManager.getUserSetting('boldMode', false),
+          dataManager.getUserSetting('isFullscreen', false)
+        ]);
+
+        // Update your component's state with the loaded data
+        if (storedQuizData) {
+          setQuestions(storedQuizData);
+        }
+        if (storedQuizTime !== undefined) {
+          setQuizTime(storedQuizTime);
+        }
+        if (storedPracticeMode !== undefined) {
+          setPracticeMode(storedPracticeMode);
+        }
+        if (storedDrawing !== undefined) {
+          setEnableDrawing(storedDrawing);
+        }
+        if (storedDarkMode !== undefined) {
+          setIsDarkMode(storedDarkMode);
+          if (storedDarkMode) {
+            document.documentElement.classList.add('dark-mode');
+            document.body.classList.add('dark-mode');
+          } else {
+            document.documentElement.classList.remove('dark-mode');
+            document.body.classList.remove('dark-mode');
+          }
+        }
+        if (storedBoldMode !== undefined) {
+          setIsBoldMode(storedBoldMode);
+          if (storedBoldMode) {
+            document.documentElement.classList.add('bold-mode');
+            document.body.classList.add('bold-mode');
+          } else {
+            document.documentElement.classList.remove('bold-mode');
+            document.body.classList.remove('bold-mode');
+          }
+        }
+        if (storedFullscreen !== undefined) {
+          setIsFullscreen(storedFullscreen);
+        }
+      } catch (error) {
+        console.error('Error loading data from IndexedDB:', error);
+      }
+    };
+
+    loadStoredData();
+  }, []);
+
   if (!questions.length || !sections.length) return <div className="exam-ui">Loading exam…</div>;
 
   return (

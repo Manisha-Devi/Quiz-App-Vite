@@ -23,34 +23,43 @@ function ResultPage() {
 
   useEffect(() => {
     const loadResultData = async () => {
-      const [
-        questions,
-        answers,
-        reviewMarks,
-        retryMode,
-        retryAnswers,
-        retryCompleted,
-        darkMode,
-        boldMode
-      ] = await Promise.all([
-        dataManager.getExamData('finalQuiz'),
-        dataManager.getExamResults('examAnswers'),
-        dataManager.getExamResults('reviewMarks'),
-        dataManager.getUserSetting('retryMode', false),
-        dataManager.getExamResults('retryAnswers'),
-        dataManager.getExamResults('retryCompleted'),
-        dataManager.getUserSetting('darkMode', false),
-        dataManager.getUserSetting('boldMode', false)
-      ]);
+      try {
+        // Ensure IndexedDB-only operations
+        await dataManager.enforceIndexedDBOnly();
+        
+        const [
+          questions,
+          answers,
+          reviewMarks,
+          retryMode,
+          retryAnswers,
+          retryCompleted,
+          darkMode,
+          boldMode
+        ] = await Promise.all([
+          dataManager.getExamData('finalQuiz'),
+          dataManager.getExamResults('examAnswers'),
+          dataManager.getExamResults('reviewMarks'),
+          dataManager.getUserSetting('retryMode', false),
+          dataManager.getExamResults('retryAnswers'),
+          dataManager.getExamResults('retryCompleted'),
+          dataManager.getUserSetting('darkMode', false),
+          dataManager.getUserSetting('boldMode', false)
+        ]);
 
       setQuestions(questions || []);
-      setAnswers(answers || {});
-      setReviewMarks(reviewMarks || {});
-      setRetryMode(retryMode);
-      setRetryAnswers(retryAnswers || {});
-      setRetryCompleted(retryCompleted || {});
-      setIsDarkMode(darkMode);
-      setIsBoldMode(boldMode);
+        setAnswers(answers || {});
+        setReviewMarks(reviewMarks || {});
+        setRetryMode(retryMode);
+        setRetryAnswers(retryAnswers || {});
+        setRetryCompleted(retryCompleted || {});
+        setIsDarkMode(darkMode);
+        setIsBoldMode(boldMode);
+        
+        console.log('ResultPage loaded - using IndexedDB exclusively');
+      } catch (error) {
+        console.error('Error loading result data:', error);
+      }
     };
 
     loadResultData();

@@ -1,30 +1,53 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { MathJaxContext } from 'better-react-mathjax';
 import UploadPage from './pages/UploadPage';
 import SectionSetupPage from './pages/SectionSetupPage';
 import ExamPage from './pages/ExamPage';
 import ResultPage from './pages/ResultPage';
-import PWAInstaller from './components/PWAInstaller';
-import { loadJSONFilesToStorage } from './utils/jsonLoader';
-import { checkAndRunMigration } from './utils/migrationHelper';
+import dataManager from './utils/dataManager';
 import './App.css';
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
-    // Run migration first, then load JSON files
     const initializeApp = async () => {
-      await checkAndRunMigration();
-      await loadJSONFilesToStorage();
+      try {
+        // Only run migration once on first app load
+        const migrationComplete = await dataManager.getUserSetting('migrationComplete', false);
+
+        if (!migrationComplete) {
+          console.log('First time app launch - running migration from localStorage to IndexedDB...');
+          await dataManager.migrateFromLocalStorage();
+
+          // Clear localStorage after successful migration to prevent future conflicts
+          localStorage.clear();
+          console.log('Migration completed and localStorage cleared');
+        }
+
+        console.log('App initialization completed - using IndexedDB exclusively');
+      } catch (error) {
+        console.error('Error during app initialization:', error);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     initializeApp();
   }, []);
 
+  if (isLoading) {
+    return (
+      <div className="loading-screen">
+        <div className="loading-spinner"></div>
+        <p>Initializing application...</p>
+      </div>
+    );
+  }
+
   return (
     <Router>
       <div className="App">
-        <PWAInstaller />
         <Routes>
           <Route path="/" element={<UploadPage />} />
           <Route path="/sections" element={<SectionSetupPage />} />
