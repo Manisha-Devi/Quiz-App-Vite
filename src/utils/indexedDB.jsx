@@ -1,3 +1,4 @@
+
 // src/utils/indexedDB.js
 
 // Open the IndexedDB database
@@ -104,7 +105,7 @@ export const storeText = async (content, key) => {
   return store.put(textData);
 };
 
-// Get data from IndexedDB
+// Get data from IndexedDB - Fixed to return the actual object
 export const getData = async (storeName, key) => {
   const db = await openDb();
   const transaction = db.transaction(storeName, "readonly");
@@ -112,7 +113,7 @@ export const getData = async (storeName, key) => {
 
   return new Promise((resolve, reject) => {
     const request = store.get(key);
-    request.onsuccess = () => resolve(request.result?.content || null);
+    request.onsuccess = () => resolve(request.result || null);
     request.onerror = () => reject("Error fetching data");
   });
 };
@@ -154,8 +155,6 @@ export const getText = async (key) => {
     };
   });
 };
-
-
 
 // Store JSON file data in dedicated jsonFiles store
 export const storeJSONFile = async (filename, jsonData) => {
@@ -299,8 +298,6 @@ export const clearAllJSONImages = async () => {
   const store = transaction.objectStore("jsonImages");
   return store.clear();
 };
-
-// Get data from any store (already defined above, removing duplicate)
 
 // Delete data from any store
 export const deleteData = async (storeName, id) => {
