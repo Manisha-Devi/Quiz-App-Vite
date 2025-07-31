@@ -1,0 +1,57 @@
+🖼️ Starting to load associated images...
+CacheCleaner.jsx:92 Error fetching JSON data: SyntaxError: Unexpected token 'export' (at jsonLoader.js:210:1)
+fetchJSONData @ CacheCleaner.jsx:92
+await in fetchJSONData
+executeDispatch @ react-dom_client.js?v=88c460ff:11468
+runWithFiberInDEV @ react-dom_client.js?v=88c460ff:1217
+processDispatchQueue @ react-dom_client.js?v=88c460ff:11504
+(anonymous) @ react-dom_client.js?v=88c460ff:11914
+batchedUpdates$1 @ react-dom_client.js?v=88c460ff:2360
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=88c460ff:11609
+dispatchEvent @ react-dom_client.js?v=88c460ff:14524
+dispatchDiscreteEvent @ react-dom_client.js?v=88c460ff:14505
+<button>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=88c460ff:250
+CacheCleaner @ CacheCleaner.jsx:403
+react-stack-bottom-frame @ react-dom_client.js?v=88c460ff:17156
+renderWithHooks @ react-dom_client.js?v=88c460ff:3938
+updateFunctionComponent @ react-dom_client.js?v=88c460ff:6351
+beginWork @ react-dom_client.js?v=88c460ff:7386
+runWithFiberInDEV @ react-dom_client.js?v=88c460ff:1217
+performUnitOfWork @ react-dom_client.js?v=88c460ff:10600
+workLoopSync @ react-dom_client.js?v=88c460ff:10460
+renderRootSync @ react-dom_client.js?v=88c460ff:10443
+performWorkOnRoot @ react-dom_client.js?v=88c460ff:10062
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=88c460ff:11355
+performWorkUntilDeadline @ chunk-PJMRTMRF.js?v=88c460ff:30
+<CacheCleaner>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=88c460ff:250
+UploadPage @ UploadPage.jsx:588
+react-stack-bottom-frame @ react-dom_client.js?v=88c460ff:17156
+renderWithHooks @ react-dom_client.js?v=88c460ff:3938
+updateFunctionComponent @ react-dom_client.js?v=88c460ff:6351
+beginWork @ react-dom_client.js?v=88c460ff:7386
+runWithFiberInDEV @ react-dom_client.js?v=88c460ff:1217
+performUnitOfWork @ react-dom_client.js?v=88c460ff:10600
+workLoopSync @ react-dom_client.js?v=88c460ff:10460
+renderRootSync @ react-dom_client.js?v=88c460ff:10443
+performWorkOnRoot @ react-dom_client.js?v=88c460ff:10062
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=88c460ff:11355
+performWorkUntilDeadline @ chunk-PJMRTMRF.js?v=88c460ff:30
+<UploadPage>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=88c460ff:250
+App @ App.jsx:46
+react-stack-bottom-frame @ react-dom_client.js?v=88c460ff:17156
+renderWithHooks @ react-dom_client.js?v=88c460ff:3938
+updateFunctionComponent @ react-dom_client.js?v=88c460ff:6351
+beginWork @ react-dom_client.js?v=88c460ff:7386
+runWithFiberInDEV @ react-dom_client.js?v=88c460ff:1217
+performUnitOfWork @ react-dom_client.js?v=88c460ff:10600
+workLoopSync @ react-dom_client.js?v=88c460ff:10460
+renderRootSync @ react-dom_client.js?v=88c460ff:10443
+performWorkOnRoot @ react-dom_client.js?v=88c460ff:10062
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=88c460ff:11355
+performWorkUntilDeadline @ chunk-PJMRTMRF.js?v=88c460ff:30
+<App>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=88c460ff:250
+(anonymous) @ main.jsx:8Understand this err
