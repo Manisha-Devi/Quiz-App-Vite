@@ -21,6 +21,105 @@ function ResultPage() {
   const [retryCompleted, setRetryCompleted] = useState({});
   const navigate = useNavigate();
 
+  // Function to process questions and replace image references with actual data
+  const processQuestionsWithImages = async (questions, fileImageMap) => {
+    const processedQuestions = [];
+    
+    for (const question of questions) {
+      const processedQuestion = { ...question };
+      
+      // Process question text
+      if (question.question) {
+        processedQuestion.question = await replaceImageReferences(question.question, fileImageMap);
+      }
+      
+      // Process options
+      if (question.options && Array.isArray(question.options)) {
+        processedQuestion.options = await Promise.all(
+          question.options.map(option => replaceImageReferences(option, fileImageMap))
+        );
+      }
+      
+      // Process explanation
+      if (question.explanation) {
+        processedQuestion.explanation = await replaceImageReferences(question.explanation, fileImageMap);
+      }
+      
+      processedQuestions.push(processedQuestion);
+    }
+    
+    return processedQuestions;
+  };
+
+  // Function to replace image references with actual image data
+  const replaceImageReferences = async (text, fileImageMap) => {
+    if (!text || typeof text !== 'string') return text;
+    
+    // Find img tags with id attributes
+    const imgRegex = /<img[^>]*id=['"]([^'"]*?)['"][^>]*>/g;
+    let processedText = text;
+    let match;
+    
+    while ((match = imgRegex.exec(text)) !== null) {
+      const imageName = match[1];
+      console.log(`Looking for image: ${imageName}`);
+      
+      // Search for image in fileImageMap
+      let imageData = null;
+      for (const [fileName, images] of Object.entries(fileImageMap)) {
+        if (images && Array.isArray(images)) {
+          const foundImage = images.find(img => 
+            img.name === imageName || 
+            img.name === imageName.replace('.png', '') ||
+            img.name === imageName.replace('.jpg', '') ||
+            img.name === imageName.replace('.jpeg', '')
+          );
+          if (foundImage) {
+            imageData = foundImage.data;
+            console.log(`Found image ${imageName} in ${fileName}`);
+            break;
+          }
+        }
+      }
+      
+      // If not found in fileImageMap, try IndexedDB jsonImages store
+      if (!imageData) {
+        try {
+          // Try different JSON file names
+          const possibleJsonNames = ['Image_Demo', 'KaTeX Demo', 'Art and Culture jk'];
+          for (const jsonName of possibleJsonNames) {
+            imageData = await dataManager.getImageFromJSONImagesStore(jsonName, imageName);
+            if (imageData) {
+              console.log(`Found image ${imageName} in jsonImages store for ${jsonName}`);
+              break;
+            }
+            
+            // Also try without file extension
+            const nameWithoutExt = imageName.replace(/\.(png|jpg|jpeg)$/i, '');
+            imageData = await dataManager.getImageFromJSONImagesStore(jsonName, nameWithoutExt);
+            if (imageData) {
+              console.log(`Found image ${nameWithoutExt} in jsonImages store for ${jsonName}`);
+              break;
+            }
+          }
+        } catch (error) {
+          console.error(`Error fetching image ${imageName} from jsonImages store:`, error);
+        }
+      }
+      
+      if (imageData) {
+        // Replace the img tag with the actual image data
+        const newImgTag = match[0].replace(/id=['"][^'"]*['"]/, `src="${imageData}"`);
+        processedText = processedText.replace(match[0], newImgTag);
+        console.log(`✅ Replaced image reference for ${imageName}`);
+      } else {
+        console.warn(`❌ Image not found: ${imageName}`);
+      }
+    }
+    
+    return processedText;
+  };
+
   useEffect(() => {
     const loadResultData = async () => {
       try {
@@ -35,7 +134,8 @@ function ResultPage() {
           retryAnswers,
           retryCompleted,
           darkMode,
-          boldMode
+          boldMode,
+          fileImageMap
         ] = await Promise.all([
           dataManager.getExamData('finalQuiz'),
           dataManager.getExamResults('examAnswers'),
@@ -44,16 +144,21 @@ function ResultPage() {
           dataManager.getExamResults('retryAnswers'),
           dataManager.getExamResults('retryCompleted'),
           dataManager.getUserSetting('darkMode', false),
-          dataManager.getUserSetting('boldMode', false)
+          dataManager.getUserSetting('boldMode', false),
+          dataManager.getFileImageMap()
         ]);
 
         console.log('Data loaded in ResultPage:', {
           questionsCount: questions?.length || 0,
           answersCount: Object.keys(answers || {}).length,
-          reviewMarksCount: Object.keys(reviewMarks || {}).length
+          reviewMarksCount: Object.keys(reviewMarks || {}).length,
+          imageMapKeys: Object.keys(fileImageMap || {})
         });
 
-        setQuestions(questions || []);
+        // Process questions and replace image references with actual image data
+        const processedQuestions = await processQuestionsWithImages(questions || [], fileImageMap || {});
+
+        setQuestions(processedQuestions);
         setAnswers(answers || {});
         setReviewMarks(reviewMarks || {});
         setRetryMode(retryMode || false);
