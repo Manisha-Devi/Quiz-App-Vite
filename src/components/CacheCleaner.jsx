@@ -260,7 +260,7 @@ const CacheCleaner = ({ onDataChange }) => {
     if (loading) return;
 
     if (confirm(
-      "⚠️ Are you sure you want to DELETE the entire IndexedDB database?\n\n🔥 This will:\n• Remove ALL data permanently\n• Require a page reload to recreate the database\n• Cannot be undone\n\nProceed with deletion?"
+      "⚠️ Are you sure you want to DELETE the entire IndexedDB database?\n\n🔥 This will:\n• Remove ALL data permanently\n• Delete the entire database structure\n• Cannot be undone\n\nProceed with deletion?"
     )) {
       try {
         setLoading(true);
@@ -279,16 +279,11 @@ const CacheCleaner = ({ onDataChange }) => {
 
         if (deleteSuccess) {
           console.log('✅ IndexedDB database deleted successfully');
-          alert('✅ IndexedDB database deleted successfully!\n\n🔄 The page will reload to recreate a fresh database.');
+          alert('✅ IndexedDB database deleted successfully!\n\n🗑️ The database has been completely removed.');
 
           if (onDataChange) {
             onDataChange();
           }
-
-          // Automatically reload the page after a short delay
-          setTimeout(() => {
-            window.location.reload();
-          }, 1500);
 
         } else {
           throw new Error('Failed to delete IndexedDB database after multiple attempts');
