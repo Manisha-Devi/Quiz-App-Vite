@@ -22,6 +22,7 @@ function UploadPage() {
   const [loading, setLoading] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const navigate = useNavigate();
   const { isOnline } = useOfflineStorage();
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -349,7 +350,7 @@ function UploadPage() {
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [toggleDarkMode]);
+  }, []);
 
 
   return (

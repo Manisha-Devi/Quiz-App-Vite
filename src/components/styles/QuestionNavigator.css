@@ -1,20 +1,26 @@
+
+/* Question Navigator Container */
 .question-navigator {
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow: hidden;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  border: 1px solid rgba(102, 126, 234, 0.1);
+  backdrop-filter: blur(10px);
 }
 
-/* SCROLLABLE BUTTON GRID */
+/* Scrollable Button Grid */
 .navigator-grid {
-  overflow-y: scroll;
+  overflow-y: auto;
   min-height: 0;
-  padding-right: 4px;
+  flex: 1;
+  padding: 16px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(36px, 36px));
-  gap: 10px 10px;
-  justify-content: space-evenly;
-  margin-bottom: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+  gap: 12px;
+  justify-content: center;
   
   /* Hide scrollbar */
   scrollbar-width: none; /* Firefox */
@@ -27,67 +33,111 @@
   display: none; /* Chrome, Safari, Opera */
 }
 
+/* Navigation Dots */
 .nav-dot {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   font-weight: bold;
   font-size: 14px;
-  border: none;
+  border: 2px solid transparent;
   color: white;
   cursor: pointer;
-  transition: transform 0.15s ease;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .nav-dot:hover {
   transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.answered { background: #28a745; }
-.not-visited { background: #6c757d; }
-.review { background: #007bff; }
-.review-answered { background: #fd7e14; }
-.active { background: #6f42c1; }
+/* Status Colors */
+.nav-dot.answered { 
+  background: linear-gradient(135deg, #28a745, #20c997);
+}
 
-/* LEGEND PILL STYLES */
+.nav-dot.not-visited { 
+  background: linear-gradient(135deg, #6c757d, #495057);
+}
+
+.nav-dot.review { 
+  background: linear-gradient(135deg, #007bff, #0056b3);
+}
+
+.nav-dot.review-answered { 
+  background: linear-gradient(135deg, #fd7e14, #e55a4e);
+}
+
+.nav-dot.active { 
+  background: linear-gradient(135deg, #6f42c1, #5a32a3);
+  border-color: #fff;
+  box-shadow: 0 0 20px rgba(111, 66, 193, 0.5);
+}
+
+/* Legend Section */
 .legend {
-  margin-top: auto; /* Push to bottom in flex container */
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  justify-content: center;
-  align-items: center;
+  margin-top: auto;
+  padding: 16px;
+  border-top: 1px solid rgba(102, 126, 234, 0.1);
+  background: rgba(248, 249, 250, 0.8);
 }
 
 .legend-row {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
+  margin-bottom: 8px;
 }
 
+.legend-row:last-child {
+  margin-bottom: 0;
+}
+
+/* Legend Pills */
 .legend-pill {
-  font-size: 12px;
+  font-size: 11px;
   padding: 6px 12px;
-  border-radius: 999px;
+  border-radius: 20px;
   font-weight: 600;
   color: white;
   white-space: nowrap;
-  transition: background 0.2s ease;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   gap: 6px;
   cursor: pointer;
   user-select: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.legend-pill.answered { background: #28a745; }
-.legend-pill.review { background: #007bff; }
-.legend-pill.review-answered { background: #fd7e14; }
-.legend-pill.not-visited { background: #6c757d; }
-.legend-pill.current { background: #6f42c1; cursor: default; }
-.legend-pill.active { background: #6f42c1; cursor: default; }
+.legend-pill.answered { 
+  background: linear-gradient(135deg, #28a745, #20c997);
+}
+
+.legend-pill.review { 
+  background: linear-gradient(135deg, #007bff, #0056b3);
+}
+
+.legend-pill.review-answered { 
+  background: linear-gradient(135deg, #fd7e14, #e55a4e);
+}
+
+.legend-pill.not-visited { 
+  background: linear-gradient(135deg, #6c757d, #495057);
+}
+
+.legend-pill.current,
+.legend-pill.active { 
+  background: linear-gradient(135deg, #6f42c1, #5a32a3);
+  cursor: default;
+}
 
 .legend-pill input[type="checkbox"] {
   width: 14px;
@@ -97,7 +147,43 @@
   margin: 0;
 }
 
-.legend-pill:hover:not(.active) {
+.legend-pill:hover:not(.active):not(.current) {
   opacity: 0.8;
-  transform: scale(1.02);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Dark Mode Styles */
+.dark-mode .question-navigator {
+  background: rgba(26, 26, 46, 0.95);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .legend {
+  background: rgba(32, 32, 54, 0.8);
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .navigator-grid {
+    grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
+    gap: 10px;
+    padding: 12px;
+  }
+  
+  .nav-dot {
+    width: 36px;
+    height: 36px;
+    font-size: 12px;
+  }
+  
+  .legend {
+    padding: 12px;
+  }
+  
+  .legend-pill {
+    font-size: 10px;
+    padding: 4px 8px;
+  }
 }

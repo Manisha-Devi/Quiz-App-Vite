@@ -1,4 +1,3 @@
-
 import React from 'react';
 import '../styles/CustomPopup.css';
 
@@ -25,6 +24,31 @@ const CustomPopup = ({ message, type, onClose, isVisible, showConfirm, onConfirm
     }
   };
 
+  const handleConfirm = () => {
+    try {
+      if (onConfirm) {
+        onConfirm();
+      }
+    } catch (error) {
+      console.error("Error during confirm action:", error);
+    } finally {
+      onClose();
+    }
+  };
+
+  const handleCancel = () => {
+    try {
+      if (onCancel) {
+        onCancel();
+      } else {
+        onClose();
+      }
+    } catch (error) {
+      console.error("Error during cancel action:", error);
+      onClose();
+    }
+  };
+
   return (
     <div className="popup-backdrop" onClick={onClose}>
       <div className={`popup-container popup-${type}`} onClick={(e) => e.stopPropagation()}>
@@ -32,26 +56,23 @@ const CustomPopup = ({ message, type, onClose, isVisible, showConfirm, onConfirm
           <span className="popup-icon">{getIcon()}</span>
           <h3 className="popup-title">{getTitle()}</h3>
         </div>
-        
+
         <div className="popup-content">
           <pre className="popup-message">{message}</pre>
         </div>
-        
+
         <div className="popup-actions">
           {showConfirm ? (
             <>
-              <button className="popup-cancel-btn" onClick={onCancel || onClose}>
+              <button className="popup-cancel-btn" onClick={handleCancel}>
                 Cancel
               </button>
-              <button className="popup-confirm-btn" onClick={() => {
-                if (onConfirm) onConfirm();
-                onClose();
-              }}>
+              <button className="popup-confirm-btn" onClick={handleConfirm}>
                 Confirm
               </button>
             </>
           ) : (
-            <button className="popup-close-btn" onClick={onClose}>
+            <button className="popup-ok-btn" onClick={onClose}>
               OK
             </button>
           )}
