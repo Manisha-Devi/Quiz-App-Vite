@@ -85,6 +85,7 @@ function UploadPage() {
       console.log('Dark mode loaded:', darkModeValue);
 
       console.log('UploadPage initialization completed - exam data cleared, ready for fresh start');
+      console.log('📌 Images will only be fetched when user clicks Fetch button - no automatic loading');
     };
 
     initializeData();

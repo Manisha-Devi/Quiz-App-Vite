@@ -138,7 +138,7 @@ const CacheCleaner = ({ onDataChange }) => {
     try {
       const { openDb } = await import('../utils/indexedDB');
       const db = await openDb();
-      
+
       if (!db) {
         throw new Error('Could not open database');
       }
@@ -155,7 +155,7 @@ const CacheCleaner = ({ onDataChange }) => {
 
           const transaction = db.transaction([storeName], 'readwrite');
           const store = transaction.objectStore(storeName);
-          
+
           await new Promise((resolve, reject) => {
             const clearRequest = store.clear();
             clearRequest.onsuccess = () => {
@@ -282,11 +282,11 @@ const CacheCleaner = ({ onDataChange }) => {
 
         if (deleteSuccess) {
           console.log('✅ IndexedDB database deleted successfully');
-          
+
           // Mark database as deleted to prevent automatic recreation
           const { default: dataManager } = await import('../utils/dataManager');
           dataManager.markDatabaseAsDeleted();
-          
+
           alert('✅ IndexedDB database deleted successfully!\n\n🗑️ The database has been completely removed and will not recreate automatically.');
 
           if (onDataChange) {
@@ -340,10 +340,10 @@ const CacheCleaner = ({ onDataChange }) => {
   // Helper function to attempt database deletion with retries
   const attemptDatabaseDeletion = async () => {
     const maxAttempts = 3;
-    
+
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
       console.log(`🔄 Deletion attempt ${attempt}/${maxAttempts}...`);
-      
+
       const success = await new Promise((resolve) => {
         const deleteRequest = indexedDB.deleteDatabase("quizDatabase");
         let resolved = false;
@@ -400,7 +400,7 @@ const CacheCleaner = ({ onDataChange }) => {
         onClick={fetchJSONData}
         disabled={loading}
         className="compact-dev-btn fetch-btn"
-        title="Load JSON files from project and store in IndexedDB"
+        title="Manual fetch: Load JSON files and images from project and store in IndexedDB"
       >
         <span className="compact-icon">{loading && currentOperation === 'fetching' ? '⏳' : '📥'}</span>
         <span className="compact-text">
