@@ -3,12 +3,14 @@ import dataManager from '../utils/dataManager';
 
 const CacheCleaner = ({ onDataChange }) => {
   const [loading, setLoading] = useState(false);
+  const [currentOperation, setCurrentOperation] = useState('');
 
   const fetchJSONData = async () => {
     if (loading) return;
 
     try {
       setLoading(true);
+      setCurrentOperation('fetching');
       console.log('Fetching JSON files data and storing in IndexedDB...');
 
       // Dynamic import of JSON files and store them in IndexedDB
@@ -66,6 +68,7 @@ const CacheCleaner = ({ onDataChange }) => {
       alert('❌ Error loading JSON files. Please try again.');
     } finally {
       setLoading(false);
+      setCurrentOperation('');
     }
   };
 
@@ -79,6 +82,7 @@ const CacheCleaner = ({ onDataChange }) => {
     if (confirmed) {
       try {
         setLoading(true);
+        setCurrentOperation('clearing');
         console.log('Starting IndexedDB stores clearing process...');
 
         const success = await dataManager.clearAllAppData();
@@ -99,6 +103,7 @@ const CacheCleaner = ({ onDataChange }) => {
         alert(`❌ Error clearing IndexedDB stores: ${error.message || 'Unknown error occurred.'}`);
       } finally {
         setLoading(false);
+        setCurrentOperation('');
       }
     }
   };
@@ -113,6 +118,7 @@ const CacheCleaner = ({ onDataChange }) => {
     if (confirmed) {
       try {
         setLoading(true);
+        setCurrentOperation('storage');
         console.log('Starting browser storage clearing process...');
 
         // Clear localStorage
@@ -178,6 +184,7 @@ const CacheCleaner = ({ onDataChange }) => {
         alert(`❌ Error clearing browser storage: ${error.message || 'Unknown error occurred.'}`);
       } finally {
         setLoading(false);
+        setCurrentOperation('');
       }
     }
   };
@@ -192,6 +199,7 @@ const CacheCleaner = ({ onDataChange }) => {
     if (confirmed) {
       try {
         setLoading(true);
+        setCurrentOperation('deleting');
         console.log('Starting IndexedDB database deletion process...');
 
         // Step 1: Force close all database connections
@@ -309,6 +317,7 @@ const CacheCleaner = ({ onDataChange }) => {
           onDataChange();
         }
         setLoading(false);
+        setCurrentOperation('');
       }
     }
   };
@@ -321,8 +330,10 @@ const CacheCleaner = ({ onDataChange }) => {
         className="dev-tool-btn fetch-btn"
         title="Fetch JSON files from project and store in IndexedDB"
       >
-        <span className="btn-icon">{loading ? '⏳' : '📥'}</span>
-        <span className="btn-text">{loading ? 'Loading...' : 'Fetch Data'}</span>
+        <span className="btn-icon">{loading && currentOperation === 'fetching' ? '⏳' : '📥'}</span>
+        <span className="btn-text">
+          {loading && currentOperation === 'fetching' ? 'Fetching Data...' : 'Fetch Data'}
+        </span>
         <span className="btn-description">Load JSON files into IndexedDB</span>
       </button>
 
@@ -332,8 +343,10 @@ const CacheCleaner = ({ onDataChange }) => {
         className="dev-tool-btn clear-btn"
         title="Clear all IndexedDB stores (keeps database structure)"
       >
-        <span className="btn-icon">{loading ? '⏳' : '🧹'}</span>
-        <span className="btn-text">{loading ? 'Clearing...' : 'Clear DB'}</span>
+        <span className="btn-icon">{loading && currentOperation === 'clearing' ? '⏳' : '🧹'}</span>
+        <span className="btn-text">
+          {loading && currentOperation === 'clearing' ? 'Clearing DB...' : 'Clear DB'}
+        </span>
         <span className="btn-description">Empty all IndexedDB stores</span>
       </button>
 
@@ -343,8 +356,10 @@ const CacheCleaner = ({ onDataChange }) => {
         className="dev-tool-btn storage-btn"
         title="Clear localStorage, sessionStorage, and cookies"
       >
-        <span className="btn-icon">{loading ? '⏳' : '🗂️'}</span>
-        <span className="btn-text">{loading ? 'Clearing...' : 'Clear Storage'}</span>
+        <span className="btn-icon">{loading && currentOperation === 'storage' ? '⏳' : '🗂️'}</span>
+        <span className="btn-text">
+          {loading && currentOperation === 'storage' ? 'Clearing Storage...' : 'Clear Storage'}
+        </span>
         <span className="btn-description">Clear browser storage & cookies</span>
       </button>
 
@@ -354,8 +369,10 @@ const CacheCleaner = ({ onDataChange }) => {
         className="dev-tool-btn delete-btn"
         title="Delete entire IndexedDB database (requires page reload)"
       >
-        <span className="btn-icon">{loading ? '⏳' : '🗑️'}</span>
-        <span className="btn-text">{loading ? 'Deleting...' : 'Delete DB'}</span>
+        <span className="btn-icon">{loading && currentOperation === 'deleting' ? '⏳' : '🗑️'}</span>
+        <span className="btn-text">
+          {loading && currentOperation === 'deleting' ? 'Deleting DB...' : 'Delete DB'}
+        </span>
         <span className="btn-description">Remove all IndexedDB data</span>
       </button>
     </>
