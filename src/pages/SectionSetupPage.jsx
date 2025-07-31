@@ -22,21 +22,29 @@ function SectionSetupPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Clear future pages data when entering Section Setup
-    const FUTURE_PAGES_KEYS = [
-      'finalQuiz',
-      'examState',
-      'examMeta',
-      'examAnswers',
-      'reviewMarks',
-      'retryAnswers',
-      'retryCompleted',
-      'retryQuestions',
-      'currentRetryIndex',
-      'retryStats'
-    ];
+    // Clear future pages data when entering Section Setup using dataManager
+    const clearFutureData = async () => {
+      const examKeysToDelete = [
+        'finalQuiz', 'examState', 'examMeta'
+      ];
+      
+      const resultKeysToDelete = [
+        'examAnswers', 'reviewMarks', 'retryAnswers', 'retryCompleted',
+        'retryQuestions', 'currentRetryIndex', 'retryStats'
+      ];
+      
+      // Clear exam data
+      for (const key of examKeysToDelete) {
+        await dataManager.deleteExamData(key);
+      }
+      
+      // Clear exam results
+      for (const key of resultKeysToDelete) {
+        await dataManager.deleteExamResults(key);
+      }
+    };
 
-    FUTURE_PAGES_KEYS.forEach((key) => localStorage.removeItem(key));
+    clearFutureData();
 
     const loadData = async () => {
       try {

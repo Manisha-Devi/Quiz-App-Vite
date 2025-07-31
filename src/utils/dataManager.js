@@ -45,7 +45,9 @@ class DataManager {
   async getUserSetting(key, defaultValue = null) {
     try {
       const result = await getData('userSettings', key);
-      return result?.value ?? defaultValue;
+      const value = result?.value ?? defaultValue;
+      console.log(`Retrieved setting ${key}:`, value);
+      return value;
     } catch (error) {
       console.error(`Error getting ${key}:`, error);
       return defaultValue;
@@ -56,7 +58,9 @@ class DataManager {
   async getExamData(key) {
     try {
       const result = await getData('examData', key);
-      return result?.data || null;
+      const data = result?.data || null;
+      console.log(`Retrieved exam data ${key}:`, data ? 'Found' : 'Not found');
+      return data;
     } catch (error) {
       console.error(`Error getting exam data ${key}:`, error);
       return null;
@@ -66,6 +70,7 @@ class DataManager {
   async setExamData(key, data) {
     try {
       await storeData('examData', { id: key, data });
+      console.log(`Stored exam data ${key}:`, data ? 'Success' : 'No data');
       return true;
     } catch (error) {
       console.error(`Error setting exam data ${key}:`, error);

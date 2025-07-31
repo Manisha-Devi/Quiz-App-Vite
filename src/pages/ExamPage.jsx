@@ -98,86 +98,83 @@ function ExamPage() {
 
   useEffect(() => {
     const loadExamData = async () => {
-      const [
-        storedQuestions,
-        storedTime,
-        storedPracticeMode,
-        storedEnableDrawing,
-        storedRetryMode,
-        storedDarkMode,
-        storedBoldMode,
-        storedState,
-        storedMeta,
-        storedAnswers,
-        storedReviewMarks
-      ] = await Promise.all([
-        dataManager.getExamData('finalQuiz'),
-        dataManager.getUserSetting('quizTime', 60),
-        dataManager.getUserSetting('practiceMode', false),
-        dataManager.getUserSetting('enableDrawing', true),
-        dataManager.getUserSetting('retryMode', false),
-        dataManager.getUserSetting('darkMode', false),
-        dataManager.getUserSetting('boldMode', false),
-        dataManager.getExamData('examState'),
-        dataManager.getExamData('examMeta'),
-        dataManager.getExamResults('examAnswers'),
-        dataManager.getExamResults('reviewMarks')
-      ]);
-
-      if (!storedQuestions || storedQuestions.length === 0) {
-        alert('⚠️ No questions found. Please set up your quiz first.');
+      const quizData = await dataManager.getExamData('finalQuiz');
+      if (!quizData || quizData.length === 0) {
+        alert('❌ No quiz data found! Redirecting to upload page.');
         navigate('/');
         return;
       }
 
-      setQuestions(storedQuestions);
-      setQuizTime(storedTime);
-      setPracticeMode(storedPracticeMode);
-      setEnableDrawing(storedEnableDrawing);
-      setRetryMode(storedRetryMode);
-      setIsDarkMode(storedDarkMode);
-      setIsBoldMode(storedBoldMode);
+      const [
+        practiceMode,
+        enableDrawing,
+        retryMode,
+        quizTime,
+        darkMode,
+        boldMode,
+        savedState,
+        savedMeta
+      ] = await Promise.all([
+        dataManager.getUserSetting('practiceMode', false),
+        dataManager.getUserSetting('enableDrawing', true),
+        dataManager.getUserSetting('retryMode', false),
+        dataManager.getUserSetting('quizTime', 60),
+        dataManager.getUserSetting('darkMode', false),
+        dataManager.getUserSetting('boldMode', false),
+        dataManager.getExamData('examState'),
+        dataManager.getExamData('examMeta')
+      ]);
 
-      if (storedState?.currentQuestionIndex !== undefined) {
-        setCurrentQuestionIndex(storedState.currentQuestionIndex);
-        setStartTime(storedState.startTime || Date.now());
-        setElapsedTime(storedState.elapsedTime || 0);
-        setShowSummary(storedState.showSummary || false);
-        setExamFinished(storedState.examFinished || false);
-        setNavigationHistory(storedState.navigationHistory || []);
-        setQuestionStartTimes(storedState.questionStartTimes || {});
-        setQuestionTimeSpent(storedState.questionTimeSpent || {});
+      // Use saved state or create new
+
+      setQuestions(quizData);
+      setPracticeMode(practiceMode);
+      setEnableDrawing(enableDrawing);
+      setRetryMode(retryMode);
+      setQuizTime(quizTime);
+      setIsDarkMode(darkMode);
+      setIsBoldMode(boldMode);
+
+      if (savedState) {
+        setCurrentQuestionIndex(savedState.currentQuestionIndex || 0);
+        setAnswers(savedState.answers || {});
+        setReviewMarks(savedState.reviewMarks || {});
+        // Restore other state variables from savedState as necessary
       }
-
-      if (storedMeta?.isResumed !== undefined) {
-        setExamMeta(storedMeta);
+      if (savedMeta) {
+        // Restore meta variables from savedMeta as necessary
       }
-
-      setAnswers(storedAnswers || {});
-      setReviewMarks(storedReviewMarks || {});
     };
 
     loadExamData();
   }, [navigate]);
 
-  const saveExamState = useCallback(async () => {
-    const state = {
-      currentQuestionIndex,
-      startTime,
-      elapsedTime,
-      showSummary,
-      examFinished,
-      navigationHistory,
-      questionStartTimes,
-      questionTimeSpent
+  useEffect(() => {
+    const saveExamState = async () => {
+      try {
+        await dataManager.setExamData('examState', {
+          currentQuestionIndex,
+          answers,
+          reviewMarks,
+          //timeRemaining,
+          //isSubmitted,
+          //questionsVisited,
+          //startTime: Date.now() - (initialTime * 60 * 1000 - timeRemaining * 1000)
+        });
+
+        await dataManager.setExamData('examMeta', {
+          //totalQuestions: questions.length,
+          practiceMode,
+          enableDrawing,
+          retryMode
+        });
+      } catch (error) {
+        console.error('Error saving exam state:', error);
+      }
     };
 
-    await Promise.all([
-      dataManager.setExamData('examState', state),
-      dataManager.setExamResults('examAnswers', answers),
-      dataManager.setExamResults('reviewMarks', reviewMarks)
-    ]);
-  }, [currentQuestionIndex, startTime, elapsedTime, showSummary, examFinished, navigationHistory, questionStartTimes, questionTimeSpent, answers, reviewMarks]);
+    //saveExamState();
+  }, [currentQuestionIndex, answers, reviewMarks, practiceMode, enableDrawing, retryMode]);
 
   const validQuizTime = Math.max(1, Number(quizTime || 60));
   const EXAM_DURATION = practiceMode ? Infinity : validQuizTime * 60;
@@ -185,7 +182,7 @@ function ExamPage() {
   const mathConfig = { loader: { load: ['input/tex', 'output/chtml'] } };
   const hasMath = (text = '') => /\\\(|\\\[|\\begin|\\frac|\\sqrt/.test(text);
 
-  
+
 
   // Calculate time left based on loaded data
   useEffect(() => {
@@ -393,11 +390,10 @@ function ExamPage() {
 
           if (newCount >= 3) {
             // Force submit after 3 warnings
-            setTimeout(() => {
-              localStorage.setItem('examAnswers', JSON.stringify(answers));
-              localStorage.setItem('reviewMarks', JSON.stringify(review));
-              navigate('/result');
-            }, 100);
+            // Save current answers and review marks
+            dataManager.setExamResults('examAnswers', answers);
+            dataManager.setExamResults('reviewMarks', review);
+            navigate('/result');
           } else {
             // Show warning popup
             setShowTabLeaveWarning(true);

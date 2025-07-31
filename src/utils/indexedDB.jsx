@@ -57,24 +57,29 @@ export const openDb = () => {
 };
 
 // Store image in IndexedDB
-export const storeImage = async (imageFile, filename) => {
+export const storeImage = async (imageData, imageName, jsonFileName = null) => {
   const db = await openDb();
-  const transaction = db.transaction("images", "readwrite");
-  const store = transaction.objectStore("images");
+  
+  if (jsonFileName) {
+    // Store in jsonImages store for JSON-associated images
+    return storeJSONImage(jsonFileName, imageName, imageData);
+  } else {
+    // Store in regular images store
+    const transaction = db.transaction("images", "readwrite");
+    const store = transaction.objectStore("images");
 
-  const reader = new FileReader();
-  reader.onload = (event) => {
-    const imageData = event.target.result;
     const image = {
-      id: filename,
-      name: filename,
+      id: imageName,
+      name: imageName,
       data: imageData,
     };
 
-    store.put(image); // Store image data
-  };
-
-  reader.readAsDataURL(imageFile);
+    return new Promise((resolve, reject) => {
+      const request = store.put(image);
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject("Error storing image");
+    });
+  }
 };
 
 // Store text data (JSON content) in IndexedDB
