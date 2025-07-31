@@ -1,9 +1,9 @@
-
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSwipeable } from 'react-swipeable';
 import QuestionCard from '../components/QuestionCard';
-import dataManager from '../utils/dataManager';
+import * as dataManager from '../utils/dataManager';
+import { getJSONImage } from '../utils/indexedDB';
 import '../styles/ResultPage.css';
 
 function ResultPage() {
@@ -16,9 +16,51 @@ function ResultPage() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showPerformanceChart, setShowPerformanceChart] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [retryMode, setRetryMode] = useState(false);
   const [retryAnswers, setRetryAnswers] = useState({});
   const [retryCompleted, setRetryCompleted] = useState({});
+  const [retryMode, setRetryMode] = useState(false);
+
+  // Image injection function for ResultPage
+  const injectImageSources = useCallback(async (html) => {
+    if (!html || typeof html !== 'string') return html;
+
+    // Find all img tags with id attributes
+    const imgRegex = /<img[^>]+id=['"]([^'"]+)['"][^>]*>/g;
+    let processedContent = html;
+    let match;
+
+    while ((match = imgRegex.exec(html)) !== null) {
+      const fullImgTag = match[0];
+      const imageId = match[1];
+
+      try {
+        // Get image from IndexedDB
+        const imageData = await getJSONImage('Image_Demo', imageId);
+
+        if (imageData) {
+          // Replace the img tag with one that has the blob URL as src
+          const newImgTag = fullImgTag.replace(
+            /(<img[^>]+)>/,
+            `$1 src="${imageData}">`
+          );
+          processedContent = processedContent.replace(fullImgTag, newImgTag);
+        } else {
+          console.warn(`Image not found in ResultPage: ${imageId}`);
+          // Add a placeholder
+          const newImgTag = fullImgTag.replace(
+            /(<img[^>]+)>/,
+            `$1 src="" style="background: #f0f0f0; border: 2px dashed #ccc; padding: 20px; text-align: center; display: block;">`
+          );
+          processedContent = processedContent.replace(fullImgTag, newImgTag);
+        }
+      } catch (error) {
+        console.error(`Error loading image ${imageId} in ResultPage:`, error);
+      }
+    }
+
+    return processedContent;
+  }, []);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,7 +68,7 @@ function ResultPage() {
       try {
         // Ensure IndexedDB-only operations
         await dataManager.enforceIndexedDBOnly();
-        
+
         const [
           questions,
           answers,
@@ -61,7 +103,7 @@ function ResultPage() {
         setRetryCompleted(retryCompleted || {});
         setIsDarkMode(darkMode || false);
         setIsBoldMode(boldMode || false);
-        
+
         console.log('ResultPage loaded - using IndexedDB exclusively');
       } catch (error) {
         console.error('Error loading result data:', error);
@@ -75,16 +117,16 @@ function ResultPage() {
   useEffect(() => {
     // Push current state to prevent back navigation
     window.history.pushState(null, null, window.location.pathname);
-    
+
     const handlePopState = (event) => {
       event.preventDefault();
-      
+
       // Always redirect to UploadPage when back is pressed
       navigate('/', { replace: true });
     };
 
     window.addEventListener('popstate', handlePopState);
-    
+
     return () => {
       window.removeEventListener('popstate', handlePopState);
     };
@@ -154,7 +196,7 @@ function ResultPage() {
 
   const calculateStats = () => {
     let correct = 0, incorrect = 0, skipped = 0, total = questions.length;
-    
+
     questions.forEach((q, idx) => {
       const userAnswer = answers[idx];
       if (userAnswer === undefined) {
@@ -189,10 +231,10 @@ function ResultPage() {
 
   const filteredQuestions = questions.filter((q, idx) => {
     const status = getQuestionStatus(idx);
-    
+
     // If filter is 'all', show all questions
     if (currentFilter === 'all') return true;
-    
+
     // For other filters, only show questions that match the current filter
     return status === currentFilter;
   });
@@ -352,7 +394,7 @@ function ResultPage() {
     );
   };
 
-  
+
 
   return (
     <div className={`result-page ${isDarkMode ? 'dark-mode' : ''} ${isBoldMode ? 'bold-mode' : ''}`}>
@@ -423,12 +465,12 @@ function ResultPage() {
                   Next →
                 </button>
               </div>
-              
+
               <div className="current-question-wrapper">
                 {(() => {
                   const currentQuestion = filteredQuestions[currentQuestionIndex];
                   const actualIndex = questions.findIndex(question => question === currentQuestion);
-                  
+
                   if (actualIndex === -1) {
                     return (
                       <div className="no-results">
@@ -437,7 +479,7 @@ function ResultPage() {
                       </div>
                     );
                   }
-                  
+
                   return (
                     <QuestionCard
                       key={`${actualIndex}-${currentFilter}`}

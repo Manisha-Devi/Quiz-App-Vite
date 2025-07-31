@@ -1,9 +1,9 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { InlineMath, BlockMath } from 'react-katex';
-import { getImageFromStore } from '../utils/indexedDB';
+import { getJSONImage } from '../utils/indexedDB';
 import 'katex/dist/katex.min.css';
 
-function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, retryAnswer, retryCompleted, onRetryAnswer }) {
+function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, retryAnswer, retryCompleted, onRetryAnswer, injectImageSources }) {
   const [fiftyFiftyUsed, setFiftyFiftyUsed] = useState(false);
   const [hiddenOptions, setHiddenOptions] = useState([]);
 
@@ -11,7 +11,7 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
     if (!text) return null;
 
     // Function to inject image sources into HTML content
-    const injectImageSources = async (htmlContent) => {
+    const injectImageSourcesLocal = async (htmlContent) => {
       if (!htmlContent || typeof htmlContent !== 'string') return htmlContent;
 
       // Find all img tags with id attributes
@@ -24,14 +24,14 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
         const imageId = match[1];
 
         try {
-          // Get image from IndexedDB
-          const imageData = await getImageFromStore('Image_Demo', imageId);
+          // Get image from IndexedDB using the correct function
+          const imageData = await getJSONImage('Image_Demo', imageId);
 
-          if (imageData && imageData.data) {
+          if (imageData) {
             // Replace the img tag with one that has the blob URL as src
             const newImgTag = fullImgTag.replace(
               /(<img[^>]+)>/,
-              `$1 src="${imageData.data}">`
+              `$1 src="${imageData}">`
             );
             processedContent = processedContent.replace(fullImgTag, newImgTag);
           } else {
@@ -52,7 +52,9 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
     };
   
     // Process the text with image sources first
-    const processedText = await injectImageSources(text);
+    const processedText = injectImageSources ? 
+      await injectImageSources(text) : 
+      await injectImageSourcesLocal(text);
 
     // Split by $ for inline math and $$ for display math
     const parts = [];
@@ -117,7 +119,7 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
     }
 
     return parts.length > 0 ? parts : <span dangerouslySetInnerHTML={{ __html: processedText }} />;
-  }, []);
+  }, [injectImageSources]);
 
   // State to store rendered content
   const [renderedQuestionText, setRenderedQuestionText] = useState(null);
