@@ -321,7 +321,10 @@ function UploadPage() {
   const handleLocalJSONSelect = async (jsonData, selectedTime) => {
     await dataManager.setExamData('quizData', jsonData);
     await dataManager.setUserSetting('quizTime', selectedTime || quizTime);
-    await dataManager.setFileImageMap({});
+    
+    // Don't clear fileImageMap here - it's already set by LocalJSONLibrary
+    // await dataManager.setFileImageMap({});
+    
     navigate("/sections");
   };
 

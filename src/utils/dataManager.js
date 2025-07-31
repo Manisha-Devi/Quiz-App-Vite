@@ -160,6 +160,41 @@ class DataManager {
     }
   }
 
+  // Load JSON images from folders
+  async loadJSONImages() {
+    try {
+      const { loadJSONImagesFromFolders } = await import('./jsonLoader');
+      await loadJSONImagesFromFolders();
+      console.log('JSON images loaded successfully');
+    } catch (error) {
+      console.error('Error loading JSON images:', error);
+    }
+  }
+
+  // Get image from jsonImages store
+  async getImageFromJSONImagesStore(jsonFileName, imageName) {
+    try {
+      const { getImageFromJSONImagesStore } = await import('./indexedDB');
+      const imageData = await getImageFromJSONImagesStore(jsonFileName, imageName);
+      console.log(`🖼️ Fetched image ${imageName} for ${jsonFileName}:`, imageData ? 'Found' : 'Not found');
+      return imageData;
+    } catch (error) {
+      console.error('Error fetching image from jsonImages store:', error);
+      return null;
+    }
+  }
+
+  // Get all images for JSON file from jsonImages store
+  async getAllImagesForJSONFile(jsonFileName) {
+    try {
+      const { getAllImagesForJSONFile } = await import('./indexedDB');
+      return await getAllImagesForJSONFile(jsonFileName);
+    } catch (error) {
+      console.error('Error fetching all images for JSON file:', error);
+      return [];
+    }
+  }
+
   // Clear all data for fresh start (keeps database structure intact)
   async clearAllAppData() {
     try {
@@ -169,7 +204,7 @@ class DataManager {
         throw new Error('Database connection not available');
       }
 
-      const stores = ['userSettings', 'examData', 'examResults', 'jsonFiles', 'jsonImages'];
+      const stores = ['userSettings', 'examData', 'examResults', 'jsonFiles', 'by_filename', 'jsonImages'];
       let clearedStores = 0;
 
       // Clear each store individually without dropping database
