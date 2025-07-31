@@ -17,23 +17,6 @@ function LocalJSONLibrary({ onFileSelect }) {
 
   useEffect(() => {
     loadLocalFiles();
-    
-    // Set up interval to check for new files every 2 seconds
-    const interval = setInterval(() => {
-      loadLocalFiles();
-    }, 2000);
-    
-    // Add focus event listener to refresh when user returns to tab
-    const handleFocus = () => {
-      loadLocalFiles();
-    };
-    
-    window.addEventListener('focus', handleFocus);
-    
-    return () => {
-      clearInterval(interval);
-      window.removeEventListener('focus', handleFocus);
-    };
   }, []);
 
   const loadLocalFiles = async (forceReload = false) => {
