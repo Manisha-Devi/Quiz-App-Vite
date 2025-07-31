@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Stage, Layer, Line } from 'react-konva';
+import dataManager from '../utils/dataManager';
 import './styles/DrawingOverlay.css';
 
 function DrawingOverlay() {
@@ -149,22 +150,37 @@ function DrawingOverlay() {
     return lines[currentQuestionIndex] || {};
   };
 
-  // Save drawing data to localStorage when lines change
+  // Save drawing data to IndexedDB when lines change
   useEffect(() => {
-    localStorage.setItem('questionDrawings', JSON.stringify(lines));
+    const saveDrawings = async () => {
+      try {
+        await dataManager.setExamData('questionDrawings', lines);
+        console.log('Drawings saved to IndexedDB');
+      } catch (error) {
+        console.error('Error saving drawings to IndexedDB:', error);
+      }
+    };
+    
+    if (Object.keys(lines).length > 0) {
+      saveDrawings();
+    }
   }, [lines]);
 
-  // Load drawing data from localStorage on component mount
+  // Load drawing data from IndexedDB on component mount
   useEffect(() => {
-    const savedDrawings = localStorage.getItem('questionDrawings');
-    if (savedDrawings) {
+    const loadDrawings = async () => {
       try {
-        const parsedDrawings = JSON.parse(savedDrawings);
-        setLines(parsedDrawings);
+        const savedDrawings = await dataManager.getExamData('questionDrawings');
+        if (savedDrawings) {
+          setLines(savedDrawings);
+          console.log('Drawings loaded from IndexedDB');
+        }
       } catch (error) {
-        console.error('Error loading saved drawings:', error);
+        console.error('Error loading saved drawings from IndexedDB:', error);
       }
-    }
+    };
+    
+    loadDrawings();
   }, []);
 
   return (
