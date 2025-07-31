@@ -371,13 +371,18 @@ const loadImagesFromPublicFolder = async () => {
   try {
     console.log('🔄 Loading images from public folder (production fallback)...');
     
-    // Define known image folders and their images
+    // Try to discover images dynamically first
+    const commonImageNames = [
+      'Question1.png',
+      'Question1 (copy).png', 
+      'Question1 (copy) 1.png',
+      'question1.png',
+      'Question1.jpg',
+      'Question1.jpeg'
+    ];
+
     const imageMap = {
-      'Image_Demo': [
-        'Question1.png',
-        'Question1 (copy).png', 
-        'Question1 (copy) 1.png'
-      ]
+      'Image_Demo': commonImageNames
     };
 
     for (const [folderName, imageFiles] of Object.entries(imageMap)) {
@@ -386,24 +391,28 @@ const loadImagesFromPublicFolder = async () => {
       for (const imageName of imageFiles) {
         try {
           const imageUrl = `/json/${folderName}/${imageName}`;
-          console.log(`🖼️ Fetching image: ${imageUrl}`);
+          console.log(`🖼️ Trying to fetch: ${imageUrl}`);
           
           const response = await fetch(imageUrl);
           if (response.ok) {
             const blob = await response.blob();
             
-            // Convert blob to base64 data URL
-            const base64Data = await new Promise((resolve, reject) => {
-              const reader = new FileReader();
-              reader.onload = () => resolve(reader.result);
-              reader.onerror = () => reject(new Error('Failed to read file'));
-              reader.readAsDataURL(blob);
-            });
+            // Verify blob is actually an image
+            if (blob.type.startsWith('image/')) {
+              // Convert blob to base64 data URL
+              const base64Data = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = () => reject(new Error('Failed to read file'));
+                reader.readAsDataURL(blob);
+              });
 
-            // Store image in jsonImages IndexedDB store
-            await storeImageInJSONImagesStore(folderName, imageName, base64Data);
-            console.log(`✅ Stored image ${imageName} for ${folderName} from public folder`);
-            
+              // Store image in jsonImages IndexedDB store
+              await storeImageInJSONImagesStore(folderName, imageName, base64Data);
+              console.log(`✅ Stored image ${imageName} for ${folderName} from public folder`);
+            } else {
+              console.log(`⚠️ File is not an image: ${imageUrl} (type: ${blob.type})`);
+            }
           } else {
             console.log(`⚠️ Image not found: ${imageUrl} (${response.status})`);
           }
