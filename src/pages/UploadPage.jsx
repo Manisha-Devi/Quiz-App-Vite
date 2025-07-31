@@ -14,7 +14,7 @@ import {
 } from "../utils/indexedDB";
 
 function UploadPage() {
-  const [showLocalJSON, setShowLocalJSON] = useState(true);
+  const [showLocalJSON, setShowLocalJSON] = useState(false);
   const [files, setFiles] = useState([]);
   const [fileImageMap, setFileImageMap] = useState({});
   const [quizTime, setQuizTime] = useState(0);
@@ -377,11 +377,11 @@ function UploadPage() {
             {isDarkMode ? "☀️" : "🌙"}
           </button>
           <button
-            className={`library-toggle-btn ${!showLocalJSON ? "active" : ""}`}
+            className={`library-toggle-btn ${showLocalJSON ? "active" : ""}`}
             onClick={() => setShowLocalJSON(!showLocalJSON)}
             title="Toggle Upload Mode"
           >
-            {showLocalJSON ? "📤" : "📁"}
+            {showLocalJSON ? "📁" : "📤"}
           </button>
         </div>
       </header>

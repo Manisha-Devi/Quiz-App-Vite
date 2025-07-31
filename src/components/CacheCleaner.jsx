@@ -67,9 +67,25 @@ const CacheCleaner = ({ onDataChange }) => {
 
           for (const file of jsonFiles) {
             try {
-              const response = await fetch(`/src/json/${file.name}.json`);
-              if (response.ok) {
-                const data = await response.json();
+              // Try different path strategies for production
+              let response;
+              let data;
+              
+              // First try the public path (for production)
+              try {
+                response = await fetch(`/${file.name}.json`);
+                if (response.ok) {
+                  data = await response.json();
+                }
+              } catch (e) {
+                // If that fails, try the src path (for development)
+                response = await fetch(`/src/json/${file.name}.json`);
+                if (response.ok) {
+                  data = await response.json();
+                }
+              }
+              
+              if (data) {
                 loadedData.push({
                   name: file.name,
                   questions: data
