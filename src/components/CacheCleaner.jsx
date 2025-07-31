@@ -440,11 +440,11 @@ const CacheCleaner = ({ onDataChange }) => {
         message={popup.message}
         type={popup.type}
         isVisible={popup.isVisible}
-        onClose={closePopup}
+        onClose={() => setPopup({ ...popup, isVisible: false })}
+        showConfirm={popup.showConfirm}
         onConfirm={popup.onConfirm}
         onCancel={popup.onCancel}
-        showConfirm={popup.showConfirm}
-        contained={true}
+        contained={false}
       />
     </>
   );
