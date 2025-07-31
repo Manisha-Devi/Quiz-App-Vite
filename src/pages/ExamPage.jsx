@@ -877,8 +877,7 @@ function ExamPage() {
                   {timeLeft <= 0 ? "⏰ Time's Up!" : "Are You Sure?"}
                 </h3>
               </div>
-              <div```text
-  className="submit-modal-body">
+              <div className="submit-modal-body">
                 <p>
                   {timeLeft <= 0 
                     ? "Your exam time has ended. Your responses have been saved and will be submitted." 
