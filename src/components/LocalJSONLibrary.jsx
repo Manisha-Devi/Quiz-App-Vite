@@ -30,10 +30,10 @@ function LocalJSONLibrary({ onFileSelect, refreshTrigger = 0 }) {
     console.log('BASE_URL:', import.meta.env.BASE_URL);
   };
 
-  // Debug function to check what's in jsonImages store
+  // Debug function to check what's in jsonImages store (read-only)
   const debugJsonImagesStore = async () => {
     try {
-      console.log('🔍 Debugging jsonImages store...');
+      console.log('🔍 Checking jsonImages store (read-only debug)...');
       
       // Check for Image_Demo specifically
       const images = await dataManager.getAllImagesForJSONFile('Image_Demo');
@@ -41,18 +41,12 @@ function LocalJSONLibrary({ onFileSelect, refreshTrigger = 0 }) {
       
       if (images.length === 0) {
         console.log('⚠️ No images found in jsonImages store for Image_Demo');
-        console.log('🔄 Attempting to reload images...');
-        
-        // Try to reload images
-        const { loadJSONImagesFromFolders } = await import('../utils/jsonLoader');
-        await loadJSONImagesFromFolders();
-        
-        // Check again after reload
-        const reloadedImages = await dataManager.getAllImagesForJSONFile('Image_Demo');
-        console.log('📋 Images found after reload:', reloadedImages);
+        console.log('💡 Use the Fetch button in Developer Tools to load images manually');
+      } else {
+        console.log('✅ Images are already loaded in store');
       }
     } catch (error) {
-      console.error('❌ Error debugging jsonImages store:', error);
+      console.error('❌ Error checking jsonImages store:', error);
     }
   };
 
