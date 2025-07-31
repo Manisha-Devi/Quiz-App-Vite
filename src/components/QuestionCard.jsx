@@ -1,67 +1,19 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState } from 'react';
 import { InlineMath, BlockMath } from 'react-katex';
-import { getJSONImage } from '../utils/indexedDB';
 import 'katex/dist/katex.min.css';
 
-function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, retryAnswer, retryCompleted, onRetryAnswer, injectImageSources }) {
+function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, retryAnswer, retryCompleted, onRetryAnswer }) {
   const [fiftyFiftyUsed, setFiftyFiftyUsed] = useState(false);
   const [hiddenOptions, setHiddenOptions] = useState([]);
 
-  const renderMathAndHTML = useCallback(async (text) => {
-    if (!text) return null;
+  const renderMathAndHTML = useCallback((text) => {
+    if (!text) return '';
 
-    // Function to inject image sources into HTML content
-    const injectImageSourcesLocal = async (htmlContent) => {
-      if (!htmlContent || typeof htmlContent !== 'string') return htmlContent;
-
-      // Find all img tags with id attributes
-      const imgRegex = /<img[^>]+id=['"]([^'"]+)['"][^>]*>/g;
-      let processedContent = htmlContent;
-      let match;
-
-      while ((match = imgRegex.exec(htmlContent)) !== null) {
-        const fullImgTag = match[0];
-        const imageId = match[1];
-
-        try {
-          // Get image from IndexedDB using the correct function
-          const imageData = await getJSONImage('Image_Demo', imageId);
-
-          if (imageData) {
-            // Replace the img tag with one that has the blob URL as src
-            const newImgTag = fullImgTag.replace(
-              /(<img[^>]+)>/,
-              `$1 src="${imageData}">`
-            );
-            processedContent = processedContent.replace(fullImgTag, newImgTag);
-          } else {
-            console.warn(`Image not found in store: ${imageId}`);
-            // Add a placeholder or keep original
-            const newImgTag = fullImgTag.replace(
-              /(<img[^>]+)>/,
-              `$1 src="" style="background: #f0f0f0; border: 2px dashed #ccc; padding: 20px; text-align: center; display: block;">`
-            );
-            processedContent = processedContent.replace(fullImgTag, newImgTag);
-          }
-        } catch (error) {
-          console.error(`Error loading image ${imageId}:`, error);
-        }
-      }
-
-      return processedContent;
-    };
-  
-    // Process the text with image sources first
-    const processedText = injectImageSources ? 
-      await injectImageSources(text) : 
-      await injectImageSourcesLocal(text);
-
-    // Split by $ for inline math and $$ for display math
     const parts = [];
-    let currentText = processedText;
+    let currentText = String(text);
     let key = 0;
 
-    // Handle display math ($$...$$) first
+    // Process display math ($$...$$) first
     while (currentText.includes('$$')) {
       const startIndex = currentText.indexOf('$$');
       const endIndex = currentText.indexOf('$$', startIndex + 2);
@@ -70,23 +22,27 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
 
       // Add text before math
       if (startIndex > 0) {
-        const beforeMath = currentText.substring(0, startIndex);
-        parts.push(
-          <span key={key++} dangerouslySetInnerHTML={{ __html: beforeMath }} />
-        );
+        const beforeText = currentText.substring(0, startIndex);
+        if (beforeText.trim()) {
+          parts.push(
+            <span key={key++} dangerouslySetInnerHTML={{ __html: beforeText }} />
+          );
+        }
       }
 
-      // Add display math
+      // Add math content
       const mathContent = currentText.substring(startIndex + 2, endIndex);
-      parts.push(
-        <BlockMath key={key++} math={mathContent} />
-      );
+      try {
+        parts.push(<BlockMath key={key++} math={mathContent} />);
+      } catch (error) {
+        parts.push(<span key={key++}>{`$$${mathContent}$$`}</span>);
+      }
 
       // Continue with remaining text
       currentText = currentText.substring(endIndex + 2);
     }
 
-    // Handle inline math ($...$)
+    // Process inline math ($...$)
     while (currentText.includes('$')) {
       const startIndex = currentText.indexOf('$');
       const endIndex = currentText.indexOf('$', startIndex + 1);
@@ -95,61 +51,35 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
 
       // Add text before math
       if (startIndex > 0) {
-        const beforeMath = currentText.substring(0, startIndex);
-        parts.push(
-          <span key={key++} dangerouslySetInnerHTML={{ __html: beforeMath }} />
-        );
+        const beforeText = currentText.substring(0, startIndex);
+        if (beforeText.trim()) {
+          parts.push(
+            <span key={key++} dangerouslySetInnerHTML={{ __html: beforeText }} />
+          );
+        }
       }
 
-      // Add inline math
+      // Add math content
       const mathContent = currentText.substring(startIndex + 1, endIndex);
-      parts.push(
-        <InlineMath key={key++} math={mathContent} />
-      );
+      try {
+        parts.push(<InlineMath key={key++} math={mathContent} />);
+      } catch (error) {
+        parts.push(<span key={key++}>{`$${mathContent}$`}</span>);
+      }
 
       // Continue with remaining text
       currentText = currentText.substring(endIndex + 1);
     }
 
     // Add any remaining text
-    if (currentText) {
+    if (currentText.trim()) {
       parts.push(
         <span key={key++} dangerouslySetInnerHTML={{ __html: currentText }} />
       );
     }
 
-    return parts.length > 0 ? parts : <span dangerouslySetInnerHTML={{ __html: processedText }} />;
-  }, [injectImageSources]);
-
-  // State to store rendered content
-  const [renderedQuestionText, setRenderedQuestionText] = useState(null);
-  const [renderedOptions, setRenderedOptions] = useState([]);
-  const [renderedExplanation, setRenderedExplanation] = useState(null);
-
-  // Process content when component mounts or question changes
-  useEffect(() => {
-    const processContent = async () => {
-      // Process question text
-      const questionContent = await renderMathAndHTML(question.question);
-      setRenderedQuestionText(questionContent);
-
-      // Process options
-      if (question.options) {
-        const optionContents = await Promise.all(
-          question.options.map(option => renderMathAndHTML(option))
-        );
-        setRenderedOptions(optionContents);
-      }
-
-      // Process explanation if exists
-      if (question.explanation) {
-        const explanationContent = await renderMathAndHTML(question.explanation);
-        setRenderedExplanation(explanationContent);
-      }
-    };
-
-    processContent();
-  }, [question, renderMathAndHTML]);
+    return parts.length > 0 ? parts : text;
+  }, []);
 
   const getStatusInfo = () => {
     if (userAnswer === undefined) {
@@ -291,10 +221,10 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
       )}
 
       <div className="question-text">
-          {renderedQuestionText}
-        </div>
+        {renderMathAndHTML(question.question)}
+      </div>
 
-
+      
 
       <div className="options-grid">
         {question.options?.map((option, optionIndex) => {
@@ -326,7 +256,7 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
             >
               <div className="option-label">{String.fromCharCode(65 + optionIndex)}</div>
               <div className="option-text">
-                {renderedOptions[optionIndex] || option}
+                {renderMathAndHTML(option)}
               </div>
 
               {/* Show marks in normal mode */}
@@ -400,8 +330,8 @@ function QuestionCard({ question, index, userAnswer, reviewMarked, retryMode, re
         <div className="explanation">
           <div className="explanation-header">💡 Explanation</div>
           <div className="explanation-text">
-              {renderedExplanation}
-            </div>
+                        {renderMathAndHTML(question.explanation)}
+          </div>
         </div>
       )}
     </div>
