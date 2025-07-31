@@ -143,13 +143,15 @@ const CacheCleaner = ({ onDataChange }) => {
         console.log(`✅ Cookies cleared (${cookiesCleared} cookies removed)`);
 
         // Clear cache if available
+        let cacheCount = 0;
         if ('caches' in window) {
           try {
             const cacheNames = await caches.keys();
+            cacheCount = cacheNames.length;
             await Promise.all(
               cacheNames.map(cacheName => caches.delete(cacheName))
             );
-            console.log(`✅ Cache cleared (${cacheNames.length} caches removed)`);
+            console.log(`✅ Cache cleared (${cacheCount} caches removed)`);
           } catch (cacheError) {
             console.warn('Warning: Could not clear cache:', cacheError);
           }
@@ -162,7 +164,7 @@ const CacheCleaner = ({ onDataChange }) => {
           `• localStorage: ${localStorageCount} items removed`,
           `• sessionStorage: ${sessionStorageCount} items removed`, 
           `• Cookies: ${cookiesCleared} cookies removed`,
-          `• Cache: Cleared (if available)`
+          `• Cache: ${cacheCount} caches cleared`
         ].join('\n');
 
         alert(summary);
