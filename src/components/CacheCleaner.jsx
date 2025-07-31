@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import dataManager from '../utils/dataManager';
 import CustomPopup from './CustomPopup';
@@ -70,7 +69,7 @@ const CacheCleaner = ({ onDataChange }) => {
               // Try different path strategies for production
               let response;
               let data;
-              
+
               // First try the public path (for production)
               try {
                 response = await fetch(`/${file.name}.json`);
@@ -84,7 +83,7 @@ const CacheCleaner = ({ onDataChange }) => {
                   data = await response.json();
                 }
               }
-              
+
               if (data) {
                 loadedData.push({
                   name: file.name,
@@ -392,53 +391,49 @@ const CacheCleaner = ({ onDataChange }) => {
       <button
         onClick={fetchJSONData}
         disabled={loading}
-        className="dev-tool-btn fetch-btn"
-        title="Fetch JSON files from project and store in IndexedDB"
+        className="compact-dev-btn fetch-btn"
+        title="Load JSON files from project and store in IndexedDB"
       >
-        <span className="btn-icon">{loading && currentOperation === 'fetching' ? '⏳' : '📥'}</span>
-        <span className="btn-text">
-          {loading && currentOperation === 'fetching' ? 'Fetching Data...' : 'Fetch Data'}
+        <span className="compact-icon">{loading && currentOperation === 'fetching' ? '⏳' : '📥'}</span>
+        <span className="compact-text">
+          {loading && currentOperation === 'fetching' ? 'Fetching' : 'Fetch'}
         </span>
-        <span className="btn-description">Load JSON files into IndexedDB</span>
       </button>
 
       <button
         onClick={clearIndexedDBStores}
         disabled={loading}
-        className="dev-tool-btn clear-btn"
+        className="compact-dev-btn clear-btn"
         title="Clear all IndexedDB stores (keeps database structure)"
       >
-        <span className="btn-icon">{loading && currentOperation === 'clearing' ? '⏳' : '🧹'}</span>
-        <span className="btn-text">
-          {loading && currentOperation === 'clearing' ? 'Clearing DB...' : 'Clear DB'}
+        <span className="compact-icon">{loading && currentOperation === 'clearing' ? '⏳' : '🧹'}</span>
+        <span className="compact-text">
+          {loading && currentOperation === 'clearing' ? 'Clearing' : 'Clear'}
         </span>
-        <span className="btn-description">Empty all IndexedDB stores</span>
       </button>
 
       <button
         onClick={clearBrowserStorage}
         disabled={loading}
-        className="dev-tool-btn storage-btn"
+        className="compact-dev-btn storage-btn"
         title="Clear localStorage, sessionStorage, and cookies"
       >
-        <span className="btn-icon">{loading && currentOperation === 'storage' ? '⏳' : '🗂️'}</span>
-        <span className="btn-text">
-          {loading && currentOperation === 'storage' ? 'Clearing Storage...' : 'Clear Storage'}
+        <span className="compact-icon">{loading && currentOperation === 'storage' ? '⏳' : '🗂️'}</span>
+        <span className="compact-text">
+          {loading && currentOperation === 'storage' ? 'Clearing' : 'Storage'}
         </span>
-        <span className="btn-description">Clear browser storage & cookies</span>
       </button>
 
       <button
         onClick={deleteIndexedDB}
         disabled={loading}
-        className="dev-tool-btn delete-btn"
+        className="compact-dev-btn delete-btn"
         title="Delete entire IndexedDB database (requires page reload)"
       >
-        <span className="btn-icon">{loading && currentOperation === 'deleting' ? '⏳' : '🗑️'}</span>
-        <span className="btn-text">
-          {loading && currentOperation === 'deleting' ? 'Deleting DB...' : 'Delete DB'}
+        <span className="compact-icon">{loading && currentOperation === 'deleting' ? '⏳' : '🗑️'}</span>
+        <span className="compact-text">
+          {loading && currentOperation === 'deleting' ? 'Deleting' : 'Delete'}
         </span>
-        <span className="btn-description">Remove all IndexedDB data</span>
       </button>
 
       <CustomPopup

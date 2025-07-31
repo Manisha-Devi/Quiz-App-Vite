@@ -1976,301 +1976,200 @@
   box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);
 }
 
-/* Developer Tools Card - Modern Redesign */
-.developer-tools-card {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border: none;
-  border-radius: 24px;
-  padding: 32px;
-  margin-top: 40px;
-  box-shadow: 
-    0 10px 40px rgba(102, 126, 234, 0.3),
-    0 4px 15px rgba(0, 0, 0, 0.1);
-  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-  position: relative;
-  overflow: hidden;
-}
-
-.developer-tools-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(255, 255, 255, 0.1);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-}
-
-.developer-tools-card:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 
-    0 20px 60px rgba(102, 126, 234, 0.4),
-    0 8px 25px rgba(0, 0, 0, 0.15);
-}
-
-.developer-tools-card:hover::before {
-  opacity: 1;
-}
-
-.developer-tools-header {
-  text-align: center;
-  margin-bottom: 28px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  position: relative;
-}
-
-.developer-tools-header h3 {
-  margin: 0 0 12px 0;
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: white;
+/* Compact Developer Tools in Footer */
+.developer-tools-compact {
+  max-width: 1200px;
+  margin: 0 auto;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 12px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.developer-tools-header p {
-  margin: 0;
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 1rem;
-  font-weight: 500;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.developer-tools-actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  justify-content: space-between;
   gap: 20px;
 }
 
-.dev-tool-btn {
-  background: rgba(255, 255, 255, 0.95);
+.developer-tools-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
   color: #333;
-  border: none;
-  padding: 24px 20px;
-  border-radius: 16px;
+  font-size: 16px;
+}
+
+.upload-page.dark-mode .developer-tools-title {
+  color: #e0e0e0;
+}
+
+.tools-icon {
+  font-size: 20px;
+}
+
+.tools-text {
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+.developer-tools-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Compact Developer Buttons */
+.cache-cleaner-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.compact-dev-btn {
+  background: white;
+  color: #333;
+  border: 2px solid #e0e4ff;
+  padding: 8px 16px;
+  border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition: all 0.3s ease;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 10px;
-  text-align: center;
-  box-shadow: 
-    0 4px 15px rgba(0, 0, 0, 0.1),
-    0 2px 6px rgba(0, 0, 0, 0.05);
-  backdrop-filter: blur(10px);
-  position: relative;
-  overflow: hidden;
+  gap: 6px;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  min-width: 70px;
+  justify-content: center;
 }
 
-.dev-tool-btn:disabled {
+.upload-page.dark-mode .compact-dev-btn {
+  background: #3a3a56;
+  color: #e0e0e0;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.compact-dev-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  transform: none !important;
 }
 
-.dev-tool-btn:not(:disabled):hover {
-  transform: translateY(-4px) scale(1.05);
-  box-shadow: 
-    0 8px 25px rgba(0, 0, 0, 0.15),
-    0 4px 12px rgba(0, 0, 0, 0.08);
-  background: white;
+.compact-dev-btn:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.dev-tool-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-  transition: left 0.5s ease;
+.compact-dev-btn.fetch-btn {
+  border-color: #10b981;
+  color: #10b981;
 }
 
-.dev-tool-btn:hover::before {
-  left: 100%;
+.compact-dev-btn.fetch-btn:not(:disabled):hover {
+  background: #10b981;
+  color: white;
 }
 
-.dev-tool-btn:not(:disabled):active {
-  transform: translateY(0);
+.compact-dev-btn.clear-btn {
+  border-color: #ffc107;
+  color: #f59e0b;
 }
 
-.dev-tool-btn.fetch-btn {
-  border-left: 4px solid #10b981;
+.compact-dev-btn.clear-btn:not(:disabled):hover {
+  background: #ffc107;
+  color: white;
 }
 
-.dev-tool-btn.fetch-btn:not(:disabled):hover {
-  border-left-color: #059669;
-  color: #059669;
+.compact-dev-btn.storage-btn {
+  border-color: #6f42c1;
+  color: #6f42c1;
 }
 
-.dev-tool-btn.clear-btn {
-  border-left: 4px solid #ffc107;
+.compact-dev-btn.storage-btn:not(:disabled):hover {
+  background: #6f42c1;
+  color: white;
 }
 
-.dev-tool-btn.clear-btn:not(:disabled):hover {
-  border-left-color: #e0a800;
-  color: #e0a800;
+.compact-dev-btn.delete-btn {
+  border-color: #ef4444;
+  color: #ef4444;
 }
 
-.dev-tool-btn.storage-btn {
-  border-left: 4px solid #6f42c1;
+.compact-dev-btn.delete-btn:not(:disabled):hover {
+  background: #ef4444;
+  color: white;
 }
 
-.dev-tool-btn.storage-btn:not(:disabled):hover {
-  border-left-color: #5a32a3;
-  color: #5a32a3;
-}
-
-.dev-tool-btn.delete-btn {
-  border-left: 4px solid #ef4444;
-}
-
-.dev-tool-btn.delete-btn:not(:disabled):hover {
-  border-left-color: #dc2626;
-  color: #dc2626;
-}
-
-.dev-tool-btn .btn-icon {
-  font-size: 28px;
-  margin-bottom: 6px;
-  transition: transform 0.3s ease;
-}
-
-.dev-tool-btn:hover .btn-icon {
-  transform: scale(1.2);
-}
-
-.dev-tool-btn .btn-text {
+.compact-icon {
   font-size: 16px;
-  font-weight: 700;
-  margin-bottom: 4px;
 }
 
-.dev-tool-btn .btn-description {
+.compact-text {
   font-size: 12px;
-  opacity: 0.7;
-  font-weight: 500;
-  line-height: 1.3;
-  transition: opacity 0.3s ease;
+  font-weight: 700;
 }
 
-.dev-tool-btn:hover .btn-description {
-  opacity: 0.9;
+/* Add padding bottom to content to prevent footer overlap */
+.upload-content {
+  flex: 1;
+  padding: 32px 24px 80px 24px; /* Added bottom padding for fixed footer */
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
 }
 
-/* Enhanced Responsive Design */
+/* Responsive Design for Fixed Footer */
 @media (max-width: 768px) {
-  .developer-tools-card {
-    padding: 24px 20px;
-    margin-top: 40px;
-    border-radius: 20px;
+  .fixed-developer-footer {
+    padding: 10px 16px;
   }
 
-  .developer-tools-header {
-    margin-bottom: 24px;
-    padding-bottom: 20px;
+  .developer-tools-compact {
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
   }
 
-  .developer-tools-header h3 {
-    font-size: 1.5rem;
+  .developer-tools-title {
+    font-size: 14px;
+    gap: 8px;
   }
 
-  .developer-tools-actions {
-    grid-template-columns: 1fr;
-    gap: 20px;
+  .tools-icon {
+    font-size: 18px;
   }
 
-  .dev-tool-btn {
-    padding: 24px 20px;
-    border-radius: 16px;
+  .developer-tools-row {
+    justify-content: center;
+    gap: 8px;
   }
 
-  .dev-tool-btn .btn-icon {
-    font-size: 28px;
-  }
-
-  .dev-tool-btn .btn-text {
-    font-size: 16px;
-  }
-
-  .dev-tool-btn .btn-description {
-    font-size: 12px;
+  .upload-content {
+    padding-bottom: 120px; /* More space on mobile for larger footer */
   }
 }
 
 @media (max-width: 480px) {
-  .developer-tools-card {
-    padding: 20px 16px;
-    margin-top: 30px;
+  .fixed-developer-footer {
+    padding: 8px 12px;
   }
 
-  .developer-tools-header h3 {
-    font-size: 1.3rem;
-    gap: 8px;
+  .developer-tools-title {
+    font-size: 13px;
+    gap: 6px;
   }
 
-  .dev-tool-btn {
-    padding: 20px 16px;
+  .tools-icon {
+    font-size: 16px;
   }
 
-  .dev-tool-btn .btn-icon {
-    font-size: 24px;
+  .developer-tools-row {
+    gap: 6px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 4px 0;
   }
 
-  .dev-tool-btn .btn-text {
-    font-size: 15px;
+  .upload-content {
+    padding-bottom: 100px;
   }
-
-  .dev-tool-btn .btn-description {
-    font-size: 11px;
-  }
-}
-
-/* Enhanced Dark Mode */
-.upload-page.dark-mode .developer-tools-card {
-  background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
-  box-shadow: 
-    0 10px 40px rgba(0, 0, 0, 0.4),
-    0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.upload-page.dark-mode .developer-tools-card:hover {
-  box-shadow: 
-    0 20px 60px rgba(0, 0, 0, 0.5),
-    0 8px 25px rgba(0, 0, 0, 0.3);
-}
-
-.upload-page.dark-mode .developer-tools-header {
-  border-bottom-color: rgba(255, 255, 255, 0.15);
-}
-
-.upload-page.dark-mode .developer-tools-header h3 {
-  color: #ffffff;
-}
-
-.upload-page.dark-mode .dev-tool-btn {
-  background: rgba(255, 255, 255, 0.1);
-  color: #e2e8f0;
-  backdrop-filter: blur(15px);
-}
-
-.upload-page.dark-mode .dev-tool-btn:not(:disabled):hover {
-  background: rgba(255, 255, 255, 0.2);
-  color: #ffffff;
-}
-
-.upload-page.dark-mode .developer-tools-header p {
-  color: #a0a0a0;
 }
 
 /* Fullscreen Button Container */
@@ -2307,18 +2206,21 @@
   display: inline-block;
 }
 
-/* Footer with CacheCleaner */
-.upload-footer {
-  margin-top: 40px;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.9);
+/* Fixed Footer with Developer Tools */
+.fixed-developer-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
   border-top: 1px solid rgba(102, 126, 234, 0.1);
-  display: flex;
-  justify-content: center;
-  margin-top: auto;
+  padding: 12px 20px;
+  z-index: 1000;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
 }
 
-.upload-page.dark-mode .upload-footer {
-  background: rgba(26, 26, 46, 0.9);
+.upload-page.dark-mode .fixed-developer-footer {
+  background: rgba(26, 26, 46, 0.95);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }

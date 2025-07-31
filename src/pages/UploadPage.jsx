@@ -550,15 +550,14 @@ function UploadPage() {
         )}
       </div>
 
-      {/* Footer with CacheCleaner */}
-      <div className="upload-footer">
-        {/* Developer Tools Card */}
-        <div className="developer-tools-card">
-          <div className="developer-tools-header">
-            <h3>🔧 Developer Tools</h3>
-            <p>Development utilities for managing application data</p>
+      {/* Fixed Footer with Developer Tools */}
+      <div className="fixed-developer-footer">
+        <div className="developer-tools-compact">
+          <div className="developer-tools-title">
+            <span className="tools-icon">🔧</span>
+            <span className="tools-text">Developer Tools</span>
           </div>
-          <div className="developer-tools-actions">
+          <div className="developer-tools-row">
             <CacheCleaner onDataChange={handleDataChange} />
           </div>
         </div>
