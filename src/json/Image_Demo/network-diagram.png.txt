@@ -1,0 +1,7 @@
+
+[This would be an actual PNG image file showing corporate email network infrastructure]
+
+To use real images:
+1. Replace this .txt file with an actual network-diagram.png image
+2. Show a corporate email infrastructure with servers, firewalls, etc.
+3. Make sure the filename matches exactly: network-diagram.png

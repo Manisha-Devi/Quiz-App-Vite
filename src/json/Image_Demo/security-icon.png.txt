@@ -1,0 +1,7 @@
+
+[This would be an actual PNG image file showing a security/encryption icon]
+
+To use real images:
+1. Replace this .txt file with an actual security-icon.png image
+2. Show a padlock or security icon (small, around 50px)
+3. Make sure the filename matches exactly: security-icon.png

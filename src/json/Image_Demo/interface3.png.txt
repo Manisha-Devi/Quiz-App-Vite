@@ -1,0 +1,7 @@
+
+[This would be an actual PNG image file showing email client interface 3]
+
+To use real images:
+1. Replace this .txt file with an actual interface3.png image
+2. Show email interface with Calendar, Tasks, Contacts
+3. Make sure the filename matches exactly: interface3.png

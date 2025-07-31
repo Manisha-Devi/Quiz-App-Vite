@@ -1,0 +1,7 @@
+
+[This would be an actual PNG image file showing server configuration details]
+
+To use real images:
+1. Replace this .txt file with an actual server-details.png image
+2. Show detailed server specifications or configuration
+3. Make sure the filename matches exactly: server-details.png

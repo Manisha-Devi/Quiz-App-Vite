@@ -1,0 +1,7 @@
+
+[This would be an actual PNG image file showing email header format option 1]
+
+To use real images:
+1. Replace this .txt file with an actual header1.png image
+2. Show an email header with fields like To:, From:, Subject:
+3. Make sure the filename matches exactly: header1.png

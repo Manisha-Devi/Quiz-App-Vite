@@ -1,0 +1,7 @@
+
+[This would be an actual PNG image file showing email flow from sender through SMTP server to recipient]
+
+To use real images:
+1. Replace this .txt file with an actual email-flow.png image
+2. The image should show the flow: Sender → SMTP Server → Recipient's Email Server → Recipient
+3. Make sure the filename matches exactly: email-flow.png
