@@ -160,6 +160,38 @@ class DataManager {
     }
   }
 
+  // Load JSON images from folders
+  async loadJSONImages() {
+    try {
+      await loadJSONImagesFromFolders();
+      console.log('JSON images loaded successfully');
+    } catch (error) {
+      console.error('Error loading JSON images:', error);
+    }
+  },
+
+  // Get image from jsonImages store
+  async getImageFromJSONImagesStore(jsonFileName, imageName) {
+    try {
+      const { getImageFromJSONImagesStore } = await import('./indexedDB');
+      return await getImageFromJSONImagesStore(jsonFileName, imageName);
+    } catch (error) {
+      console.error('Error fetching image from jsonImages store:', error);
+      return null;
+    }
+  },
+
+  // Get all images for JSON file from jsonImages store
+  async getAllImagesForJSONFile(jsonFileName) {
+    try {
+      const { getAllImagesForJSONFile } = await import('./indexedDB');
+      return await getAllImagesForJSONFile(jsonFileName);
+    } catch (error) {
+      console.error('Error fetching all images for JSON file:', error);
+      return [];
+    }
+  },
+
   // Clear all data for fresh start (keeps database structure intact)
   async clearAllAppData() {
     try {

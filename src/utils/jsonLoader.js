@@ -157,6 +157,7 @@ export const loadJSONFiles = async () => {
     }
 
     // Load associated images after JSON files are loaded
+    console.log('Starting to load images into jsonImages store...');
     await loadJSONImagesFromFolders();
 
     console.log('All JSON files and associated images loaded into IndexedDB stores');
