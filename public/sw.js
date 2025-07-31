@@ -6,7 +6,7 @@ const urlsToCache = [
   '/static/css/main.css',
   '/manifest.json',
   '/json/Art and Culture jk.json',
-  '/json/Email.json',
+  '/json/Email.json', 
   '/json/Image_Demo.json',
   '/json/KaTeX Demo.json',
   '/json/Operating_System.json',
@@ -14,6 +14,9 @@ const urlsToCache = [
   '/json/Sanfoundry_Office.json',
   '/json/Sanfoundry_PowerPoint.json',
   '/json/Sanfoundry_Word.json',
+  '/json/Image_Demo/Question1.png',
+  '/json/Image_Demo/Question1 (copy).png',
+  '/json/Image_Demo/Question1 (copy) 1.png',
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
   'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js'
 ];

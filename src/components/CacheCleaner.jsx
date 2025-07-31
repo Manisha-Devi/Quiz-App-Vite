@@ -39,16 +39,12 @@ const CacheCleaner = ({ onDataChange }) => {
 
             // First try the public path (for production)
             try {
-              response = await fetch(`/${file.name}.json`);
+              response = await fetch(`/json/${file.name}.json`);
               if (response.ok) {
                 data = await response.json();
               }
             } catch (e) {
-              // If that fails, try the src path (for development)
-              response = await fetch(`/src/json/${file.name}.json`);
-              if (response.ok) {
-                data = await response.json();
-              }
+              console.warn(`Could not load from /json/${file.name}.json:`, e);
             }
 
             if (data) {

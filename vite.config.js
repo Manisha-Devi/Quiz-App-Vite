@@ -10,4 +10,6 @@ export default defineConfig({
       // Add any other hosts you want to allow here
     ],
   },
+  publicDir: "public",
+  assetsInclude: ["**/*.json"],
 });

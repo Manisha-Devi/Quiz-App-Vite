@@ -3,7 +3,7 @@ import { storeJSONFile, storeJSONImage, getAllJSONFiles, clearJSONFiles, storeIm
 // Helper function to get available JSON file names
 export const getAvailableJSONFiles = () => {
   // Get JSON files from the glob pattern
-  const jsonModules = import.meta.glob('../json/*.json');
+  const jsonModules = import.meta.glob('../../json/*.json');
   return Object.keys(jsonModules).map(path => 
     path.split('/').pop().replace('.json', '')
   );
