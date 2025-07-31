@@ -210,6 +210,24 @@ class DataManager {
     }
   }
 
+  // Force close database connections
+  async forceCloseConnections() {
+    try {
+      if (this.dbPromise) {
+        const db = await this.dbPromise;
+        if (db && !db.closed) {
+          db.close();
+          console.log('Database connection forcefully closed');
+        }
+        this.dbPromise = null;
+      }
+      return true;
+    } catch (error) {
+      console.error('Error force closing database connections:', error);
+      return false;
+    }
+  }
+
   // Initialize IndexedDB with default settings if needed
   async initializeApp() {
     try {
