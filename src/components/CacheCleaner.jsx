@@ -69,6 +69,117 @@ const CacheCleaner = ({ onDataChange }) => {
     }
   };
 
+  const clearIndexedDBStores = async () => {
+    if (loading) return;
+
+    const confirmed = window.confirm(
+      "⚠️ Are you sure you want to CLEAR all IndexedDB stores? This will empty all data but keep the database structure intact."
+    );
+
+    if (confirmed) {
+      try {
+        setLoading(true);
+        console.log('Starting IndexedDB stores clearing process...');
+
+        const success = await dataManager.clearAllAppData();
+        
+        if (success) {
+          console.log('✅ All IndexedDB stores cleared successfully');
+          alert('✅ All IndexedDB stores cleared successfully!');
+          
+          if (onDataChange) {
+            onDataChange();
+          }
+        } else {
+          throw new Error('Failed to clear IndexedDB stores');
+        }
+
+      } catch (error) {
+        console.error('Error clearing IndexedDB stores:', error);
+        alert(`❌ Error clearing IndexedDB stores: ${error.message || 'Unknown error occurred.'}`);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  const clearBrowserStorage = async () => {
+    if (loading) return;
+
+    const confirmed = window.confirm(
+      "⚠️ Are you sure you want to CLEAR all browser storage? This will remove localStorage, sessionStorage, and cookies for this domain."
+    );
+
+    if (confirmed) {
+      try {
+        setLoading(true);
+        console.log('Starting browser storage clearing process...');
+
+        // Clear localStorage
+        const localStorageCount = localStorage.length;
+        localStorage.clear();
+        console.log(`✅ localStorage cleared (${localStorageCount} items removed)`);
+
+        // Clear sessionStorage
+        const sessionStorageCount = sessionStorage.length;
+        sessionStorage.clear();
+        console.log(`✅ sessionStorage cleared (${sessionStorageCount} items removed)`);
+
+        // Clear cookies
+        const cookies = document.cookie.split(";");
+        let cookiesCleared = 0;
+        
+        for (let cookie of cookies) {
+          const eqPos = cookie.indexOf("=");
+          const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+          if (name) {
+            // Clear cookie for current domain
+            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=${window.location.hostname}`;
+            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=.${window.location.hostname}`;
+            cookiesCleared++;
+          }
+        }
+        console.log(`✅ Cookies cleared (${cookiesCleared} cookies removed)`);
+
+        // Clear cache if available (Service Worker cache)
+        if ('caches' in window) {
+          try {
+            const cacheNames = await caches.keys();
+            await Promise.all(
+              cacheNames.map(cacheName => caches.delete(cacheName))
+            );
+            console.log(`✅ Cache cleared (${cacheNames.length} caches removed)`);
+          } catch (cacheError) {
+            console.warn('Warning: Could not clear cache:', cacheError);
+          }
+        }
+
+        const summary = [
+          `✅ Browser storage cleared successfully!`,
+          ``,
+          `📊 Summary:`,
+          `• localStorage: ${localStorageCount} items removed`,
+          `• sessionStorage: ${sessionStorageCount} items removed`, 
+          `• Cookies: ${cookiesCleared} cookies removed`,
+          `• Cache: Cleared (if available)`
+        ].join('\n');
+
+        alert(summary);
+        
+        if (onDataChange) {
+          onDataChange();
+        }
+
+      } catch (error) {
+        console.error('Error clearing browser storage:', error);
+        alert(`❌ Error clearing browser storage: ${error.message || 'Unknown error occurred.'}`);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
   const deleteIndexedDB = async () => {
     if (loading) return;
 
@@ -211,6 +322,28 @@ const CacheCleaner = ({ onDataChange }) => {
         <span className="btn-icon">{loading ? '⏳' : '📥'}</span>
         <span className="btn-text">{loading ? 'Loading...' : 'Fetch Data'}</span>
         <span className="btn-description">Load JSON files into IndexedDB</span>
+      </button>
+
+      <button
+        onClick={clearIndexedDBStores}
+        disabled={loading}
+        className="dev-tool-btn clear-btn"
+        title="Clear all IndexedDB stores (keeps database structure)"
+      >
+        <span className="btn-icon">{loading ? '⏳' : '🧹'}</span>
+        <span className="btn-text">{loading ? 'Clearing...' : 'Clear DB'}</span>
+        <span className="btn-description">Empty all IndexedDB stores</span>
+      </button>
+
+      <button
+        onClick={clearBrowserStorage}
+        disabled={loading}
+        className="dev-tool-btn storage-btn"
+        title="Clear localStorage, sessionStorage, and cookies"
+      >
+        <span className="btn-icon">{loading ? '⏳' : '🗂️'}</span>
+        <span className="btn-text">{loading ? 'Clearing...' : 'Clear Storage'}</span>
+        <span className="btn-description">Clear browser storage & cookies</span>
       </button>
 
       <button

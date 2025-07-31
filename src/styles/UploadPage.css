@@ -1979,7 +1979,7 @@
 /* Developer Tools Card - Enhanced Design */
 .developer-tools-card {
   background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
-  border: 1px solid rgba(203, 213, 225, 0.3);
+  border: 1px solid rgba(203, 213,225, 0.3);
   border-radius: 24px;
   padding: 32px;
   margin-top: 50px;
@@ -2135,6 +2135,29 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
+.dev-tool-btn.clear-btn {
+  background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+  border-color: #ffc107;
+  color: #212529;
+}
+
+.dev-tool-btn.clear-btn:hover {
+  background: linear-gradient(135deg, #e0a800 0%, #d39e00 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 193, 7, 0.4);
+}
+
+.dev-tool-btn.storage-btn {
+  background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%);
+  border-color: #6f42c1;
+}
+
+.dev-tool-btn.storage-btn:hover {
+  background: linear-gradient(135deg, #5a32a3 0%, #4c2a85 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(111, 66, 193, 0.4);
+}
+
 .dev-tool-btn.delete-btn {
   background: linear-gradient(135deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%);
   box-shadow: 
@@ -2183,34 +2206,34 @@
     margin-top: 40px;
     border-radius: 20px;
   }
-  
+
   .developer-tools-header {
     margin-bottom: 24px;
     padding-bottom: 20px;
   }
-  
+
   .developer-tools-header h3 {
     font-size: 1.5rem;
   }
-  
+
   .developer-tools-actions {
     grid-template-columns: 1fr;
     gap: 20px;
   }
-  
+
   .dev-tool-btn {
     padding: 24px 20px;
     border-radius: 16px;
   }
-  
+
   .dev-tool-btn .btn-icon {
     font-size: 28px;
   }
-  
+
   .dev-tool-btn .btn-text {
     font-size: 16px;
   }
-  
+
   .dev-tool-btn .btn-description {
     font-size: 12px;
   }
@@ -2221,24 +2244,24 @@
     padding: 20px 16px;
     margin-top: 30px;
   }
-  
+
   .developer-tools-header h3 {
     font-size: 1.3rem;
     gap: 8px;
   }
-  
+
   .dev-tool-btn {
     padding: 20px 16px;
   }
-  
+
   .dev-tool-btn .btn-icon {
     font-size: 24px;
   }
-  
+
   .dev-tool-btn .btn-text {
     font-size: 15px;
   }
-  
+
   .dev-tool-btn .btn-description {
     font-size: 11px;
   }
