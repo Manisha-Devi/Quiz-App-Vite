@@ -146,7 +146,7 @@
 /* Content */
 .upload-content {
   flex: 1;
-  padding: 100px 24px 80px 24px; /* Added top padding for fixed header and bottom for footer */
+  padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
@@ -689,11 +689,9 @@
   align-items: center;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
   border-bottom: 1px solid rgba(102, 126, 234, 0.1);
-  position: fixed;
+  position: sticky;
   top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
+  z-index: 100;
   overflow-x: auto;
   overflow-y: hidden;
   white-space: nowrap;
@@ -887,7 +885,7 @@
 /* Content */
 .upload-content {
   flex: 1;
-  padding: 100px 24px 80px 24px; /* Added top padding for fixed header and bottom for footer */
+  padding: 32px 24px;
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
@@ -2111,7 +2109,7 @@
 /* Add padding bottom to content to prevent footer overlap */
 .upload-content {
   flex: 1;
-  padding: 100px 24px 80px 24px; /* Added top and bottom padding for fixed header/footer */
+  padding: 32px 24px 80px 24px; /* Added bottom padding for fixed footer */
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
