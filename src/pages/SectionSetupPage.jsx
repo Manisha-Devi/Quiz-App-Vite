@@ -356,6 +356,15 @@ function SectionSetupPage() {
           dataManager.getUserSetting('practiceMode', false)
         ]);
 
+        console.log('Loaded stored data successfully');
+      } catch (error) {
+        console.error('Error loading stored data:', error);
+      }
+    };
+
+    loadStoredData();
+  }, []);
+
     return (
     <div className={`section-page ${isDarkMode ? 'dark-mode' : ''}`}>
       {/* Header */}
