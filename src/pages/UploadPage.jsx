@@ -22,7 +22,7 @@ function UploadPage() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const navigate = useNavigate();
-  const [showLocalJSON, setShowLocalJSON] = useState(false);
+  const [showLocalJSON, setShowLocalJSON] = useState(true);
   const [showSuccess, setShowSuccess] = useState(false);
   const { isOnline } = useOfflineStorage();
 
@@ -333,7 +333,7 @@ function UploadPage() {
 
   useEffect(() => {
     const handleKeyPress = (e) => {
-      if (e.key.toLowerCase() === 'l') {
+      if (e.key.toLowerCase() === 'u') {
         setShowLocalJSON(prev => !prev);
       }
       if (e.key.toLowerCase() === 'm') {
@@ -374,17 +374,17 @@ function UploadPage() {
             {isDarkMode ? "☀️" : "🌙"}
           </button>
           <button
-            className={`library-toggle-btn ${showLocalJSON ? "active" : ""}`}
+            className={`library-toggle-btn ${!showLocalJSON ? "active" : ""}`}
             onClick={() => setShowLocalJSON(!showLocalJSON)}
-            title="Local JSON Files"
+            title="Toggle Upload Mode"
           >
-            {showLocalJSON ? "📁" : "📄"}
+            {showLocalJSON ? "📤" : "📁"}
           </button>
         </div>
       </header>
 
       <div className="upload-content">
-        {!showLocalJSON ? (
+        {showLocalJSON ? (
           <div className="library-section">
             {/* <div className="section-header">
               <h2>📁 Local JSON Files</h2>
@@ -392,7 +392,7 @@ function UploadPage() {
             </div> */}
             <div className="upload-instructions">
               <h3>📁 Select Quiz Files</h3>
-              <p>Select from blow files to load your Quiz</p>
+              <p>Select from below files to load your Quiz</p>
             </div>
             <LocalJSONLibrary onFileSelect={handleLocalJSONSelect} />
           </div>
