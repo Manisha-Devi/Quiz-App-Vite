@@ -1,3 +1,4 @@
+
 import { storeJSONFile, storeJSONImage, getAllJSONFiles, clearJSONFiles, storeImageInJSONImagesStore } from './indexedDB';
 
 // Helper function to get available JSON file names
@@ -60,8 +61,6 @@ export const loadJSONFilesToStorage = async () => {
     console.error('Error loading JSON files:', error);
   }
 };
-
-
 
 // Function to load images from JSON-associated folders into IndexedDB
 export const loadJSONImagesFromFolders = async () => {
@@ -204,7 +203,14 @@ export const loadJSONFiles = async () => {
 
 // Function to get JSON file from dedicated jsonFiles store
 export const getJSONFileFromStore = async (filename) => {
-
+  try {
+    const { getJSONFile } = await import('./indexedDB');
+    return await getJSONFile(filename);
+  } catch (error) {
+    console.error(`Error fetching ${filename} from jsonFiles store:`, error);
+    return null;
+  }
+};
 
 // Function to load images for a specific JSON file
 export const loadImagesForJSONFile = async (jsonFileName) => {
@@ -274,15 +280,6 @@ export const loadImagesForJSONFile = async (jsonFileName) => {
   } catch (error) {
     console.error(`Error loading images for ${jsonFileName}:`, error);
     return 0;
-  }
-};
-
-  try {
-    const { getJSONFile } = await import('./indexedDB');
-    return await getJSONFile(filename);
-  } catch (error) {
-    console.error(`Error fetching ${filename} from jsonFiles store:`, error);
-    return null;
   }
 };
 
