@@ -190,7 +190,7 @@
 /* Content */
 .section-content {
   flex: 1;
-  padding: 20px;
+  padding: 100px 20px 20px 20px; /* Added top padding for fixed header */
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
@@ -1081,7 +1081,7 @@
   }
 
   .section-content {
-    padding: 16px;
+    padding: 80px 16px 16px 16px; /* Added top padding for fixed header on mobile */
   }
 
   .section-card {
