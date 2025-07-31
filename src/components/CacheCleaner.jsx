@@ -98,28 +98,82 @@ const CacheCleaner = ({ onDataChange }) => {
       try {
         setLoading(true);
         setCurrentOperation('clearing');
-        console.log('Starting IndexedDB stores clearing process...');
+        console.log('🧹 Starting IndexedDB stores clearing process...');
 
-        const success = await dataManager.clearAllAppData();
+        // Try to clear using dataManager first
+        let success = await dataManager.clearAllAppData();
+
+        // If dataManager fails, try direct approach
+        if (!success) {
+          console.log('⚠️ DataManager clear failed, trying direct approach...');
+          success = await clearStoresDirectly();
+        }
 
         if (success) {
           console.log('✅ All IndexedDB stores cleared successfully');
-          alert('✅ All IndexedDB stores cleared successfully!');
+          alert('✅ All IndexedDB stores cleared successfully!\n\n📊 All data has been removed while preserving the database structure.');
 
           if (onDataChange) {
             onDataChange();
           }
         } else {
-          throw new Error('Failed to clear IndexedDB stores');
+          throw new Error('Failed to clear IndexedDB stores using all available methods');
         }
 
       } catch (error) {
-        console.error('Error clearing IndexedDB stores:', error);
-        alert(`❌ Error clearing IndexedDB stores: ${error.message || 'Unknown error occurred.'}`);
+        console.error('❌ Error clearing IndexedDB stores:', error);
+        alert(`❌ Error clearing IndexedDB stores: ${error.message || 'Unknown error occurred.'}\n\nTip: Try the Delete button instead to remove the entire database.`);
       } finally {
         setLoading(false);
         setCurrentOperation('');
       }
+    }
+  };
+
+  // Helper function for direct store clearing
+  const clearStoresDirectly = async () => {
+    try {
+      const { openDb } = await import('../utils/indexedDB');
+      const db = await openDb();
+      
+      if (!db) {
+        throw new Error('Could not open database');
+      }
+
+      const stores = ['userSettings', 'examData', 'examResults', 'jsonFiles', 'jsonImages'];
+      let clearedCount = 0;
+
+      for (const storeName of stores) {
+        try {
+          if (!db.objectStoreNames.contains(storeName)) {
+            console.log(`Store ${storeName} does not exist, skipping...`);
+            continue;
+          }
+
+          const transaction = db.transaction([storeName], 'readwrite');
+          const store = transaction.objectStore(storeName);
+          
+          await new Promise((resolve, reject) => {
+            const clearRequest = store.clear();
+            clearRequest.onsuccess = () => {
+              console.log(`✅ Direct clear of ${storeName} successful`);
+              clearedCount++;
+              resolve();
+            };
+            clearRequest.onerror = () => reject(clearRequest.error);
+          });
+
+        } catch (storeError) {
+          console.error(`Failed to directly clear store ${storeName}:`, storeError);
+        }
+      }
+
+      console.log(`✅ Direct clear completed: ${clearedCount}/${stores.length} stores cleared`);
+      return clearedCount > 0;
+
+    } catch (error) {
+      console.error('❌ Direct clear failed:', error);
+      return false;
     }
   };
 
@@ -206,123 +260,135 @@ const CacheCleaner = ({ onDataChange }) => {
     if (loading) return;
 
     if (confirm(
-      "⚠️ Are you sure you want to DELETE the entire IndexedDB database? This will remove ALL data and you'll need to reload the page to recreate the database. This action cannot be undone."
+      "⚠️ Are you sure you want to DELETE the entire IndexedDB database?\n\n🔥 This will:\n• Remove ALL data permanently\n• Require a page reload to recreate the database\n• Cannot be undone\n\nProceed with deletion?"
     )) {
       try {
         setLoading(true);
         setCurrentOperation('deleting');
-        console.log('Starting IndexedDB database deletion process...');
+        console.log('🗑️ Starting IndexedDB database deletion process...');
 
-        // Step 1: Close all database connections properly
-        try {
-          // Import dataManager to access its connections
-          const { default: dataManager } = await import('../utils/dataManager');
+        // Step 1: Force close all database connections
+        await forceCloseAllConnections();
 
-          // Force close dataManager connection if it exists
-          if (dataManager.dbPromise) {
-            try {
-              const db = await dataManager.dbPromise;
-              if (db && !db.closed) {
-                db.close();
-                console.log('DataManager database connection closed');
-              }
-            } catch (dbError) {
-              console.warn('Error accessing database for closure:', dbError);
-            }
+        // Step 2: Wait for connections to fully close
+        console.log('⏳ Waiting for database connections to close...');
+        await new Promise(resolve => setTimeout(resolve, 2000));
 
-            // Clear the promise
-            dataManager.dbPromise = null;
-          }
-
-          // Also try to close any other potential connections
-          if (window.indexedDB && window.indexedDB.databases) {
-            try {
-              const databases = await window.indexedDB.databases();
-              console.log('Found databases:', databases);
-            } catch (dbListError) {
-              console.warn('Could not list databases:', dbListError);
-            }
-          }
-
-        } catch (closeError) {
-          console.warn('Error during connection cleanup:', closeError);
-        }
-
-        // Step 2: Wait for connections to close
-        console.log('Waiting for database connections to close...');
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        // Step 3: Delete the database with proper error handling
-        const deleteSuccess = await new Promise((resolve) => {
-          console.log('Attempting to delete quizDatabase...');
-
-          const deleteRequest = indexedDB.deleteDatabase("quizDatabase");
-          let resolved = false;
-
-          deleteRequest.onsuccess = () => {
-            if (!resolved) {
-              resolved = true;
-              console.log('✅ IndexedDB database deleted successfully');
-              resolve(true);
-            }
-          };
-
-          deleteRequest.onerror = (event) => {
-            if (!resolved) {
-              resolved = true;
-              console.error('❌ Database deletion failed:', event.target.error);
-              resolve(false);
-            }
-          };
-
-          deleteRequest.onblocked = () => {
-            console.warn('⚠️ Database deletion blocked - trying to force close connections');
-            // Try to resolve anyway after a delay, sometimes it works
-            setTimeout(() => {
-              if (!resolved) {
-                resolved = true;
-                console.log('Attempting to resolve blocked deletion...');
-                resolve(false);
-              }
-            }, 3000);
-          };
-
-          // Timeout after 15 seconds
-          setTimeout(() => {
-            if (!resolved) {
-              resolved = true;
-              console.error('❌ Database deletion timed out');
-              resolve(false);
-            }
-          }, 15000);
-        });
+        // Step 3: Attempt database deletion with retry logic
+        const deleteSuccess = await attemptDatabaseDeletion();
 
         if (deleteSuccess) {
-          alert('✅ IndexedDB database deleted successfully! Please reload the page to recreate the database.');
+          console.log('✅ IndexedDB database deleted successfully');
+          alert('✅ IndexedDB database deleted successfully!\n\n🔄 The page will reload to recreate a fresh database.');
 
           if (onDataChange) {
             onDataChange();
           }
 
-          // Optional: Reload the page automatically after a short delay
+          // Automatically reload the page after a short delay
           setTimeout(() => {
-            if (confirm('Would you like to reload the page now to recreate the database?')) {
-              window.location.reload();
-            }
-          }, 1000);
+            window.location.reload();
+          }, 1500);
 
         } else {
-          throw new Error('Failed to delete IndexedDB database. The database may still be in use.');
+          throw new Error('Failed to delete IndexedDB database after multiple attempts');
         }
 
       } catch (error) {
-        console.error('Error deleting IndexedDB:', error);
-        alert(`❌ Error deleting IndexedDB: ${error.message || 'Unknown error occurred.'}\n\nTip: Try closing all other tabs with this app and try again, or manually reload the page.`);
+        console.error('❌ Error deleting IndexedDB:', error);
+        alert(`❌ Error deleting IndexedDB: ${error.message || 'Unknown error occurred.'}\n\n💡 Troubleshooting tips:\n• Close all other tabs with this app\n• Try the Clear button instead\n• Manually reload the page`);
       } finally {
         setLoading(false);
         setCurrentOperation('');
       }
     }
+  };
+
+  // Helper function to force close all connections
+  const forceCloseAllConnections = async () => {
+    try {
+      // Force close dataManager connection
+      const { default: dataManager } = await import('../utils/dataManager');
+      await dataManager.forceCloseConnections();
+
+      // Try to close any other potential connections
+      if (typeof window !== 'undefined' && window.indexedDB) {
+        // Create a temporary connection and immediately close it
+        try {
+          const tempRequest = indexedDB.open("quizDatabase");
+          tempRequest.onsuccess = (event) => {
+            const tempDb = event.target.result;
+            if (tempDb && !tempDb.closed) {
+              tempDb.close();
+              console.log('🔒 Temporary connection closed');
+            }
+          };
+        } catch (tempError) {
+          console.warn('Warning during temporary connection cleanup:', tempError);
+        }
+      }
+
+      console.log('🔒 All database connections force closed');
+    } catch (closeError) {
+      console.warn('⚠️ Error during connection cleanup:', closeError);
+    }
+  };
+
+  // Helper function to attempt database deletion with retries
+  const attemptDatabaseDeletion = async () => {
+    const maxAttempts = 3;
+    
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      console.log(`🔄 Deletion attempt ${attempt}/${maxAttempts}...`);
+      
+      const success = await new Promise((resolve) => {
+        const deleteRequest = indexedDB.deleteDatabase("quizDatabase");
+        let resolved = false;
+
+        const resolveOnce = (result) => {
+          if (!resolved) {
+            resolved = true;
+            resolve(result);
+          }
+        };
+
+        deleteRequest.onsuccess = () => {
+          console.log(`✅ Database deletion successful on attempt ${attempt}`);
+          resolveOnce(true);
+        };
+
+        deleteRequest.onerror = (event) => {
+          console.error(`❌ Database deletion failed on attempt ${attempt}:`, event.target.error);
+          resolveOnce(false);
+        };
+
+        deleteRequest.onblocked = () => {
+          console.warn(`⚠️ Database deletion blocked on attempt ${attempt}`);
+          // Wait a bit longer for blocked requests
+          setTimeout(() => resolveOnce(false), 5000);
+        };
+
+        // Timeout for each attempt
+        setTimeout(() => {
+          if (!resolved) {
+            console.error(`⏰ Database deletion timed out on attempt ${attempt}`);
+            resolveOnce(false);
+          }
+        }, 10000);
+      });
+
+      if (success) {
+        return true;
+      }
+
+      // Wait before retrying (except on last attempt)
+      if (attempt < maxAttempts) {
+        console.log(`⏳ Waiting before retry...`);
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
+    }
+
+    return false;
   };
 
   return (

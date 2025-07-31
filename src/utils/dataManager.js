@@ -163,37 +163,62 @@ class DataManager {
   // Clear all data for fresh start (keeps database structure intact)
   async clearAllAppData() {
     try {
+      // Get fresh database connection
       const db = await this.dbPromise;
+      if (!db) {
+        throw new Error('Database connection not available');
+      }
+
       const stores = ['userSettings', 'examData', 'examResults', 'jsonFiles', 'jsonImages'];
+      let clearedStores = 0;
 
       // Clear each store individually without dropping database
       for (const storeName of stores) {
         try {
+          // Check if store exists before trying to clear it
+          if (!db.objectStoreNames.contains(storeName)) {
+            console.log(`Store ${storeName} does not exist, skipping...`);
+            continue;
+          }
+
           const transaction = db.transaction([storeName], 'readwrite');
           const store = transaction.objectStore(storeName);
           
-          // Wait for the clear operation to complete
+          // Wait for the clear operation to complete with timeout
+          await Promise.race([
+            new Promise((resolve, reject) => {
+              const clearRequest = store.clear();
+              clearRequest.onsuccess = () => {
+                console.log(`✅ Store ${storeName} cleared successfully`);
+                clearedStores++;
+                resolve();
+              };
+              clearRequest.onerror = () => {
+                console.error(`❌ Error clearing store ${storeName}:`, clearRequest.error);
+                reject(clearRequest.error);
+              };
+            }),
+            new Promise((_, reject) => 
+              setTimeout(() => reject(new Error(`Timeout clearing ${storeName}`)), 10000)
+            )
+          ]);
+
+          // Wait for transaction to complete
           await new Promise((resolve, reject) => {
-            const clearRequest = store.clear();
-            clearRequest.onsuccess = () => {
-              console.log(`Store ${storeName} cleared successfully`);
-              resolve();
-            };
-            clearRequest.onerror = () => {
-              console.error(`Error clearing store ${storeName}:`, clearRequest.error);
-              reject(clearRequest.error);
-            };
+            transaction.oncomplete = () => resolve();
+            transaction.onerror = () => reject(transaction.error);
           });
+
         } catch (storeError) {
           console.error(`Failed to clear store ${storeName}:`, storeError);
           // Continue with other stores even if one fails
         }
       }
 
-      console.log('All IndexedDB stores cleared successfully - database structure preserved');
-      return true;
+      console.log(`✅ Successfully cleared ${clearedStores}/${stores.length} IndexedDB stores - database structure preserved`);
+      return clearedStores > 0;
     } catch (error) {
-      console.error('Error clearing app data:', error);
+      console.error('❌ Error clearing app data:', error);
       return false;
     }
   }
