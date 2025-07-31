@@ -6,16 +6,13 @@ import QuestionViewer from '../components/QuestionViewer';
 import QuestionNavigator from '../components/QuestionNavigator';
 import '../styles/ExamPage.css';
 import DrawingOverlay from '../components/DrawingOverlay';
+import { storeData, getData, openDb } from '../utils/indexedDB';
 
 function ExamPage() {
   const navigate = useNavigate();
   const [isFullscreen, setIsFullscreen] = useState(false); // Track fullscreen state
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    return localStorage.getItem('darkMode') === 'true';
-  });
-  const [isBoldMode, setIsBoldMode] = useState(() => {
-    return localStorage.getItem('boldMode') === 'true';
-  });
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isBoldMode, setIsBoldMode] = useState(false);
 
   const toggleFullscreen = () => {
     if (isFullscreen) {
@@ -26,10 +23,15 @@ function ExamPage() {
     setIsFullscreen(!isFullscreen);
   };
 
-  const toggleDarkMode = () => {
+  const toggleDarkMode = async () => {
     const newDarkMode = !isDarkMode;
     setIsDarkMode(newDarkMode);
-    localStorage.setItem('darkMode', newDarkMode.toString());
+    
+    try {
+      await storeData('userSettings', { id: 'darkMode', value: newDarkMode });
+    } catch (error) {
+      console.error('Error saving dark mode to IndexedDB:', error);
+    }
 
     // Force re-render by updating document class
     if (newDarkMode) {
@@ -41,10 +43,15 @@ function ExamPage() {
     }
   };
 
-  const toggleBoldMode = () => {
+  const toggleBoldMode = async () => {
     const newBoldMode = !isBoldMode;
     setIsBoldMode(newBoldMode);
-    localStorage.setItem('boldMode', newBoldMode.toString());
+    
+    try {
+      await storeData('userSettings', { id: 'boldMode', value: newBoldMode });
+    } catch (error) {
+      console.error('Error saving bold mode to IndexedDB:', error);
+    }
 
     // Force re-render by updating document class
     if (newBoldMode) {
@@ -56,20 +63,68 @@ function ExamPage() {
     }
   };
 
-  const quizTimeRaw = localStorage.getItem('quizTime');
-  const practiceMode = localStorage.getItem('practiceMode') === 'true';
-  const enableDrawing = localStorage.getItem('enableDrawing') !== 'false';
+  const [quizTime, setQuizTime] = useState(60);
+  const [practiceMode, setPracticeMode] = useState(false);
+  const [enableDrawing, setEnableDrawing] = useState(true);
 
-  if (!quizTimeRaw) {
-    console.error("❌ quizTime not found in localStorage.");
-    // Set default time if not found
-    localStorage.setItem('quizTime', '60');
-  }
+  // Load exam settings from IndexedDB
+  useEffect(() => {
+    const loadExamSettings = async () => {
+      try {
+        const db = await openDb();
+        const transaction = db.transaction('userSettings', 'readonly');
+        const store = transaction.objectStore('userSettings');
+        
+        const quizTimeResult = await new Promise((resolve) => {
+          const request = store.get('quizTime');
+          request.onsuccess = () => resolve(request.result?.value || 60);
+          request.onerror = () => resolve(60);
+        });
+        
+        const practiceModeResult = await new Promise((resolve) => {
+          const request = store.get('practiceMode');
+          request.onsuccess = () => resolve(request.result?.value || false);
+          request.onerror = () => resolve(false);
+        });
+        
+        const enableDrawingResult = await new Promise((resolve) => {
+          const request = store.get('enableDrawing');
+          request.onsuccess = () => resolve(request.result?.value !== false);
+          request.onerror = () => resolve(true);
+        });
+        
+        const darkModeResult = await new Promise((resolve) => {
+          const request = store.get('darkMode');
+          request.onsuccess = () => resolve(request.result?.value || false);
+          request.onerror = () => resolve(false);
+        });
+        
+        const boldModeResult = await new Promise((resolve) => {
+          const request = store.get('boldMode');
+          request.onsuccess = () => resolve(request.result?.value || false);
+          request.onerror = () => resolve(false);
+        });
+        
+        setQuizTime(Number(quizTimeResult) || 60);
+        setPracticeMode(practiceModeResult);
+        setEnableDrawing(enableDrawingResult);
+        setIsDarkMode(darkModeResult);
+        setIsBoldMode(boldModeResult);
+        
+      } catch (error) {
+        console.error('Error loading exam settings from IndexedDB:', error);
+        setQuizTime(60);
+        setPracticeMode(false);
+        setEnableDrawing(true);
+      }
+    };
+    
+    loadExamSettings();
+  }, []);
 
-  const quizTimeMinutes = Number(quizTimeRaw || '60');
+  const quizTimeMinutes = Number(quizTime || 60);
   if (isNaN(quizTimeMinutes) || quizTimeMinutes <= 0) {
-    console.error("❌ Invalid quizTime in localStorage, using default 60 minutes.");
-    localStorage.setItem('quizTime', '60');
+    console.error("❌ Invalid quizTime, using default 60 minutes.");
   }
 
   const validQuizTime = Math.max(1, quizTimeMinutes); // Ensure at least 1 minute
@@ -78,27 +133,76 @@ function ExamPage() {
   const mathConfig = { loader: { load: ['input/tex', 'output/chtml'] } };
   const hasMath = (text = '') => /\\\(|\\\[|\\begin|\\frac|\\sqrt/.test(text);
 
-  const meta = JSON.parse(localStorage.getItem('examMeta')) || {};
-  const saved = JSON.parse(localStorage.getItem('examState')) || {};
+  const [examMeta, setExamMeta] = useState({});
+  const [questions, setQuestions] = useState([]);
+  const [current, setCurrent] = useState(0);
+  const [answers, setAnswers] = useState({});
+  const [review, setReview] = useState({});
+  const [fiftyFiftyUsed, setFiftyFiftyUsed] = useState({});
 
-  const [questions] = useState(() => JSON.parse(localStorage.getItem('finalQuiz')) || []);
-  const [current, setCurrent] = useState(saved.current ?? 0);
-  const [answers, setAnswers] = useState(saved.answers ?? {});
-  const [review, setReview] = useState(saved.review ?? {});
-  const [fiftyFiftyUsed, setFiftyFiftyUsed] = useState(saved.fiftyFiftyUsed ?? {});
-  const [timeLeft, setTimeLeft] = useState(() => {
-    if (practiceMode) return Infinity;
+  // Load exam data from IndexedDB
+  useEffect(() => {
+    const loadExamData = async () => {
+      try {
+        const db = await openDb();
+        const transaction = db.transaction(['examData'], 'readonly');
+        const store = transaction.objectStore('examData');
+        
+        const metaResult = await new Promise((resolve) => {
+          const request = store.get('examMeta');
+          request.onsuccess = () => resolve(request.result?.data || {});
+          request.onerror = () => resolve({});
+        });
+        
+        const questionsResult = await new Promise((resolve) => {
+          const request = store.get('finalQuiz');
+          request.onsuccess = () => resolve(request.result?.data || []);
+          request.onerror = () => resolve([]);
+        });
+        
+        const stateResult = await new Promise((resolve) => {
+          const request = store.get('examState');
+          request.onsuccess = () => resolve(request.result?.data || {});
+          request.onerror = () => resolve({});
+        });
+        
+        setExamMeta(metaResult);
+        setQuestions(questionsResult);
+        setCurrent(stateResult.current ?? 0);
+        setAnswers(stateResult.answers ?? {});
+        setReview(stateResult.review ?? {});
+        setFiftyFiftyUsed(stateResult.fiftyFiftyUsed ?? {});
+        
+      } catch (error) {
+        console.error('Error loading exam data from IndexedDB:', error);
+      }
+    };
+    
+    loadExamData();
+  }, []);
 
-    // Ensure EXAM_DURATION is valid
-    if (!EXAM_DURATION || EXAM_DURATION <= 0) {
-      console.warn("Invalid EXAM_DURATION, using 60 minutes as fallback");
-      return 3600; // 60 minutes fallback
+  // Calculate time left based on loaded data
+  useEffect(() => {
+    if (practiceMode) {
+      setTimeLeft(Infinity);
+      return;
     }
 
-    return meta.startedAt
-      ? Math.max(0, EXAM_DURATION - Math.floor((Date.now() - meta.startedAt) / 1000))
+    const EXAM_DURATION = validQuizTime * 60;
+    
+    if (!EXAM_DURATION || EXAM_DURATION <= 0) {
+      console.warn("Invalid EXAM_DURATION, using 60 minutes as fallback");
+      setTimeLeft(3600);
+      return;
+    }
+
+    const calculatedTimeLeft = examMeta.startedAt
+      ? Math.max(0, EXAM_DURATION - Math.floor((Date.now() - examMeta.startedAt) / 1000))
       : EXAM_DURATION;
-  });
+      
+    setTimeLeft(calculatedTimeLeft);
+  }, [examMeta, practiceMode, validQuizTime]);
+  const [timeLeft, setTimeLeft] = useState(Infinity);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
   const [showTimeWarning, setShowTimeWarning] = useState(false); // Track visibility of the warning
@@ -219,8 +323,10 @@ function ExamPage() {
 
     RESULT_PAGE_KEYS.forEach((key) => localStorage.removeItem(key));
 
-    if (!meta.startedAt) {
-      localStorage.setItem('examMeta', JSON.stringify({ startedAt: Date.now() }));
+    if (!examMeta.startedAt) {
+      const newMeta = { startedAt: Date.now() };
+      setExamMeta(newMeta);
+      storeData('examData', { id: 'examMeta', data: newMeta });
     }
 
     // Set initial question index for DrawingOverlay
@@ -289,7 +395,20 @@ function ExamPage() {
   }, [practiceMode]);
 
   useEffect(() => {
-    localStorage.setItem('examState', JSON.stringify({ answers, review, current, fiftyFiftyUsed }));
+    const saveExamState = async () => {
+      try {
+        await storeData('examData', { 
+          id: 'examState', 
+          data: { answers, review, current, fiftyFiftyUsed } 
+        });
+      } catch (error) {
+        console.error('Error saving exam state to IndexedDB:', error);
+      }
+    };
+    
+    if (Object.keys(answers).length > 0 || Object.keys(review).length > 0 || current > 0) {
+      saveExamState();
+    }
   }, [answers, review, current, fiftyFiftyUsed]);
 
   // Tab visibility detection for warnings (only in exam mode)
@@ -390,14 +509,20 @@ function ExamPage() {
     }
   }, [current, questions.length]);
 
-  const handleSubmit = useCallback((auto = false) => {
+  const handleSubmit = useCallback(async (auto = false) => {
     if (!auto) {
       setShowSubmitModal(true);
       return;
     }
-    localStorage.setItem('examAnswers', JSON.stringify(answers));
-    localStorage.setItem('reviewMarks', JSON.stringify(review));
-    navigate('/result');
+    
+    try {
+      await storeData('examResults', { id: 'examAnswers', data: answers });
+      await storeData('examResults', { id: 'reviewMarks', data: review });
+      navigate('/result');
+    } catch (error) {
+      console.error('Error saving exam results to IndexedDB:', error);
+      navigate('/result');
+    }
   }, [answers, review, navigate]);
 
   const handleClear = useCallback(() => {
@@ -475,13 +600,33 @@ function ExamPage() {
   }, [current, questions.length, toggleDarkMode, toggleBoldMode, handleClear, enableDrawing, toggleFullscreen, goNext, goPrev, fiftyFiftyUsed, handleOption, practiceMode, toggleReview, handleNext, handleSubmit]);
 
   // Memoize image injection for performance
-  const imageMap = useMemo(() => {
-    const map = JSON.parse(localStorage.getItem('fileImageMap') || '{}');
-    const flatMap = {};
-    Object.values(map).flat().forEach(({ name, data }) => {
-      flatMap[name] = data;
-    });
-    return flatMap;
+  const [imageMap, setImageMap] = useState({});
+  
+  useEffect(() => {
+    const loadImageMap = async () => {
+      try {
+        const db = await openDb();
+        const transaction = db.transaction(['examData'], 'readonly');
+        const store = transaction.objectStore('examData');
+        
+        const mapResult = await new Promise((resolve) => {
+          const request = store.get('fileImageMap');
+          request.onsuccess = () => resolve(request.result?.data || {});
+          request.onerror = () => resolve({});
+        });
+        
+        const flatMap = {};
+        Object.values(mapResult).flat().forEach(({ name, data }) => {
+          flatMap[name] = data;
+        });
+        setImageMap(flatMap);
+        
+      } catch (error) {
+        console.error('Error loading image map from IndexedDB:', error);
+      }
+    };
+    
+    loadImageMap();
   }, []);
 
   const injectImageSources = useCallback((html) => {
@@ -536,11 +681,17 @@ function ExamPage() {
     }
   }, [timeLeft, practiceMode, EXAM_DURATION]);
 
-  const confirmSubmit = useCallback(() => {
+  const confirmSubmit = useCallback(async () => {
     setShowSubmitModal(false);
-    localStorage.setItem('examAnswers', JSON.stringify(answers));
-    localStorage.setItem('reviewMarks', JSON.stringify(review));
-    navigate('/result');
+    
+    try {
+      await storeData('examResults', { id: 'examAnswers', data: answers });
+      await storeData('examResults', { id: 'reviewMarks', data: review });
+      navigate('/result');
+    } catch (error) {
+      console.error('Error saving exam results to IndexedDB:', error);
+      navigate('/result');
+    }
   }, [answers, review, navigate]);
 
   const cancelSubmit = useCallback(() => {

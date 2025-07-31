@@ -3,7 +3,7 @@
 // Open the IndexedDB database
 export const openDb = () => {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open("quizDatabase", 1);
+    const request = indexedDB.open("quizDatabase", 2);
 
     request.onerror = (event) => {
       reject("Error opening IndexedDB");
@@ -43,6 +43,15 @@ export const openDb = () => {
       const jsonImagesStore = db.createObjectStore("jsonImages", { keyPath: "id" });
       jsonImagesStore.createIndex("by_json_file", "jsonFileName", { unique: false });
       jsonImagesStore.createIndex("by_image_name", "imageName", { unique: false });
+
+      // Exam data store - for exam state, questions, meta data
+      db.createObjectStore("examData", { keyPath: "id" });
+
+      // User settings store - for dark mode, bold mode, etc.
+      db.createObjectStore("userSettings", { keyPath: "id" });
+
+      // Exam results store - for answers and review marks
+      db.createObjectStore("examResults", { keyPath: "id" });
     };
   });
 };
