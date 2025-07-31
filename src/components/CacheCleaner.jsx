@@ -5,14 +5,26 @@ import CustomPopup from './CustomPopup';
 const CacheCleaner = ({ onDataChange }) => {
   const [loading, setLoading] = useState(false);
   const [currentOperation, setCurrentOperation] = useState('');
-  const [popup, setPopup] = useState({ isVisible: false, message: '', type: 'info', onConfirm: null, onCancel: null });
+  const [popup, setPopup] = useState({
+    message: '',
+    type: 'info',
+    isVisible: false,
+    onConfirm: null,
+    showConfirm: false
+  });
 
   const showPopup = (message, type = 'info', onConfirm = null, onCancel = null) => {
     setPopup({ isVisible: true, message, type, onConfirm, onCancel });
   };
 
   const closePopup = () => {
-    setPopup({ isVisible: false, message: '', type: 'info', onConfirm: null, onCancel: null });
+    setPopup({
+      message: '',
+      type: 'info',
+      isVisible: false,
+      onConfirm: null,
+      showConfirm: false
+    });
   };
 
   const fetchJSONData = async () => {
