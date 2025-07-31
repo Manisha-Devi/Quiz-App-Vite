@@ -202,7 +202,11 @@ function LocalJSONLibrary({ onFileSelect }) {
 
   return (
     <div className="local-json-library">
-
+      {/* Stable Header Section */}
+      <div className="library-header">
+        <h2>📁 Select Quiz Files</h2>
+        <p>Choose from available JSON files to start your quiz</p>
+      </div>
 
       {/* Enhanced Search and Filters */}
       <div className="controls-section">

@@ -5,7 +5,60 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* Stable Header Section */
+.library-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.2);
+  position: relative;
+  overflow: hidden;
+}
 
+.library-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+.library-header h2 {
+  margin: 0;
+  color: white;
+  font-size: 28px;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  position: relative;
+  z-index: 1;
+}
+
+.library-header p {
+  margin: 8px 0 0 0;
+  color: rgba(255,255,255,0.9);
+  font-size: 16px;
+  font-weight: 400;
+  position: relative;
+  z-index: 1;
+}
+
+.dark-mode .library-header {
+  background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+  border: 1px solid #444;
+}
+
+.dark-mode .library-header h2 {
+  color: #e0e0e0;
+}
+
+.dark-mode .library-header p {
+  color: rgba(224,224,224,0.8);
+}
 
 /* Enhanced Controls Section */
 .controls-section {
