@@ -78,17 +78,20 @@ export const loadJSONImagesFromFolders = async () => {
     const allImageModules = import.meta.glob('../json/**/*.{png,jpg,jpeg,gif,webp,svg}');
 
     console.log('📁 Found image modules:', Object.keys(allImageModules));
+    console.log('📊 Total images found:', Object.keys(allImageModules).length);
 
     // Process each image
     for (const imagePath of Object.keys(allImageModules)) {
-      console.log(`🖼️ Processing: ${imagePath}`);
+      console.log(`\n🖼️ Processing: ${imagePath}`);
 
       // Parse the path to extract folder structure
       // Example: ../json/Image_Demo/Question1.png
       const pathParts = imagePath.split('/');
+      console.log('📂 Path parts:', pathParts);
 
       // Find the folder name after 'json'
       const jsonIndex = pathParts.findIndex(part => part === 'json');
+      console.log('📍 JSON index:', jsonIndex);
 
       if (jsonIndex !== -1 && jsonIndex + 1 < pathParts.length) {
         const folderName = pathParts[jsonIndex + 1]; // Folder name after 'json'
@@ -100,45 +103,68 @@ export const loadJSONImagesFromFolders = async () => {
         console.log(`📂 Folder: ${folderName}`);
         console.log(`📄 JSON File Name: ${jsonFileName}`);
         console.log(`🖼️ Image Name: ${imageName}`);
+        console.log(`📏 Path length: ${pathParts.length}, Required: > ${jsonIndex + 2}`);
 
-        // Skip if it's directly in json folder (not in a subfolder)
-        if (pathParts.length <= jsonIndex + 2) {
-          console.log(`⏭️ Skipping ${imagePath} - not in a subfolder`);
-          continue;
-        }
+        // Check if it's in a subfolder (not directly in json folder)
+        if (pathParts.length > jsonIndex + 2) {
+          try {
+            console.log(`🚀 Starting image processing for ${imageName}...`);
 
-        try {
-          // Import the image as a URL
-          const imageModule = await allImageModules[imagePath]();
-          const imageUrl = imageModule.default;
+            // Import the image as a URL
+            const imageModule = await allImageModules[imagePath]();
+            const imageUrl = imageModule.default;
 
-          console.log(`📥 Loading image from URL: ${imageUrl}`);
+            console.log(`📥 Loading image from URL: ${imageUrl}`);
 
-          // Convert image URL to blob data
-          const response = await fetch(imageUrl);
-          const blob = await response.blob();
+            // Convert image URL to blob data
+            const response = await fetch(imageUrl);
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const blob = await response.blob();
+            console.log(`📦 Blob size: ${blob.size} bytes`);
 
-          // Convert blob to base64 data URL
-          const base64Data = await new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = () => reject(new Error('Failed to read file'));
-            reader.readAsDataURL(blob);
-          });
+            // Convert blob to base64 data URL
+            const base64Data = await new Promise((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = () => {
+                console.log(`📝 Base64 data length: ${reader.result.length}`);
+                resolve(reader.result);
+              };
+              reader.onerror = () => reject(new Error('Failed to read file'));
+              reader.readAsDataURL(blob);
+            });
 
-          // Store image in jsonImages IndexedDB store
-          await storeImageInJSONImagesStore(jsonFileName, imageName, base64Data);
-          console.log(`✅ Successfully stored image ${imageName} for ${jsonFileName} in jsonImages store`);
+            // Store image in jsonImages IndexedDB store
+            console.log(`💾 Storing in IndexedDB: ${jsonFileName} -> ${imageName}`);
+            await storeImageInJSONImagesStore(jsonFileName, imageName, base64Data);
+            console.log(`✅ Successfully stored image ${imageName} for ${jsonFileName} in jsonImages store`);
 
-        } catch (error) {
-          console.error(`❌ Error loading image ${imagePath}:`, error);
+            // Verify storage immediately
+            const { getImageFromJSONImagesStore } = await import('./indexedDB');
+            const verifyImage = await getImageFromJSONImagesStore(jsonFileName, imageName);
+            console.log(`🔍 Verification: Image ${imageName} for ${jsonFileName} found:`, verifyImage ? 'YES' : 'NO');
+
+          } catch (error) {
+            console.error(`❌ Error loading image ${imagePath}:`, error);
+          }
+        } else {
+          console.log(`⏭️ Skipping ${imagePath} - not in a subfolder (path length: ${pathParts.length})`);
         }
       } else {
-        console.log(`⏭️ Skipping ${imagePath} - invalid path structure`);
+        console.log(`⏭️ Skipping ${imagePath} - invalid path structure (jsonIndex: ${jsonIndex})`);
       }
     }
 
-    console.log('✅ All JSON images processing completed');
+    console.log('\n✅ All JSON images processing completed');
+    
+    // Final verification - check what's in the store
+    console.log('\n🔍 Final verification - checking stored images:');
+    const { getAllImagesForJSONFile } = await import('./indexedDB');
+    const storedImages = await getAllImagesForJSONFile('Image_Demo');
+    console.log('📋 Images stored for Image_Demo:', storedImages);
+
   } catch (error) {
     console.error('❌ Error loading JSON images:', error);
   }
