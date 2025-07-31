@@ -183,7 +183,7 @@ class DataManager {
 
           const transaction = db.transaction([storeName], 'readwrite');
           const store = transaction.objectStore(storeName);
-          
+
           // Wait for the clear operation to complete with timeout
           await Promise.race([
             new Promise((resolve, reject) => {

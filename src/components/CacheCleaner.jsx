@@ -279,7 +279,12 @@ const CacheCleaner = ({ onDataChange }) => {
 
         if (deleteSuccess) {
           console.log('✅ IndexedDB database deleted successfully');
-          alert('✅ IndexedDB database deleted successfully!\n\n🗑️ The database has been completely removed.');
+          
+          // Mark database as deleted to prevent automatic recreation
+          const { default: dataManager } = await import('../utils/dataManager');
+          dataManager.markDatabaseAsDeleted();
+          
+          alert('✅ IndexedDB database deleted successfully!\n\n🗑️ The database has been completely removed and will not recreate automatically.');
 
           if (onDataChange) {
             onDataChange();
