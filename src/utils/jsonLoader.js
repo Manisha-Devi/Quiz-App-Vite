@@ -17,6 +17,13 @@ export const loadJSONFilesToStorage = async () => {
     const jsonModules = import.meta.glob('../json/*.json');
 
     console.log('Found JSON files:', Object.keys(jsonModules));
+    
+    // Fallback for production if glob doesn't work
+    if (Object.keys(jsonModules).length === 0) {
+      console.log('No files found via glob, trying production fallback...');
+      await loadJSONFilesFromPublic();
+      return;
+    }
 
     // Get current file names from the file system
     const currentFileNames = Object.keys(jsonModules).map(path => 
@@ -316,5 +323,33 @@ export const getSpecificJSONImage = async (jsonFileName, imageName) => {
   } catch (error) {
     console.error(`Error fetching image ${imageName} for ${jsonFileName}:`, error);
     return null;
+  }
+};
+
+// Production fallback for loading JSON files
+const loadJSONFilesFromPublic = async () => {
+  const jsonFiles = [
+    'Art and Culture jk',
+    'Email',
+    'Image_Demo',
+    'KaTeX Demo',
+    'Operating_System',
+    'Sanfoundry_Excel',
+    'Sanfoundry_Office',
+    'Sanfoundry_PowerPoint',
+    'Sanfoundry_Word'
+  ];
+
+  for (const fileName of jsonFiles) {
+    try {
+      const response = await fetch(`/src/json/${fileName}.json`);
+      if (response.ok) {
+        const jsonData = await response.json();
+        await storeJSONFile(fileName, jsonData);
+        console.log(`Loaded ${fileName} from public path`);
+      }
+    } catch (error) {
+      console.error(`Failed to load ${fileName}:`, error);
+    }
   }
 };

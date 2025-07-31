@@ -5,6 +5,15 @@ const urlsToCache = [
   '/static/js/bundle.js',
   '/static/css/main.css',
   '/manifest.json',
+  '/src/json/Art and Culture jk.json',
+  '/src/json/Email.json',
+  '/src/json/Image_Demo.json',
+  '/src/json/KaTeX Demo.json',
+  '/src/json/Operating_System.json',
+  '/src/json/Sanfoundry_Excel.json',
+  '/src/json/Sanfoundry_Office.json',
+  '/src/json/Sanfoundry_PowerPoint.json',
+  '/src/json/Sanfoundry_Word.json',
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
   'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js'
 ];

@@ -19,7 +19,16 @@ function LocalJSONLibrary({ onFileSelect, refreshTrigger = 0 }) {
   useEffect(() => {
     loadLocalFiles();
     debugJsonImagesStore(); // Debug function to check stored images
+    debugProductionMode(); // Debug production vs development
   }, []);
+
+  // Debug production mode
+  const debugProductionMode = () => {
+    console.log('🔍 Environment check:');
+    console.log('DEV mode:', import.meta.env.DEV);
+    console.log('PROD mode:', import.meta.env.PROD);
+    console.log('BASE_URL:', import.meta.env.BASE_URL);
+  };
 
   // Debug function to check what's in jsonImages store
   const debugJsonImagesStore = async () => {
