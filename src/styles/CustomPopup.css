@@ -8,7 +8,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 10000;
+  z-index: 99999;
   animation: fadeIn 0.2s ease-out;
 }
 
@@ -34,6 +34,8 @@
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   animation: slideIn 0.3s ease-out;
   border: 2px solid;
+  z-index: 100000;
+  position: relative;
 }
 
 .popup-container.contained {
