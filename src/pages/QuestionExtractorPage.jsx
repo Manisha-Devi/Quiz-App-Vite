@@ -138,24 +138,15 @@ const QuestionExtractorPage = () => {
           const arrayBuffer = await file.arrayBuffer();
           const result = await mammoth.extractRawText({ arrayBuffer });
           extractedText = result.value;
-          console.log('Extracted text from DOCX:', extractedText.substring(0, 500)); // Debug log
         } else if (file.type === 'application/pdf') {
           // For PDF parsing, you would need pdf-parse or similar library
           // For now, we'll show a message that PDF parsing is not yet implemented
           console.log('PDF parsing not yet implemented');
-          alert('PDF parsing is not yet implemented. Please use DOCX files for now.');
-          continue;
-        }
-
-        if (!extractedText || extractedText.trim().length === 0) {
-          console.log('No text extracted from file:', file.name);
-          alert(`No text could be extracted from ${file.name}. Please check the file format.`);
           continue;
         }
 
         // Parse questions from extracted text
         const questions = parseQuestionsFromText(extractedText, i);
-        console.log(`Extracted ${questions.length} questions from ${file.name}`);
         setExtractedQuestions(prev => [...prev, ...questions]);
       }
 
@@ -171,93 +162,68 @@ const QuestionExtractorPage = () => {
   const parseQuestionsFromText = (text, fileIndex) => {
     const questions = [];
 
-    // Clean and normalize text
-    const cleanText = text
-      .replace(/\r\n/g, '\n')
-      .replace(/\r/g, '\n')
-      .replace(/\t/g, ' ')
-      .trim();
-
     // Split text into lines and clean up
-    const lines = cleanText.split('\n')
-      .map(line => line.trim())
-      .filter(line => line.length > 0);
+    const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
 
     let currentQuestion = null;
     let questionCounter = 1;
 
-    console.log('Total lines to process:', lines.length);
-    console.log('First 10 lines:', lines.slice(0, 10));
-
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
-      console.log(`Line ${i}: "${line}"`);
 
-      // Check if line starts with a number followed by colon (question)
-      if (/^\d+:\s*.+/.test(line) && 
-          !line.toLowerCase().includes('answer:') && 
-          !line.toLowerCase().includes('level:') && 
-          !line.toLowerCase().includes('explanation:')) {
-        
-        const questionMatch = line.match(/^(\d+):\s*(.+)/);
-        if (questionMatch) {
-          console.log('✅ Found question:', questionMatch[2]);
-          
-          // Save previous question if exists and is complete
-          if (currentQuestion && currentQuestion.question && currentQuestion.options.length >= 2 && currentQuestion.correct) {
-            if (currentQuestion.level === undefined) {
-              currentQuestion.level = 0;
-            }
-            questions.push(currentQuestion);
-            console.log('✅ Saved previous question');
+      // Check if line starts with a number (question) - handle both "1:" and "1."
+      const questionMatch = line.match(/^(\d+)[\:\.]?\s*(.+)/);
+      if (questionMatch && !line.toLowerCase().includes('answer') && !line.toLowerCase().includes('level') && !line.toLowerCase().includes('explanation')) {
+        // Save previous question if exists
+        if (currentQuestion && currentQuestion.question && currentQuestion.options.length === 4) {
+          // Set default level if not explicitly provided
+          if (currentQuestion.level === undefined) {
+            currentQuestion.level = 0;
           }
+          questions.push(currentQuestion);
+        }
 
-          // Start new question
-          currentQuestion = {
-            id: `q${fileIndex}_${questionCounter++}`,
-            question: questionMatch[2].trim(),
-            options: [],
-            correct: '',
-            explanation: '',
-            level: undefined
-          };
-        }
+        // Start new question
+        currentQuestion = {
+          id: `q${fileIndex}_${questionCounter++}`,
+          question: questionMatch[2].trim(),
+          options: [],
+          correct: '',
+          explanation: '',
+          level: undefined // Will be set if found in text, otherwise default to 0 later
+        };
       }
-      // Check for options - strict format "A:" only
-      else if (currentQuestion && /^[A-D]:\s*.+/.test(line)) {
-        const optionMatch = line.match(/^([A-D]):\s*(.+)/);
+      // Check for options (A:, A., A), B:, B., B), etc.)
+      else if (currentQuestion && line.match(/^[A-D][\:\.\)]\s*(.+)/)) {
+        const optionMatch = line.match(/^[A-D][\:\.\)]\s*(.+)/);
         if (optionMatch) {
-          currentQuestion.options.push(optionMatch[2].trim());
-          console.log('✅ Added option:', optionMatch[1], optionMatch[2].trim());
+          currentQuestion.options.push(optionMatch[1].trim());
         }
       }
-      // Check for answer - strict format "Answer: A" only
-      else if (currentQuestion && /^answer:\s*[A-D]/i.test(line)) {
-        const answerMatch = line.match(/^answer:\s*([A-D])/i);
+      // Check for answer - handle both "Answer: A" and "Answer A"
+      else if (currentQuestion && /answer[\:\s]*[A-D]/i.test(line)) {
+        const answerMatch = line.match(/answer[\:\s]*([A-D])/i);
         if (answerMatch) {
           currentQuestion.correct = answerMatch[1].toUpperCase();
-          console.log('✅ Set answer:', answerMatch[1].toUpperCase());
         }
       }
-      // Check for explanation - strict format "Explanation:" only
-      else if (currentQuestion && /^explanation:\s*/i.test(line)) {
-        const explanationMatch = line.match(/^explanation:\s*(.+)/i);
+      // Check for explanation - handle both "Explanation:" and "Explanation"
+      else if (currentQuestion && /explanation[\:\s]/i.test(line)) {
+        const explanationMatch = line.match(/explanation[\:\s]*(.+)/i);
         if (explanationMatch) {
           currentQuestion.explanation = explanationMatch[1].trim();
-          console.log('✅ Set explanation');
         }
       }
-      // Check for level - strict format "Level:" only
-      else if (currentQuestion && /^level:\s*/i.test(line)) {
+      // Check for level/difficulty - handle various formats
+      else if (currentQuestion && /level[\:\s]/i.test(line)) {
         // Try to extract numeric level first
-        const numericMatch = line.match(/^level:\s*(\d+)/i);
+        const numericMatch = line.match(/level[\:\s]*(\d+)/i);
         if (numericMatch) {
           const level = parseInt(numericMatch[1]);
-          currentQuestion.level = Math.min(Math.max(level, 0), 2);
-          console.log('✅ Set numeric level:', currentQuestion.level);
+          currentQuestion.level = Math.min(Math.max(level, 0), 2); // Ensure level is 0, 1, or 2
         } else {
           // Try to extract text-based level
-          const textMatch = line.match(/^level:\s*(easy|medium|meduim|hard|beginner|intermediate|advanced)/i);
+          const textMatch = line.match(/level[\:\s]*(easy|medium|meduim|hard|beginner|intermediate|advanced)/i);
           if (textMatch) {
             const levelText = textMatch[1].toLowerCase();
             switch (levelText) {
@@ -266,7 +232,7 @@ const QuestionExtractorPage = () => {
                 currentQuestion.level = 0;
                 break;
               case 'medium':
-              case 'meduim':
+              case 'meduim': // Handle misspelling
               case 'intermediate':
                 currentQuestion.level = 1;
                 break;
@@ -277,23 +243,20 @@ const QuestionExtractorPage = () => {
               default:
                 currentQuestion.level = 0;
             }
-            console.log('✅ Set text level:', currentQuestion.level);
           }
         }
       }
     }
 
-    // Add the last question if valid and complete
-    if (currentQuestion && currentQuestion.question && currentQuestion.options.length >= 2 && currentQuestion.correct) {
+    // Add the last question if valid
+    if (currentQuestion && currentQuestion.question && currentQuestion.options.length === 4) {
+      // Set default level if not explicitly provided
       if (currentQuestion.level === undefined) {
         currentQuestion.level = 0;
       }
       questions.push(currentQuestion);
-      console.log('✅ Saved last question');
     }
 
-    console.log('🎯 Total questions extracted:', questions.length);
-    console.log('Questions details:', questions);
     return questions;
   };
 
@@ -302,7 +265,9 @@ const QuestionExtractorPage = () => {
       id: index + 1,
       question: q.question,
       options: q.options,
-      answer: q.correct.charCodeAt(0) - 65, // Convert A,B,C,D to 0,1,2,3
+      answer: q.options.findIndex(opt => opt === q.options[q.correct.charCodeAt(0) - 65]) !== -1 
+        ? q.options.findIndex(opt => opt === q.options[q.correct.charCodeAt(0) - 65])
+        : q.correct.charCodeAt(0) - 65, // Convert A,B,C,D to 0,1,2,3
       level: q.level || 0,
       explanation: q.explanation || ""
     }));
@@ -451,13 +416,19 @@ const QuestionExtractorPage = () => {
 
             <div className="questions-preview">
               {extractedQuestions.slice(0, 3).map((question, index) => {
-                const correctAnswerIndex = question.correct ? question.correct.charCodeAt(0) - 65 : -1;
+                // Create a modified question object for display
+                const displayQuestion = {
+                  ...question,
+                  options: question.options,
+                  answer: question.correct.charCodeAt(0) - 65
+                };
 
                 return (
                   <div key={question.id} className="extracted-question-card">
                     <div className="question-header">
                       <div className="question-number">Q{index + 1}</div>
                       <div className="level-badge">
+                        <span className="level-icon">✅</span>
                         <span className="level-text">
                           {question.level === 0 ? 'Easy' : question.level === 1 ? 'Medium' : 'Hard'}
                         </span>
@@ -472,11 +443,11 @@ const QuestionExtractorPage = () => {
                       {question.options?.map((option, optionIndex) => (
                         <div 
                           key={optionIndex} 
-                          className={`option ${optionIndex === correctAnswerIndex ? 'correct-option' : ''}`}
+                          className={`option ${optionIndex === (question.correct.charCodeAt(0) - 65) ? 'correct-option' : ''}`}
                         >
                           <div className="option-label">{String.fromCharCode(65 + optionIndex)}</div>
                           <div className="option-text">{option}</div>
-                          {optionIndex === correctAnswerIndex && (
+                          {optionIndex === (question.correct.charCodeAt(0) - 65) && (
                             <div className="correct-mark">✅</div>
                           )}
                         </div>
