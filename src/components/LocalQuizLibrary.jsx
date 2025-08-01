@@ -4,7 +4,7 @@ import useOfflineStorage from '../hooks/useOfflineStorage';
 import './styles/LocalQuizLibrary.css';
 
 const LocalQuizLibrary = ({ onQuizSelect }) => {
-  const { localQuizzes, loadLocalQuizzes, isOnline } = useOfflineStorage();
+  const { localQuizzes, loadLocalQuizzes, isOnline, deleteQuiz } = useOfflineStorage();
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
@@ -19,6 +19,38 @@ const LocalQuizLibrary = ({ onQuizSelect }) => {
     // Update last used timestamp
     quiz.lastUsed = new Date().toISOString();
     onQuizSelect(quiz);
+  };
+
+  const handleDeleteQuiz = async (e, quizId) => {
+    e.stopPropagation();
+    if (window.confirm('Are you sure you want to delete this quiz?')) {
+      try {
+        await deleteQuiz(quizId);
+        await loadLocalQuizzes(); // Refresh the list
+      } catch (error) {
+        console.error('Error deleting quiz:', error);
+        alert('Failed to delete quiz. Please try again.');
+      }
+    }
+  };
+
+  const handleAddImages = (e, quiz) => {
+    e.stopPropagation();
+    // Create file input for image upload
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.multiple = true;
+    input.onchange = (event) => {
+      const files = Array.from(event.target.files);
+      if (files.length > 0) {
+        // Handle image upload logic here
+        console.log(`Adding ${files.length} images to quiz: ${quiz.name}`);
+        // You can implement the actual image upload logic as needed
+        alert(`Selected ${files.length} image(s) for ${quiz.name}`);
+      }
+    };
+    input.click();
   };
 
   const formatDate = (dateString) => {
@@ -96,7 +128,7 @@ const LocalQuizLibrary = ({ onQuizSelect }) => {
                       <h3 className="file-name">{quiz.name}</h3>
                     </div>
                     
-                    {/* Row 2: Questions (left), Date (center), Size (right) */}
+                    {/* Row 2: Questions (left), Images (center), Size (right) */}
                     <div className="file-row file-meta-row">
                       <div className="file-questions-left">
                         <span 
@@ -112,9 +144,13 @@ const LocalQuizLibrary = ({ onQuizSelect }) => {
                         <span className="question-count">{questionCount} questions</span>
                       </div>
                       
-                      <div className="file-images-center">
-                        <span className="date-info">
-                          📅 {formatDate(quiz.createdAt)}
+                      <div 
+                        className="file-images-center clickable-image-area"
+                        onClick={(e) => handleAddImages(e, quiz)}
+                        title="Click to add images"
+                      >
+                        <span className="image-add-info">
+                          📷 Add Images
                         </span>
                       </div>
                       
@@ -127,6 +163,15 @@ const LocalQuizLibrary = ({ onQuizSelect }) => {
                     </div>
                   </div>
                 </div>
+
+                {/* Delete button in top-right corner */}
+                <button 
+                  className="delete-quiz-btn"
+                  onClick={(e) => handleDeleteQuiz(e, quiz.id)}
+                  title="Delete quiz"
+                >
+                  ✕
+                </button>
               </div>
             );
           })}
