@@ -162,21 +162,21 @@ const QuestionExtractorPage = () => {
   const parseQuestionsFromText = (text, fileIndex) => {
     const questions = [];
     
-    // Clean up text and split into sections by question numbers
+    // Clean up text but preserve original line structure
     let cleanedText = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
     
     // Find all question starts with regex
-    const questionPattern = /(\d+)\.\s*(.+?)(?=\d+\.\s|$)/gs;
+    const questionPattern = /(\d+)\.\s*(.+?)(?=(?:\n|\r)*\d+\.\s|$)/gs;
     const questionMatches = [...cleanedText.matchAll(questionPattern)];
     
     let questionCounter = 1;
     
     for (const match of questionMatches) {
       const questionNumber = parseInt(match[1]);
-      const questionContent = match[2].trim();
+      const questionContent = match[2];
       
-      // Parse each question content
-      const lines = questionContent.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+      // Split into lines but preserve original spacing and structure
+      const lines = questionContent.split('\n');
       
       let currentQuestion = {
         id: `q${fileIndex}_${questionCounter++}`,
@@ -192,38 +192,50 @@ const QuestionExtractorPage = () => {
       let isParsingAnswer = false;
       let isParsingExplanation = false;
       let isParsingLevel = false;
-      
-      // Check if this is a match-the-following question
-      const isMatchQuestion = questionContent.toLowerCase().includes('match') && questionContent.toLowerCase().includes('following');
+      let questionLines = [];
       
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
+        const trimmedLine = line.trim();
         
-        // Check for options (A., B., C., D. or A), B), C), D))
-        const optionMatch = line.match(/^([A-D])[\.\)]\s*(.+)/i);
-        if (optionMatch && !isParsingAnswer && !isParsingExplanation) {
+        // Skip empty lines
+        if (!trimmedLine) {
+          // Add line break for spacing if we're building question text
+          if (!isParsingOptions && !isParsingAnswer && !isParsingExplanation && !isParsingLevel && questionLines.length > 0) {
+            questionLines.push('<br>');
+          }
+          continue;
+        }
+        
+        // Check for options starting at new line (A., B., C., D.)
+        const optionMatch = trimmedLine.match(/^([A-D])[\.\)]\s*(.*)$/i);
+        if (optionMatch && !isParsingAnswer && !isParsingExplanation && !isParsingLevel) {
           isParsingOptions = true;
           const optionText = optionMatch[2].trim();
           currentQuestion.options.push(optionText);
           continue;
         }
         
-        // Check for answer
-        if (line.toLowerCase().includes('answer:')) {
+        // Check for Answer: at new line
+        if (trimmedLine.toLowerCase().startsWith('answer:')) {
           isParsingAnswer = true;
           isParsingOptions = false;
           isParsingExplanation = false;
-          const answerMatch = line.match(/answer:\s*([A-D])/i);
+          isParsingLevel = false;
+          const answerMatch = trimmedLine.match(/answer:\s*([A-D])/i);
           if (answerMatch) {
             currentQuestion.correct = answerMatch[1].toUpperCase();
           }
           continue;
         }
         
-        // Check for level/difficulty
-        if (line.toLowerCase().includes('level:')) {
+        // Check for Level: at new line
+        if (trimmedLine.toLowerCase().startsWith('level:')) {
           isParsingLevel = true;
-          const levelMatch = line.match(/level:\s*(easy|medium|hard|\d+)/i);
+          isParsingOptions = false;
+          isParsingAnswer = false;
+          isParsingExplanation = false;
+          const levelMatch = trimmedLine.match(/level:\s*(easy|medium|hard|\d+)/i);
           if (levelMatch) {
             const levelValue = levelMatch[1].toLowerCase();
             if (levelValue === 'easy' || levelValue === '0') {
@@ -240,12 +252,13 @@ const QuestionExtractorPage = () => {
           continue;
         }
         
-        // Check for explanation
-        if (line.toLowerCase().includes('explanation:')) {
+        // Check for Explanation: at new line
+        if (trimmedLine.toLowerCase().startsWith('explanation:')) {
           isParsingExplanation = true;
           isParsingOptions = false;
           isParsingAnswer = false;
-          const explanationMatch = line.match(/explanation:\s*(.+)/i);
+          isParsingLevel = false;
+          const explanationMatch = trimmedLine.match(/explanation:\s*(.+)/i);
           if (explanationMatch) {
             currentQuestion.explanation = explanationMatch[1].trim();
           }
@@ -253,103 +266,42 @@ const QuestionExtractorPage = () => {
         }
         
         // Continue parsing explanation if we're in explanation mode
-        if (isParsingExplanation && !line.toLowerCase().includes('level:') && !line.toLowerCase().includes('answer:')) {
+        if (isParsingExplanation) {
           if (currentQuestion.explanation) {
-            currentQuestion.explanation += ' ' + line;
+            currentQuestion.explanation += ' ' + trimmedLine;
           } else {
-            currentQuestion.explanation = line;
+            currentQuestion.explanation = trimmedLine;
           }
           continue;
         }
         
-        // If not parsing options, answer, or explanation, add to question text
+        // Continue parsing options if they span multiple lines
+        if (isParsingOptions && currentQuestion.options.length > 0 && !optionMatch) {
+          // Add to last option if it's continuation
+          const lastIndex = currentQuestion.options.length - 1;
+          currentQuestion.options[lastIndex] += ' ' + trimmedLine;
+          continue;
+        }
+        
+        // If not parsing options, answer, explanation, or level, add to question text
         if (!isParsingOptions && !isParsingAnswer && !isParsingExplanation && !isParsingLevel) {
-          if (questionText) {
-            questionText += ' ' + line;
-          } else {
-            questionText = line;
+          // Handle spacing preservation - replace multiple spaces with HTML entities
+          let processedLine = trimmedLine;
+          
+          // Replace multiple spaces (2 or more) with HTML non-breaking spaces
+          if (processedLine.includes('  ')) {
+            processedLine = processedLine.replace(/\s{2,}/g, (match) => {
+              return '&nbsp;'.repeat(match.length);
+            });
           }
+          
+          questionLines.push(processedLine);
         }
       }
       
-      // Handle HTML formatting and preserve structure for complex questions
-      if (isMatchQuestion) {
-        // Parse match-the-following questions with proper formatting
-        const allLines = questionContent.split('\n');
-        let formattedQuestion = '';
-        let foundFirstOption = false;
-        let isTableSection = false;
-        
-        for (let line of allLines) {
-          line = line.trim();
-          
-          // Skip empty lines
-          if (!line) continue;
-          
-          // Check if we've reached the options section
-          if (line.match(/^[A-D][\.\)]/i)) {
-            foundFirstOption = true;
-            break;
-          }
-          
-          // Skip answer, explanation, and level lines
-          if (line.toLowerCase().includes('answer:') || 
-              line.toLowerCase().includes('explanation:') || 
-              line.toLowerCase().includes('level:')) {
-            break;
-          }
-          
-          // Detect table structure
-          if (line.includes('\t') || (line.length > 5 && line.includes(' ') && 
-              (line.includes('A') || line.includes('B') || line.includes('1.') || line.includes('2.') || line.includes('3.')))) {
-            
-            if (!isTableSection) {
-              // Start table formatting
-              if (formattedQuestion && !formattedQuestion.endsWith('<br>')) {
-                formattedQuestion += '<br><br>';
-              }
-              isTableSection = true;
-            }
-            
-            // Format table rows with proper spacing
-            let formattedLine = line;
-            
-            // Handle column headers (A and B)
-            if (line.includes('A') && line.includes('B') && line.length < 20) {
-              formattedLine = line.replace(/\s+/g, '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
-            }
-            // Handle numbered items with options
-            else if (line.includes('.') && (line.includes('i.') || line.includes('ii.') || line.includes('iii.'))) {
-              // Replace multiple spaces/tabs with proper spacing
-              formattedLine = line.replace(/\s+/g, '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
-            }
-            // Handle items with large spacing
-            else {
-              formattedLine = line.replace(/\t+/g, '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
-                               .replace(/\s{3,}/g, '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
-            }
-            
-            if (formattedQuestion && !formattedQuestion.endsWith('<br>')) {
-              formattedQuestion += '<br>';
-            }
-            formattedQuestion += formattedLine;
-          } else {
-            // Regular question text
-            if (formattedQuestion && !isTableSection) {
-              formattedQuestion += ' ' + line;
-            } else if (formattedQuestion && isTableSection) {
-              formattedQuestion += '<br>' + line;
-              isTableSection = false;
-            } else {
-              formattedQuestion = line;
-            }
-          }
-        }
-        
-        currentQuestion.question = formattedQuestion.trim();
-      } else {
-        // Regular question formatting
-        currentQuestion.question = questionText.trim();
+      // Build final question text with proper line breaks
+      if (questionLines.length > 0) {
+        currentQuestion.question = questionLines.join('<br>');
       }
       
       // Only add question if it has valid structure
