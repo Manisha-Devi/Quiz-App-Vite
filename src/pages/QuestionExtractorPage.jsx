@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/QuestionExtractorPage.css';
 import useOfflineStorage from '../hooks/useOfflineStorage';
 import QuestionCard from '../components/QuestionCard';
+import dataManager from '../utils/dataManager';
 
 const QuestionExtractorPage = () => {
   const navigate = useNavigate();
-  const { dataManager } = useOfflineStorage();
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [files, setFiles] = useState([]);
