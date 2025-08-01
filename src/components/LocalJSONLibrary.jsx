@@ -31,20 +31,13 @@ function FileCardWithImages({ file, isSelected, questionCount, viewMode, onToggl
     >
       <div className="file-content">
         <div className="file-info">
+          {/* Row 1: File name (left aligned) */}
           <div className="file-row file-name-row">
             <span className="file-icon">📄</span>
             <h3 className="file-name">{file.filename}</h3>
           </div>
           
-          {/* Image count row - centered */}
-          {!loading && imageCount > 0 && (
-            <div className="file-row file-images-row">
-              <span className="image-info">
-                🖼️ {imageCount} Image{imageCount !== 1 ? 's' : ''}
-              </span>
-            </div>
-          )}
-          
+          {/* Row 2: Questions (left), Images (center), Size (right) */}
           <div className="file-row file-meta-row">
             <div className="file-questions-left">
               <span 
@@ -59,6 +52,15 @@ function FileCardWithImages({ file, isSelected, questionCount, viewMode, onToggl
               </span>
               <span className="question-count">{questionCount} questions</span>
             </div>
+            
+            <div className="file-images-center">
+              {!loading && imageCount > 0 && (
+                <span className="image-info">
+                  🖼️ {imageCount} Image{imageCount !== 1 ? 's' : ''}
+                </span>
+              )}
+            </div>
+            
             <div className="file-size-right">
               <span className="file-size">
                 {questionCount <= 20 ? '🟢 Small' : 

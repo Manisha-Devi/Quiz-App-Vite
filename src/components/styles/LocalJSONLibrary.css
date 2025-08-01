@@ -606,12 +606,11 @@
   flex-direction: row;
 }
 
-.file-images-row {
+.file-images-center {
+  display: flex;
   justify-content: center;
   align-items: center;
-  margin: 4px 0;
-  width: 100%;
-  display: flex;
+  flex: 1;
 }
 
 .image-info {
@@ -985,10 +984,17 @@
 
   .file-questions-left {
     justify-content: flex-start;
+    flex: 0 0 auto;
+  }
+
+  .file-images-center {
+    justify-content: center;
+    flex: 1;
   }
 
   .file-size-right {
     justify-content: flex-end;
+    flex: 0 0 auto;
   }
 
   .time-setting {
