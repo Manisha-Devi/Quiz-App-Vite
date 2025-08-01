@@ -204,7 +204,7 @@ class DataManager {
         throw new Error('Database connection not available');
       }
 
-      const stores = ['userSettings', 'examData', 'examResults', 'jsonFiles', 'by_filename', 'jsonImages'];
+      const stores = ['userSettings', 'examData', 'examResults', 'jsonFiles', 'jsonImages'];
       let clearedStores = 0;
 
       // Clear each store individually without dropping database

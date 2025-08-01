@@ -4,7 +4,7 @@
 // Open the IndexedDB database
 export const openDb = () => {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open("quizDatabase", 2);
+    const request = indexedDB.open("quizDatabase", 3);
 
     request.onerror = (event) => {
       reject("Error opening IndexedDB");
@@ -17,9 +17,16 @@ export const openDb = () => {
     request.onupgradeneeded = (event) => {
       const db = event.target.result;
 
+      // Clear all existing stores
+      const storeNames = ['jsonFiles', 'jsonImages', 'examData', 'userSettings', 'examResults'];
+      storeNames.forEach(storeName => {
+        if (db.objectStoreNames.contains(storeName)) {
+          db.deleteObjectStore(storeName);
+        }
+      });
+
       // JSON files store - dedicated store for JSON files from json folder
       const jsonFilesStore = db.createObjectStore("jsonFiles", { keyPath: "filename" });
-      jsonFilesStore.createIndex("by_filename", "filename", { unique: true });
 
       // JSON Images store - structure with jsonFileName and imageName keys
       const jsonImagesStore = db.createObjectStore("jsonImages", { keyPath: ["jsonFileName", "imageName"] });
@@ -54,8 +61,6 @@ export const storeData = async (storeName, data) => {
   return store.put(data);
 };
 
-
-
 // Get data from IndexedDB - Fixed to return the actual object
 export const getData = async (storeName, key) => {
   const db = await openDb();
@@ -69,15 +74,11 @@ export const getData = async (storeName, key) => {
   });
 };
 
-
-
-
-
 // Store JSON file data in dedicated jsonFiles store
 export const storeJSONFile = async (filename, jsonData) => {
   const db = await openDb();
   const transaction = db.transaction("jsonFiles", "readwrite");
-  const store = transaction.objectStore("jsonFiles");
+  const store = transaction.objectStore(jsonFiles);
 
   const fileData = {
     filename: filename,
