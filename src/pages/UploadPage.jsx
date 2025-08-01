@@ -454,13 +454,6 @@ function UploadPage() {
             {isDarkMode ? "☀️" : "🌙"}
           </button>
           <button
-            className="extract-page-btn"
-            onClick={() => navigate('/extract')}
-            title="Question Extractor"
-          >
-            🔍
-          </button>
-          <button
             className={`library-toggle-btn ${showLocalJSON ? "active" : ""}`}
             onClick={() => setShowLocalJSON(!showLocalJSON)}
             title="Toggle Upload Mode"
