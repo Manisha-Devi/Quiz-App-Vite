@@ -144,10 +144,51 @@ function ExamPage() {
       if (savedMeta) {
         // Restore meta variables from savedMeta as necessary
       }
+
+      // Load images after questions are loaded
+      await loadMissingImages();
     };
 
     loadExamData();
   }, [navigate]);
+
+  // Function to load missing images from IndexedDB jsonImages store
+  const loadMissingImages = async () => {
+    try {
+      const missingImages = document.querySelectorAll('img[data-missing-image]');
+      if (missingImages.length === 0) return;
+
+      console.log(`Found ${missingImages.length} missing images, attempting to load from IndexedDB...`);
+
+      // Try common JSON file names
+      const possibleJsonNames = ['Image_Demo', 'KaTeX Demo', 'Art and Culture jk'];
+      
+      for (const img of missingImages) {
+        const imageName = img.getAttribute('data-missing-image');
+        let imageData = null;
+
+        for (const jsonName of possibleJsonNames) {
+          try {
+            imageData = await dataManager.getImageFromJSONImagesStore(jsonName, imageName);
+            if (imageData) {
+              console.log(`✅ Found missing image ${imageName} in ${jsonName}`);
+              img.src = imageData;
+              img.removeAttribute('data-missing-image');
+              break;
+            }
+          } catch (error) {
+            // Continue to next JSON file
+          }
+        }
+
+        if (!imageData) {
+          console.warn(`❌ Could not find image ${imageName} in any JSON file`);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading missing images:', error);
+    }
+  };
 
   useEffect(() => {
     const saveExamState = async () => {
@@ -572,10 +613,26 @@ function ExamPage() {
     const loadImageMap = async () => {
       try {
         const mapResult = await dataManager.getFileImageMap();
+        console.log('Loaded fileImageMap from IndexedDB:', mapResult);
+        
         const flatMap = {};
-        Object.values(mapResult).flat().forEach(({ name, data }) => {
-          flatMap[name] = data;
+        
+        // Handle the fileImageMap structure properly
+        Object.entries(mapResult).forEach(([fileName, images]) => {
+          if (images && Array.isArray(images)) {
+            images.forEach(({ name, data }) => {
+              if (name && data) {
+                flatMap[name] = data;
+                // Also add with common extensions for fallback
+                flatMap[`${name}.png`] = data;
+                flatMap[`${name}.jpg`] = data;
+                flatMap[`${name}.jpeg`] = data;
+              }
+            });
+          }
         });
+        
+        console.log('Processed image map for injection:', Object.keys(flatMap));
         setImageMap(flatMap);
       } catch (error) {
         console.error('Error loading image map:', error);
@@ -586,9 +643,25 @@ function ExamPage() {
   }, []);
 
   const injectImageSources = useCallback((html) => {
+    if (!html || typeof html !== 'string') return html;
+    
     return html.replace(/<img\s+[^>]*id=['"]([^'"]+)['"][^>]*>/g, (match, id) => {
-      const src = imageMap[id] || '';
-      return `<img id="${id}" src="${src}" alt="${id}" />`;
+      // Try different variations of the image name
+      let src = imageMap[id] || 
+                imageMap[id.replace(/\.(png|jpg|jpeg)$/i, '')] ||
+                imageMap[`${id}.png`] ||
+                imageMap[`${id}.jpg`] ||
+                imageMap[`${id}.jpeg`] ||
+                '';
+      
+      if (src) {
+        console.log(`✅ Found image for ID: ${id}`);
+        return `<img id="${id}" src="${src}" alt="${id}" style="max-width: 100%; height: auto;" />`;
+      } else {
+        console.warn(`❌ No image found for ID: ${id}`);
+        // Try to fetch from IndexedDB as fallback
+        return `<img id="${id}" src="" alt="${id}" data-missing-image="${id}" style="max-width: 100%; height: auto; border: 1px dashed #ccc;" />`;
+      }
     });
   }, [imageMap]);
 
@@ -742,6 +815,15 @@ function ExamPage() {
 
     loadStoredData();
   }, []);
+
+  // Load missing images after component updates
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      loadMissingImages();
+    }, 500); // Small delay to ensure DOM is updated
+
+    return () => clearTimeout(timer);
+  }, [current, imageMap]); // Re-run when question changes or imageMap updates
 
   if (!questions.length || !sections.length) return <div className="exam-ui">Loading exam…</div>;
 
