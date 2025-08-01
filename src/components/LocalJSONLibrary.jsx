@@ -3,6 +3,79 @@ import { getAllJSONFiles } from '../utils/indexedDB';
 import '../components/styles/LocalJSONLibrary.css';
 import dataManager from '../utils/dataManager';
 
+// Component to handle individual file card with image loading
+function FileCardWithImages({ file, isSelected, questionCount, viewMode, onToggle, showRemoveIcon = false }) {
+  const [imageCount, setImageCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadImageCount = async () => {
+      try {
+        const images = await dataManager.getAllImagesForJSONFile(file.filename);
+        setImageCount(images ? images.length : 0);
+      } catch (error) {
+        console.error(`Error getting image count for ${file.filename}:`, error);
+        setImageCount(0);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadImageCount();
+  }, [file.filename]);
+
+  return (
+    <div 
+      className={`file-card ${isSelected ? 'selected' : ''} ${viewMode} ${showRemoveIcon ? 'selected-file-card' : ''}`}
+      onClick={() => onToggle(file)}
+    >
+      <div className="file-content">
+        <div className="file-info">
+          <div className="file-row file-name-row">
+            <span className="file-icon">📄</span>
+            <h3 className="file-name">{file.filename}</h3>
+          </div>
+          
+          {/* Image count row - centered */}
+          {!loading && imageCount > 0 && (
+            <div className="file-row file-images-row">
+              <span className="image-info">
+                🖼️ {imageCount} Image{imageCount !== 1 ? 's' : ''}
+              </span>
+            </div>
+          )}
+          
+          <div className="file-row file-meta-row">
+            <div className="file-questions-left">
+              <span 
+                className="question-prefix" 
+                style={{
+                  color: questionCount <= 20 ? '#4CAF50' : 
+                         questionCount <= 50 ? '#ff9800' : '#f44336',
+                  fontWeight: 'bold'
+                }}
+              >
+                Q:
+              </span>
+              <span className="question-count">{questionCount} questions</span>
+            </div>
+            <div className="file-size-right">
+              <span className="file-size">
+                {questionCount <= 20 ? '🟢 Small' : 
+                 questionCount <= 50 ? '🟡 Medium' : '🔴 Large'}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {isSelected && (
+        <div className="selected-indicator">{showRemoveIcon ? '✕' : '✓'}</div>
+      )}
+    </div>
+  );
+}
+
 function LocalJSONLibrary({ onFileSelect, refreshTrigger = 0 }) {
   const [localFiles, setLocalFiles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -103,6 +176,17 @@ function LocalJSONLibrary({ onFileSelect, refreshTrigger = 0 }) {
   };
 
 
+
+  // Get image count for a file
+  const getImageCount = async (filename) => {
+    try {
+      const images = await dataManager.getAllImagesForJSONFile(filename);
+      return images ? images.length : 0;
+    } catch (error) {
+      console.error(`Error getting image count for ${filename}:`, error);
+      return 0;
+    }
+  };
 
   const handleContinue = async () => {
     if (selectedFiles.length === 0) {
@@ -354,43 +438,15 @@ function LocalJSONLibrary({ onFileSelect, refreshTrigger = 0 }) {
             {selectedFiles.map((file, index) => {
               const questionCount = Array.isArray(file.data) ? file.data.length : 0;
               return (
-                <div 
-                  key={index} 
-                  className="file-card selected-file-card"
-                  onClick={() => handleFileToggle(file)}
-                >
-                  <div className="file-content">
-                    <div className="file-info">
-                      <div className="file-row file-name-row">
-                        <span className="file-icon">📄</span>
-                        <h3 className="file-name">{file.filename}</h3>
-                      </div>
-                      <div className="file-row file-meta-row">
-                        <div className="file-questions-left">
-                          <span 
-                            className="question-prefix" 
-                            style={{
-                              color: questionCount <= 20 ? '#4CAF50' : 
-                                     questionCount <= 50 ? '#ff9800' : '#f44336',
-                              fontWeight: 'bold'
-                            }}
-                          >
-                            Q:
-                          </span>
-                          <span className="question-count">{questionCount} questions</span>
-                        </div>
-                        <div className="file-size-right">
-                          <span className="file-size">
-                            {questionCount <= 20 ? '🟢 Small' : 
-                             questionCount <= 50 ? '🟡 Medium' : '🔴 Large'}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="selected-indicator">✕</div>
-                </div>
+                <FileCardWithImages 
+                  key={index}
+                  file={file}
+                  isSelected={true}
+                  questionCount={questionCount}
+                  viewMode="grid"
+                  onToggle={handleFileToggle}
+                  showRemoveIcon={true}
+                />
               );
             })}
           </div>
@@ -423,45 +479,14 @@ function LocalJSONLibrary({ onFileSelect, refreshTrigger = 0 }) {
             const questionCount = Array.isArray(file.data) ? file.data.length : 0;
 
             return (
-              <div 
-                key={index} 
-                className={`file-card ${isSelected ? 'selected' : ''} ${viewMode}`}
-                onClick={() => handleFileToggle(file)}
-              >
-                <div className="file-content">
-                  <div className="file-info">
-                    <div className="file-row file-name-row">
-                      <span className="file-icon">📄</span>
-                      <h3 className="file-name">{file.filename}</h3>
-                    </div>
-                    <div className="file-row file-meta-row">
-                      <div className="file-questions-left">
-                        <span 
-                          className="question-prefix" 
-                          style={{
-                            color: questionCount <= 20 ? '#4CAF50' : 
-                                   questionCount <= 50 ? '#ff9800' : '#f44336',
-                            fontWeight: 'bold'
-                          }}
-                        >
-                          Q:
-                        </span>
-                        <span className="question-count">{questionCount} questions</span>
-                      </div>
-                      <div className="file-size-right">
-                        <span className="file-size">
-                          {questionCount <= 20 ? '🟢 Small' : 
-                           questionCount <= 50 ? '🟡 Medium' : '🔴 Large'}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {isSelected && (
-                  <div className="selected-indicator">✓</div>
-                )}
-              </div>
+              <FileCardWithImages 
+                key={index}
+                file={file}
+                isSelected={isSelected}
+                questionCount={questionCount}
+                viewMode={viewMode}
+                onToggle={handleFileToggle}
+              />
             );
           })
         )}
