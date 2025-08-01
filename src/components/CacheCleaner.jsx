@@ -238,32 +238,146 @@ const CacheCleaner = ({ onDataChange }) => {
           console.warn('⚠️ Extension storage clear failed or not available:', error);
         }
 
-        // 4. Clear Cookies (comprehensive approach)
+        // 4. Clear Cookies (comprehensive approach with multiple methods)
         try {
+          const initialCookies = document.cookie.split(";").filter(c => c.trim());
+          console.log(`🍪 Found ${initialCookies.length} initial cookies to clear`);
+
+          // Method 1: Standard cookie clearing with comprehensive domain/path combinations
           const cookies = document.cookie.split(";");
+          const cookieNames = [];
+          
           for (let cookie of cookies) {
             const eqPos = cookie.indexOf("=");
             const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
-            if (name) {
-              // Clear cookie with different domain and path combinations
-              const domains = [
-                '', 
-                window.location.hostname, 
-                `.${window.location.hostname}`,
-                `.${window.location.hostname.split('.').slice(-2).join('.')}`
-              ];
-              const paths = ['/', '/app', '/quiz', ''];
-              
-              domains.forEach(domain => {
-                paths.forEach(path => {
-                  document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=${path};domain=${domain}`;
-                  document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=${path}`;
-                });
-              });
-              results.cookies++;
+            if (name && name.length > 0) {
+              cookieNames.push(name);
             }
           }
-          console.log(`✅ Cookies cleared (${results.cookies} cookies removed)`);
+
+          console.log(`🍪 Processing ${cookieNames.length} cookie names:`, cookieNames);
+
+          for (let name of cookieNames) {
+            // Multiple domain variations
+            const domains = [
+              '', // no domain
+              window.location.hostname, // exact hostname
+              `.${window.location.hostname}`, // subdomain wildcard
+              window.location.hostname.startsWith('www.') ? window.location.hostname.substring(4) : `www.${window.location.hostname}`, // www variant
+            ];
+            
+            // Add top-level domain if hostname has subdomains
+            if (window.location.hostname.includes('.')) {
+              const parts = window.location.hostname.split('.');
+              if (parts.length > 2) {
+                domains.push(`.${parts.slice(-2).join('.')}`);
+              }
+            }
+
+            // Multiple path variations
+            const paths = ['/', '', '/app', '/quiz', '/src', '/pages', '/components'];
+            
+            // Clear with all combinations
+            domains.forEach(domain => {
+              paths.forEach(path => {
+                try {
+                  // Multiple clearing methods
+                  const expireDate = new Date(0).toUTCString(); // Thu, 01 Jan 1970 00:00:00 GMT
+                  const altExpireDate = 'Thu, 01 Jan 1970 00:00:00 GMT';
+                  
+                  // Method 1: Standard clearing
+                  if (domain) {
+                    document.cookie = `${name}=; expires=${expireDate}; path=${path}; domain=${domain}; secure; samesite=strict`;
+                    document.cookie = `${name}=; expires=${altExpireDate}; path=${path}; domain=${domain}; secure; samesite=lax`;
+                    document.cookie = `${name}=; expires=${expireDate}; path=${path}; domain=${domain}`;
+                  } else {
+                    document.cookie = `${name}=; expires=${expireDate}; path=${path}; secure; samesite=strict`;
+                    document.cookie = `${name}=; expires=${altExpireDate}; path=${path}; secure; samesite=lax`;
+                    document.cookie = `${name}=; expires=${expireDate}; path=${path}`;
+                  }
+                  
+                  // Method 2: Max-Age approach
+                  if (domain) {
+                    document.cookie = `${name}=; max-age=0; path=${path}; domain=${domain};`;
+                  } else {
+                    document.cookie = `${name}=; max-age=0; path=${path};`;
+                  }
+                  
+                  // Method 3: Empty value approach
+                  if (domain) {
+                    document.cookie = `${name}=; path=${path}; domain=${domain};`;
+                  } else {
+                    document.cookie = `${name}=; path=${path};`;
+                  }
+                } catch (cookieError) {
+                  // Continue with other combinations even if one fails
+                }
+              });
+            });
+            results.cookies++;
+          }
+
+          // Method 2: Try to clear any remaining cookies using different approach
+          setTimeout(() => {
+            const remainingCookies = document.cookie.split(";").filter(c => c.trim());
+            if (remainingCookies.length > 0) {
+              console.log(`🍪 Found ${remainingCookies.length} remaining cookies, attempting alternative clearing...`);
+              
+              remainingCookies.forEach(cookie => {
+                const name = cookie.split('=')[0].trim();
+                if (name) {
+                  // Brute force approach with all possible combinations
+                  const allDomains = ['', window.location.hostname, `.${window.location.hostname}`, 'localhost', '.localhost'];
+                  const allPaths = ['/', '', '/app', '/quiz', '/src', '/pages', '/components', '/public'];
+                  
+                  allDomains.forEach(domain => {
+                    allPaths.forEach(path => {
+                      try {
+                        document.cookie = `${name}=deleted; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=${path}${domain ? `; domain=${domain}` : ''}`;
+                      } catch (e) {
+                        // Continue
+                      }
+                    });
+                  });
+                }
+              });
+            }
+          }, 100);
+
+          // Method 3: Use modern cookie store API if available
+          if ('cookieStore' in window) {
+            try {
+              const cookieList = await cookieStore.getAll();
+              console.log(`🍪 Found ${cookieList.length} cookies via Cookie Store API`);
+              
+              for (const cookie of cookieList) {
+                try {
+                  await cookieStore.delete({
+                    name: cookie.name,
+                    domain: cookie.domain,
+                    path: cookie.path
+                  });
+                  console.log(`🗑️ Deleted cookie via Cookie Store API: ${cookie.name}`);
+                } catch (deleteError) {
+                  console.warn(`⚠️ Could not delete cookie ${cookie.name} via Cookie Store API:`, deleteError);
+                }
+              }
+            } catch (cookieStoreError) {
+              console.warn('⚠️ Cookie Store API failed:', cookieStoreError);
+            }
+          }
+
+          console.log(`✅ Cookies clearing process completed (${results.cookies} cookies processed)`);
+          
+          // Verify clearing after a short delay
+          setTimeout(() => {
+            const finalCookies = document.cookie.split(";").filter(c => c.trim());
+            console.log(`🍪 Final cookie count: ${finalCookies.length}`);
+            if (finalCookies.length > 0) {
+              console.log('🍪 Remaining cookies:', finalCookies);
+            }
+          }, 200);
+
         } catch (error) {
           console.warn('⚠️ Cookies clear failed:', error);
         }
