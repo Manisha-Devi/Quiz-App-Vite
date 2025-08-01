@@ -17,25 +17,6 @@ export const openDb = () => {
     request.onupgradeneeded = (event) => {
       const db = event.target.result;
 
-      // Images store
-      const imageStore = db.createObjectStore("images", { keyPath: "id" });
-      imageStore.createIndex("by_name", "name", { unique: true });
-
-      // Texts store
-      db.createObjectStore("texts", { keyPath: "id" });
-
-      // Quiz results store
-      const resultsStore = db.createObjectStore("quizResults", { keyPath: "id", autoIncrement: true });
-      resultsStore.createIndex("by_date", "date", { unique: false });
-      resultsStore.createIndex("by_score", "score", { unique: false });
-
-      // User progress store
-      const progressStore = db.createObjectStore("userProgress", { keyPath: "id" });
-      progressStore.createIndex("by_category", "category", { unique: false });
-
-      // Offline quiz cache
-      db.createObjectStore("quizCache", { keyPath: "id" });
-
       // JSON files store - dedicated store for JSON files from json folder
       const jsonFilesStore = db.createObjectStore("jsonFiles", { keyPath: "filename" });
       jsonFilesStore.createIndex("by_filename", "filename", { unique: true });
@@ -62,30 +43,12 @@ export const openDb = () => {
   });
 };
 
-// Store image in IndexedDB
-export const storeImage = async (imageData, imageName, jsonFileName = null) => {
-  const db = await openDb();
-  
-  if (jsonFileName) {
-    // Store in jsonImages store for JSON-associated images
-    return storeJSONImage(jsonFileName, imageName, imageData);
-  } else {
-    // Store in regular images store
-    const transaction = db.transaction("images", "readwrite");
-    const store = transaction.objectStore("images");
-
-    const image = {
-      id: imageName,
-      name: imageName,
-      data: imageData,
-    };
-
-    return new Promise((resolve, reject) => {
-      const request = store.put(image);
-      request.onsuccess = () => resolve();
-      request.onerror = () => reject("Error storing image");
-    });
+// Store image in IndexedDB - only for JSON-associated images
+export const storeImage = async (imageData, imageName, jsonFileName) => {
+  if (!jsonFileName) {
+    throw new Error("jsonFileName is required for storing images");
   }
+  return storeJSONImage(jsonFileName, imageName, imageData);
 };
 
 // Store text data (JSON content) in IndexedDB
@@ -96,19 +59,7 @@ export const storeData = async (storeName, data) => {
   return store.put(data);
 };
 
-// Store text content in IndexedDB texts store
-export const storeText = async (content, key) => {
-  const db = await openDb();
-  const transaction = db.transaction("texts", "readwrite");
-  const store = transaction.objectStore("texts");
 
-  const textData = {
-    id: key,
-    content: content
-  };
-
-  return store.put(textData);
-};
 
 // Get data from IndexedDB - Fixed to return the actual object
 export const getData = async (storeName, key) => {
@@ -123,43 +74,9 @@ export const getData = async (storeName, key) => {
   });
 };
 
-// Get image data from IndexedDB by filename
-export const getImage = async (filename) => {
-  const db = await openDb();
-  const transaction = db.transaction("images", "readonly");
-  const store = transaction.objectStore("images");
 
-  const request = store.get(filename);
 
-  return new Promise((resolve, reject) => {
-    request.onsuccess = () => {
-      resolve(request.result ? request.result.data : null);
-    };
 
-    request.onerror = () => {
-      reject("Error fetching image");
-    };
-  });
-};
-
-// Get text data (JSON content) from IndexedDB by key
-export const getText = async (key) => {
-  const db = await openDb();
-  const transaction = db.transaction("texts", "readonly");
-  const store = transaction.objectStore("texts");
-
-  const request = store.get(key);
-
-  return new Promise((resolve, reject) => {
-    request.onsuccess = () => {
-      resolve(request.result ? request.result.content : null);
-    };
-
-    request.onerror = () => {
-      reject("Error fetching text");
-    };
-  });
-};
 
 // Store JSON file data in dedicated jsonFiles store
 export const storeJSONFile = async (filename, jsonData) => {
@@ -455,7 +372,7 @@ export const deleteData = async (storeName, id) => {
 // Clear entire database
 export const clearDatabase = async () => {
   const db = await openDb();
-  const stores = ['userSettings', 'examData', 'examResults', 'jsonFiles', 'by_filename', 'images', 'texts'];
+  const stores = ['userSettings', 'examData', 'examResults', 'jsonFiles', 'by_filename', 'jsonImages'];
   
   for (const storeName of stores) {
     try {

@@ -32,14 +32,9 @@ const useOfflineStorage = () => {
 
   const loadLocalQuizzes = async () => {
     try {
-      const db = await openDb();
-      const transaction = db.transaction('quizCache', 'readonly');
-      const store = transaction.objectStore('quizCache');
-      const request = store.getAll();
-      
-      request.onsuccess = () => {
-        setLocalQuizzes(request.result || []);
-      };
+      // Using examData store instead of quizCache
+      const quizSetup = await getData('examData', 'quizSetup');
+      setLocalQuizzes(quizSetup ? [quizSetup] : []);
     } catch (error) {
       console.error('Failed to load local quizzes:', error);
     }
@@ -48,15 +43,14 @@ const useOfflineStorage = () => {
   const saveQuizToLocal = async (quizData, quizName) => {
     try {
       const quizEntry = {
-        id: `quiz_${Date.now()}`,
         name: quizName,
         data: quizData,
         createdAt: new Date().toISOString(),
         lastUsed: new Date().toISOString()
       };
       
-      await storeData('quizCache', quizEntry);
-      setLocalQuizzes(prev => [...prev, quizEntry]);
+      await storeData('examData', { id: 'quizSetup', data: quizEntry });
+      setLocalQuizzes([quizEntry]);
       return true;
     } catch (error) {
       console.error('Failed to save quiz locally:', error);
@@ -67,13 +61,12 @@ const useOfflineStorage = () => {
   const saveQuizResult = async (resultData) => {
     try {
       const result = {
-        id: `result_${Date.now()}`,
         ...resultData,
         date: new Date().toISOString(),
         synced: false
       };
       
-      await storeData('quizResults', result);
+      await storeData('examResults', { id: `result_${Date.now()}`, data: result });
       
       if (!isOnline) {
         const pending = JSON.parse(localStorage.getItem('pendingSync') || '[]');
@@ -91,8 +84,8 @@ const useOfflineStorage = () => {
   const getLocalResults = async () => {
     try {
       const db = await openDb();
-      const transaction = db.transaction('quizResults', 'readonly');
-      const store = transaction.objectStore('quizResults');
+      const transaction = db.transaction('examResults', 'readonly');
+      const store = transaction.objectStore('examResults');
       
       return new Promise((resolve, reject) => {
         const request = store.getAll();
