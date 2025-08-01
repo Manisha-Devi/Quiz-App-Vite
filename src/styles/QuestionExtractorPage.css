@@ -832,70 +832,7 @@ body {
   font-weight: 600;
   margin-bottom: 25px;
   color: #2e7d32;
-  line-height: 1.8;
-  white-space: pre-line;
-  word-wrap: break-word;
-  font-family: 'Courier New', 'Consolas', monospace;
-}
-
-.extracted-question-card .question-text br {
-  display: block;
-  margin: 4px 0;
-  content: "";
-}
-
-/* Preserve exact spacing and alignment */
-.extracted-question-card .question-text {
-  text-align: left;
-  overflow-x: auto;
-  padding: 10px;
-  background: rgba(255, 255, 255, 0.7);
-  border-radius: 8px;
-  border: 1px solid rgba(76, 175, 80, 0.3);
-}
-
-/* Handle tables and structured content */
-.extracted-question-card .question-text table,
-.extracted-question-card .question-text .match-table {
-  border-collapse: collapse;
-  margin: 15px 0;
-  width: 100%;
-  font-family: 'Courier New', monospace;
-}
-
-.extracted-question-card .question-text td,
-.extracted-question-card .question-text th {
-  border: 1px solid #4CAF50;
-  padding: 8px 12px;
-  text-align: left;
-  white-space: pre;
-}
-
-.extracted-question-card .question-text th {
-  background: #4CAF50;
-  color: white;
-  font-weight: 600;
-}
-
-/* Ensure monospace font for all content to maintain alignment */
-.extracted-question-card .question-text,
-.extracted-question-card .question-text * {
-  font-family: 'Courier New', 'Consolas', monospace !important;
-}
-
-/* Maintain spacing in HTML entities */
-.extracted-question-card .question-text {
-  letter-spacing: 0;
-  word-spacing: 0;
-}
-
-/* Better rendering for HTML content */
-.extracted-question-card .question-text p {
-  margin: 8px 0;
-}
-
-.extracted-question-card .question-text div {
-  margin: 4px 0;
+  line-height: 1.6;
 }
 
 .extracted-question-card .options-grid {

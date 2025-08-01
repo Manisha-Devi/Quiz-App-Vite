@@ -162,200 +162,75 @@ const QuestionExtractorPage = () => {
   const parseQuestionsFromText = (text, fileIndex) => {
     const questions = [];
     
-    // Clean up text and preserve mathematical symbols
-    let cleanedText = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    // Split text into lines and clean up
+    const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
     
-    // Handle common mathematical symbol replacements that might get lost
-    cleanedText = cleanedText
-      .replace(/∑/g, '\\sum')
-      .replace(/∞/g, '\\infty')
-      .replace(/π/g, '\\pi')
-      .replace(/€/g, '\\euro')
-      .replace(/▒/g, '')
-      .replace(/〖/g, '{')
-      .replace(/〗/g, '}')
-      .replace(/¦/g, ' \\choose ')
-      .replace(/⋯/g, '\\cdots')
-      .replace(/cos⁡/g, '\\cos')
-      .replace(/sin⁡/g, '\\sin');
-    
-    // Find all question starts with regex
-    const questionPattern = /(\d+)\.\s*(.+?)(?=(?:\n|\r)*\d+\.\s|$)/gs;
-    const questionMatches = [...cleanedText.matchAll(questionPattern)];
-    
+    let currentQuestion = null;
     let questionCounter = 1;
     
-    for (const match of questionMatches) {
-      const questionNumber = parseInt(match[1]);
-      const questionContent = match[2];
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
       
-      // Split into lines but preserve original spacing and structure
-      const lines = questionContent.split('\n');
-      
-      let currentQuestion = {
-        id: `q${fileIndex}_${questionCounter++}`,
-        question: '',
-        options: [],
-        correct: '',
-        explanation: '',
-        level: 0
-      };
-      
-      let questionText = '';
-      let isParsingOptions = false;
-      let isParsingAnswer = false;
-      let isParsingExplanation = false;
-      let isParsingLevel = false;
-      let questionLines = [];
-      
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
-        const trimmedLine = line.trim();
-        
-        // Skip empty lines
-        if (!trimmedLine) {
-          // Add line break for spacing if we're building question text
-          if (!isParsingOptions && !isParsingAnswer && !isParsingExplanation && !isParsingLevel && questionLines.length > 0) {
-            questionLines.push('<br>');
+      // Check if line starts with a number (question)
+      const questionMatch = line.match(/^(\d+)\.\s*(.+)/);
+      if (questionMatch) {
+        // Save previous question if exists
+        if (currentQuestion && currentQuestion.question && currentQuestion.options.length === 4) {
+          // Set default level if not explicitly provided
+          if (currentQuestion.level === undefined) {
+            currentQuestion.level = 0;
           }
-          continue;
+          questions.push(currentQuestion);
         }
         
-        // Check for options starting at new line (A., B., C., D.)
-        const optionMatch = trimmedLine.match(/^([A-D])[\.\)]\s*(.*)$/i);
-        if (optionMatch && !isParsingAnswer && !isParsingExplanation && !isParsingLevel) {
-          isParsingOptions = true;
-          let optionText = optionMatch[2].trim();
-          
-          // Process mathematical expressions in options
-          optionText = optionText
-            .replace(/\b(\\sum|\\infty|\\pi|\\euro|\\cdots|\\cos|\\sin)\b/g, '$$$1$$')
-            .replace(/\(([^)]*\\[a-zA-Z]+[^)]*)\)/g, '($$$1$$)')
-            .replace(/([a-zA-Z])_\{([^}]+)\}/g, '$$$$1_{$2}$$$$')
-            .replace(/([a-zA-Z])\^([0-9n])/g, '$$$$1^{$2}$$$$')
-            .replace(/([a-zA-Z])\^([a-zA-Z])/g, '$$$$1^{$2}$$$$')
-            .replace(/\b(\d+)!/g, '$$$$1!$$$$')
-            .replace(/\b([a-zA-Z])!/g, '$$$$1!$$$$')
-            .replace(/\b([a-zA-Z])\(([a-zA-Z])\)/g, '$$$$1($2)$$$$')
-            .replace(/\\choose/g, '\\binom');
-          
-          currentQuestion.options.push(optionText);
-          continue;
-        }
-        
-        // Check for Answer: at new line
-        if (trimmedLine.toLowerCase().startsWith('answer:')) {
-          isParsingAnswer = true;
-          isParsingOptions = false;
-          isParsingExplanation = false;
-          isParsingLevel = false;
-          const answerMatch = trimmedLine.match(/answer:\s*([A-D])/i);
-          if (answerMatch) {
-            currentQuestion.correct = answerMatch[1].toUpperCase();
-          }
-          continue;
-        }
-        
-        // Check for Level: at new line
-        if (trimmedLine.toLowerCase().startsWith('level:')) {
-          isParsingLevel = true;
-          isParsingOptions = false;
-          isParsingAnswer = false;
-          isParsingExplanation = false;
-          const levelMatch = trimmedLine.match(/level:\s*(easy|medium|hard|\d+)/i);
-          if (levelMatch) {
-            const levelValue = levelMatch[1].toLowerCase();
-            if (levelValue === 'easy' || levelValue === '0') {
-              currentQuestion.level = 0;
-            } else if (levelValue === 'medium' || levelValue === '1') {
-              currentQuestion.level = 1;
-            } else if (levelValue === 'hard' || levelValue === '2') {
-              currentQuestion.level = 2;
-            } else {
-              const numLevel = parseInt(levelValue);
-              currentQuestion.level = Math.min(Math.max(numLevel, 0), 2);
-            }
-          }
-          continue;
-        }
-        
-        // Check for Explanation: at new line
-        if (trimmedLine.toLowerCase().startsWith('explanation:')) {
-          isParsingExplanation = true;
-          isParsingOptions = false;
-          isParsingAnswer = false;
-          isParsingLevel = false;
-          const explanationMatch = trimmedLine.match(/explanation:\s*(.+)/i);
-          if (explanationMatch) {
-            currentQuestion.explanation = explanationMatch[1].trim();
-          }
-          continue;
-        }
-        
-        // Continue parsing explanation if we're in explanation mode
-        if (isParsingExplanation) {
-          if (currentQuestion.explanation) {
-            currentQuestion.explanation += ' ' + trimmedLine;
-          } else {
-            currentQuestion.explanation = trimmedLine;
-          }
-          continue;
-        }
-        
-        // Continue parsing options if they span multiple lines
-        if (isParsingOptions && currentQuestion.options.length > 0 && !optionMatch) {
-          // Add to last option if it's continuation
-          const lastIndex = currentQuestion.options.length - 1;
-          currentQuestion.options[lastIndex] += ' ' + trimmedLine;
-          continue;
-        }
-        
-        // If not parsing options, answer, explanation, or level, add to question text
-        if (!isParsingOptions && !isParsingAnswer && !isParsingExplanation && !isParsingLevel) {
-          // Handle spacing preservation - work with original line with spaces
-          let processedLine = line; // Use original line, not trimmed
-          
-          // Replace tabs with 4 spaces first
-          processedLine = processedLine.replace(/\t/g, '    ');
-          
-          // Handle mathematical expressions - wrap standalone math symbols in $ $
-          processedLine = processedLine
-            .replace(/\b(\\sum|\\infty|\\pi|\\euro|\\cdots|\\cos|\\sin)\b/g, '$$$1$$')
-            .replace(/\(([^)]*\\[a-zA-Z]+[^)]*)\)/g, '($$$1$$)')
-            .replace(/([a-zA-Z])_\{([^}]+)\}/g, '$$$$1_{$2}$$$$')
-            .replace(/([a-zA-Z])\^([0-9n])/g, '$$$$1^{$2}$$$$')
-            .replace(/([a-zA-Z])\^([a-zA-Z])/g, '$$$$1^{$2}$$$$')
-            .replace(/\b(\d+)!/g, '$$$$1!$$$$')
-            .replace(/\b([a-zA-Z])!/g, '$$$$1!$$$$')
-            .replace(/\b([a-zA-Z])\(([a-zA-Z])\)/g, '$$$$1($2)$$$$')
-            .replace(/\\choose/g, '\\binom');
-          
-          // Replace multiple spaces (2 or more) with HTML non-breaking spaces
-          processedLine = processedLine.replace(/\s{2,}/g, (match) => {
-            return '&nbsp;'.repeat(match.length);
-          });
-          
-          // Trim only leading spaces but preserve internal spacing
-          processedLine = processedLine.replace(/^\s+/, '');
-          
-          // Only add non-empty lines
-          if (processedLine.trim()) {
-            questionLines.push(processedLine);
-          }
+        // Start new question
+        currentQuestion = {
+          id: `q${fileIndex}_${questionCounter++}`,
+          question: questionMatch[2].trim(),
+          options: [],
+          correct: '',
+          explanation: '',
+          level: undefined // Will be set if found in text, otherwise default to 0 later
+        };
+      }
+      // Check for options (A), B), C), D))
+      else if (currentQuestion && line.match(/^[A-D]\)\s*(.+)/)) {
+        const optionMatch = line.match(/^[A-D]\)\s*(.+)/);
+        if (optionMatch) {
+          currentQuestion.options.push(optionMatch[1].trim());
         }
       }
-      
-      // Build final question text with proper line breaks
-      if (questionLines.length > 0) {
-        currentQuestion.question = questionLines.join('<br>');
+      // Check for answer
+      else if (currentQuestion && line.toLowerCase().startsWith('answer:')) {
+        const answerMatch = line.match(/answer:\s*([A-D])/i);
+        if (answerMatch) {
+          currentQuestion.correct = answerMatch[1].toUpperCase();
+        }
       }
-      
-      // Only add question if it has valid structure
-      if (currentQuestion.question && currentQuestion.options.length >= 4 && currentQuestion.correct) {
-        // Ensure we have exactly 4 options
-        currentQuestion.options = currentQuestion.options.slice(0, 4);
-        questions.push(currentQuestion);
+      // Check for explanation
+      else if (currentQuestion && line.toLowerCase().startsWith('explanation:')) {
+        const explanationMatch = line.match(/explanation:\s*(.+)/i);
+        if (explanationMatch) {
+          currentQuestion.explanation = explanationMatch[1].trim();
+        }
       }
+      // Check for level/difficulty
+      else if (currentQuestion && line.toLowerCase().includes('level:')) {
+        const levelMatch = line.match(/level:\s*(\d+)/i);
+        if (levelMatch) {
+          const level = parseInt(levelMatch[1]);
+          currentQuestion.level = Math.min(Math.max(level, 0), 2); // Ensure level is 0, 1, or 2
+        }
+      }
+    }
+    
+    // Add the last question if valid
+    if (currentQuestion && currentQuestion.question && currentQuestion.options.length === 4) {
+      // Set default level if not explicitly provided
+      if (currentQuestion.level === undefined) {
+        currentQuestion.level = 0;
+      }
+      questions.push(currentQuestion);
     }
     
     return questions;
@@ -537,21 +412,7 @@ const QuestionExtractorPage = () => {
                     </div>
 
                     <div className="question-text">
-                      {/* Use the same KaTeX rendering logic as other components */}
-                      {question.question.split(/(\$\$[^$]*\$\$|\$[^$]*\$)/g).map((part, index) => {
-                        if (part.startsWith('$$') && part.endsWith('$$')) {
-                          // Display math
-                          const mathContent = part.slice(2, -2);
-                          return <span key={index} dangerouslySetInnerHTML={{ __html: `<div style="text-align: center; margin: 10px 0;"><span style="font-size: 1.2em;">$$${mathContent}$$</span></div>` }} />;
-                        } else if (part.startsWith('$') && part.endsWith('$')) {
-                          // Inline math
-                          const mathContent = part.slice(1, -1);
-                          return <span key={index} dangerouslySetInnerHTML={{ __html: `$${mathContent}$` }} />;
-                        } else {
-                          // Regular text with HTML
-                          return <span key={index} dangerouslySetInnerHTML={{ __html: part }} />;
-                        }
-                      })}
+                      {question.question}
                     </div>
 
                     <div className="options-grid">
