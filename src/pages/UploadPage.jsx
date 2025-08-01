@@ -25,14 +25,6 @@ function UploadPage() {
   const navigate = useNavigate();
   const { isOnline } = useOfflineStorage();
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const [showModal, setShowModal] = useState(false);
-  const [modalConfig, setModalConfig] = useState({
-    title: '',
-    message: '',
-    type: 'confirm',
-    onConfirm: null,
-    onCancel: null
-  });
 
   const KEYS_TO_CLEAR = [
     "quizData",
@@ -341,17 +333,6 @@ function UploadPage() {
     setRefreshTrigger(prev => prev + 1); // Increment to trigger refresh
   };
 
-  const handleShowModal = (title, message, type, onConfirm = null) => {
-    setModalConfig({
-      title,
-      message,
-      type,
-      onConfirm: onConfirm || (() => setShowModal(false)),
-      onCancel: () => setShowModal(false)
-    });
-    setShowModal(true);
-  };
-
 
   // Function to clear all data
   const clearAllData = async () => {
@@ -608,7 +589,7 @@ function UploadPage() {
             <span className="tools-text">Developer Tools</span>
           </div>
           <div className="developer-tools-row">
-            <CacheCleaner onDataChange={handleDataChange} onShowModal={handleShowModal} />
+            <CacheCleaner onDataChange={handleDataChange} />
           </div>
         </div>
       </div>
@@ -619,50 +600,6 @@ function UploadPage() {
           <span className="fullscreen-icon">{isFullscreen ? "⤲" : "⛶"}</span>
         </button>
       </div>
-
-      {/* Custom Modal */}
-      {showModal && (
-        <div className="modal-overlay" onClick={() => modalConfig.type !== 'confirm' && setShowModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3 className={`modal-title ${modalConfig.type}`}>
-                {modalConfig.type === 'success' && '✅ '}
-                {modalConfig.type === 'error' && '❌ '}
-                {modalConfig.type === 'confirm' && '⚠️ '}
-                {modalConfig.title}
-              </h3>
-            </div>
-            <div className="modal-body">
-              <p className="modal-message">{modalConfig.message}</p>
-            </div>
-            <div className="modal-footer">
-              {modalConfig.type === 'confirm' ? (
-                <>
-                  <button 
-                    className="modal-btn modal-btn-cancel" 
-                    onClick={modalConfig.onCancel}
-                  >
-                    Cancel
-                  </button>
-                  <button 
-                    className="modal-btn modal-btn-confirm" 
-                    onClick={modalConfig.onConfirm}
-                  >
-                    Confirm
-                  </button>
-                </>
-              ) : (
-                <button 
-                  className="modal-btn modal-btn-ok" 
-                  onClick={modalConfig.onConfirm}
-                >
-                  OK
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
