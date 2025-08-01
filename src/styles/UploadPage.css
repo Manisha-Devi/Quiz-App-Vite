@@ -112,7 +112,8 @@
 
 .theme-toggle-btn,
 .library-toggle-btn,
-.refresh-btn {
+.refresh-btn,
+.extract-page-btn {
   background: rgba(255, 255, 255, 0.1);
   color: white;
   border: none;
@@ -126,7 +127,8 @@
 
 .theme-toggle-btn:hover,
 .library-toggle-btn:hover,
-.refresh-btn:hover {
+.refresh-btn:hover,
+.extract-page-btn:hover {
   background: rgba(255, 255, 255, 0.2);
   transform: translateY(-2px);
 }
@@ -137,7 +139,8 @@
 }
 
 .upload-page.dark-mode .theme-toggle-btn,
-.upload-page.dark-mode .library-toggle-btn {
+.upload-page.dark-mode .library-toggle-btn,
+.upload-page.dark-mode .extract-page-btn {
   background: #404040 !important;
   color: #e0e0e0 !important;
   border: 1px solid #555 !important;
