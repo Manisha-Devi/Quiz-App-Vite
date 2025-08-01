@@ -4,7 +4,6 @@ import { storeImage } from "../utils/indexedDB";
 import useOfflineStorage from "../hooks/useOfflineStorage";
 import LocalJSONLibrary from "../components/LocalJSONLibrary";
 import CacheCleaner from "../components/CacheCleaner";
-
 import dataManager from "../utils/dataManager";
 import "../styles/UploadPage.css";
 import {
@@ -345,8 +344,6 @@ function UploadPage() {
     setRefreshTrigger(prev => prev + 1); // Increment to trigger refresh
   };
 
-  
-
   const handleDialogAlert = (title, message, type = 'info') => {
     setDialogContent({ title, message, type });
     setDialogVisible(true);
@@ -455,13 +452,6 @@ function UploadPage() {
             title="Toggle Dark Mode"
           >
             {isDarkMode ? "☀️" : "🌙"}
-          </button>
-          <button
-            className="extract-link-btn"
-            onClick={() => navigate('/extract')}
-            title="Question Extractor"
-          >
-            🔍
           </button>
           <button
             className={`library-toggle-btn ${showLocalJSON ? "active" : ""}`}

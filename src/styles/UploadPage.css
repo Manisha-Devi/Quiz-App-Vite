@@ -997,37 +997,6 @@
   padding: 48px 32px;
   border: 3px dashed #667eea;
   border-radius: 20px;
-
-
-.extract-link-btn {
-  background: transparent;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-  color: var(--text-color, #333);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 44px;
-  height: 44px;
-}
-
-.extract-link-btn:hover {
-  background: rgba(0, 123, 255, 0.1);
-  transform: scale(1.05);
-}
-
-.upload-page.dark-mode .extract-link-btn {
-  color: #e2e8f0;
-}
-
-.upload-page.dark-mode .extract-link-btn:hover {
-  background: rgba(116, 75, 162, 0.2);
-}
-
   cursor: pointer;
   transition: all 0.3s ease;
   background: linear-gradient(145deg, #fafbff, #f0f4ff);

@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import UploadPage from './pages/UploadPage';
-import ExtractPage from './pages/ExtractPage';
 import SectionSetupPage from './pages/SectionSetupPage';
 import ExamPage from './pages/ExamPage';
 import ResultPage from './pages/ResultPage';
@@ -45,7 +44,6 @@ function App() {
       <div className="App">
         <Routes>
           <Route path="/" element={<UploadPage />} />
-          <Route path="/extract" element={<ExtractPage />} />
           <Route path="/sections" element={<SectionSetupPage />} />
           <Route path="/exam" element={<ExamPage />} />
           <Route path="/result" element={<ResultPage />} />
