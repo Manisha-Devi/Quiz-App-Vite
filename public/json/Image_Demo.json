@@ -14,12 +14,12 @@
     },
         {
         "id": 2,
-        "question": "Study the given Venn Diagram Carefully and answer the question that folows:<br><img id='Question1.png' alt='Image Missing'><br> The number in different section indicates the number of persons. How many plumbers are there who are also hairdressers and judges.  ",
+        "question": "If a mirror is placed on the line MN, then which of the answer figures is the right image of the given figure? <br><img id='Question2.png'> ",
         "options": [
-            "19", 
-            "11", 
-            "23", 
-            "12"
+            "<img id='Question2Option1.png'>", 
+            "<img id='Question2Option2.png'>", 
+            "<img id='Question2Option3.png'>", 
+            "<img id='Question2Option4.png'>"
         ],
         "answer": 0,
         "level": 1
