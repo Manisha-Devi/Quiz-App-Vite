@@ -833,6 +833,33 @@ body {
   margin-bottom: 25px;
   color: #2e7d32;
   line-height: 1.6;
+  white-space: pre-line;
+}
+
+.extracted-question-card .question-text br {
+  display: block;
+  margin: 8px 0;
+  content: "";
+}
+
+.extracted-question-card .question-text table,
+.extracted-question-card .question-text .match-table {
+  border-collapse: collapse;
+  margin: 15px 0;
+  width: 100%;
+}
+
+.extracted-question-card .question-text td,
+.extracted-question-card .question-text th {
+  border: 1px solid #4CAF50;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.extracted-question-card .question-text th {
+  background: #4CAF50;
+  color: white;
+  font-weight: 600;
 }
 
 .extracted-question-card .options-grid {

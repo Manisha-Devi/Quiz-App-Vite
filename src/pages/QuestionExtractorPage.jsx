@@ -162,75 +162,147 @@ const QuestionExtractorPage = () => {
   const parseQuestionsFromText = (text, fileIndex) => {
     const questions = [];
     
-    // Split text into lines and clean up
-    const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+    // Clean up text and split into sections by question numbers
+    let cleanedText = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
     
-    let currentQuestion = null;
+    // Find all question starts with regex
+    const questionPattern = /(\d+)\.\s*(.+?)(?=\d+\.\s|$)/gs;
+    const questionMatches = [...cleanedText.matchAll(questionPattern)];
+    
     let questionCounter = 1;
     
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
+    for (const match of questionMatches) {
+      const questionNumber = parseInt(match[1]);
+      const questionContent = match[2].trim();
       
-      // Check if line starts with a number (question)
-      const questionMatch = line.match(/^(\d+)\.\s*(.+)/);
-      if (questionMatch) {
-        // Save previous question if exists
-        if (currentQuestion && currentQuestion.question && currentQuestion.options.length === 4) {
-          // Set default level if not explicitly provided
-          if (currentQuestion.level === undefined) {
-            currentQuestion.level = 0;
-          }
-          questions.push(currentQuestion);
+      // Parse each question content
+      const lines = questionContent.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+      
+      let currentQuestion = {
+        id: `q${fileIndex}_${questionCounter++}`,
+        question: '',
+        options: [],
+        correct: '',
+        explanation: '',
+        level: 0
+      };
+      
+      let questionText = '';
+      let isParsingOptions = false;
+      let isParsingAnswer = false;
+      let isParsingExplanation = false;
+      let isParsingLevel = false;
+      
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        
+        // Check for options (A., B., C., D. or A), B), C), D))
+        const optionMatch = line.match(/^([A-D])[\.\)]\s*(.+)/i);
+        if (optionMatch && !isParsingAnswer && !isParsingExplanation) {
+          isParsingOptions = true;
+          const optionText = optionMatch[2].trim();
+          currentQuestion.options.push(optionText);
+          continue;
         }
         
-        // Start new question
-        currentQuestion = {
-          id: `q${fileIndex}_${questionCounter++}`,
-          question: questionMatch[2].trim(),
-          options: [],
-          correct: '',
-          explanation: '',
-          level: undefined // Will be set if found in text, otherwise default to 0 later
-        };
-      }
-      // Check for options (A), B), C), D))
-      else if (currentQuestion && line.match(/^[A-D]\)\s*(.+)/)) {
-        const optionMatch = line.match(/^[A-D]\)\s*(.+)/);
-        if (optionMatch) {
-          currentQuestion.options.push(optionMatch[1].trim());
+        // Check for answer
+        if (line.toLowerCase().includes('answer:')) {
+          isParsingAnswer = true;
+          isParsingOptions = false;
+          isParsingExplanation = false;
+          const answerMatch = line.match(/answer:\s*([A-D])/i);
+          if (answerMatch) {
+            currentQuestion.correct = answerMatch[1].toUpperCase();
+          }
+          continue;
+        }
+        
+        // Check for level/difficulty
+        if (line.toLowerCase().includes('level:')) {
+          isParsingLevel = true;
+          const levelMatch = line.match(/level:\s*(easy|medium|hard|\d+)/i);
+          if (levelMatch) {
+            const levelValue = levelMatch[1].toLowerCase();
+            if (levelValue === 'easy' || levelValue === '0') {
+              currentQuestion.level = 0;
+            } else if (levelValue === 'medium' || levelValue === '1') {
+              currentQuestion.level = 1;
+            } else if (levelValue === 'hard' || levelValue === '2') {
+              currentQuestion.level = 2;
+            } else {
+              const numLevel = parseInt(levelValue);
+              currentQuestion.level = Math.min(Math.max(numLevel, 0), 2);
+            }
+          }
+          continue;
+        }
+        
+        // Check for explanation
+        if (line.toLowerCase().includes('explanation:')) {
+          isParsingExplanation = true;
+          isParsingOptions = false;
+          isParsingAnswer = false;
+          const explanationMatch = line.match(/explanation:\s*(.+)/i);
+          if (explanationMatch) {
+            currentQuestion.explanation = explanationMatch[1].trim();
+          }
+          continue;
+        }
+        
+        // Continue parsing explanation if we're in explanation mode
+        if (isParsingExplanation && !line.toLowerCase().includes('level:') && !line.toLowerCase().includes('answer:')) {
+          if (currentQuestion.explanation) {
+            currentQuestion.explanation += ' ' + line;
+          } else {
+            currentQuestion.explanation = line;
+          }
+          continue;
+        }
+        
+        // If not parsing options, answer, or explanation, add to question text
+        if (!isParsingOptions && !isParsingAnswer && !isParsingExplanation && !isParsingLevel) {
+          if (questionText) {
+            questionText += ' ' + line;
+          } else {
+            questionText = line;
+          }
         }
       }
-      // Check for answer
-      else if (currentQuestion && line.toLowerCase().startsWith('answer:')) {
-        const answerMatch = line.match(/answer:\s*([A-D])/i);
-        if (answerMatch) {
-          currentQuestion.correct = answerMatch[1].toUpperCase();
+      
+      // Clean up and format question text
+      currentQuestion.question = questionText.trim();
+      
+      // Handle HTML formatting and preserve structure for complex questions
+      if (currentQuestion.question.includes('Match') || currentQuestion.question.includes('following')) {
+        // Preserve formatting for match-the-following questions
+        const formattedLines = questionContent.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+        let formattedQuestion = '';
+        let foundFirstOption = false;
+        
+        for (const line of formattedLines) {
+          if (line.match(/^[A-D][\.\)]/i)) {
+            foundFirstOption = true;
+            break;
+          }
+          if (!line.toLowerCase().includes('answer:') && 
+              !line.toLowerCase().includes('explanation:') && 
+              !line.toLowerCase().includes('level:')) {
+            if (formattedQuestion) {
+              formattedQuestion += '<br>' + line;
+            } else {
+              formattedQuestion = line;
+            }
+          }
         }
+        currentQuestion.question = formattedQuestion;
       }
-      // Check for explanation
-      else if (currentQuestion && line.toLowerCase().startsWith('explanation:')) {
-        const explanationMatch = line.match(/explanation:\s*(.+)/i);
-        if (explanationMatch) {
-          currentQuestion.explanation = explanationMatch[1].trim();
-        }
+      
+      // Only add question if it has valid structure
+      if (currentQuestion.question && currentQuestion.options.length >= 4 && currentQuestion.correct) {
+        // Ensure we have exactly 4 options
+        currentQuestion.options = currentQuestion.options.slice(0, 4);
+        questions.push(currentQuestion);
       }
-      // Check for level/difficulty
-      else if (currentQuestion && line.toLowerCase().includes('level:')) {
-        const levelMatch = line.match(/level:\s*(\d+)/i);
-        if (levelMatch) {
-          const level = parseInt(levelMatch[1]);
-          currentQuestion.level = Math.min(Math.max(level, 0), 2); // Ensure level is 0, 1, or 2
-        }
-      }
-    }
-    
-    // Add the last question if valid
-    if (currentQuestion && currentQuestion.question && currentQuestion.options.length === 4) {
-      // Set default level if not explicitly provided
-      if (currentQuestion.level === undefined) {
-        currentQuestion.level = 0;
-      }
-      questions.push(currentQuestion);
     }
     
     return questions;
