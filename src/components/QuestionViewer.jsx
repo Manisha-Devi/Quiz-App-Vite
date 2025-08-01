@@ -277,6 +277,7 @@ const QuestionViewer = React.memo(function QuestionViewer({
                   {renderMathAndHTML(opt)}
                 </span>
                 {isHidden && <span className="red-fifty">❌</span>}
+                {isUserAnswer && !showAnswer && <span className="option-tick">✓</span>}
                 {isCorrectAnswer && <span className="correct-indicator">✅</span>}
               </div>
             );
