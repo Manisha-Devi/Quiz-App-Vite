@@ -72,26 +72,6 @@
   float: right;
 }
 
-.option-tick {
-  color: #4b3ee6;
-  font-size: 20px;
-  font-weight: bold;
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  background: rgba(75, 62, 230, 0.1);
-  border-radius: 50%;
-  transition: all 0.2s ease;
-}
-
-.dark-mode .option-tick {
-  color: #a78bfa;
-  background: rgba(167, 139, 250, 0.1);
-}
-
 .explanation-section {
   background: #e8f7e9;
   padding: 16px;
