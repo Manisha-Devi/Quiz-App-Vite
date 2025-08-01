@@ -139,10 +139,26 @@ const QuestionExtractorPage = () => {
           const result = await mammoth.extractRawText({ arrayBuffer });
           extractedText = result.value;
         } else if (file.type === 'application/pdf') {
-          // For PDF parsing, you would need pdf-parse or similar library
-          // For now, we'll show a message that PDF parsing is not yet implemented
-          console.log('PDF parsing not yet implemented');
-          continue;
+          // Parse PDF file
+          try {
+            const pdfParse = await import('pdf-parse');
+            const arrayBuffer = await file.arrayBuffer();
+            const buffer = new Uint8Array(arrayBuffer);
+            const data = await pdfParse.default(buffer);
+            extractedText = data.text;
+            console.log('PDF text extracted successfully');
+          } catch (pdfError) {
+            console.error('Error parsing PDF:', pdfError);
+            setExtractedQuestions(prev => [...prev, {
+              id: `error-${Date.now()}`,
+              question: `Error parsing PDF file: ${file.name}. ${pdfError.message}`,
+              options: ['Unable to extract', 'Please try again', 'Check file format', 'Contact support'],
+              correct: 'A',
+              level: 0,
+              explanation: 'This PDF file could not be processed. Please ensure it contains readable text.'
+            }]);
+            continue;
+          }
         }
 
         // Parse questions from extracted text
