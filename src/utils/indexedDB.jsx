@@ -1,4 +1,3 @@
-
 // src/utils/indexedDB.js
 
 // Open the IndexedDB database
@@ -269,7 +268,7 @@ export const deleteData = async (storeName, id) => {
 export const clearDatabase = async () => {
   const db = await openDb();
   const stores = ['userSettings', 'examData', 'examResults', 'jsonFiles', 'jsonImages'];
-  
+
   for (const storeName of stores) {
     try {
       const transaction = db.transaction([storeName], 'readwrite');

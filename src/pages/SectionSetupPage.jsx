@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAllJSONImages } from '../utils/indexedDB';
+import { getAllImagesForJSONFile } from '../utils/indexedDB';
 import dataManager from '../utils/dataManager';
 import '../styles/SectionSetupPage.css';
 
@@ -87,11 +87,11 @@ function SectionSetupPage() {
         for (const file of data) {
           try {
             console.log(`Loading images for ${file.name}...`);
-            const images = await getAllJSONImages(file.name);
+            const images = await getAllImagesForJSONFile(file.name);
             if (images && images.length > 0) {
               imageMap[`${file.name}.json`] = images.map(img => ({
                 name: img.imageName,
-                data: img.imageData
+                data: img.data
               }));
               console.log(`Loaded ${images.length} images for ${file.name}`);
             }
