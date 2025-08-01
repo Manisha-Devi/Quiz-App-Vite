@@ -1,155 +1,185 @@
 import React, { useState, useEffect } from 'react';
 import dataManager from '../utils/dataManager';
 
-const CacheCleaner = ({ onDataChange, onAlert }) => {
+const CacheCleaner = ({ onDataChange, onAlert, onConfirm }) => {
   const [loading, setLoading] = useState(false);
   const [currentOperation, setCurrentOperation] = useState('');
 
   const fetchJSONData = async () => {
     if (loading) return;
 
+    const confirmAction = () => performFetchJSONData();
+
+    if (onConfirm) {
+      onConfirm(
+        "Fetch Data",
+        "⚠️ Are you sure you want to Fetch Data? This will fetch data from the server.",
+        confirmAction
+      );
+      return;
+    }
+
     if (confirm(
       "⚠️ Are you sure you want to Fetch Data? This will fetch data from the server."
     )) {
-      try {
-        setLoading(true);
-        setCurrentOperation('fetching');
-        console.log('Fetching JSON files data and storing in IndexedDB...');
+        performFetchJSONData();
+    }
+  };
 
-        // Dynamic import of JSON files and store them in IndexedDB
-        const jsonFiles = [
-          { name: 'Art and Culture jk', path: '/json/Art and Culture jk.json' },
-          { name: 'Email', path: '/json/Email.json' },
-          { name: 'Image_Demo', path: '/json/Image_Demo.json' },
-          { name: 'KaTeX Demo', path: '/json/KaTeX Demo.json' },
-          { name: 'Operating_System', path: '/json/Operating_System.json' },
-          { name: 'Sanfoundry_Excel', path: '/json/Sanfoundry_Excel.json' },
-          { name: 'Sanfoundry_Office', path: '/json/Sanfoundry_Office.json' },
-          { name: 'Sanfoundry_PowerPoint', path: '/json/Sanfoundry_PowerPoint.json' },
-          { name: 'Sanfoundry_Word', path: '/json/Sanfoundry_Word.json' }
-        ];
+  const performFetchJSONData = async () => {
+    try {
+      setLoading(true);
+      setCurrentOperation('fetching');
+      console.log('Fetching JSON files data and storing in IndexedDB...');
 
-        const loadedData = [];
+      // Dynamic import of JSON files and store them in IndexedDB
+      const jsonFiles = [
+        { name: 'Art and Culture jk', path: '/json/Art and Culture jk.json' },
+        { name: 'Email', path: '/json/Email.json' },
+        { name: 'Image_Demo', path: '/json/Image_Demo.json' },
+        { name: 'KaTeX Demo', path: '/json/KaTeX Demo.json' },
+        { name: 'Operating_System', path: '/json/Operating_System.json' },
+        { name: 'Sanfoundry_Excel', path: '/json/Sanfoundry_Excel.json' },
+        { name: 'Sanfoundry_Office', path: '/json/Sanfoundry_Office.json' },
+        { name: 'Sanfoundry_PowerPoint', path: '/json/Sanfoundry_PowerPoint.json' },
+        { name: 'Sanfoundry_Word', path: '/json/Sanfoundry_Word.json' }
+      ];
 
-        for (const file of jsonFiles) {
+      const loadedData = [];
+
+      for (const file of jsonFiles) {
+        try {
+          // Try different path strategies for production
+          let response;
+          let data;
+
+          // First try the public path (for production)
           try {
-            // Try different path strategies for production
-            let response;
-            let data;
-
-            // First try the public path (for production)
-            try {
-              response = await fetch(`/json/${file.name}.json`);
-              if (response.ok) {
-                data = await response.json();
-              }
-            } catch (e) {
-              console.warn(`Could not load from /json/${file.name}.json:`, e);
+            response = await fetch(`/json/${file.name}.json`);
+            if (response.ok) {
+              data = await response.json();
             }
-
-            if (data) {
-              loadedData.push({
-                name: file.name,
-                questions: data
-              });
-              console.log(`Loaded ${file.name}: ${data.length} questions`);
-            }
-          } catch (error) {
-            console.warn(`Could not load ${file.name}:`, error);
+          } catch (e) {
+            console.warn(`Could not load from /json/${file.name}.json:`, e);
           }
+
+          if (data) {
+            loadedData.push({
+              name: file.name,
+              questions: data
+            });
+            console.log(`Loaded ${file.name}: ${data.length} questions`);
+          }
+        } catch (error) {
+          console.warn(`Could not load ${file.name}:`, error);
         }
-
-        if (loadedData.length > 0) {
-          // Store each file in dedicated jsonFiles store
-          const { storeJSONFile } = await import('../utils/indexedDB');
-
-          for (const fileData of loadedData) {
-            await storeJSONFile(fileData.name, fileData.questions);
-            console.log(`Stored ${fileData.name} in jsonFiles store with ${fileData.questions.length} questions`);
-          }
-
-          console.log(`Successfully stored ${loadedData.length} JSON files in dedicated jsonFiles IndexedDB store`);
-
-          // Now also fetch and store images associated with JSON files
-          console.log('🖼️ Starting to load associated images...');
-          const { loadJSONImagesFromFolders } = await import('../utils/jsonLoader');
-          await loadJSONImagesFromFolders();
-          console.log('✅ Images loading process completed');
-
-          if (onAlert) {
-            onAlert('Data Fetch Success', `✅ Successfully loaded:\n📄 ${loadedData.length} JSON files\n🖼️ Associated images\n\nAll data stored in IndexedDB!`, 'success');
-          } else {
-            alert(`✅ Successfully loaded:\n📄 ${loadedData.length} JSON files\n🖼️ Associated images\n\nAll data stored in IndexedDB!`);
-          }
-
-          if (onDataChange) {
-            onDataChange();
-          }
-        } else {
-          if (onAlert) {
-            onAlert('Data Fetch Warning', '⚠️ No JSON files could be loaded', 'warning');
-          } else {
-            alert('⚠️ No JSON files could be loaded');
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching JSON data:', error);
-        if (onAlert) {
-          onAlert('Data Fetch Error', `❌ Error loading JSON files: ${error.message || 'Please try again.'}`, 'error');
-        } else {
-          alert(`❌ Error loading JSON files: ${error.message || 'Please try again.'}`);
-        }
-      } finally {
-        setLoading(false);
-        setCurrentOperation('');
       }
+
+      if (loadedData.length > 0) {
+        // Store each file in dedicated jsonFiles store
+        const { storeJSONFile } = await import('../utils/indexedDB');
+
+        for (const fileData of loadedData) {
+          await storeJSONFile(fileData.name, fileData.questions);
+          console.log(`Stored ${fileData.name} in jsonFiles store with ${fileData.questions.length} questions`);
+        }
+
+        console.log(`Successfully stored ${loadedData.length} JSON files in dedicated jsonFiles IndexedDB store`);
+
+        // Now also fetch and store images associated with JSON files
+        console.log('🖼️ Starting to load associated images...');
+        const { loadJSONImagesFromFolders } = await import('../utils/jsonLoader');
+        await loadJSONImagesFromFolders();
+        console.log('✅ Images loading process completed');
+
+        if (onAlert) {
+          onAlert('Data Fetch Success', `✅ Successfully loaded:\n📄 ${loadedData.length} JSON files\n🖼️ Associated images\n\nAll data stored in IndexedDB!`, 'success');
+        } else {
+          alert(`✅ Successfully loaded:\n📄 ${loadedData.length} JSON files\n🖼️ Associated images\n\nAll data stored in IndexedDB!`);
+        }
+
+        if (onDataChange) {
+          onDataChange();
+        }
+      } else {
+        if (onAlert) {
+          onAlert('Data Fetch Warning', '⚠️ No JSON files could be loaded', 'warning');
+        } else {
+          alert('⚠️ No JSON files could be loaded');
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching JSON data:', error);
+      if (onAlert) {
+        onAlert('Data Fetch Error', `❌ Error loading JSON files: ${error.message || 'Please try again.'}`, 'error');
+      } else {
+        alert(`❌ Error loading JSON files: ${error.message || 'Please try again.'}`);
+      }
+    } finally {
+      setLoading(false);
+      setCurrentOperation('');
     }
   };
 
   const clearIndexedDBStores = async () => {
     if (loading) return;
 
+    const confirmAction = () => performClearIndexedDBStores();
+
+    if (onConfirm) {
+      onConfirm(
+        "Clear IndexedDB Stores",
+        "⚠️ Are you sure you want to CLEAR all IndexedDB stores? This will empty all data but keep the database structure intact.",
+        confirmAction
+      );
+      return;
+    }
+
     if (confirm("⚠️ Are you sure you want to CLEAR all IndexedDB stores? This will empty all data but keep the database structure intact.")) {
-      try {
-        setLoading(true);
-        setCurrentOperation('clearing');
-        console.log('🧹 Starting IndexedDB stores clearing process...');
+        performClearIndexedDBStores();
+    }
+  };
 
-        // Try to clear using dataManager first
-        let success = await dataManager.clearAllAppData();
+  const performClearIndexedDBStores = async () => {
+    try {
+      setLoading(true);
+      setCurrentOperation('clearing');
+      console.log('🧹 Starting IndexedDB stores clearing process...');
 
-        // If dataManager fails, try direct approach
-        if (!success) {
-          console.log('⚠️ DataManager clear failed, trying direct approach...');
-          success = await clearStoresDirectly();
-        }
+      // Try to clear using dataManager first
+      let success = await dataManager.clearAllAppData();
 
-        if (success) {
-          console.log('✅ All IndexedDB stores cleared successfully');
-          if (onAlert) {
-            onAlert('Clear Success', '✅ All IndexedDB stores cleared successfully!\n\n📊 All data has been removed while preserving the database structure.', 'success');
-          } else {
-            alert('✅ All IndexedDB stores cleared successfully!\n\n📊 All data has been removed while preserving the database structure.');
-          }
-
-          if (onDataChange) {
-            onDataChange();
-          }
-        } else {
-          throw new Error('Failed to clear IndexedDB stores using all available methods');
-        }
-
-      } catch (error) {
-        console.error('❌ Error clearing IndexedDB stores:', error);
-        if (onAlert) {
-          onAlert('Clear Error', `❌ Error clearing IndexedDB stores: ${error.message || 'Unknown error occurred.'}\n\nTip: Try the Delete button instead to remove the entire database.`, 'error');
-        } else {
-          alert(`❌ Error clearing IndexedDB stores: ${error.message || 'Unknown error occurred.'}\n\nTip: Try the Delete button instead to remove the entire database.`);
-        }
-      } finally {
-        setLoading(false);
-        setCurrentOperation('');
+      // If dataManager fails, try direct approach
+      if (!success) {
+        console.log('⚠️ DataManager clear failed, trying direct approach...');
+        success = await clearStoresDirectly();
       }
+
+      if (success) {
+        console.log('✅ All IndexedDB stores cleared successfully');
+        if (onAlert) {
+          onAlert('Clear Success', '✅ All IndexedDB stores cleared successfully!\n\n📊 All data has been removed while preserving the database structure.', 'success');
+        } else {
+          alert('✅ All IndexedDB stores cleared successfully!\n\n📊 All data has been removed while preserving the database structure.');
+        }
+
+        if (onDataChange) {
+          onDataChange();
+        }
+      } else {
+        throw new Error('Failed to clear IndexedDB stores using all available methods');
+      }
+
+    } catch (error) {
+      console.error('❌ Error clearing IndexedDB stores:', error);
+      if (onAlert) {
+        onAlert('Clear Error', `❌ Error clearing IndexedDB stores: ${error.message || 'Unknown error occurred.'}\n\nTip: Try the Delete button instead to remove the entire database.`, 'error');
+      } else {
+        alert(`❌ Error clearing IndexedDB stores: ${error.message || 'Unknown error occurred.'}\n\nTip: Try the Delete button instead to remove the entire database.`);
+      }
+    } finally {
+      setLoading(false);
+      setCurrentOperation('');
     }
   };
 
@@ -203,143 +233,173 @@ const CacheCleaner = ({ onDataChange, onAlert }) => {
   const clearBrowserStorage = async () => {
     if (loading) return;
 
+    const confirmAction = () => performClearBrowserStorage();
+
+    if (onConfirm) {
+      onConfirm(
+        "Clear Browser Storage",
+        "⚠️ Are you sure you want to CLEAR all browser storage? This will remove localStorage, sessionStorage, and cookies for this domain.",
+        confirmAction
+      );
+      return;
+    }
+
     if (confirm(
       "⚠️ Are you sure you want to CLEAR all browser storage? This will remove localStorage, sessionStorage, and cookies for this domain."
     )) {
-      try {
-        setLoading(true);
-        setCurrentOperation('storage');
-        console.log('Starting browser storage clearing process...');
+        performClearBrowserStorage();
+    }
+  };
 
-        // Clear localStorage
-        const localStorageCount = localStorage.length;
-        localStorage.clear();
-        console.log(`✅ localStorage cleared (${localStorageCount} items removed)`);
+  const performClearBrowserStorage = async () => {
+    try {
+      setLoading(true);
+      setCurrentOperation('storage');
+      console.log('Starting browser storage clearing process...');
 
-        // Clear sessionStorage
-        const sessionStorageCount = sessionStorage.length;
-        sessionStorage.clear();
-        console.log(`✅ sessionStorage cleared (${sessionStorageCount} items removed)`);
+      // Clear localStorage
+      const localStorageCount = localStorage.length;
+      localStorage.clear();
+      console.log(`✅ localStorage cleared (${localStorageCount} items removed)`);
 
-        // Clear cookies
-        const cookies = document.cookie.split(";");
-        let cookiesCleared = 0;
+      // Clear sessionStorage
+      const sessionStorageCount = sessionStorage.length;
+      sessionStorage.clear();
+      console.log(`✅ sessionStorage cleared (${sessionStorageCount} items removed)`);
 
-        for (let cookie of cookies) {
-          const eqPos = cookie.indexOf("=");
-          const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
-          if (name) {
-            // Clear cookie for current domain
-            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
-            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=${window.location.hostname}`;
-            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=.${window.location.hostname}`;
-            cookiesCleared++;
-          }
+      // Clear cookies
+      const cookies = document.cookie.split(";");
+      let cookiesCleared = 0;
+
+      for (let cookie of cookies) {
+        const eqPos = cookie.indexOf("=");
+        const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+        if (name) {
+          // Clear cookie for current domain
+          document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+          document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=${window.location.hostname}`;
+          document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=.${window.location.hostname}`;
+          cookiesCleared++;
         }
-        console.log(`✅ Cookies cleared (${cookiesCleared} cookies removed)`);
-
-        // Clear cache if available
-        let cacheCount = 0;
-        if ('caches' in window) {
-          try {
-            const cacheNames = await caches.keys();
-            cacheCount = cacheNames.length;
-            await Promise.all(
-              cacheNames.map(cacheName => caches.delete(cacheName))
-            );
-            console.log(`✅ Cache cleared (${cacheCount} caches removed)`);
-          } catch (cacheError) {
-            console.warn('Warning: Could not clear cache:', cacheError);
-          }
-        }
-
-        const summary = [
-          `✅ Browser storage cleared successfully!`,
-          ``,
-          `📊 Summary:`,
-          `• localStorage: ${localStorageCount} items removed`,
-          `• sessionStorage: ${sessionStorageCount} items removed`,
-          `• Cookies: ${cookiesCleared} cookies removed`,
-          `• Cache: ${cacheCount} caches cleared`
-        ].join('\n');
-
-        if (onAlert) {
-          onAlert('Storage Clear Success', summary, 'success');
-        } else {
-          alert(summary);
-        }
-
-        if (onDataChange) {
-          onDataChange();
-        }
-
-      } catch (error) {
-        console.error('Error clearing browser storage:', error);
-        if (onAlert) {
-          onAlert('Storage Clear Error', `❌ Error clearing browser storage: ${error.message || 'Unknown error occurred.'}`, 'error');
-        } else {
-          alert(`❌ Error clearing browser storage: ${error.message || 'Unknown error occurred.'}`);
-        }
-      } finally {
-        setLoading(false);
-        setCurrentOperation('');
       }
+      console.log(`✅ Cookies cleared (${cookiesCleared} cookies removed)`);
+
+      // Clear cache if available
+      let cacheCount = 0;
+      if ('caches' in window) {
+        try {
+          const cacheNames = await caches.keys();
+          cacheCount = cacheNames.length;
+          await Promise.all(
+            cacheNames.map(cacheName => caches.delete(cacheName))
+          );
+          console.log(`✅ Cache cleared (${cacheCount} caches removed)`);
+        } catch (cacheError) {
+          console.warn('Warning: Could not clear cache:', cacheError);
+        }
+      }
+
+      const summary = [
+        `✅ Browser storage cleared successfully!`,
+        ``,
+        `📊 Summary:`,
+        `• localStorage: ${localStorageCount} items removed`,
+        `• sessionStorage: ${sessionStorageCount} items removed`,
+        `• Cookies: ${cookiesCleared} cookies removed`,
+        `• Cache: ${cacheCount} caches cleared`
+      ].join('\n');
+
+      if (onAlert) {
+        onAlert('Storage Clear Success', summary, 'success');
+      } else {
+        alert(summary);
+      }
+
+      if (onDataChange) {
+        onDataChange();
+      }
+
+    } catch (error) {
+      console.error('Error clearing browser storage:', error);
+      if (onAlert) {
+        onAlert('Storage Clear Error', `❌ Error clearing browser storage: ${error.message || 'Unknown error occurred.'}`, 'error');
+      } else {
+        alert(`❌ Error clearing browser storage: ${error.message || 'Unknown error occurred.'}`);
+      }
+    } finally {
+      setLoading(false);
+      setCurrentOperation('');
     }
   };
 
   const deleteIndexedDB = async () => {
     if (loading) return;
 
+    const confirmAction = () => performDeleteIndexedDB();
+
+    if (onConfirm) {
+      onConfirm(
+        "Delete IndexedDB",
+        "⚠️ Are you sure you want to DELETE the entire IndexedDB database?\n\n🔥 This will:\n• Remove ALL data permanently\n• Delete the entire database structure\n• Cannot be undone\n\nProceed with deletion?",
+        confirmAction
+      );
+      return;
+    }
+
     if (confirm(
       "⚠️ Are you sure you want to DELETE the entire IndexedDB database?\n\n🔥 This will:\n• Remove ALL data permanently\n• Delete the entire database structure\n• Cannot be undone\n\nProceed with deletion?"
     )) {
-      try {
-        setLoading(true);
-        setCurrentOperation('deleting');
-        console.log('🗑️ Starting IndexedDB database deletion process...');
+        performDeleteIndexedDB();
+    }
+  };
 
-        // Step 1: Force close all database connections
-        await forceCloseAllConnections();
+  const performDeleteIndexedDB = async () => {
+    try {
+      setLoading(true);
+      setCurrentOperation('deleting');
+      console.log('🗑️ Starting IndexedDB database deletion process...');
 
-        // Step 2: Wait for connections to fully close
-        console.log('⏳ Waiting for database connections to close...');
-        await new Promise(resolve => setTimeout(resolve, 2000));
+      // Step 1: Force close all database connections
+      await forceCloseAllConnections();
 
-        // Step 3: Attempt database deletion with retry logic
-        const deleteSuccess = await attemptDatabaseDeletion();
+      // Step 2: Wait for connections to fully close
+      console.log('⏳ Waiting for database connections to close...');
+      await new Promise(resolve => setTimeout(resolve, 2000));
 
-        if (deleteSuccess) {
-          console.log('✅ IndexedDB database deleted successfully');
+      // Step 3: Attempt database deletion with retry logic
+      const deleteSuccess = await attemptDatabaseDeletion();
 
-          // Mark database as deleted to prevent automatic recreation
-          const { default: dataManager } = await import('../utils/dataManager');
-          dataManager.markDatabaseAsDeleted();
+      if (deleteSuccess) {
+        console.log('✅ IndexedDB database deleted successfully');
 
-          if (onAlert) {
-            onAlert('Delete Success', '✅ IndexedDB database deleted successfully!\n\n🗑️ The database has been completely removed and will not recreate automatically.', 'success');
-          } else {
-            alert('✅ IndexedDB database deleted successfully!\n\n🗑️ The database has been completely removed and will not recreate automatically.');
-          }
+        // Mark database as deleted to prevent automatic recreation
+        const { default: dataManager } = await import('../utils/dataManager');
+        dataManager.markDatabaseAsDeleted();
 
-          if (onDataChange) {
-            onDataChange();
-          }
-
-        } else {
-          throw new Error('Failed to delete IndexedDB database after multiple attempts');
-        }
-
-      } catch (error) {
-        console.error('❌ Error deleting IndexedDB:', error);
         if (onAlert) {
-          onAlert('Delete Error', `❌ Error deleting IndexedDB: ${error.message || 'Unknown error occurred.'}\n\n💡 Troubleshooting tips:\n• Close all other tabs with this app\n• Try the Clear button instead\n• Manually reload the page`, 'error');
+          onAlert('Delete Success', '✅ IndexedDB database deleted successfully!\n\n🗑️ The database has been completely removed and will not recreate automatically.', 'success');
         } else {
-          alert(`❌ Error deleting IndexedDB: ${error.message || 'Unknown error occurred.'}\n\n💡 Troubleshooting tips:\n• Close all other tabs with this app\n• Try the Clear button instead\n• Manually reload the page`);
+          alert('✅ IndexedDB database deleted successfully!\n\n🗑️ The database has been completely removed and will not recreate automatically.');
         }
-      } finally {
-        setLoading(false);
-        setCurrentOperation('');
+
+        if (onDataChange) {
+          onDataChange();
+        }
+
+      } else {
+        throw new Error('Failed to delete IndexedDB database after multiple attempts');
       }
+
+    } catch (error) {
+      console.error('❌ Error deleting IndexedDB:', error);
+      if (onAlert) {
+        onAlert('Delete Error', `❌ Error deleting IndexedDB: ${error.message || 'Unknown error occurred.'}\n\n💡 Troubleshooting tips:\n• Close all other tabs with this app\n• Try the Clear button instead\n• Manually reload the page`, 'error');
+      } else {
+        alert(`❌ Error deleting IndexedDB: ${error.message || 'Unknown error occurred.'}\n\n💡 Troubleshooting tips:\n• Close all other tabs with this app\n• Try the Clear button instead\n• Manually reload the page`);
+      }
+    } finally {
+      setLoading(false);
+      setCurrentOperation('');
     }
   };
 

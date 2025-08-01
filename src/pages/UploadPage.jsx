@@ -27,6 +27,15 @@ function UploadPage() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [dialogVisible, setDialogVisible] = useState(false);
   const [dialogContent, setDialogContent] = useState({ title: '', message: '', type: 'info' });
+  
+  // Confirmation dialog state
+  const [confirmationVisible, setConfirmationVisible] = useState(false);
+  const [confirmationData, setConfirmationData] = useState({ 
+    title: '', 
+    message: '', 
+    onConfirm: null, 
+    onCancel: null 
+  });
 
   const KEYS_TO_CLEAR = [
     "quizData",
@@ -344,6 +353,31 @@ function UploadPage() {
     setDialogVisible(false);
   };
 
+  // Confirmation dialog functions
+  const handleConfirmDialog = (title, message, onConfirm, onCancel = null) => {
+    setConfirmationData({ 
+      title, 
+      message, 
+      onConfirm, 
+      onCancel: onCancel || (() => setConfirmationVisible(false))
+    });
+    setConfirmationVisible(true);
+  };
+
+  const handleConfirm = () => {
+    if (confirmationData.onConfirm) {
+      confirmationData.onConfirm();
+    }
+    setConfirmationVisible(false);
+  };
+
+  const handleCancel = () => {
+    if (confirmationData.onCancel) {
+      confirmationData.onCancel();
+    }
+    setConfirmationVisible(false);
+  };
+
 
   // Function to clear all data
   const clearAllData = async () => {
@@ -600,7 +634,7 @@ function UploadPage() {
             <span className="tools-text">Developer Tools</span>
           </div>
           <div className="developer-tools-row">
-            <CacheCleaner onDataChange={handleDataChange} onAlert={handleDialogAlert} />
+            <CacheCleaner onDataChange={handleDataChange} onAlert={handleDialogAlert} onConfirm={handleConfirmDialog} />
           </div>
         </div>
       </div>
@@ -625,6 +659,32 @@ function UploadPage() {
             </div>
             <div className="dialog-actions">
               <button className="dialog-ok-btn" onClick={closeDialog}>OK</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirmation Dialog Box */}
+      {confirmationVisible && (
+        <div className="custom-dialog-overlay" onClick={handleCancel}>
+          <div className="custom-dialog-box" onClick={(e) => e.stopPropagation()}>
+            <div className="dialog-header">
+              <h3 className="dialog-title">
+                <span className="dialog-icon">⚠️</span>
+                {confirmationData.title}
+              </h3>
+              <button className="dialog-close-btn" onClick={handleCancel}>✕</button>
+            </div>
+            <div className="dialog-content">
+              <p className="dialog-message" style={{ whiteSpace: 'pre-line' }}>{confirmationData.message}</p>
+            </div>
+            <div className="dialog-actions">
+              <button className="dialog-ok-btn" onClick={handleCancel} style={{ marginRight: '10px', background: '#6c757d' }}>
+                Cancel
+              </button>
+              <button className="dialog-ok-btn" onClick={handleConfirm}>
+                Confirm
+              </button>
             </div>
           </div>
         </div>
