@@ -565,99 +565,32 @@ function ExamPage() {
     return () => window.removeEventListener('keydown', handler);
   }, [current, questions.length, toggleDarkMode, toggleBoldMode, handleClear, enableDrawing, toggleFullscreen, goNext, goPrev, fiftyFiftyUsed, handleOption, practiceMode, toggleReview, handleNext, handleSubmit]);
 
-  // State for file image map
-  const [fileImageMap, setFileImageMap] = useState({});
+  // Memoize image injection for performance
+  const [imageMap, setImageMap] = useState({});
 
   useEffect(() => {
-    const loadFileImageMap = async () => {
+    const loadImageMap = async () => {
       try {
         const mapResult = await dataManager.getFileImageMap();
-        console.log('ExamPage - Loaded fileImageMap:', mapResult);
-        setFileImageMap(mapResult || {});
+        const flatMap = {};
+        Object.values(mapResult).flat().forEach(({ name, data }) => {
+          flatMap[name] = data;
+        });
+        setImageMap(flatMap);
       } catch (error) {
-        console.error('Error loading file image map:', error);
-        setFileImageMap({});
+        console.error('Error loading image map:', error);
       }
     };
 
-    loadFileImageMap();
+    loadImageMap();
   }, []);
 
-  // Function to replace image references with actual image data (same as ResultPage)
-  const replaceImageReferences = async (text, fileImageMap) => {
-    if (!text || typeof text !== 'string') return text;
-
-    // Find img tags with id attributes
-    const imgRegex = /<img[^>]*id=['"]([^'"]*?)['"][^>]*>/g;
-    let processedText = text;
-    let match;
-
-    while ((match = imgRegex.exec(text)) !== null) {
-      const imageName = match[1];
-      console.log(`Looking for image: ${imageName}`);
-
-      // Search for image in fileImageMap
-      let imageData = null;
-      for (const [fileName, images] of Object.entries(fileImageMap)) {
-        if (images && Array.isArray(images)) {
-          const foundImage = images.find(img => 
-            img.name === imageName || 
-            img.name === imageName.replace('.png', '') ||
-            img.name === imageName.replace('.jpg', '') ||
-            img.name === imageName.replace('.jpeg', '')
-          );
-          if (foundImage) {
-            imageData = foundImage.data;
-            console.log(`Found image ${imageName} in ${fileName}`);
-            break;
-          }
-        }
-      }
-
-      // If not found in fileImageMap, try IndexedDB jsonImages store
-      if (!imageData) {
-        try {
-          // Try different JSON file names
-          const possibleJsonNames = ['Image_Demo', 'KaTeX Demo', 'Art and Culture jk'];
-          for (const jsonName of possibleJsonNames) {
-            imageData = await dataManager.getImageFromJSONImagesStore(jsonName, imageName);
-            if (imageData) {
-              console.log(`Found image ${imageName} in jsonImages store for ${jsonName}`);
-              break;
-            }
-
-            // Also try without file extension
-            const nameWithoutExt = imageName.replace(/\.(png|jpg|jpeg)$/i, '');
-            imageData = await dataManager.getImageFromJSONImagesStore(jsonName, nameWithoutExt);
-            if (imageData) {
-              console.log(`Found image ${nameWithoutExt} in jsonImages store for ${jsonName}`);
-              break;
-            }
-          }
-        } catch (error) {
-          console.error(`Error fetching image ${imageName} from jsonImages store:`, error);
-        }
-      }
-
-      if (imageData) {
-        // Replace the img tag with the actual image data
-        const newImgTag = match[0].replace(/id=['"][^'"]*['"]/, `src="${imageData}"`).replace(/id=['"][^'"]*['"] /, '');
-        processedText = processedText.replace(match[0], `<img src="${imageData}" alt="${imageName}" style="max-width: 100%; height: auto;" />`);
-        console.log(`✅ Replaced image reference for ${imageName}`);
-      } else {
-        console.warn(`❌ Image not found: ${imageName}`);
-      }
-    }
-
-    return processedText;
-  };
-
-  const injectImageSources = useCallback(async (html) => {
-    if (!html) return html;
-
-    // Use the same logic as ResultPage
-    return await replaceImageReferences(html, fileImageMap);
-  }, [fileImageMap]);
+  const injectImageSources = useCallback((html) => {
+    return html.replace(/<img\s+[^>]*id=['"]([^'"]+)['"][^>]*>/g, (match, id) => {
+      const src = imageMap[id] || '';
+      return `<img id="${id}" src="${src}" alt="${id}" />`;
+    });
+  }, [imageMap]);
 
   const swipeHandlers = useSwipeable({
     onSwipedLeft: goNext,
@@ -897,7 +830,7 @@ function ExamPage() {
                   onJump={(i) => {
                     setCurrent(i);
                     // Notify DrawingOverlay about question change
-                    window.currentQuestionIndex= i;
+                    window.currentQuestionIndex = i;
                     const event = new CustomEvent('questionChanged', { 
                       detail: { questionIndex: i } 
                     });

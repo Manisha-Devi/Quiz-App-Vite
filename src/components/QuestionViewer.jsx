@@ -124,40 +124,8 @@ const QuestionViewer = React.memo(function QuestionViewer({
   const renderMathAndHTML = useCallback((text) => {
     if (!text) return null;
 
-    // Process the text with image sources first (now async)
-    const [processedText, setProcessedText] = React.useState(text);
-
-    React.useEffect(() => {
-      const processImages = async () => {
-        if (injectImageSources && typeof injectImageSources === 'function') {
-          try {
-            let processed = await injectImageSources(text);
-
-            // Additional image processing for common patterns
-            if (processed && typeof processed === 'string') {
-              // Handle image references that might be in different formats
-              processed = processed.replace(/\[IMAGE:([^\]]+)\]/g, (match, imageName) => {
-                return `<img src="/json/Image_Demo/${imageName}" alt="${imageName}" style="max-width: 100%; height: auto;" />`;
-              });
-
-              // Handle relative image paths
-              processed = processed.replace(/src="(?!http|\/|data:)([^"]+)"/g, (match, src) => {
-                return `src="/json/Image_Demo/${src}"`;
-              });
-            }
-
-            setProcessedText(processed || text);
-          } catch (error) {
-            console.error('Error processing images:', error);
-            setProcessedText(text);
-          }
-        } else {
-          setProcessedText(text);
-        }
-      };
-
-      processImages();
-    }, [text, injectImageSources]);
+    // Process the text with image sources first
+    const processedText = injectImageSources(text);
 
     // Split by $ for inline math and $$ for display math
     const parts = [];
