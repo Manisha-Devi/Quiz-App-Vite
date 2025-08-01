@@ -85,7 +85,6 @@ const QuestionExtractorPage = () => {
   const handleFileSelect = (e) => {
     const selectedFiles = Array.from(e.target.files);
     const validFiles = selectedFiles.filter(file => 
-      file.type === 'application/pdf' || 
       file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     );
 
@@ -108,7 +107,6 @@ const QuestionExtractorPage = () => {
 
     const droppedFiles = Array.from(e.dataTransfer.files);
     const validFiles = droppedFiles.filter(file => 
-      file.type === 'application/pdf' || 
       file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     );
 
@@ -138,27 +136,6 @@ const QuestionExtractorPage = () => {
           const arrayBuffer = await file.arrayBuffer();
           const result = await mammoth.extractRawText({ arrayBuffer });
           extractedText = result.value;
-        } else if (file.type === 'application/pdf') {
-          // Parse PDF file
-          try {
-            const pdfParse = await import('pdf-parse');
-            const arrayBuffer = await file.arrayBuffer();
-            const buffer = new Uint8Array(arrayBuffer);
-            const data = await pdfParse.default(buffer);
-            extractedText = data.text;
-            console.log('PDF text extracted successfully');
-          } catch (pdfError) {
-            console.error('Error parsing PDF:', pdfError);
-            setExtractedQuestions(prev => [...prev, {
-              id: `error-${Date.now()}`,
-              question: `Error parsing PDF file: ${file.name}. ${pdfError.message}`,
-              options: ['Unable to extract', 'Please try again', 'Check file format', 'Contact support'],
-              correct: 'A',
-              level: 0,
-              explanation: 'This PDF file could not be processed. Please ensure it contains readable text.'
-            }]);
-            continue;
-          }
         }
 
         // Parse questions from extracted text
@@ -347,12 +324,12 @@ const QuestionExtractorPage = () => {
               <div className="upload-icon">📁</div>
               <div className="upload-text">
                 <span className="primary-text">Click to upload or drag & drop</span>
-                <span className="secondary-text">Supports .docx and .pdf files</span>
+                <span className="secondary-text">Supports .docx files only</span>
               </div>
               <input
                 type="file"
                 multiple
-                accept=".pdf,.docx"
+                accept=".docx"
                 onChange={handleFileSelect}
                 className="file-input"
               />
@@ -374,9 +351,7 @@ const QuestionExtractorPage = () => {
                 {files.map((file, index) => (
                   <div key={index} className="file-item">
                     <div className="file-info">
-                      <span className="file-icon">
-                        {file.type.includes('pdf') ? '📄' : '📝'}
-                      </span>
+                      <span className="file-icon">📝</span>
                       <div className="file-details">
                         <div className="file-name">{file.name}</div>
                         <div className="file-size">
