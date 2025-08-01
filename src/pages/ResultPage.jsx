@@ -503,33 +503,32 @@ function ResultPage() {
 
       {/* Main Content Area */}
       <div className="main-content">
-        {/* Question Navigation Header - Moved outside question card */}
-        {filteredQuestions.length > 0 && (
-          <div className="question-navigation-header">
-            <button 
-              className="nav-arrow prev" 
-              onClick={goToPrevQuestion}
-              disabled={currentQuestionIndex === 0}
-              title="Previous Question (Left Arrow)"
-            >
-              ← Previous
-            </button>
-            <div className="question-counter">
-              {currentQuestionIndex + 1} of {filteredQuestions.length}
-            </div>
-            <button 
-              className="nav-arrow next" 
-              onClick={goToNextQuestion}
-              disabled={currentQuestionIndex === filteredQuestions.length - 1}
-              title="Next Question (Right Arrow)"
-            >
-              Next →
-            </button>
-          </div>
-        )}
-
         {/* Single Question Card View */}
         <div className="single-question-container" {...swipeHandlers}>
+          {/* Question Navigation Header - Inside single question container */}
+          {filteredQuestions.length > 0 && (
+            <div className="question-navigation-header">
+              <button 
+                className="nav-arrow prev" 
+                onClick={goToPrevQuestion}
+                disabled={currentQuestionIndex === 0}
+                title="Previous Question (Left Arrow)"
+              >
+                ← Previous
+              </button>
+              <div className="question-counter">
+                {currentQuestionIndex + 1} of {filteredQuestions.length}
+              </div>
+              <button 
+                className="nav-arrow next" 
+                onClick={goToNextQuestion}
+                disabled={currentQuestionIndex === filteredQuestions.length - 1}
+                title="Next Question (Right Arrow)"
+              >
+                Next →
+              </button>
+            </div>
+          )}
           {filteredQuestions.length > 0 ? (
             <div className="current-question-wrapper">
               {(() => {
