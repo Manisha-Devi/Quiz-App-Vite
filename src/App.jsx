@@ -5,6 +5,7 @@ import UploadPage from './pages/UploadPage';
 import SectionSetupPage from './pages/SectionSetupPage';
 import ExamPage from './pages/ExamPage';
 import ResultPage from './pages/ResultPage';
+import QuestionExtractorPage from './pages/QuestionExtractorPage';
 import dataManager from './utils/dataManager';
 import './App.css';
 
@@ -47,6 +48,7 @@ function App() {
           <Route path="/sections" element={<SectionSetupPage />} />
           <Route path="/exam" element={<ExamPage />} />
           <Route path="/result" element={<ResultPage />} />
+          <Route path="/extract" element={<QuestionExtractorPage />} />
         </Routes>
       </div>
     </Router>
