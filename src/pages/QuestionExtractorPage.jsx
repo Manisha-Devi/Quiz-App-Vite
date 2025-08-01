@@ -214,12 +214,35 @@ const QuestionExtractorPage = () => {
           currentQuestion.explanation = explanationMatch[1].trim();
         }
       }
-      // Check for level/difficulty
-      else if (currentQuestion && line.toLowerCase().includes('level:')) {
-        const levelMatch = line.match(/level:\s*(\d+)/i);
-        if (levelMatch) {
-          const level = parseInt(levelMatch[1]);
+      // Check for level/difficulty with various formats
+      else if (currentQuestion && (line.toLowerCase().includes('level:') || line.toLowerCase().includes('difficulty:') || line.toLowerCase().includes('mah level'))) {
+        // Try to extract numeric level first
+        const numericMatch = line.match(/(?:level|difficulty|mah\s*level):\s*(\d+)/i);
+        if (numericMatch) {
+          const level = parseInt(numericMatch[1]);
           currentQuestion.level = Math.min(Math.max(level, 0), 2); // Ensure level is 0, 1, or 2
+        } else {
+          // Try to extract text-based level
+          const textMatch = line.match(/(?:level|difficulty|mah\s*level):\s*(easy|medium|hard|beginner|intermediate|advanced)/i);
+          if (textMatch) {
+            const levelText = textMatch[1].toLowerCase();
+            switch (levelText) {
+              case 'easy':
+              case 'beginner':
+                currentQuestion.level = 0;
+                break;
+              case 'medium':
+              case 'intermediate':
+                currentQuestion.level = 1;
+                break;
+              case 'hard':
+              case 'advanced':
+                currentQuestion.level = 2;
+                break;
+              default:
+                currentQuestion.level = 0;
+            }
+          }
         }
       }
     }
