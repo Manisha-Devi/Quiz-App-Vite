@@ -285,17 +285,24 @@ const QuestionExtractorPage = () => {
         
         // If not parsing options, answer, explanation, or level, add to question text
         if (!isParsingOptions && !isParsingAnswer && !isParsingExplanation && !isParsingLevel) {
-          // Handle spacing preservation - replace multiple spaces with HTML entities
-          let processedLine = trimmedLine;
+          // Handle spacing preservation - work with original line with spaces
+          let processedLine = line; // Use original line, not trimmed
+          
+          // Replace tabs with 4 spaces first
+          processedLine = processedLine.replace(/\t/g, '    ');
           
           // Replace multiple spaces (2 or more) with HTML non-breaking spaces
-          if (processedLine.includes('  ')) {
-            processedLine = processedLine.replace(/\s{2,}/g, (match) => {
-              return '&nbsp;'.repeat(match.length);
-            });
-          }
+          processedLine = processedLine.replace(/\s{2,}/g, (match) => {
+            return '&nbsp;'.repeat(match.length);
+          });
           
-          questionLines.push(processedLine);
+          // Trim only leading spaces but preserve internal spacing
+          processedLine = processedLine.replace(/^\s+/, '');
+          
+          // Only add non-empty lines
+          if (processedLine.trim()) {
+            questionLines.push(processedLine);
+          }
         }
       }
       
