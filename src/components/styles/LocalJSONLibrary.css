@@ -601,12 +601,17 @@
 .file-meta-row {
   justify-content: space-between;
   align-items: center;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
 }
 
 .file-images-row {
   justify-content: center;
   align-items: center;
   margin: 4px 0;
+  width: 100%;
+  display: flex;
 }
 
 .image-info {
@@ -631,12 +636,14 @@
   align-items: center;
   gap: 8px;
   justify-content: flex-start;
+  flex: 0 0 auto;
 }
 
 .file-size-right {
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  flex: 0 0 auto;
 }
 
 .file-icon {
@@ -969,10 +976,19 @@
     border-radius: 10px;
   }
 
-  .file-meta {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
+  .file-meta-row {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .file-questions-left {
+    justify-content: flex-start;
+  }
+
+  .file-size-right {
+    justify-content: flex-end;
   }
 
   .time-setting {
