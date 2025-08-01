@@ -1554,6 +1554,7 @@
 
   .upload-content {
     padding: 20px 16px;
+    padding-top: calc(8vh + 40px);
   }
 
   .upload-section,
@@ -1817,6 +1818,7 @@
 
   .upload-content {
     padding: 16px 12px;
+    padding-top: calc(8vh + 35px);
   }
 
   .upload-section,

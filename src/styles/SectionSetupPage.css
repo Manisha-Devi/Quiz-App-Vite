@@ -1085,6 +1085,7 @@
 
   .section-content {
     padding: 16px;
+    padding-top: calc(8vh + 35px);
   }
 
   .section-card {
@@ -1162,6 +1163,9 @@
 @media (max-width: 480px) {
   .section-header {
     padding: 12px 16px;
+    height: 8vh;
+    max-height: 60px;
+    min-height: 50px;
   }
 
   .header-controls {
@@ -1198,6 +1202,11 @@
   .config-item {
     justify-content: space-between;
     width: 100%;
+  }
+
+  .section-content {
+    padding: 16px 12px;
+    padding-top: calc(8vh + 30px);
   }
 
   .section-card {
