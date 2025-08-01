@@ -11,17 +11,5 @@
         ],
         "answer": 0,
         "level": 1
-    },
-        {
-        "id": 2,
-        "question": "If a mirror is placed on the line MN, then which of the answer figures is the right image of the given figure? <br><img id='Question2.png'> ",
-        "options": [
-            "<img id='Question2Option1.png'>", 
-            "<img id='Question2Option2.png'>", 
-            "<img id='Question2Option3.png'>", 
-            "<img id='Question2Option4.png'>"
-        ],
-        "answer": 0,
-        "level": 1
     }
 ]

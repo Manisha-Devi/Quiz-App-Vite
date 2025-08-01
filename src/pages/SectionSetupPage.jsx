@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSwipeable } from 'react-swipeable';
 import { getAllImagesForJSONFile } from '../utils/indexedDB';
 import dataManager from '../utils/dataManager';
 import '../styles/SectionSetupPage.css';
@@ -301,23 +300,6 @@ function SectionSetupPage() {
     setModalImages([]);
     setModalIndex(0);
   };
-
-  // Swipe handlers for image navigation
-  const swipeHandlers = useSwipeable({
-    onSwipedLeft: () => {
-      if (modalIndex < modalImages.length - 1) {
-        setModalIndex(prev => prev + 1);
-      }
-    },
-    onSwipedRight: () => {
-      if (modalIndex > 0) {
-        setModalIndex(prev => prev - 1);
-      }
-    },
-    trackTouch: true,
-    preventScrollOnSwipe: true,
-    delta: 50,
-  });
 
   const getTotalSelected = () => {
     return quizData.reduce((total, file, fileIndex) => {
@@ -660,78 +642,41 @@ function SectionSetupPage() {
 
       {/* Image Modal */}
       {showModal && (
-        <div className="image-modal-overlay" onClick={closeModal}>
-          <div className="image-modal-container" onClick={(e) => e.stopPropagation()}>
-            {/* Modal Header */}
-            <div className="image-modal-header">
-              <div className="image-modal-title">
-                <span className="image-icon">🖼️</span>
-                <span className="image-name">{modalImages[modalIndex]?.name}</span>
-              </div>
-              <button className="image-modal-close" onClick={closeModal}>
-                <span>✕</span>
-              </button>
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3 className="modal-title">{modalImages[modalIndex]?.name}</h3>
+              <button className="modal-close-btn" onClick={closeModal}>×</button>
             </div>
 
-            {/* Image Container with Swipe Support */}
-            <div 
-              className="image-modal-body"
-              {...swipeHandlers}
-              onTouchStart={(e) => e.stopPropagation()}
-            >
-              <div className="image-container">
-                <img
-                  src={modalImages[modalIndex]?.data}
-                  alt={modalImages[modalIndex]?.name}
-                  className="preview-image"
-                  draggable={false}
-                />
-                
-                {/* Navigation Arrows */}
-                {modalImages.length > 1 && (
-                  <>
-                    <button 
-                      className={`nav-arrow nav-prev ${modalIndex === 0 ? 'disabled' : ''}`}
-                      onClick={() => setModalIndex(i => Math.max(0, i - 1))}
-                      disabled={modalIndex === 0}
-                    >
-                      ❮
-                    </button>
-                    <button 
-                      className={`nav-arrow nav-next ${modalIndex === modalImages.length - 1 ? 'disabled' : ''}`}
-                      onClick={() => setModalIndex(i => Math.min(modalImages.length - 1, i + 1))}
-                      disabled={modalIndex === modalImages.length - 1}
-                    >
-                      ❯
-                    </button>
-                  </>
-                )}
-              </div>
+            <div className="modal-body">
+              <img
+                src={modalImages[modalIndex]?.data}
+                alt={modalImages[modalIndex]?.name}
+                className="modal-image"
+              />
             </div>
 
-            {/* Modal Footer */}
-            <div className="image-modal-footer">
-              <div className="image-counter-display">
-                <span className="current-image">{modalIndex + 1}</span>
-                <span className="separator">of</span>
-                <span className="total-images">{modalImages.length}</span>
-              </div>
-              
-              {modalImages.length > 1 && (
-                <div className="image-dots">
-                  {modalImages.map((_, index) => (
-                    <button
-                      key={index}
-                      className={`dot ${index === modalIndex ? 'active' : ''}`}
-                      onClick={() => setModalIndex(index)}
-                    />
-                  ))}
-                </div>
-              )}
+            <div className="modal-footer">
+              <div className="image-navigation">
+                <button 
+                  className="nav-btn prev-btn"
+                  onClick={() => setModalIndex(i => Math.max(0, i - 1))} 
+                  disabled={modalIndex === 0}
+                >
+                  ⬅️ Previous
+                </button>
 
-              <div className="modal-actions">
-                <button className="action-btn" onClick={closeModal}>
-                  Close
+                <span className="image-counter">
+                  {modalIndex + 1} of {modalImages.length}
+                </span>
+
+                <button
+                  className="nav-btn next-btn"
+                  onClick={() => setModalIndex(i => Math.min(modalImages.length - 1, i + 1))}
+                  disabled={modalIndex === modalImages.length - 1}
+                >
+                  Next ➡️
                 </button>
               </div>
             </div>
