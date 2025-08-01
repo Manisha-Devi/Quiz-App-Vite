@@ -391,16 +391,54 @@ const QuestionExtractorPage = () => {
             </div>
 
             <div className="questions-preview">
-              {extractedQuestions.slice(0, 3).map((question, index) => (
-                <QuestionCard
-                  key={question.id}
-                  question={question}
-                  index={index}
-                  userAnswer={question.correct.charCodeAt(0) - 65}
-                  reviewMarked={false}
-                  retryMode={false}
-                />
-              ))}
+              {extractedQuestions.slice(0, 3).map((question, index) => {
+                // Create a modified question object for display
+                const displayQuestion = {
+                  ...question,
+                  options: question.options,
+                  answer: question.correct.charCodeAt(0) - 65
+                };
+
+                return (
+                  <div key={question.id} className="extracted-question-card">
+                    <div className="question-header">
+                      <div className="question-number">Q{index + 1}</div>
+                      <div className="level-badge">
+                        <span className="level-icon">✅</span>
+                        <span className="level-text">
+                          {question.level === 0 ? 'Easy' : question.level === 1 ? 'Medium' : 'Hard'}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="question-text">
+                      {question.question}
+                    </div>
+
+                    <div className="options-grid">
+                      {question.options?.map((option, optionIndex) => (
+                        <div 
+                          key={optionIndex} 
+                          className={`option ${optionIndex === (question.correct.charCodeAt(0) - 65) ? 'correct-option' : ''}`}
+                        >
+                          <div className="option-label">{String.fromCharCode(65 + optionIndex)}</div>
+                          <div className="option-text">{option}</div>
+                          {optionIndex === (question.correct.charCodeAt(0) - 65) && (
+                            <div className="correct-mark">✅</div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+
+                    {question.explanation && (
+                      <div className="explanation">
+                        <div className="explanation-header">💡 Explanation</div>
+                        <div className="explanation-text">{question.explanation}</div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
 
               {extractedQuestions.length > 3 && (
                 <div className="more-questions">
