@@ -129,8 +129,9 @@ const CacheCleaner = ({ onDataChange }) => {
         setLoading(false);
         setCurrentOperation('');
       }
-      }
-    );
+        }
+      );
+    }
   };
 
   const clearIndexedDBStores = async () => {
@@ -181,8 +182,9 @@ const CacheCleaner = ({ onDataChange }) => {
         setLoading(false);
         setCurrentOperation('');
       }
-      }
-    );
+        }
+      );
+    }
   };
 
   // Helper function for direct store clearing
@@ -300,7 +302,7 @@ const CacheCleaner = ({ onDataChange }) => {
           // Method 1: Standard cookie clearing with comprehensive domain/path combinations
           const cookies = document.cookie.split(";");
           const cookieNames = [];
-          
+
           for (let cookie of cookies) {
             const eqPos = cookie.indexOf("=");
             const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
@@ -319,7 +321,7 @@ const CacheCleaner = ({ onDataChange }) => {
               `.${window.location.hostname}`, // subdomain wildcard
               window.location.hostname.startsWith('www.') ? window.location.hostname.substring(4) : `www.${window.location.hostname}`, // www variant
             ];
-            
+
             // Add top-level domain if hostname has subdomains
             if (window.location.hostname.includes('.')) {
               const parts = window.location.hostname.split('.');
@@ -330,7 +332,7 @@ const CacheCleaner = ({ onDataChange }) => {
 
             // Multiple path variations
             const paths = ['/', '', '/app', '/quiz', '/src', '/pages', '/components'];
-            
+
             // Clear with all combinations
             domains.forEach(domain => {
               paths.forEach(path => {
@@ -338,7 +340,7 @@ const CacheCleaner = ({ onDataChange }) => {
                   // Multiple clearing methods
                   const expireDate = new Date(0).toUTCString(); // Thu, 01 Jan 1970 00:00:00 GMT
                   const altExpireDate = 'Thu, 01 Jan 1970 00:00:00 GMT';
-                  
+
                   // Method 1: Standard clearing
                   if (domain) {
                     document.cookie = `${name}=; expires=${expireDate}; path=${path}; domain=${domain}; secure; samesite=strict`;
@@ -349,14 +351,14 @@ const CacheCleaner = ({ onDataChange }) => {
                     document.cookie = `${name}=; expires=${altExpireDate}; path=${path}; secure; samesite=lax`;
                     document.cookie = `${name}=; expires=${expireDate}; path=${path}`;
                   }
-                  
+
                   // Method 2: Max-Age approach
                   if (domain) {
                     document.cookie = `${name}=; max-age=0; path=${path}; domain=${domain};`;
                   } else {
                     document.cookie = `${name}=; max-age=0; path=${path};`;
                   }
-                  
+
                   // Method 3: Empty value approach
                   if (domain) {
                     document.cookie = `${name}=; path=${path}; domain=${domain};`;
@@ -376,14 +378,14 @@ const CacheCleaner = ({ onDataChange }) => {
             const remainingCookies = document.cookie.split(";").filter(c => c.trim());
             if (remainingCookies.length > 0) {
               console.log(`🍪 Found ${remainingCookies.length} remaining cookies, attempting alternative clearing...`);
-              
+
               remainingCookies.forEach(cookie => {
                 const name = cookie.split('=')[0].trim();
                 if (name) {
                   // Brute force approach with all possible combinations
                   const allDomains = ['', window.location.hostname, `.${window.location.hostname}`, 'localhost', '.localhost'];
                   const allPaths = ['/', '', '/app', '/quiz', '/src', '/pages', '/components', '/public'];
-                  
+
                   allDomains.forEach(domain => {
                     allPaths.forEach(path => {
                       try {
@@ -403,7 +405,7 @@ const CacheCleaner = ({ onDataChange }) => {
             try {
               const cookieList = await cookieStore.getAll();
               console.log(`🍪 Found ${cookieList.length} cookies via Cookie Store API`);
-              
+
               for (const cookie of cookieList) {
                 try {
                   await cookieStore.delete({
@@ -422,7 +424,7 @@ const CacheCleaner = ({ onDataChange }) => {
           }
 
           console.log(`✅ Cookies clearing process completed (${results.cookies} cookies processed)`);
-          
+
           // Verify clearing after a short delay
           setTimeout(() => {
             const finalCookies = document.cookie.split(";").filter(c => c.trim());
@@ -460,7 +462,7 @@ const CacheCleaner = ({ onDataChange }) => {
               console.log('✅ Interest Groups/Topics cleared');
             }
           }
-          
+
           // Alternative method for clearing interest groups
           if ('joinAdInterestGroup' in navigator) {
             // Clear any stored interest groups
@@ -489,10 +491,10 @@ const CacheCleaner = ({ onDataChange }) => {
           if ('caches' in window) {
             const cacheNames = await caches.keys();
             results.cacheStorage = cacheNames.length;
-            
+
             // Delete all caches
             await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
-            
+
             // Also try to clear any service worker caches
             if ('serviceWorker' in navigator) {
               const registrations = await navigator.serviceWorker.getRegistrations();
@@ -505,7 +507,7 @@ const CacheCleaner = ({ onDataChange }) => {
                 }
               }
             }
-            
+
             console.log(`✅ Cache Storage cleared (${results.cacheStorage} caches removed)`);
           }
         } catch (error) {
@@ -536,7 +538,7 @@ const CacheCleaner = ({ onDataChange }) => {
           if ('storage' in navigator && navigator.storage) {
             const estimate = await navigator.storage.estimate();
             console.log('📊 Storage estimate before cleanup:', estimate);
-            
+
             // Try to clear storage
             if (navigator.storage.persist) {
               await navigator.storage.persist();
@@ -599,8 +601,9 @@ const CacheCleaner = ({ onDataChange }) => {
         setLoading(false);
         setCurrentOperation('');
       }
-      }
-    );
+        }
+      );
+    }
   };
 
   const deleteIndexedDB = async () => {
@@ -658,8 +661,9 @@ const CacheCleaner = ({ onDataChange }) => {
         setLoading(false);
         setCurrentOperation('');
       }
-      }
-    );
+        }
+      );
+    }
   };
 
   // Helper function to force close all connections
