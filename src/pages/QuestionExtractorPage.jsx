@@ -171,8 +171,8 @@ const QuestionExtractorPage = () => {
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
 
-      // Check if line starts with a number (question) - handle both "1:" and "1."
-      const questionMatch = line.match(/^(\d+)[\:\.]?\s*(.+)/);
+      // Check if line starts with a number followed by colon (question) - only "1:"
+      const questionMatch = line.match(/^(\d+):\s*(.+)/);
       if (questionMatch && !line.toLowerCase().includes('answer') && !line.toLowerCase().includes('level') && !line.toLowerCase().includes('explanation')) {
         // Save previous question if exists
         if (currentQuestion && currentQuestion.question && currentQuestion.options.length === 4) {
@@ -200,30 +200,30 @@ const QuestionExtractorPage = () => {
           currentQuestion.options.push(optionMatch[1].trim());
         }
       }
-      // Check for answer - handle both "Answer: A" and "Answer A"
-      else if (currentQuestion && /answer[\:\s]*[A-D]/i.test(line)) {
-        const answerMatch = line.match(/answer[\:\s]*([A-D])/i);
+      // Check for answer - strict format "Answer: A" only
+      else if (currentQuestion && /^answer:\s*[A-D]/i.test(line)) {
+        const answerMatch = line.match(/^answer:\s*([A-D])/i);
         if (answerMatch) {
           currentQuestion.correct = answerMatch[1].toUpperCase();
         }
       }
-      // Check for explanation - handle both "Explanation:" and "Explanation"
-      else if (currentQuestion && /explanation[\:\s]/i.test(line)) {
-        const explanationMatch = line.match(/explanation[\:\s]*(.+)/i);
+      // Check for explanation - strict format "Explanation:" only
+      else if (currentQuestion && /^explanation:\s*/i.test(line)) {
+        const explanationMatch = line.match(/^explanation:\s*(.+)/i);
         if (explanationMatch) {
           currentQuestion.explanation = explanationMatch[1].trim();
         }
       }
-      // Check for level/difficulty - handle various formats
-      else if (currentQuestion && /level[\:\s]/i.test(line)) {
+      // Check for level - strict format "Level:" only
+      else if (currentQuestion && /^level:\s*/i.test(line)) {
         // Try to extract numeric level first
-        const numericMatch = line.match(/level[\:\s]*(\d+)/i);
+        const numericMatch = line.match(/^level:\s*(\d+)/i);
         if (numericMatch) {
           const level = parseInt(numericMatch[1]);
           currentQuestion.level = Math.min(Math.max(level, 0), 2); // Ensure level is 0, 1, or 2
         } else {
           // Try to extract text-based level
-          const textMatch = line.match(/level[\:\s]*(easy|medium|meduim|hard|beginner|intermediate|advanced)/i);
+          const textMatch = line.match(/^level:\s*(easy|medium|meduim|hard|beginner|intermediate|advanced)/i);
           if (textMatch) {
             const levelText = textMatch[1].toLowerCase();
             switch (levelText) {
