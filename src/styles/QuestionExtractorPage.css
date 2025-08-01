@@ -570,6 +570,22 @@
   font-size: 14px;
 }
 
+.explanation-preview {
+  font-size: 13px;
+  opacity: 0.9;
+  font-style: italic;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  border-left: 3px solid #2196F3;
+}
+
+.level-preview {
+  font-size: 12px;
+  font-weight: 600;
+  color: #FF9800;
+}
+
 .more-questions {
   text-align: center;
   padding: 20px;

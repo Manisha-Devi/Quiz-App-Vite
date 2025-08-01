@@ -129,21 +129,24 @@ const QuestionExtractorPage = () => {
         const file = files[i];
         setProcessingFile(file.name);
 
-        // Simulate extraction process - replace with actual extraction logic
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        let extractedText = '';
 
-        // Mock extracted questions
-        const mockQuestions = [
-          {
-            id: `q${i}_1`,
-            question: `Sample question from ${file.name}?`,
-            options: ['Option A', 'Option B', 'Option C', 'Option D'],
-            correct: 'A',
-            explanation: 'This is a sample explanation for the question.'
-          }
-        ];
+        if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+          // Parse DOCX file
+          const mammoth = await import('mammoth');
+          const arrayBuffer = await file.arrayBuffer();
+          const result = await mammoth.extractRawText({ arrayBuffer });
+          extractedText = result.value;
+        } else if (file.type === 'application/pdf') {
+          // For PDF parsing, you would need pdf-parse or similar library
+          // For now, we'll show a message that PDF parsing is not yet implemented
+          console.log('PDF parsing not yet implemented');
+          continue;
+        }
 
-        setExtractedQuestions(prev => [...prev, ...mockQuestions]);
+        // Parse questions from extracted text
+        const questions = parseQuestionsFromText(extractedText, i);
+        setExtractedQuestions(prev => [...prev, ...questions]);
       }
 
       setShowResults(true);
@@ -155,19 +158,86 @@ const QuestionExtractorPage = () => {
     }
   };
 
+  const parseQuestionsFromText = (text, fileIndex) => {
+    const questions = [];
+    
+    // Split text into lines and clean up
+    const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+    
+    let currentQuestion = null;
+    let questionCounter = 1;
+    
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      
+      // Check if line starts with a number (question)
+      const questionMatch = line.match(/^(\d+)\.\s*(.+)/);
+      if (questionMatch) {
+        // Save previous question if exists
+        if (currentQuestion && currentQuestion.question && currentQuestion.options.length === 4) {
+          questions.push(currentQuestion);
+        }
+        
+        // Start new question
+        currentQuestion = {
+          id: `q${fileIndex}_${questionCounter++}`,
+          question: questionMatch[2].trim(),
+          options: [],
+          correct: '',
+          explanation: '',
+          level: 0 // Default to Easy
+        };
+      }
+      // Check for options (A), B), C), D))
+      else if (currentQuestion && line.match(/^[A-D]\)\s*(.+)/)) {
+        const optionMatch = line.match(/^[A-D]\)\s*(.+)/);
+        if (optionMatch) {
+          currentQuestion.options.push(optionMatch[1].trim());
+        }
+      }
+      // Check for answer
+      else if (currentQuestion && line.toLowerCase().startsWith('answer:')) {
+        const answerMatch = line.match(/answer:\s*([A-D])/i);
+        if (answerMatch) {
+          currentQuestion.correct = answerMatch[1].toUpperCase();
+        }
+      }
+      // Check for explanation
+      else if (currentQuestion && line.toLowerCase().startsWith('explanation:')) {
+        const explanationMatch = line.match(/explanation:\s*(.+)/i);
+        if (explanationMatch) {
+          currentQuestion.explanation = explanationMatch[1].trim();
+        }
+      }
+      // Check for level/difficulty
+      else if (currentQuestion && line.toLowerCase().includes('level:')) {
+        const levelMatch = line.match(/level:\s*(\d+)/i);
+        if (levelMatch) {
+          const level = parseInt(levelMatch[1]);
+          currentQuestion.level = Math.min(Math.max(level, 0), 2); // Ensure level is 0, 1, or 2
+        }
+      }
+    }
+    
+    // Add the last question if valid
+    if (currentQuestion && currentQuestion.question && currentQuestion.options.length === 4) {
+      questions.push(currentQuestion);
+    }
+    
+    return questions;
+  };
+
   const formatAsJSON = () => {
-    const jsonOutput = {
-      name: "Extracted Questions",
-      description: "Questions extracted from uploaded documents",
-      questions: extractedQuestions.map((q, index) => ({
-        id: index + 1,
-        question: q.question,
-        options: q.options,
-        correct: q.correct,
-        explanation: q.explanation || "",
-        difficulty: "medium"
-      }))
-    };
+    const jsonOutput = extractedQuestions.map((q, index) => ({
+      id: index + 1,
+      question: q.question,
+      options: q.options,
+      answer: q.options.findIndex(opt => opt === q.options[q.correct.charCodeAt(0) - 65]) !== -1 
+        ? q.options.findIndex(opt => opt === q.options[q.correct.charCodeAt(0) - 65])
+        : q.correct.charCodeAt(0) - 65, // Convert A,B,C,D to 0,1,2,3
+      level: q.level || 0,
+      explanation: q.explanation || ""
+    }));
 
     const blob = new Blob([JSON.stringify(jsonOutput, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -210,20 +280,21 @@ const QuestionExtractorPage = () => {
         {/* Instructions Section */}
         <section className="instructions-section">
           <h2>📄 Document Question Extractor</h2>
-          <p>Upload Word (.docx) or PDF files to extract questions with proper KaTeX formatting</p>
+          <p>Upload Word (.docx) files to extract questions automatically. PDF support coming soon!</p>
 
           <div className="format-examples">
             <div className="format-example">
               <h3>📝 Supported Question Format:</h3>
               <div className="example-content">
                 <code>
-                  1. Question text?<br/>
-                  A) Option 1<br/>
-                  B) Option 2<br/>
-                  C) Option 3<br/>
-                  D) Option 4<br/>
+                  1. What is the Capital of India?<br/>
+                  A) New Delhi<br/>
+                  B) Bombay<br/>
+                  C) Kolkata<br/>
+                  D) Delhi<br/>
                   Answer: A<br/>
-                  Explanation: Explanation of question (optional)
+                  Explanation: New Delhi is the capital of India (optional)<br/>
+                  Level: 0 (0=Easy, 1=Medium, 2=Hard, optional - defaults to 0)
                 </code>
               </div>
             </div>
@@ -356,6 +427,14 @@ const QuestionExtractorPage = () => {
                       ))}
                     </div>
                     <div className="answer-preview">Answer: {question.correct}</div>
+                    {question.explanation && (
+                      <div className="explanation-preview">
+                        <strong>Explanation:</strong> {question.explanation}
+                      </div>
+                    )}
+                    <div className="level-preview">
+                      Level: {question.level === 0 ? 'Easy' : question.level === 1 ? 'Medium' : 'Hard'}
+                    </div></div>
                   </div>
                 </div>
               ))}
