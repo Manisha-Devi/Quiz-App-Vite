@@ -428,7 +428,6 @@ const QuestionExtractorPage = () => {
                     <div className="question-header">
                       <div className="question-number">Q{index + 1}</div>
                       <div className="level-badge">
-                        <span className="level-icon">✅</span>
                         <span className="level-text">
                           {question.level === 0 ? 'Easy' : question.level === 1 ? 'Medium' : 'Hard'}
                         </span>
