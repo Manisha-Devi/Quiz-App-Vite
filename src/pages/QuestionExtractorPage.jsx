@@ -193,9 +193,9 @@ const QuestionExtractorPage = () => {
           level: undefined // Will be set if found in text, otherwise default to 0 later
         };
       }
-      // Check for options (A:, A., A), B:, B., B), etc.)
-      else if (currentQuestion && line.match(/^[A-D][\:\.\)]\s*(.+)/)) {
-        const optionMatch = line.match(/^[A-D][\:\.\)]\s*(.+)/);
+      // Check for options - strict format "A:" only
+      else if (currentQuestion && line.match(/^[A-D]:\s*(.+)/)) {
+        const optionMatch = line.match(/^[A-D]:\s*(.+)/);
         if (optionMatch) {
           currentQuestion.options.push(optionMatch[1].trim());
         }
