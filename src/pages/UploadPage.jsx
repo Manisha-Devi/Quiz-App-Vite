@@ -101,10 +101,30 @@ function UploadPage() {
     initializeData();
   }, []);
 
+  // Apply dark mode classes when component mounts or dark mode changes
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark-mode');
+      document.body.classList.add('dark-mode');
+    } else {
+      document.documentElement.classList.remove('dark-mode');
+      document.body.classList.remove('dark-mode');
+    }
+  }, [isDarkMode]);
+
   const toggleDarkMode = async () => {
     const newDarkMode = !isDarkMode;
     setIsDarkMode(newDarkMode);
     await dataManager.setUserSetting('darkMode', newDarkMode);
+    
+    // Force re-render by updating document class
+    if (newDarkMode) {
+      document.documentElement.classList.add('dark-mode');
+      document.body.classList.add('dark-mode');
+    } else {
+      document.documentElement.classList.remove('dark-mode');
+      document.body.classList.remove('dark-mode');
+    }
   };
 
   const toggleFullscreen = () => {
