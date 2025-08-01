@@ -505,60 +505,60 @@ function ResultPage() {
       <div className="main-content">
         {/* Single Question Card View */}
         <div className="single-question-container" {...swipeHandlers}>
+          {/* Question Navigation Header - Inside single question container */}
+          {filteredQuestions.length > 0 && (
+            <div className="question-navigation-header">
+              <button 
+                className="nav-arrow prev" 
+                onClick={goToPrevQuestion}
+                disabled={currentQuestionIndex === 0}
+                title="Previous Question (Left Arrow)"
+              >
+                ← Previous
+              </button>
+              <div className="question-counter">
+                {currentQuestionIndex + 1} of {filteredQuestions.length}
+              </div>
+              <button 
+                className="nav-arrow next" 
+                onClick={goToNextQuestion}
+                disabled={currentQuestionIndex === filteredQuestions.length - 1}
+                title="Next Question (Right Arrow)"
+              >
+                Next →
+              </button>
+            </div>
+          )}
           {filteredQuestions.length > 0 ? (
-            <>
-              <div className="question-navigation-header">
-                <button 
-                  className="nav-arrow prev" 
-                  onClick={goToPrevQuestion}
-                  disabled={currentQuestionIndex === 0}
-                  title="Previous Question (Left Arrow)"
-                >
-                  ← Previous
-                </button>
-                <div className="question-counter">
-                  {currentQuestionIndex + 1} of {filteredQuestions.length}
-                </div>
-                <button 
-                  className="nav-arrow next" 
-                  onClick={goToNextQuestion}
-                  disabled={currentQuestionIndex === filteredQuestions.length - 1}
-                  title="Next Question (Right Arrow)"
-                >
-                  Next →
-                </button>
-              </div>
-              
-              <div className="current-question-wrapper">
-                {(() => {
-                  const currentQuestion = filteredQuestions[currentQuestionIndex];
-                  const actualIndex = questions.findIndex(question => question === currentQuestion);
-                  
-                  if (actualIndex === -1) {
-                    return (
-                      <div className="no-results">
-                        <div className="no-results-icon">🔍</div>
-                        <div className="no-results-text">Question not found</div>
-                      </div>
-                    );
-                  }
-                  
+            <div className="current-question-wrapper">
+              {(() => {
+                const currentQuestion = filteredQuestions[currentQuestionIndex];
+                const actualIndex = questions.findIndex(question => question === currentQuestion);
+                
+                if (actualIndex === -1) {
                   return (
-                    <QuestionCard
-                      key={`${actualIndex}-${currentFilter}`}
-                      question={currentQuestion}
-                      index={actualIndex}
-                      userAnswer={answers[actualIndex]}
-                      reviewMarked={reviewMarks[actualIndex]}
-                      retryMode={retryMode}
-                      retryAnswer={retryAnswers[actualIndex]}
-                      retryCompleted={retryCompleted[actualIndex]}
-                      onRetryAnswer={handleRetryAnswer}
-                    />
+                    <div className="no-results">
+                      <div className="no-results-icon">🔍</div>
+                      <div className="no-results-text">Question not found</div>
+                    </div>
                   );
-                })()}
-              </div>
-            </>
+                }
+                
+                return (
+                  <QuestionCard
+                    key={`${actualIndex}-${currentFilter}`}
+                    question={currentQuestion}
+                    index={actualIndex}
+                    userAnswer={answers[actualIndex]}
+                    reviewMarked={reviewMarks[actualIndex]}
+                    retryMode={retryMode}
+                    retryAnswer={retryAnswers[actualIndex]}
+                    retryCompleted={retryCompleted[actualIndex]}
+                    onRetryAnswer={handleRetryAnswer}
+                  />
+                );
+              })()}
+            </div>
           ) : (
             <div className="no-results">
               <div className="no-results-icon">🔍</div>
