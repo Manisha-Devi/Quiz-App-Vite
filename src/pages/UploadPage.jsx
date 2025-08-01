@@ -8,7 +8,6 @@ import dataManager from "../utils/dataManager";
 import "../styles/UploadPage.css";
 import {
   openDb,
-  storeText,
   clearDatabase,
   deleteDatabase,
 } from "../utils/indexedDB";
@@ -297,7 +296,8 @@ function UploadPage() {
 
       // Store texts for each quiz file
       for (const item of allData) {
-        await storeText(item.questions, item.name);
+        const { storeJSONFile } = await import('../utils/indexedDB');
+        await storeJSONFile(item.name + '.json', item.questions);
         console.log(`Stored text data for ${item.name}`);
       }
 
