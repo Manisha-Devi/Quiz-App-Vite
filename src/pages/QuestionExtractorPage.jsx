@@ -265,9 +265,7 @@ const QuestionExtractorPage = () => {
       id: index + 1,
       question: q.question,
       options: q.options,
-      answer: q.options.findIndex(opt => opt === q.options[q.correct.charCodeAt(0) - 65]) !== -1 
-        ? q.options.findIndex(opt => opt === q.options[q.correct.charCodeAt(0) - 65])
-        : q.correct.charCodeAt(0) - 65, // Convert A,B,C,D to 0,1,2,3
+      answer: q.correct.charCodeAt(0) - 65, // Convert A,B,C,D to 0,1,2,3
       level: q.level || 0,
       explanation: q.explanation || ""
     }));
@@ -416,12 +414,7 @@ const QuestionExtractorPage = () => {
 
             <div className="questions-preview">
               {extractedQuestions.slice(0, 3).map((question, index) => {
-                // Create a modified question object for display
-                const displayQuestion = {
-                  ...question,
-                  options: question.options,
-                  answer: question.correct.charCodeAt(0) - 65
-                };
+                const correctAnswerIndex = question.correct ? question.correct.charCodeAt(0) - 65 : -1;
 
                 return (
                   <div key={question.id} className="extracted-question-card">
@@ -442,11 +435,11 @@ const QuestionExtractorPage = () => {
                       {question.options?.map((option, optionIndex) => (
                         <div 
                           key={optionIndex} 
-                          className={`option ${optionIndex === (question.correct.charCodeAt(0) - 65) ? 'correct-option' : ''}`}
+                          className={`option ${optionIndex === correctAnswerIndex ? 'correct-option' : ''}`}
                         >
                           <div className="option-label">{String.fromCharCode(65 + optionIndex)}</div>
                           <div className="option-text">{option}</div>
-                          {optionIndex === (question.correct.charCodeAt(0) - 65) && (
+                          {optionIndex === correctAnswerIndex && (
                             <div className="correct-mark">✅</div>
                           )}
                         </div>
