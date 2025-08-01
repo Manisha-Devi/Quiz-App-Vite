@@ -239,11 +239,16 @@ const QuestionExtractorPage = () => {
       explanation: q.explanation || ""
     }));
 
+    // Use the first file's name with spaces replaced by underscores
+    const fileName = files.length > 0 
+      ? files[0].name.replace(/\.[^/.]+$/, "").replace(/\s+/g, "_") + ".json"
+      : "extracted-questions.json";
+
     const blob = new Blob([JSON.stringify(jsonOutput, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'extracted-questions.json';
+    a.download = fileName;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -277,44 +282,7 @@ const QuestionExtractorPage = () => {
 
       {/* Content */}
       <div className="extractor-content">
-        {/* Instructions Section */}
-        <section className="instructions-section">
-          <h2>📄 Document Question Extractor</h2>
-          <p>Upload Word (.docx) files to extract questions automatically. PDF support coming soon!</p>
-
-          <div className="format-examples">
-            <div className="format-example">
-              <h3>📝 Supported Question Format:</h3>
-              <div className="example-content">
-                <code>
-                  1. What is the Capital of India?<br/>
-                  A) New Delhi<br/>
-                  B) Bombay<br/>
-                  C) Kolkata<br/>
-                  D) Delhi<br/>
-                  Answer: A<br/>
-                  Explanation: New Delhi is the capital of India (optional)<br/>
-                  Level: 0 (0=Easy, 1=Medium, 2=Hard, optional - defaults to 0)
-                </code>
-              </div>
-            </div>
-          </div>
-
-          <div className="feature-list">
-            <div className="feature-item">
-              <span className="feature-icon">✅</span>
-              <span>Automatic question detection and parsing</span>
-            </div>
-            <div className="feature-item">
-              <span className="feature-icon">📐</span>
-              <span>KaTeX mathematical formatting support</span>
-            </div>
-            <div className="feature-item">
-              <span className="feature-icon">📊</span>
-              <span>JSON export for quiz integration</span>
-            </div>
-          </div>
-        </section>
+        
 
         {/* Upload Section */}
         <section className="upload-section">
