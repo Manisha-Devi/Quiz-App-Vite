@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/QuestionExtractorPage.css';
 import useOfflineStorage from '../hooks/useOfflineStorage';
+import QuestionCard from '../components/QuestionCard';
 
 const QuestionExtractorPage = () => {
   const navigate = useNavigate();
@@ -175,6 +176,10 @@ const QuestionExtractorPage = () => {
       if (questionMatch) {
         // Save previous question if exists
         if (currentQuestion && currentQuestion.question && currentQuestion.options.length === 4) {
+          // Set default level if not explicitly provided
+          if (currentQuestion.level === undefined) {
+            currentQuestion.level = 0;
+          }
           questions.push(currentQuestion);
         }
         
@@ -185,7 +190,7 @@ const QuestionExtractorPage = () => {
           options: [],
           correct: '',
           explanation: '',
-          level: 0 // Default to Easy
+          level: undefined // Will be set if found in text, otherwise default to 0 later
         };
       }
       // Check for options (A), B), C), D))
@@ -221,6 +226,10 @@ const QuestionExtractorPage = () => {
     
     // Add the last question if valid
     if (currentQuestion && currentQuestion.question && currentQuestion.options.length === 4) {
+      // Set default level if not explicitly provided
+      if (currentQuestion.level === undefined) {
+        currentQuestion.level = 0;
+      }
       questions.push(currentQuestion);
     }
     
@@ -383,33 +392,24 @@ const QuestionExtractorPage = () => {
 
             <div className="questions-preview">
               {extractedQuestions.slice(0, 3).map((question, index) => (
-                <div key={question.id} className="question-preview">
-                  <div className="question-number">Q{index + 1}</div>
-                  <div className="question-content">
-                    <div className="question-text">{question.question}</div>
-                    <div className="options-preview">
-                      {question.options.map((option, optIndex) => (
-                        <div key={optIndex} className="option-preview">
-                          {String.fromCharCode(65 + optIndex)}) {option}
-                        </div>
-                      ))}
-                    </div>
-                    <div className="answer-preview">Answer: {question.correct}</div>
-                    {question.explanation && (
-                      <div className="explanation-preview">
-                        <strong>Explanation:</strong> {question.explanation}
-                      </div>
-                    )}
-                    <div className="level-preview">
-                      Level: {question.level === 0 ? 'Easy' : question.level === 1 ? 'Medium' : 'Hard'}
-                    </div>
-                  </div>
-                </div>
+                <QuestionCard
+                  key={question.id}
+                  question={question}
+                  index={index}
+                  userAnswer={question.correct.charCodeAt(0) - 65}
+                  reviewMarked={false}
+                  retryMode={false}
+                />
               ))}
 
               {extractedQuestions.length > 3 && (
                 <div className="more-questions">
-                  +{extractedQuestions.length - 3} more questions...
+                  <div className="more-questions-text">
+                    +{extractedQuestions.length - 3} more questions available
+                  </div>
+                  <div className="more-questions-hint">
+                    Export as JSON to see all questions
+                  </div>
                 </div>
               )}
             </div>
