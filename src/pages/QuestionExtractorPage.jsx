@@ -185,7 +185,11 @@ const QuestionExtractorPage = () => {
         // Save previous question if exists and is valid
         if (currentQuestion && currentQuestion.question && currentQuestion.options.length === 4) {
           if (currentQuestion.level === undefined) {
-            currentQuestion.level = 0;
+            currentQuestion.level = 0; // Default to Easy
+          }
+          // Only add explanation if it exists and is not empty
+          if (!currentQuestion.explanation || currentQuestion.explanation.trim() === '') {
+            delete currentQuestion.explanation;
           }
           questions.push(currentQuestion);
         }
@@ -322,7 +326,11 @@ const QuestionExtractorPage = () => {
     // Add the last question if valid
     if (currentQuestion && currentQuestion.question && currentQuestion.options.length === 4) {
       if (currentQuestion.level === undefined) {
-        currentQuestion.level = 0;
+        currentQuestion.level = 0; // Default to Easy
+      }
+      // Only add explanation if it exists and is not empty
+      if (!currentQuestion.explanation || currentQuestion.explanation.trim() === '') {
+        delete currentQuestion.explanation;
       }
       questions.push(currentQuestion);
     }
@@ -362,16 +370,24 @@ const QuestionExtractorPage = () => {
   };
 
   const formatAsJSON = () => {
-    const jsonOutput = extractedQuestions.map((q, index) => ({
-      id: index + 1,
-      question: q.question,
-      options: q.options,
-      answer: q.options.findIndex(opt => opt === q.options[q.correct.charCodeAt(0) - 65]) !== -1 
-        ? q.options.findIndex(opt => opt === q.options[q.correct.charCodeAt(0) - 65])
-        : q.correct.charCodeAt(0) - 65, // Convert A,B,C,D to 0,1,2,3
-      level: q.level || 0,
-      explanation: q.explanation || ""
-    }));
+    const jsonOutput = extractedQuestions.map((q, index) => {
+      const questionData = {
+        id: index + 1,
+        question: q.question,
+        options: q.options,
+        answer: q.options.findIndex(opt => opt === q.options[q.correct.charCodeAt(0) - 65]) !== -1 
+          ? q.options.findIndex(opt => opt === q.options[q.correct.charCodeAt(0) - 65])
+          : q.correct.charCodeAt(0) - 65, // Convert A,B,C,D to 0,1,2,3
+        level: q.level || 0
+      };
+      
+      // Only add explanation if it exists and is not empty
+      if (q.explanation && q.explanation.trim() !== '') {
+        questionData.explanation = q.explanation;
+      }
+      
+      return questionData;
+    });
 
     // Use the first file's name with spaces replaced by underscores
     const fileName = files.length > 0 
