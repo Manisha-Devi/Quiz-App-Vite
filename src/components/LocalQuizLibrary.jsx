@@ -32,58 +32,106 @@ const LocalQuizLibrary = ({ onQuizSelect }) => {
   return (
     <div className="local-quiz-library">
       <div className="library-header">
-        <h2>📚 Saved Quizzes ({localQuizzes.length})</h2>
-        <div className="status-indicator">
-          <span className={`status ${isOnline ? 'online' : 'offline'}`}>
-            {isOnline ? '🟢 Online' : '🔴 Offline'}
-          </span>
+        <h2>📚 Saved Quizzes</h2>
+        <p>Choose from your saved quiz files to continue</p>
+      </div>
+
+      <div className="controls-section">
+        <div className="search-row">
+          <div className="search-input-container">
+            <span className="search-icon">🔍</span>
+            <input
+              type="text"
+              placeholder="Search quizzes by name..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input"
+            />
+            {searchTerm && (
+              <div className="search-actions">
+                <button 
+                  className="clear-search"
+                  onClick={() => setSearchTerm('')}
+                  title="Clear search"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
-      <div className="search-bar">
-        <input
-          type="text"
-          placeholder="🔍 Search quizzes..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="search-input"
-        />
-      </div>
+      {/* Library Stats */}
+      {filteredQuizzes.length > 0 && (
+        <div className="library-stats">
+          <span className="total-files">
+            📊 Total: {filteredQuizzes.length} quiz{filteredQuizzes.length !== 1 ? 'zes' : ''} | 
+            Status: {isOnline ? '🟢 Online' : '🔴 Offline'}
+          </span>
+        </div>
+      )}
 
-      <div className="quiz-grid">
-        {filteredQuizzes.length === 0 ? (
-          <div className="empty-state">
-            <p>📝 No saved quizzes found</p>
-            <small>Upload some quiz files to see them here</small>
-          </div>
-        ) : (
-          filteredQuizzes.map((quiz) => (
-            <div key={quiz.id} className="quiz-card" onClick={() => handleQuizSelect(quiz)}>
-              <div className="quiz-card-header">
-                <h3>{quiz.name}</h3>
-                <span className="quiz-questions">
-                  {quiz.data?.length || 0} questions
-                </span>
-              </div>
-              
-              <div className="quiz-card-meta">
-                <div className="quiz-date">
-                  📅 Created: {formatDate(quiz.createdAt)}
+      {filteredQuizzes.length === 0 ? (
+        <div className="empty-state">
+          <div className="empty-icon">📝</div>
+          <h3>No saved quizzes found</h3>
+          <p>Upload some quiz files to see them here</p>
+        </div>
+      ) : (
+        <div className="files-container grid files-grid-2-col">
+          {filteredQuizzes.map((quiz) => {
+            const questionCount = quiz.data?.length || 0;
+            return (
+              <div 
+                key={quiz.id} 
+                className="file-card"
+                onClick={() => handleQuizSelect(quiz)}
+              >
+                <div className="file-content">
+                  <div className="file-info">
+                    {/* Row 1: File name (left aligned) */}
+                    <div className="file-row file-name-row">
+                      <span className="file-icon">📚</span>
+                      <h3 className="file-name">{quiz.name}</h3>
+                    </div>
+                    
+                    {/* Row 2: Questions (left), Date (center), Size (right) */}
+                    <div className="file-row file-meta-row">
+                      <div className="file-questions-left">
+                        <span 
+                          className="question-prefix" 
+                          style={{
+                            color: questionCount <= 20 ? '#4CAF50' : 
+                                   questionCount <= 50 ? '#ff9800' : '#f44336',
+                            fontWeight: 'bold'
+                          }}
+                        >
+                          Q:
+                        </span>
+                        <span className="question-count">{questionCount} questions</span>
+                      </div>
+                      
+                      <div className="file-images-center">
+                        <span className="date-info">
+                          📅 {formatDate(quiz.createdAt)}
+                        </span>
+                      </div>
+                      
+                      <div className="file-size-right">
+                        <span className="file-size">
+                          {questionCount <= 20 ? '🟢 Small' : 
+                           questionCount <= 50 ? '🟡 Medium' : '🔴 Large'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="quiz-last-used">
-                  🕒 Last used: {formatDate(quiz.lastUsed)}
-                </div>
               </div>
-              
-              <div className="quiz-card-footer">
-                <button className="load-quiz-btn">
-                  Load Quiz 🚀
-                </button>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };
