@@ -603,7 +603,7 @@ const CacheCleaner = ({ onDataChange }) => {
       }
         }
       );
-    }
+    };
   };
 
   const deleteIndexedDB = async () => {
