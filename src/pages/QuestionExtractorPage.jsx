@@ -249,52 +249,42 @@ const QuestionExtractorPage = () => {
       }
 
       // Check for answer (Answer: A format)
-      if (currentQuestion && trimmedLine.toLowerCase().startsWith('answer:')) {
+      if (currentQuestion && trimmedLine.toLowerCase().includes('answer:')) {
         isParsingAnswer = true;
         isParsingOptions = false;
         const answerMatch = trimmedLine.match(/answer:\s*([A-D])/i);
         if (answerMatch) {
           currentQuestion.correct = answerMatch[1].toUpperCase();
         }
-        continue;
-      }
 
-      // Check for level (Level: Medium format or just Level: at end of answer line)
-      if (currentQuestion && (trimmedLine.toLowerCase().includes('level:') || (isParsingAnswer && /\b(easy|medium|hard)\b/i.test(trimmedLine)))) {
-        isParsingLevel = true;
-        let levelText = '';
-
-        // Extract level from current line
+        // Check if level is on the same line after answer
         if (trimmedLine.toLowerCase().includes('level:')) {
           const levelMatch = trimmedLine.match(/level:\s*(easy|medium|hard|\d+)/i);
           if (levelMatch) {
-            levelText = levelMatch[1].toLowerCase();
-          }
-        } else if (isParsingAnswer) {
-          // Level might be on the same line as answer
-          const levelMatch = trimmedLine.match(/\b(easy|medium|hard)\b/i);
-          if (levelMatch) {
-            levelText = levelMatch[1].toLowerCase();
+            const levelText = levelMatch[1].toLowerCase();
+            if (levelText === 'easy' || levelText === '0') {
+              currentQuestion.level = 0;
+            } else if (levelText === 'medium' || levelText === '1') {
+              currentQuestion.level = 1;
+            } else if (levelText === 'hard' || levelText === '2') {
+              currentQuestion.level = 2;
+            }
           }
         }
+        continue;
+      }
 
-        // Convert level text to number
-        if (levelText === 'easy' || levelText === '0') {
-          currentQuestion.level = 0;
-        } else if (levelText === 'medium' || levelText === '1') {
-          currentQuestion.level = 1;
-        } else if (levelText === 'hard' || levelText === '2') {
-          currentQuestion.level = 2;
-        } else if (!isNaN(parseInt(levelText))) {
-          const level = parseInt(levelText);
-          currentQuestion.level = Math.min(Math.max(level, 0), 2);
-        }
-
-        // If this line also contains answer, parse it
-        if (!currentQuestion.correct && trimmedLine.toLowerCase().includes('answer:')) {
-          const answerMatch = trimmedLine.match(/answer:\s*([A-D])/i);
-          if (answerMatch) {
-            currentQuestion.correct = answerMatch[1].toUpperCase();
+      // Check for level (Level: Medium format) - can appear independently
+      if (currentQuestion && trimmedLine.toLowerCase().startsWith('level:')) {
+        const levelMatch = trimmedLine.match(/level:\s*(easy|medium|hard|\d+)/i);
+        if (levelMatch) {
+          const levelText = levelMatch[1].toLowerCase();
+          if (levelText === 'easy' || levelText === '0') {
+            currentQuestion.level = 0;
+          } else if (levelText === 'medium' || levelText === '1') {
+            currentQuestion.level = 1;
+          } else if (levelText === 'hard' || levelText === '2') {
+            currentQuestion.level = 2;
           }
         }
         continue;
@@ -304,7 +294,6 @@ const QuestionExtractorPage = () => {
       if (currentQuestion && trimmedLine.toLowerCase().startsWith('explanation:')) {
         isParsingExplanation = true;
         isParsingAnswer = false;
-        isParsingLevel = false;
         const explanationMatch = trimmedLine.match(/explanation:\s*(.+)/i);
         if (explanationMatch) {
           currentQuestion.explanation = explanationMatch[1].trim();
@@ -571,7 +560,7 @@ const QuestionExtractorPage = () => {
                       ))}
                     </div>
 
-                    {question.explanation && (
+                    {question.explanation && question.explanation.trim() !== '' && (
                       <div className="explanation">
                         <div className="explanation-header">💡 Explanation</div>
                         <div className="explanation-text">{question.explanation}</div>
