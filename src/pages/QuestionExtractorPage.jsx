@@ -193,6 +193,9 @@ const QuestionExtractorPage = () => {
       let isParsingExplanation = false;
       let isParsingLevel = false;
       
+      // Check if this is a match-the-following question
+      const isMatchQuestion = questionContent.toLowerCase().includes('match') && questionContent.toLowerCase().includes('following');
+      
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
         
@@ -269,32 +272,84 @@ const QuestionExtractorPage = () => {
         }
       }
       
-      // Clean up and format question text
-      currentQuestion.question = questionText.trim();
-      
       // Handle HTML formatting and preserve structure for complex questions
-      if (currentQuestion.question.includes('Match') || currentQuestion.question.includes('following')) {
-        // Preserve formatting for match-the-following questions
-        const formattedLines = questionContent.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+      if (isMatchQuestion) {
+        // Parse match-the-following questions with proper formatting
+        const allLines = questionContent.split('\n');
         let formattedQuestion = '';
         let foundFirstOption = false;
+        let isTableSection = false;
         
-        for (const line of formattedLines) {
+        for (let line of allLines) {
+          line = line.trim();
+          
+          // Skip empty lines
+          if (!line) continue;
+          
+          // Check if we've reached the options section
           if (line.match(/^[A-D][\.\)]/i)) {
             foundFirstOption = true;
             break;
           }
-          if (!line.toLowerCase().includes('answer:') && 
-              !line.toLowerCase().includes('explanation:') && 
-              !line.toLowerCase().includes('level:')) {
-            if (formattedQuestion) {
+          
+          // Skip answer, explanation, and level lines
+          if (line.toLowerCase().includes('answer:') || 
+              line.toLowerCase().includes('explanation:') || 
+              line.toLowerCase().includes('level:')) {
+            break;
+          }
+          
+          // Detect table structure
+          if (line.includes('\t') || (line.length > 5 && line.includes(' ') && 
+              (line.includes('A') || line.includes('B') || line.includes('1.') || line.includes('2.') || line.includes('3.')))) {
+            
+            if (!isTableSection) {
+              // Start table formatting
+              if (formattedQuestion && !formattedQuestion.endsWith('<br>')) {
+                formattedQuestion += '<br><br>';
+              }
+              isTableSection = true;
+            }
+            
+            // Format table rows with proper spacing
+            let formattedLine = line;
+            
+            // Handle column headers (A and B)
+            if (line.includes('A') && line.includes('B') && line.length < 20) {
+              formattedLine = line.replace(/\s+/g, '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+            }
+            // Handle numbered items with options
+            else if (line.includes('.') && (line.includes('i.') || line.includes('ii.') || line.includes('iii.'))) {
+              // Replace multiple spaces/tabs with proper spacing
+              formattedLine = line.replace(/\s+/g, '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+            }
+            // Handle items with large spacing
+            else {
+              formattedLine = line.replace(/\t+/g, '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
+                               .replace(/\s{3,}/g, '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+            }
+            
+            if (formattedQuestion && !formattedQuestion.endsWith('<br>')) {
+              formattedQuestion += '<br>';
+            }
+            formattedQuestion += formattedLine;
+          } else {
+            // Regular question text
+            if (formattedQuestion && !isTableSection) {
+              formattedQuestion += ' ' + line;
+            } else if (formattedQuestion && isTableSection) {
               formattedQuestion += '<br>' + line;
+              isTableSection = false;
             } else {
               formattedQuestion = line;
             }
           }
         }
-        currentQuestion.question = formattedQuestion;
+        
+        currentQuestion.question = formattedQuestion.trim();
+      } else {
+        // Regular question formatting
+        currentQuestion.question = questionText.trim();
       }
       
       // Only add question if it has valid structure
@@ -483,9 +538,10 @@ const QuestionExtractorPage = () => {
                       </div>
                     </div>
 
-                    <div className="question-text">
-                      {question.question}
-                    </div>
+                    <div 
+                      className="question-text"
+                      dangerouslySetInnerHTML={{ __html: question.question }}
+                    ></div>
 
                     <div className="options-grid">
                       {question.options?.map((option, optionIndex) => (

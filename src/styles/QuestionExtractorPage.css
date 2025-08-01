@@ -833,7 +833,8 @@ body {
   margin-bottom: 25px;
   color: #2e7d32;
   line-height: 1.6;
-  white-space: pre-line;
+  white-space: normal;
+  word-wrap: break-word;
 }
 
 .extracted-question-card .question-text br {
@@ -860,6 +861,25 @@ body {
   background: #4CAF50;
   color: white;
   font-weight: 600;
+}
+
+/* Handle non-breaking spaces and HTML formatting */
+.extracted-question-card .question-text {
+  font-family: 'Courier New', monospace;
+}
+
+/* Preserve spacing for match-the-following questions */
+.extracted-question-card .question-text * {
+  font-family: inherit;
+}
+
+/* Better rendering for HTML content */
+.extracted-question-card .question-text p {
+  margin: 8px 0;
+}
+
+.extracted-question-card .question-text div {
+  margin: 4px 0;
 }
 
 .extracted-question-card .options-grid {
