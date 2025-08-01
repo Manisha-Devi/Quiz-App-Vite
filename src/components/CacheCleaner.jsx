@@ -1,16 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import dataManager from '../utils/dataManager';
+import './styles/CacheCleaner.css';
 
 const CacheCleaner = ({ onDataChange }) => {
   const [loading, setLoading] = useState(false);
   const [currentOperation, setCurrentOperation] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [modalConfig, setModalConfig] = useState({
+    title: '',
+    message: '',
+    type: 'confirm', // 'confirm', 'alert', 'success', 'error'
+    onConfirm: null,
+    onCancel: null
+  });
+
+  // Modal helper functions
+  const showConfirmModal = (title, message, onConfirm) => {
+    setModalConfig({
+      title,
+      message,
+      type: 'confirm',
+      onConfirm,
+      onCancel: () => setShowModal(false)
+    });
+    setShowModal(true);
+  };
+
+  const showAlertModal = (title, message, type = 'success') => {
+    setModalConfig({
+      title,
+      message,
+      type,
+      onConfirm: () => setShowModal(false),
+      onCancel: null
+    });
+    setShowModal(true);
+  };
 
   const fetchJSONData = async () => {
     if (loading) return;
 
-    if (confirm(
-      "⚠️ Are you sure you want to Fetch Data? This will fetch data from the server."
-    )) {
+    showConfirmModal(
+      "Fetch JSON Data",
+      "⚠️ Are you sure you want to Fetch Data? This will fetch data from the server.",
+      async () => {
+        setShowModal(false);
       try {
         setLoading(true);
         setCurrentOperation('fetching');
@@ -76,28 +110,37 @@ const CacheCleaner = ({ onDataChange }) => {
           await loadJSONImagesFromFolders();
           console.log('✅ Images loading process completed');
 
-          alert(`✅ Successfully loaded:\n📄 ${loadedData.length} JSON files\n🖼️ Associated images\n\nAll data stored in IndexedDB!`);
+          showAlertModal(
+            "Success",
+            `✅ Successfully loaded:\n📄 ${loadedData.length} JSON files\n🖼️ Associated images\n\nAll data stored in IndexedDB!`,
+            'success'
+          );
 
           if (onDataChange) {
             onDataChange();
           }
         } else {
-          alert('⚠️ No JSON files could be loaded');
+          showAlertModal("Warning", "⚠️ No JSON files could be loaded", 'error');
         }
       } catch (error) {
         console.error('Error fetching JSON data:', error);
-        alert(`❌ Error loading JSON files: ${error.message || 'Please try again.'}`);
+        showAlertModal("Error", `❌ Error loading JSON files: ${error.message || 'Please try again.'}`, 'error');
       } finally {
         setLoading(false);
         setCurrentOperation('');
       }
-    }
+      }
+    );
   };
 
   const clearIndexedDBStores = async () => {
     if (loading) return;
 
-    if (confirm("⚠️ Are you sure you want to CLEAR all IndexedDB stores? This will empty all data but keep the database structure intact.")) {
+    showConfirmModal(
+      "Clear IndexedDB Stores",
+      "⚠️ Are you sure you want to CLEAR all IndexedDB stores? This will empty all data but keep the database structure intact.",
+      async () => {
+        setShowModal(false);
       try {
         setLoading(true);
         setCurrentOperation('clearing');
@@ -114,7 +157,11 @@ const CacheCleaner = ({ onDataChange }) => {
 
         if (success) {
           console.log('✅ All IndexedDB stores cleared successfully');
-          alert('✅ All IndexedDB stores cleared successfully!\n\n📊 All data has been removed while preserving the database structure.');
+          showAlertModal(
+            "Success", 
+            "✅ All IndexedDB stores cleared successfully!\n\n📊 All data has been removed while preserving the database structure.",
+            'success'
+          );
 
           if (onDataChange) {
             onDataChange();
@@ -125,12 +172,17 @@ const CacheCleaner = ({ onDataChange }) => {
 
       } catch (error) {
         console.error('❌ Error clearing IndexedDB stores:', error);
-        alert(`❌ Error clearing IndexedDB stores: ${error.message || 'Unknown error occurred.'}\n\nTip: Try the Delete button instead to remove the entire database.`);
+        showAlertModal(
+          "Error",
+          `❌ Error clearing IndexedDB stores: ${error.message || 'Unknown error occurred.'}\n\nTip: Try the Delete button instead to remove the entire database.`,
+          'error'
+        );
       } finally {
         setLoading(false);
         setCurrentOperation('');
       }
-    }
+      }
+    );
   };
 
   // Helper function for direct store clearing
@@ -183,9 +235,11 @@ const CacheCleaner = ({ onDataChange }) => {
   const clearBrowserStorage = async () => {
     if (loading) return;
 
-    if (confirm(
-      "⚠️ Are you sure you want to CLEAR ALL browser storage?\n\n🧹 This will remove:\n• localStorage\n• sessionStorage\n• Extension Storage\n• Cookies\n• Private State Tokens\n• Interest Groups\n• Shared Storage\n• Cache Storage\n• Storage Buckets\n\nThis action cannot be undone!"
-    )) {
+    showConfirmModal(
+      "Clear All Browser Storage",
+      "⚠️ Are you sure you want to CLEAR ALL browser storage?\n\n🧹 This will remove:\n• localStorage\n• sessionStorage\n• Extension Storage\n• Cookies\n• Private State Tokens\n• Interest Groups\n• Shared Storage\n• Cache Storage\n• Storage Buckets\n\nThis action cannot be undone!",
+      async () => {
+        setShowModal(false);
       try {
         setLoading(true);
         setCurrentOperation('storage');
@@ -528,7 +582,7 @@ const CacheCleaner = ({ onDataChange }) => {
           `🔄 Refresh the page to see the full effect.`
         ].join('\n');
 
-        alert(summary);
+        showAlertModal("Success", summary, 'success');
 
         if (onDataChange) {
           onDataChange();
@@ -536,20 +590,27 @@ const CacheCleaner = ({ onDataChange }) => {
 
       } catch (error) {
         console.error('❌ Error during comprehensive storage clearing:', error);
-        alert(`❌ Error clearing browser storage: ${error.message || 'Unknown error occurred.'}\n\n💡 Some storage types may not be supported in this browser.`);
+        showAlertModal(
+          "Error",
+          `❌ Error clearing browser storage: ${error.message || 'Unknown error occurred.'}\n\n💡 Some storage types may not be supported in this browser.`,
+          'error'
+        );
       } finally {
         setLoading(false);
         setCurrentOperation('');
       }
-    }
+      }
+    );
   };
 
   const deleteIndexedDB = async () => {
     if (loading) return;
 
-    if (confirm(
-      "⚠️ Are you sure you want to DELETE the entire IndexedDB database?\n\n🔥 This will:\n• Remove ALL data permanently\n• Delete the entire database structure\n• Cannot be undone\n\nProceed with deletion?"
-    )) {
+    showConfirmModal(
+      "Delete IndexedDB Database",
+      "⚠️ Are you sure you want to DELETE the entire IndexedDB database?\n\n🔥 This will:\n• Remove ALL data permanently\n• Delete the entire database structure\n• Cannot be undone\n\nProceed with deletion?",
+      async () => {
+        setShowModal(false);
       try {
         setLoading(true);
         setCurrentOperation('deleting');
@@ -572,7 +633,11 @@ const CacheCleaner = ({ onDataChange }) => {
           const { default: dataManager } = await import('../utils/dataManager');
           dataManager.markDatabaseAsDeleted();
 
-          alert('✅ IndexedDB database deleted successfully!\n\n🗑️ The database has been completely removed and will not recreate automatically.');
+          showAlertModal(
+            "Success",
+            "✅ IndexedDB database deleted successfully!\n\n🗑️ The database has been completely removed and will not recreate automatically.",
+            'success'
+          );
 
           if (onDataChange) {
             onDataChange();
@@ -584,12 +649,17 @@ const CacheCleaner = ({ onDataChange }) => {
 
       } catch (error) {
         console.error('❌ Error deleting IndexedDB:', error);
-        alert(`❌ Error deleting IndexedDB: ${error.message || 'Unknown error occurred.'}\n\n💡 Troubleshooting tips:\n• Close all other tabs with this app\n• Try the Clear button instead\n• Manually reload the page`);
+        showAlertModal(
+          "Error",
+          `❌ Error deleting IndexedDB: ${error.message || 'Unknown error occurred.'}\n\n💡 Troubleshooting tips:\n• Close all other tabs with this app\n• Try the Clear button instead\n• Manually reload the page`,
+          'error'
+        );
       } finally {
         setLoading(false);
         setCurrentOperation('');
       }
-    }
+      }
+    );
   };
 
   // Helper function to force close all connections
@@ -681,6 +751,50 @@ const CacheCleaner = ({ onDataChange }) => {
 
   return (
     <>
+      {/* Custom Modal */}
+      {showModal && (
+        <div className="modal-overlay" onClick={() => modalConfig.type !== 'confirm' && setShowModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3 className={`modal-title ${modalConfig.type}`}>
+                {modalConfig.type === 'success' && '✅ '}
+                {modalConfig.type === 'error' && '❌ '}
+                {modalConfig.type === 'confirm' && '⚠️ '}
+                {modalConfig.title}
+              </h3>
+            </div>
+            <div className="modal-body">
+              <p className="modal-message">{modalConfig.message}</p>
+            </div>
+            <div className="modal-footer">
+              {modalConfig.type === 'confirm' ? (
+                <>
+                  <button 
+                    className="modal-btn modal-btn-cancel" 
+                    onClick={modalConfig.onCancel}
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    className="modal-btn modal-btn-confirm" 
+                    onClick={modalConfig.onConfirm}
+                  >
+                    Confirm
+                  </button>
+                </>
+              ) : (
+                <button 
+                  className="modal-btn modal-btn-ok" 
+                  onClick={modalConfig.onConfirm}
+                >
+                  OK
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       <button
         onClick={fetchJSONData}
         disabled={loading}
