@@ -162,8 +162,22 @@ const QuestionExtractorPage = () => {
   const parseQuestionsFromText = (text, fileIndex) => {
     const questions = [];
     
-    // Clean up text but preserve original line structure
+    // Clean up text and preserve mathematical symbols
     let cleanedText = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    
+    // Handle common mathematical symbol replacements that might get lost
+    cleanedText = cleanedText
+      .replace(/∑/g, '\\sum')
+      .replace(/∞/g, '\\infty')
+      .replace(/π/g, '\\pi')
+      .replace(/€/g, '\\euro')
+      .replace(/▒/g, '')
+      .replace(/〖/g, '{')
+      .replace(/〗/g, '}')
+      .replace(/¦/g, ' \\choose ')
+      .replace(/⋯/g, '\\cdots')
+      .replace(/cos⁡/g, '\\cos')
+      .replace(/sin⁡/g, '\\sin');
     
     // Find all question starts with regex
     const questionPattern = /(\d+)\.\s*(.+?)(?=(?:\n|\r)*\d+\.\s|$)/gs;
@@ -211,7 +225,20 @@ const QuestionExtractorPage = () => {
         const optionMatch = trimmedLine.match(/^([A-D])[\.\)]\s*(.*)$/i);
         if (optionMatch && !isParsingAnswer && !isParsingExplanation && !isParsingLevel) {
           isParsingOptions = true;
-          const optionText = optionMatch[2].trim();
+          let optionText = optionMatch[2].trim();
+          
+          // Process mathematical expressions in options
+          optionText = optionText
+            .replace(/\b(\\sum|\\infty|\\pi|\\euro|\\cdots|\\cos|\\sin)\b/g, '$$$1$$')
+            .replace(/\(([^)]*\\[a-zA-Z]+[^)]*)\)/g, '($$$1$$)')
+            .replace(/([a-zA-Z])_\{([^}]+)\}/g, '$$$$1_{$2}$$$$')
+            .replace(/([a-zA-Z])\^([0-9n])/g, '$$$$1^{$2}$$$$')
+            .replace(/([a-zA-Z])\^([a-zA-Z])/g, '$$$$1^{$2}$$$$')
+            .replace(/\b(\d+)!/g, '$$$$1!$$$$')
+            .replace(/\b([a-zA-Z])!/g, '$$$$1!$$$$')
+            .replace(/\b([a-zA-Z])\(([a-zA-Z])\)/g, '$$$$1($2)$$$$')
+            .replace(/\\choose/g, '\\binom');
+          
           currentQuestion.options.push(optionText);
           continue;
         }
@@ -290,6 +317,18 @@ const QuestionExtractorPage = () => {
           
           // Replace tabs with 4 spaces first
           processedLine = processedLine.replace(/\t/g, '    ');
+          
+          // Handle mathematical expressions - wrap standalone math symbols in $ $
+          processedLine = processedLine
+            .replace(/\b(\\sum|\\infty|\\pi|\\euro|\\cdots|\\cos|\\sin)\b/g, '$$$1$$')
+            .replace(/\(([^)]*\\[a-zA-Z]+[^)]*)\)/g, '($$$1$$)')
+            .replace(/([a-zA-Z])_\{([^}]+)\}/g, '$$$$1_{$2}$$$$')
+            .replace(/([a-zA-Z])\^([0-9n])/g, '$$$$1^{$2}$$$$')
+            .replace(/([a-zA-Z])\^([a-zA-Z])/g, '$$$$1^{$2}$$$$')
+            .replace(/\b(\d+)!/g, '$$$$1!$$$$')
+            .replace(/\b([a-zA-Z])!/g, '$$$$1!$$$$')
+            .replace(/\b([a-zA-Z])\(([a-zA-Z])\)/g, '$$$$1($2)$$$$')
+            .replace(/\\choose/g, '\\binom');
           
           // Replace multiple spaces (2 or more) with HTML non-breaking spaces
           processedLine = processedLine.replace(/\s{2,}/g, (match) => {
@@ -497,10 +536,23 @@ const QuestionExtractorPage = () => {
                       </div>
                     </div>
 
-                    <div 
-                      className="question-text"
-                      dangerouslySetInnerHTML={{ __html: question.question }}
-                    ></div>
+                    <div className="question-text">
+                      {/* Use the same KaTeX rendering logic as other components */}
+                      {question.question.split(/(\$\$[^$]*\$\$|\$[^$]*\$)/g).map((part, index) => {
+                        if (part.startsWith('$$') && part.endsWith('$$')) {
+                          // Display math
+                          const mathContent = part.slice(2, -2);
+                          return <span key={index} dangerouslySetInnerHTML={{ __html: `<div style="text-align: center; margin: 10px 0;"><span style="font-size: 1.2em;">$$${mathContent}$$</span></div>` }} />;
+                        } else if (part.startsWith('$') && part.endsWith('$')) {
+                          // Inline math
+                          const mathContent = part.slice(1, -1);
+                          return <span key={index} dangerouslySetInnerHTML={{ __html: `$${mathContent}$` }} />;
+                        } else {
+                          // Regular text with HTML
+                          return <span key={index} dangerouslySetInnerHTML={{ __html: part }} />;
+                        }
+                      })}
+                    </div>
 
                     <div className="options-grid">
                       {question.options?.map((option, optionIndex) => (
