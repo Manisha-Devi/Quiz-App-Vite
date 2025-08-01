@@ -64,6 +64,29 @@
   }
 }
 
+/* Standalone mode styles */
+.extractor-modal-overlay.standalone {
+  position: static;
+  background: none;
+  display: block;
+  z-index: auto;
+  padding: 0;
+  backdrop-filter: none;
+}
+
+.extractor-modal.standalone {
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  max-width: none;
+  width: 100%;
+  max-height: none;
+  overflow: visible;
+  display: block;
+  border: none;
+  animation: none;
+}
+
 @media (max-width: 768px) {
   .extractor-modal {
     margin: 10px;

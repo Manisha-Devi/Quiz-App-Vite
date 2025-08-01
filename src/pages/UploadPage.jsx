@@ -4,7 +4,7 @@ import { storeImage } from "../utils/indexedDB";
 import useOfflineStorage from "../hooks/useOfflineStorage";
 import LocalJSONLibrary from "../components/LocalJSONLibrary";
 import CacheCleaner from "../components/CacheCleaner";
-import QuestionExtractor from "../components/QuestionExtractor";
+
 import dataManager from "../utils/dataManager";
 import "../styles/UploadPage.css";
 import {
@@ -345,20 +345,7 @@ function UploadPage() {
     setRefreshTrigger(prev => prev + 1); // Increment to trigger refresh
   };
 
-  const handleExtractedQuestions = (extractedQuestions) => {
-    // Create a virtual file object for the extracted questions
-    const fileName = `extracted_questions_${new Date().toISOString().split('T')[0]}.json`;
-    const jsonData = JSON.stringify(extractedQuestions, null, 2);
-    const blob = new Blob([jsonData], { type: 'application/json' });
-    const file = new File([blob], fileName, { type: 'application/json' });
-    
-    // Add to files list
-    setFiles(prev => [...prev, file]);
-    setShowSuccess(true);
-    setTimeout(() => setShowSuccess(false), 3000);
-    
-    handleDialogAlert('Questions Added', `${extractedQuestions.length} questions added to upload queue!`, 'success');
-  };
+  
 
   const handleDialogAlert = (title, message, type = 'info') => {
     setDialogContent({ title, message, type });
@@ -469,10 +456,13 @@ function UploadPage() {
           >
             {isDarkMode ? "☀️" : "🌙"}
           </button>
-          <QuestionExtractor 
-            onExtractedQuestions={handleExtractedQuestions}
-            onAlert={handleDialogAlert}
-          />
+          <button
+            className="extract-link-btn"
+            onClick={() => navigate('/extract')}
+            title="Question Extractor"
+          >
+            🔍
+          </button>
           <button
             className={`library-toggle-btn ${showLocalJSON ? "active" : ""}`}
             onClick={() => setShowLocalJSON(!showLocalJSON)}

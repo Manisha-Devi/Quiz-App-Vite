@@ -2,8 +2,8 @@
 import React, { useState, useRef } from 'react';
 import './styles/QuestionExtractor.css';
 
-const QuestionExtractor = ({ onExtractedQuestions, onAlert }) => {
-  const [isOpen, setIsOpen] = useState(false);
+const QuestionExtractor = ({ onExtractedQuestions, onAlert, isStandalone = false }) => {
+  const [isOpen, setIsOpen] = useState(isStandalone);
   const [extractedText, setExtractedText] = useState('');
   const [processing, setProcessing] = useState(false);
   const [questions, setQuestions] = useState([]);
@@ -209,23 +209,27 @@ const QuestionExtractor = ({ onExtractedQuestions, onAlert }) => {
 
   return (
     <>
-      {/* Tool Icon in Header */}
-      <button
-        className={`extractor-icon-btn ${isOpen ? 'active' : ''}`}
-        onClick={() => setIsOpen(!isOpen)}
-        title="Extract Questions from Word/PDF"
-      >
-        🔍
-      </button>
+      {/* Tool Icon in Header - only show if not standalone */}
+      {!isStandalone && (
+        <button
+          className={`extractor-icon-btn ${isOpen ? 'active' : ''}`}
+          onClick={() => setIsOpen(!isOpen)}
+          title="Extract Questions from Word/PDF"
+        >
+          🔍
+        </button>
+      )}
 
       {/* Modal */}
       {isOpen && (
-        <div className="extractor-modal-overlay">
-          <div className="extractor-modal">
-            <div className="extractor-header">
-              <h2>📄 Question Extractor</h2>
-              <button className="close-btn" onClick={() => setIsOpen(false)}>✕</button>
-            </div>
+        <div className={`extractor-modal-overlay ${isStandalone ? 'standalone' : ''}`}>
+          <div className={`extractor-modal ${isStandalone ? 'standalone' : ''}`}>
+            {!isStandalone && (
+              <div className="extractor-header">
+                <h2>📄 Question Extractor</h2>
+                <button className="close-btn" onClick={() => setIsOpen(false)}>✕</button>
+              </div>
+            )}
 
             <div className="extractor-content">
               {/* File Upload Section */}
