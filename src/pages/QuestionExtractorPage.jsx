@@ -161,79 +161,204 @@ const QuestionExtractorPage = () => {
 
   const parseQuestionsFromText = (text, fileIndex) => {
     const questions = [];
-    
-    // Split text into lines and clean up
-    const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
-    
+
+    // Clean up text but preserve original line structure
+    let cleanedText = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+
+    // Split into lines for line-by-line processing
+    const lines = cleanedText.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+
     let currentQuestion = null;
     let questionCounter = 1;
-    
+    let isParsingOptions = false;
+    let isParsingAnswer = false;
+    let isParsingExplanation = false;
+    let isParsingLevel = false;
+
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
-      
-      // Check if line starts with a number (question)
-      const questionMatch = line.match(/^(\d+)\.\s*(.+)/);
-      if (questionMatch) {
-        // Save previous question if exists
+      const trimmedLine = line.trim();
+
+      // Check if line starts with a number followed by a dot (question start)
+      const questionMatch = trimmedLine.match(/^(\d+)\.\s*(.+)$/);
+      if (questionMatch && !isParsingAnswer && !isParsingExplanation) {
+        // Save previous question if exists and is valid
         if (currentQuestion && currentQuestion.question && currentQuestion.options.length === 4) {
-          // Set default level if not explicitly provided
           if (currentQuestion.level === undefined) {
             currentQuestion.level = 0;
           }
           questions.push(currentQuestion);
         }
-        
+
+        // Reset parsing flags
+        isParsingOptions = false;
+        isParsingAnswer = false;
+        isParsingExplanation = false;
+        isParsingLevel = false;
+
         // Start new question
+        let questionText = questionMatch[2].trim();
+
+        // Process mathematical expressions in question text
+        questionText = questionText
+          .replace(/\b(\\sum|\\infty|\\pi|\\euro|\\cdots|\\cos|\\sin)\b/g, '$$$1$$')
+          .replace(/\(([^)]*\\[a-zA-Z]+[^)]*)\)/g, '($$$1$$)')
+          .replace(/([a-zA-Z])_\{([^}]+)\}/g, '$$$$1_{$2}$$$$')
+          .replace(/([a-zA-Z])\^([0-9n])/g, '$$$$1^{$2}$$$$')
+          .replace(/([a-zA-Z])\^([a-zA-Z])/g, '$$$$1^{$2}$$$$')
+          .replace(/\b(\d+)!/g, '$$$$1!$$$$')
+          .replace(/\b([a-zA-Z])!/g, '$$$$1!$$$$')
+          .replace(/\b([a-zA-Z])\(([a-zA-Z])\)/g, '$$$$1($2)$$$$')
+          .replace(/\\choose/g, '\\binom');
+
         currentQuestion = {
           id: `q${fileIndex}_${questionCounter++}`,
-          question: questionMatch[2].trim(),
+          question: questionText,
           options: [],
           correct: '',
           explanation: '',
-          level: undefined // Will be set if found in text, otherwise default to 0 later
+          level: undefined
         };
+        continue;
       }
-      // Check for options (A), B), C), D))
-      else if (currentQuestion && line.match(/^[A-D]\)\s*(.+)/)) {
-        const optionMatch = line.match(/^[A-D]\)\s*(.+)/);
-        if (optionMatch) {
-          currentQuestion.options.push(optionMatch[1].trim());
-        }
+
+      // Check for options (A. B. C. D. format)
+      const optionMatch = trimmedLine.match(/^([A-D])[\.\)]\s*(.*)$/i);
+      if (optionMatch && !isParsingAnswer && !isParsingExplanation && !isParsingLevel) {
+        isParsingOptions = true;
+        let optionText = optionMatch[2].trim();
+
+        // Process mathematical expressions in options
+        optionText = optionText
+          .replace(/\b(\\sum|\\infty|\\pi|\\euro|\\cdots|\\cos|\\sin)\b/g, '$$$1$$')
+          .replace(/\(([^)]*\\[a-zA-Z]+[^)]*)\)/g, '($$$1$$)')
+          .replace(/([a-zA-Z])_\{([^}]+)\}/g, '$$$$1_{$2}$$$$')
+          .replace(/([a-zA-Z])\^([0-9n])/g, '$$$$1^{$2}$$$$')
+          .replace(/([a-zA-Z])\^([a-zA-Z])/g, '$$$$1^{$2}$$$$')
+          .replace(/\b(\d+)!/g, '$$$$1!$$$$')
+          .replace(/\b([a-zA-Z])!/g, '$$$$1!$$$$')
+          .replace(/\b([a-zA-Z])\(([a-zA-Z])\)/g, '$$$$1($2)$$$$')
+          .replace(/\\choose/g, '\\binom');
+
+        currentQuestion.options.push(optionText);
+        continue;
       }
-      // Check for answer
-      else if (currentQuestion && line.toLowerCase().startsWith('answer:')) {
-        const answerMatch = line.match(/answer:\s*([A-D])/i);
+
+      // Check for answer (Answer: A format)
+      if (currentQuestion && trimmedLine.toLowerCase().startsWith('answer:')) {
+        isParsingAnswer = true;
+        isParsingOptions = false;
+        const answerMatch = trimmedLine.match(/answer:\s*([A-D])/i);
         if (answerMatch) {
           currentQuestion.correct = answerMatch[1].toUpperCase();
         }
+        continue;
       }
+
+      // Check for level (Level: Medium format or just Level: at end of answer line)
+      if (currentQuestion && (trimmedLine.toLowerCase().includes('level:') || (isParsingAnswer && /\b(easy|medium|hard)\b/i.test(trimmedLine)))) {
+        isParsingLevel = true;
+        let levelText = '';
+
+        // Extract level from current line
+        if (trimmedLine.toLowerCase().includes('level:')) {
+          const levelMatch = trimmedLine.match(/level:\s*(easy|medium|hard|\d+)/i);
+          if (levelMatch) {
+            levelText = levelMatch[1].toLowerCase();
+          }
+        } else if (isParsingAnswer) {
+          // Level might be on the same line as answer
+          const levelMatch = trimmedLine.match(/\b(easy|medium|hard)\b/i);
+          if (levelMatch) {
+            levelText = levelMatch[1].toLowerCase();
+          }
+        }
+
+        // Convert level text to number
+        if (levelText === 'easy' || levelText === '0') {
+          currentQuestion.level = 0;
+        } else if (levelText === 'medium' || levelText === '1') {
+          currentQuestion.level = 1;
+        } else if (levelText === 'hard' || levelText === '2') {
+          currentQuestion.level = 2;
+        } else if (!isNaN(parseInt(levelText))) {
+          const level = parseInt(levelText);
+          currentQuestion.level = Math.min(Math.max(level, 0), 2);
+        }
+
+        // If this line also contains answer, parse it
+        if (!currentQuestion.correct && trimmedLine.toLowerCase().includes('answer:')) {
+          const answerMatch = trimmedLine.match(/answer:\s*([A-D])/i);
+          if (answerMatch) {
+            currentQuestion.correct = answerMatch[1].toUpperCase();
+          }
+        }
+        continue;
+      }
+
       // Check for explanation
-      else if (currentQuestion && line.toLowerCase().startsWith('explanation:')) {
-        const explanationMatch = line.match(/explanation:\s*(.+)/i);
+      if (currentQuestion && trimmedLine.toLowerCase().startsWith('explanation:')) {
+        isParsingExplanation = true;
+        isParsingAnswer = false;
+        isParsingLevel = false;
+        const explanationMatch = trimmedLine.match(/explanation:\s*(.+)/i);
         if (explanationMatch) {
           currentQuestion.explanation = explanationMatch[1].trim();
         }
+        continue;
       }
-      // Check for level/difficulty
-      else if (currentQuestion && line.toLowerCase().includes('level:')) {
-        const levelMatch = line.match(/level:\s*(\d+)/i);
-        if (levelMatch) {
-          const level = parseInt(levelMatch[1]);
-          currentQuestion.level = Math.min(Math.max(level, 0), 2); // Ensure level is 0, 1, or 2
+
+      // Continue explanation on next lines
+      if (currentQuestion && isParsingExplanation && !trimmedLine.match(/^(\d+)\./)) {
+        if (currentQuestion.explanation) {
+          currentQuestion.explanation += ' ' + trimmedLine;
+        } else {
+          currentQuestion.explanation = trimmedLine;
         }
+        continue;
       }
     }
-    
+
     // Add the last question if valid
     if (currentQuestion && currentQuestion.question && currentQuestion.options.length === 4) {
-      // Set default level if not explicitly provided
       if (currentQuestion.level === undefined) {
         currentQuestion.level = 0;
       }
       questions.push(currentQuestion);
     }
-    
+
     return questions;
+  };
+
+  const processQuestionText = (text) => {
+    const lines = text.split('\n');
+    const processedLines = lines.map(line => {
+      let processedLine = line;
+
+      // Replace tabs with 4 spaces first
+      processedLine = processedLine.replace(/\t/g, '    ');
+
+      // Handle mathematical expressions - wrap standalone math symbols in $ $
+      processedLine = processedLine
+        .replace(/\b(\\sum|\\infty|\\pi|\\euro|\\cdots|\\cos|\\sin)\b/g, '$$$1$$')
+        .replace(/\(([^)]*\\[a-zA-Z]+[^)]*)\)/g, '($$$1$$)')
+        .replace(/([a-zA-Z])_\{([^}]+)\}/g, '$$$$1_{$2}$$$$')
+        .replace(/([a-zA-Z])\^([0-9n])/g, '$$$$1^{$2}$$$$')
+        .replace(/([a-zA-Z])\^([a-zA-Z])/g, '$$$$1^{$2}$$$$')
+        .replace(/\b(\d+)!/g, '$$$$1!$$$$')
+        .replace(/\b([a-zA-Z])!/g, '$$$$1!$$$$')
+        .replace(/\b([a-zA-Z])\(([a-zA-Z])\)/g, '$$$$1($2)$$$$')
+        .replace(/\\choose/g, '\\binom');
+
+      // Replace multiple spaces (2 or more) with HTML non-breaking spaces
+      processedLine = processedLine.replace(/\s{2,}/g, (match) => {
+        return '&nbsp;'.repeat(match.length);
+      });
+
+      return processedLine;
+    });
+
+    return processedLines.join('<br/>');
   };
 
   const formatAsJSON = () => {
@@ -291,7 +416,7 @@ const QuestionExtractorPage = () => {
 
       {/* Content */}
       <div className="extractor-content">
-        
+
 
         {/* Upload Section */}
         <section className="upload-section">
