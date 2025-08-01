@@ -4,7 +4,7 @@ import useOfflineStorage from '../hooks/useOfflineStorage';
 import './styles/LocalQuizLibrary.css';
 
 const LocalQuizLibrary = ({ onQuizSelect }) => {
-  const { localQuizzes, loadLocalQuizzes, isOnline, deleteQuiz } = useOfflineStorage();
+  const { localQuizzes, loadLocalQuizzes, isOnline } = useOfflineStorage();
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
@@ -21,37 +21,6 @@ const LocalQuizLibrary = ({ onQuizSelect }) => {
     onQuizSelect(quiz);
   };
 
-  const handleDeleteQuiz = async (e, quizId) => {
-    e.stopPropagation();
-    if (window.confirm('Are you sure you want to delete this quiz?')) {
-      try {
-        await deleteQuiz(quizId);
-        await loadLocalQuizzes(); // Refresh the list
-      } catch (error) {
-        console.error('Error deleting quiz:', error);
-        alert('Failed to delete quiz. Please try again.');
-      }
-    }
-  };
-
-  const handleAddImages = (e, quiz) => {
-    e.stopPropagation();
-    // Create file input for image upload
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.multiple = true;
-    input.onchange = (event) => {
-      const files = Array.from(event.target.files);
-      if (files.length > 0) {
-        // Handle image upload logic here
-        console.log(`Adding ${files.length} images to quiz: ${quiz.name}`);
-        alert(`Selected ${files.length} image(s) for ${quiz.name}`);
-      }
-    };
-    input.click();
-  };
-
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -59,32 +28,6 @@ const LocalQuizLibrary = ({ onQuizSelect }) => {
       day: 'numeric'
     });
   };
-
-  const getFileSize = (quiz) => {
-    const sizeInBytes = JSON.stringify(quiz).length;
-    if (sizeInBytes < 1024) return `${sizeInBytes} B`;
-    if (sizeInBytes < 1024 * 1024) return `${(sizeInBytes / 1024).toFixed(1)} KB`;
-    return `${(sizeInBytes / (1024 * 1024)).toFixed(1)} MB`;
-  };
-
-  const getSizeCategory = (quiz) => {
-    const sizeInBytes = JSON.stringify(quiz).length;
-    if (sizeInBytes < 10 * 1024) return 'Small';
-    if (sizeInBytes < 100 * 1024) return 'Medium';
-    return 'Large';
-  };
-
-  if (localQuizzes.length === 0) {
-    return (
-      <div className="local-quiz-library">
-        <div className="empty-state">
-          <div className="empty-icon">📚</div>
-          <h3>No Saved Quizzes Found</h3>
-          <p>Upload and save some quizzes to see them here</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="local-quiz-library">
@@ -107,58 +50,39 @@ const LocalQuizLibrary = ({ onQuizSelect }) => {
         />
       </div>
 
-      <div className="files-container grid">
-        {filteredQuizzes.map((quiz) => {
-          const questionCount = quiz.data?.length || 0;
-          
-          return (
-            <div 
-              key={quiz.id} 
-              className="file-card"
-              onClick={() => handleQuizSelect(quiz)}
-            >
-              <div className="file-card-content">
-                <div className="file-content-wrapper">
-                  {/* Row 1: File name */}
-                  <div className="file-row file-name-row">
-                    <h3 className="file-name">{quiz.name}</h3>
-                  </div>
-                  
-                  {/* Row 2: Questions (left), Images (center), Size (right) */}
-                  <div className="file-row file-meta-row">
-                    <div className="file-questions-left">
-                      <span className="question-count-icon">📝</span>
-                      <span className="question-count">{questionCount} questions</span>
-                    </div>
-                    
-                    <div 
-                      className="file-images-center clickable-image-area"
-                      onClick={(e) => handleAddImages(e, quiz)}
-                      title="Click to add images"
-                    >
-                      <span className="image-add-info">
-                        📷 Add Images
-                      </span>
-                    </div>
-                    
-                    <div className="file-size-right">
-                      <span className="size-category">{getSizeCategory(quiz)}</span>
-                    </div>
-                  </div>
+      <div className="quiz-grid">
+        {filteredQuizzes.length === 0 ? (
+          <div className="empty-state">
+            <p>📝 No saved quizzes found</p>
+            <small>Upload some quiz files to see them here</small>
+          </div>
+        ) : (
+          filteredQuizzes.map((quiz) => (
+            <div key={quiz.id} className="quiz-card" onClick={() => handleQuizSelect(quiz)}>
+              <div className="quiz-card-header">
+                <h3>{quiz.name}</h3>
+                <span className="quiz-questions">
+                  {quiz.data?.length || 0} questions
+                </span>
+              </div>
+              
+              <div className="quiz-card-meta">
+                <div className="quiz-date">
+                  📅 Created: {formatDate(quiz.createdAt)}
+                </div>
+                <div className="quiz-last-used">
+                  🕒 Last used: {formatDate(quiz.lastUsed)}
                 </div>
               </div>
-
-              {/* Delete button in top-right corner */}
-              <button 
-                className="delete-quiz-btn"
-                onClick={(e) => handleDeleteQuiz(e, quiz.id)}
-                title="Delete quiz"
-              >
-                ✕
-              </button>
+              
+              <div className="quiz-card-footer">
+                <button className="load-quiz-btn">
+                  Load Quiz 🚀
+                </button>
+              </div>
             </div>
-          );
-        })}
+          ))
+        )}
       </div>
     </div>
   );
