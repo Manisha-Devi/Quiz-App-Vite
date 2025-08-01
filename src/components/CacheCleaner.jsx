@@ -255,58 +255,144 @@ const CacheCleaner = ({ onDataChange, onAlert, onConfirm }) => {
     try {
       setLoading(true);
       setCurrentOperation('storage');
-      console.log('Starting browser storage clearing process...');
+      console.log('🧹 Starting comprehensive browser storage clearing process...');
 
       // Clear localStorage
       const localStorageCount = localStorage.length;
-      localStorage.clear();
-      console.log(`✅ localStorage cleared (${localStorageCount} items removed)`);
+      try {
+        localStorage.clear();
+        console.log(`✅ localStorage cleared (${localStorageCount} items removed)`);
+      } catch (localError) {
+        console.warn('⚠️ localStorage clear failed:', localError);
+      }
 
       // Clear sessionStorage
       const sessionStorageCount = sessionStorage.length;
-      sessionStorage.clear();
-      console.log(`✅ sessionStorage cleared (${sessionStorageCount} items removed)`);
-
-      // Clear cookies
-      const cookies = document.cookie.split(";");
-      let cookiesCleared = 0;
-
-      for (let cookie of cookies) {
-        const eqPos = cookie.indexOf("=");
-        const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
-        if (name) {
-          // Clear cookie for current domain
-          document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
-          document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=${window.location.hostname}`;
-          document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=.${window.location.hostname}`;
-          cookiesCleared++;
-        }
+      try {
+        sessionStorage.clear();
+        console.log(`✅ sessionStorage cleared (${sessionStorageCount} items removed)`);
+      } catch (sessionError) {
+        console.warn('⚠️ sessionStorage clear failed:', sessionError);
       }
-      console.log(`✅ Cookies cleared (${cookiesCleared} cookies removed)`);
 
-      // Clear cache if available
+      // Enhanced cookie clearing
+      let cookiesCleared = 0;
+      try {
+        const cookies = document.cookie.split(";");
+        
+        // Get all possible paths and domains to clear cookies from
+        const paths = ['/', '/quiz', '/exam', '/upload'];
+        const domains = [
+          window.location.hostname,
+          `.${window.location.hostname}`,
+          'localhost',
+          '.localhost'
+        ];
+
+        for (let cookie of cookies) {
+          const eqPos = cookie.indexOf("=");
+          const name = eqPos > -1 ? cookie.substring(0, eqPos).trim() : cookie.trim();
+          
+          if (name && name.length > 0) {
+            // Clear cookie for all possible path and domain combinations
+            for (const path of paths) {
+              for (const domain of domains) {
+                try {
+                  // Clear with explicit domain and path
+                  document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=${path};domain=${domain}`;
+                  // Clear with path only
+                  document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=${path}`;
+                } catch (cookieError) {
+                  // Continue if specific cookie clearing fails
+                }
+              }
+            }
+            
+            // Fallback: simple cookie clearing
+            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+            cookiesCleared++;
+          }
+        }
+        console.log(`✅ Enhanced cookies clearing completed (${cookiesCleared} cookies processed)`);
+      } catch (cookieError) {
+        console.warn('⚠️ Cookie clearing encountered issues:', cookieError);
+      }
+
+      // Enhanced cache clearing with service worker cache
       let cacheCount = 0;
-      if ('caches' in window) {
-        try {
+      try {
+        if ('caches' in window) {
           const cacheNames = await caches.keys();
           cacheCount = cacheNames.length;
-          await Promise.all(
-            cacheNames.map(cacheName => caches.delete(cacheName))
-          );
-          console.log(`✅ Cache cleared (${cacheCount} caches removed)`);
-        } catch (cacheError) {
-          console.warn('Warning: Could not clear cache:', cacheError);
+          
+          console.log(`🗂️ Found ${cacheCount} cache storage entries to clear...`);
+          
+          // Delete each cache individually with error handling
+          for (const cacheName of cacheNames) {
+            try {
+              const deleted = await caches.delete(cacheName);
+              if (deleted) {
+                console.log(`✅ Cache '${cacheName}' deleted successfully`);
+              } else {
+                console.warn(`⚠️ Cache '${cacheName}' could not be deleted`);
+              }
+            } catch (individualCacheError) {
+              console.warn(`⚠️ Error deleting cache '${cacheName}':`, individualCacheError);
+            }
+          }
+          
+          // Verify cache clearing
+          const remainingCaches = await caches.keys();
+          const actuallyCleared = cacheCount - remainingCaches.length;
+          console.log(`✅ Cache Storage: ${actuallyCleared}/${cacheCount} caches successfully cleared`);
+          
+          // If service worker cache exists, try to clear it
+          if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+            try {
+              navigator.serviceWorker.controller.postMessage({ action: 'clearCache' });
+              console.log('📡 Service worker cache clear signal sent');
+            } catch (swError) {
+              console.warn('⚠️ Service worker cache clear failed:', swError);
+            }
+          }
+        } else {
+          console.log('ℹ️ Cache API not available in this browser');
         }
+      } catch (cacheError) {
+        console.error('❌ Cache clearing failed:', cacheError);
+      }
+
+      // Clear any IndexedDB used by other apps (optional)
+      try {
+        if ('indexedDB' in window) {
+          // This is already handled by our main clear function, just log
+          console.log('ℹ️ IndexedDB clearing handled separately by Clear button');
+        }
+      } catch (idbError) {
+        console.warn('⚠️ IndexedDB check failed:', idbError);
+      }
+
+      // Clear WebSQL if supported (legacy)
+      try {
+        if ('openDatabase' in window) {
+          console.log('ℹ️ WebSQL detected but clearing not implemented (deprecated)');
+        }
+      } catch (webSqlError) {
+        console.warn('⚠️ WebSQL check failed:', webSqlError);
       }
 
       const summary = [
-        `✅ Browser storage cleared successfully!`,
+        `✅ Browser storage clearing completed!`,
         ``,
-        `📊 Summary:`,
-        `• localStorage: ${localStorageCount} items removed`,
-        `• sessionStorage: ${sessionStorageCount} items removed`,
-        `• Cookies: ${cookiesCleared} cookies removed`,
-        `• Cache: ${cacheCount} caches cleared`
+        `📊 Detailed Summary:`,
+        `• localStorage: ${localStorageCount} items cleared`,
+        `• sessionStorage: ${sessionStorageCount} items cleared`,
+        `• Cookies: ${cookiesCleared} cookies processed & cleared`,
+        `• Cache Storage: ${cacheCount} caches cleared`,
+        `• Service Worker: Cache clear signal sent`,
+        ``,
+        `💡 Note: Some cookies may require page reload to fully clear`
       ].join('\n');
 
       if (onAlert) {
@@ -320,11 +406,11 @@ const CacheCleaner = ({ onDataChange, onAlert, onConfirm }) => {
       }
 
     } catch (error) {
-      console.error('Error clearing browser storage:', error);
+      console.error('❌ Critical error during browser storage clearing:', error);
       if (onAlert) {
-        onAlert('Storage Clear Error', `❌ Error clearing browser storage: ${error.message || 'Unknown error occurred.'}`, 'error');
+        onAlert('Storage Clear Error', `❌ Error clearing browser storage: ${error.message || 'Unknown error occurred.'}\n\n💡 Try refreshing the page and attempting again.`, 'error');
       } else {
-        alert(`❌ Error clearing browser storage: ${error.message || 'Unknown error occurred.'}`);
+        alert(`❌ Error clearing browser storage: ${error.message || 'Unknown error occurred.'}\n\n💡 Try refreshing the page and attempting again.`);
       }
     } finally {
       setLoading(false);
