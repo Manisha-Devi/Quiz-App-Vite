@@ -1,7 +1,11 @@
 
+body {
+  background-color: white !important;
+}
+
 .extractor-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: white;
   background-attachment: fixed;
   font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   display: flex;
@@ -11,12 +15,12 @@
   -moz-osx-font-smoothing: grayscale;
   position: relative;
   overflow-x: hidden;
-  color: white;
+  color: #333;
 }
 
 .extractor-page.dark-mode {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-  color: #e0e0e0;
+  background: white;
+  color: #333;
 }
 
 .extractor-page::before {

@@ -434,7 +434,7 @@ const QuestionExtractorPage = () => {
                     )}
                     <div className="level-preview">
                       Level: {question.level === 0 ? 'Easy' : question.level === 1 ? 'Medium' : 'Hard'}
-                    </div></div>
+                    </div>
                   </div>
                 </div>
               ))}
