@@ -176,7 +176,7 @@ const QuestionExtractorPage = () => {
       .replace(/\r\n/g, '\n')
       .replace(/\r/g, '\n')
       .replace(/\t/g, ' ')
-      .replace(/\s+/g, ' ');
+      .trim();
 
     // Split text into lines and clean up
     const lines = cleanText.split('\n')
@@ -186,47 +186,49 @@ const QuestionExtractorPage = () => {
     let currentQuestion = null;
     let questionCounter = 1;
 
-    console.log('Parsing lines:', lines); // Debug log
+    console.log('Total lines to process:', lines.length);
+    console.log('First 10 lines:', lines.slice(0, 10));
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
-      console.log(`Processing line ${i}: "${line}"`); // Debug log
+      console.log(`Line ${i}: "${line}"`);
 
       // Check if line starts with a number followed by colon (question)
-      const questionMatch = line.match(/^(\d+):\s*(.+)/);
-      if (questionMatch && 
+      if (/^\d+:\s*.+/.test(line) && 
           !line.toLowerCase().includes('answer:') && 
           !line.toLowerCase().includes('level:') && 
           !line.toLowerCase().includes('explanation:')) {
         
-        console.log('Found question:', questionMatch[2]); // Debug log
-        
-        // Save previous question if exists and is complete
-        if (currentQuestion && currentQuestion.question && currentQuestion.options.length >= 2) {
-          // Set default level if not explicitly provided
-          if (currentQuestion.level === undefined) {
-            currentQuestion.level = 0;
+        const questionMatch = line.match(/^(\d+):\s*(.+)/);
+        if (questionMatch) {
+          console.log('✅ Found question:', questionMatch[2]);
+          
+          // Save previous question if exists and is complete
+          if (currentQuestion && currentQuestion.question && currentQuestion.options.length >= 2 && currentQuestion.correct) {
+            if (currentQuestion.level === undefined) {
+              currentQuestion.level = 0;
+            }
+            questions.push(currentQuestion);
+            console.log('✅ Saved previous question');
           }
-          questions.push(currentQuestion);
-          console.log('Saved previous question'); // Debug log
-        }
 
-        // Start new question
-        currentQuestion = {
-          id: `q${fileIndex}_${questionCounter++}`,
-          question: questionMatch[2].trim(),
-          options: [],
-          correct: '',
-          explanation: '',
-          level: undefined
-        };
+          // Start new question
+          currentQuestion = {
+            id: `q${fileIndex}_${questionCounter++}`,
+            question: questionMatch[2].trim(),
+            options: [],
+            correct: '',
+            explanation: '',
+            level: undefined
+          };
+        }
       }
       // Check for options - strict format "A:" only
-      else if (currentQuestion && line.match(/^[A-D]:\s*(.+)/)) {
-        const optionMatch = line.match(/^[A-D]:\s*(.+)/);
+      else if (currentQuestion && /^[A-D]:\s*.+/.test(line)) {
+        const optionMatch = line.match(/^([A-D]):\s*(.+)/);
         if (optionMatch) {
-          currentQuestion.options.push(optionMatch[1].trim());
-          console.log('Added option:', optionMatch[1].trim()); // Debug log
+          currentQuestion.options.push(optionMatch[2].trim());
+          console.log('✅ Added option:', optionMatch[1], optionMatch[2].trim());
         }
       }
       // Check for answer - strict format "Answer: A" only
@@ -234,7 +236,7 @@ const QuestionExtractorPage = () => {
         const answerMatch = line.match(/^answer:\s*([A-D])/i);
         if (answerMatch) {
           currentQuestion.correct = answerMatch[1].toUpperCase();
-          console.log('Set answer:', answerMatch[1].toUpperCase()); // Debug log
+          console.log('✅ Set answer:', answerMatch[1].toUpperCase());
         }
       }
       // Check for explanation - strict format "Explanation:" only
@@ -242,7 +244,7 @@ const QuestionExtractorPage = () => {
         const explanationMatch = line.match(/^explanation:\s*(.+)/i);
         if (explanationMatch) {
           currentQuestion.explanation = explanationMatch[1].trim();
-          console.log('Set explanation'); // Debug log
+          console.log('✅ Set explanation');
         }
       }
       // Check for level - strict format "Level:" only
@@ -252,7 +254,7 @@ const QuestionExtractorPage = () => {
         if (numericMatch) {
           const level = parseInt(numericMatch[1]);
           currentQuestion.level = Math.min(Math.max(level, 0), 2);
-          console.log('Set numeric level:', currentQuestion.level); // Debug log
+          console.log('✅ Set numeric level:', currentQuestion.level);
         } else {
           // Try to extract text-based level
           const textMatch = line.match(/^level:\s*(easy|medium|meduim|hard|beginner|intermediate|advanced)/i);
@@ -275,23 +277,23 @@ const QuestionExtractorPage = () => {
               default:
                 currentQuestion.level = 0;
             }
-            console.log('Set text level:', currentQuestion.level); // Debug log
+            console.log('✅ Set text level:', currentQuestion.level);
           }
         }
       }
     }
 
-    // Add the last question if valid
-    if (currentQuestion && currentQuestion.question && currentQuestion.options.length >= 2) {
-      // Set default level if not explicitly provided
+    // Add the last question if valid and complete
+    if (currentQuestion && currentQuestion.question && currentQuestion.options.length >= 2 && currentQuestion.correct) {
       if (currentQuestion.level === undefined) {
         currentQuestion.level = 0;
       }
       questions.push(currentQuestion);
-      console.log('Saved last question'); // Debug log
+      console.log('✅ Saved last question');
     }
 
-    console.log('Total questions extracted:', questions.length); // Debug log
+    console.log('🎯 Total questions extracted:', questions.length);
+    console.log('Questions details:', questions);
     return questions;
   };
 
