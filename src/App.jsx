@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import UploadPage from './pages/UploadPage';
@@ -15,10 +14,10 @@ function App() {
     const initializeApp = async () => {
       try {
         console.log('Starting IndexedDB-only application...');
-        
+
         // Initialize IndexedDB with default settings
         await dataManager.initializeApp();
-        
+
         console.log('Application initialized successfully - using IndexedDB exclusively');
       } catch (error) {
         console.error('Error during app initialization:', error);
