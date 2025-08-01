@@ -211,8 +211,8 @@ const QuestionExtractor = ({ onExtractedQuestions, onAlert }) => {
     <>
       {/* Tool Icon in Header */}
       <button
-        className="extractor-icon-btn"
-        onClick={() => setIsOpen(true)}
+        className={`extractor-icon-btn ${isOpen ? 'active' : ''}`}
+        onClick={() => setIsOpen(!isOpen)}
         title="Extract Questions from Word/PDF"
       >
         🔍
@@ -220,8 +220,8 @@ const QuestionExtractor = ({ onExtractedQuestions, onAlert }) => {
 
       {/* Modal */}
       {isOpen && (
-        <div className="extractor-modal-overlay" onClick={() => setIsOpen(false)}>
-          <div className="extractor-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="extractor-modal-overlay">
+          <div className="extractor-modal">
             <div className="extractor-header">
               <h2>📄 Question Extractor</h2>
               <button className="close-btn" onClick={() => setIsOpen(false)}>✕</button>
