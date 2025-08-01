@@ -27,6 +27,7 @@ export const openDb = () => {
 
       // JSON files store - dedicated store for JSON files from json folder
       const jsonFilesStore = db.createObjectStore("jsonFiles", { keyPath: "filename" });
+      jsonFilesStore.createIndex("by_filename", "filename", { unique: true });
 
       // JSON Images store - structure with jsonFileName and imageName keys
       const jsonImagesStore = db.createObjectStore("jsonImages", { keyPath: ["jsonFileName", "imageName"] });
@@ -78,7 +79,7 @@ export const getData = async (storeName, key) => {
 export const storeJSONFile = async (filename, jsonData) => {
   const db = await openDb();
   const transaction = db.transaction("jsonFiles", "readwrite");
-  const store = transaction.objectStore(jsonFiles);
+  const store = transaction.objectStore("jsonFiles");
 
   const fileData = {
     filename: filename,
