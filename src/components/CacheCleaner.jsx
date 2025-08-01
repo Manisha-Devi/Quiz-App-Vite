@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import dataManager from '../utils/dataManager';
 
-const CacheCleaner = ({ onDataChange }) => {
+const CacheCleaner = ({ onDataChange, onAlert }) => {
   const [loading, setLoading] = useState(false);
   const [currentOperation, setCurrentOperation] = useState('');
 
@@ -76,17 +76,29 @@ const CacheCleaner = ({ onDataChange }) => {
           await loadJSONImagesFromFolders();
           console.log('✅ Images loading process completed');
 
-          alert(`✅ Successfully loaded:\n📄 ${loadedData.length} JSON files\n🖼️ Associated images\n\nAll data stored in IndexedDB!`);
+          if (onAlert) {
+            onAlert('Data Fetch Success', `✅ Successfully loaded:\n📄 ${loadedData.length} JSON files\n🖼️ Associated images\n\nAll data stored in IndexedDB!`, 'success');
+          } else {
+            alert(`✅ Successfully loaded:\n📄 ${loadedData.length} JSON files\n🖼️ Associated images\n\nAll data stored in IndexedDB!`);
+          }
 
           if (onDataChange) {
             onDataChange();
           }
         } else {
-          alert('⚠️ No JSON files could be loaded');
+          if (onAlert) {
+            onAlert('Data Fetch Warning', '⚠️ No JSON files could be loaded', 'warning');
+          } else {
+            alert('⚠️ No JSON files could be loaded');
+          }
         }
       } catch (error) {
         console.error('Error fetching JSON data:', error);
-        alert(`❌ Error loading JSON files: ${error.message || 'Please try again.'}`);
+        if (onAlert) {
+          onAlert('Data Fetch Error', `❌ Error loading JSON files: ${error.message || 'Please try again.'}`, 'error');
+        } else {
+          alert(`❌ Error loading JSON files: ${error.message || 'Please try again.'}`);
+        }
       } finally {
         setLoading(false);
         setCurrentOperation('');
@@ -114,7 +126,11 @@ const CacheCleaner = ({ onDataChange }) => {
 
         if (success) {
           console.log('✅ All IndexedDB stores cleared successfully');
-          alert('✅ All IndexedDB stores cleared successfully!\n\n📊 All data has been removed while preserving the database structure.');
+          if (onAlert) {
+            onAlert('Clear Success', '✅ All IndexedDB stores cleared successfully!\n\n📊 All data has been removed while preserving the database structure.', 'success');
+          } else {
+            alert('✅ All IndexedDB stores cleared successfully!\n\n📊 All data has been removed while preserving the database structure.');
+          }
 
           if (onDataChange) {
             onDataChange();
@@ -125,7 +141,11 @@ const CacheCleaner = ({ onDataChange }) => {
 
       } catch (error) {
         console.error('❌ Error clearing IndexedDB stores:', error);
-        alert(`❌ Error clearing IndexedDB stores: ${error.message || 'Unknown error occurred.'}\n\nTip: Try the Delete button instead to remove the entire database.`);
+        if (onAlert) {
+          onAlert('Clear Error', `❌ Error clearing IndexedDB stores: ${error.message || 'Unknown error occurred.'}\n\nTip: Try the Delete button instead to remove the entire database.`, 'error');
+        } else {
+          alert(`❌ Error clearing IndexedDB stores: ${error.message || 'Unknown error occurred.'}\n\nTip: Try the Delete button instead to remove the entire database.`);
+        }
       } finally {
         setLoading(false);
         setCurrentOperation('');
@@ -243,7 +263,11 @@ const CacheCleaner = ({ onDataChange }) => {
           `• Cache: ${cacheCount} caches cleared`
         ].join('\n');
 
-        alert(summary);
+        if (onAlert) {
+          onAlert('Storage Clear Success', summary, 'success');
+        } else {
+          alert(summary);
+        }
 
         if (onDataChange) {
           onDataChange();
@@ -251,7 +275,11 @@ const CacheCleaner = ({ onDataChange }) => {
 
       } catch (error) {
         console.error('Error clearing browser storage:', error);
-        alert(`❌ Error clearing browser storage: ${error.message || 'Unknown error occurred.'}`);
+        if (onAlert) {
+          onAlert('Storage Clear Error', `❌ Error clearing browser storage: ${error.message || 'Unknown error occurred.'}`, 'error');
+        } else {
+          alert(`❌ Error clearing browser storage: ${error.message || 'Unknown error occurred.'}`);
+        }
       } finally {
         setLoading(false);
         setCurrentOperation('');
@@ -287,7 +315,11 @@ const CacheCleaner = ({ onDataChange }) => {
           const { default: dataManager } = await import('../utils/dataManager');
           dataManager.markDatabaseAsDeleted();
 
-          alert('✅ IndexedDB database deleted successfully!\n\n🗑️ The database has been completely removed and will not recreate automatically.');
+          if (onAlert) {
+            onAlert('Delete Success', '✅ IndexedDB database deleted successfully!\n\n🗑️ The database has been completely removed and will not recreate automatically.', 'success');
+          } else {
+            alert('✅ IndexedDB database deleted successfully!\n\n🗑️ The database has been completely removed and will not recreate automatically.');
+          }
 
           if (onDataChange) {
             onDataChange();
@@ -299,7 +331,11 @@ const CacheCleaner = ({ onDataChange }) => {
 
       } catch (error) {
         console.error('❌ Error deleting IndexedDB:', error);
-        alert(`❌ Error deleting IndexedDB: ${error.message || 'Unknown error occurred.'}\n\n💡 Troubleshooting tips:\n• Close all other tabs with this app\n• Try the Clear button instead\n• Manually reload the page`);
+        if (onAlert) {
+          onAlert('Delete Error', `❌ Error deleting IndexedDB: ${error.message || 'Unknown error occurred.'}\n\n💡 Troubleshooting tips:\n• Close all other tabs with this app\n• Try the Clear button instead\n• Manually reload the page`, 'error');
+        } else {
+          alert(`❌ Error deleting IndexedDB: ${error.message || 'Unknown error occurred.'}\n\n💡 Troubleshooting tips:\n• Close all other tabs with this app\n• Try the Clear button instead\n• Manually reload the page`);
+        }
       } finally {
         setLoading(false);
         setCurrentOperation('');

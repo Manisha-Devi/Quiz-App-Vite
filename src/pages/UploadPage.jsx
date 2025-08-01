@@ -25,6 +25,8 @@ function UploadPage() {
   const navigate = useNavigate();
   const { isOnline } = useOfflineStorage();
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [dialogVisible, setDialogVisible] = useState(false);
+  const [dialogContent, setDialogContent] = useState({ title: '', message: '', type: 'info' });
 
   const KEYS_TO_CLEAR = [
     "quizData",
@@ -333,6 +335,15 @@ function UploadPage() {
     setRefreshTrigger(prev => prev + 1); // Increment to trigger refresh
   };
 
+  const handleDialogAlert = (title, message, type = 'info') => {
+    setDialogContent({ title, message, type });
+    setDialogVisible(true);
+  };
+
+  const closeDialog = () => {
+    setDialogVisible(false);
+  };
+
 
   // Function to clear all data
   const clearAllData = async () => {
@@ -589,10 +600,35 @@ function UploadPage() {
             <span className="tools-text">Developer Tools</span>
           </div>
           <div className="developer-tools-row">
-            <CacheCleaner onDataChange={handleDataChange} />
+            <CacheCleaner onDataChange={handleDataChange} onAlert={handleDialogAlert} />
           </div>
         </div>
       </div>
+
+      {/* Custom Dialog Box */}
+      {dialogVisible && (
+        <div className="custom-dialog-overlay" onClick={closeDialog}>
+          <div className="custom-dialog-box" onClick={(e) => e.stopPropagation()}>
+            <div className="dialog-header">
+              <h3 className="dialog-title">
+                <span className="dialog-icon">
+                  {dialogContent.type === 'success' ? '✅' : 
+                   dialogContent.type === 'error' ? '❌' : 
+                   dialogContent.type === 'warning' ? '⚠️' : 'ℹ️'}
+                </span>
+                {dialogContent.title}
+              </h3>
+              <button className="dialog-close-btn" onClick={closeDialog}>✕</button>
+            </div>
+            <div className="dialog-content">
+              <p className="dialog-message">{dialogContent.message}</p>
+            </div>
+            <div className="dialog-actions">
+              <button className="dialog-ok-btn" onClick={closeDialog}>OK</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Fullscreen Button Container */}
       <div className="fullscreen-btn-container">
