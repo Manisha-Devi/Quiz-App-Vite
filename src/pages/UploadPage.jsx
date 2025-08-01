@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { storeImage } from "../utils/indexedDB";
 import useOfflineStorage from "../hooks/useOfflineStorage";
@@ -90,20 +90,20 @@ function UploadPage() {
     initializeData();
   }, []);
 
-  const toggleDarkMode = async () => {
+  const toggleDarkMode = useCallback(async () => {
     const newDarkMode = !isDarkMode;
     setIsDarkMode(newDarkMode);
     await dataManager.setUserSetting('darkMode', newDarkMode);
-  };
+  }, [isDarkMode]);
 
-  const toggleFullscreen = () => {
+  const toggleFullscreen = useCallback(() => {
     if (isFullscreen) {
       document.exitFullscreen();
     } else {
       document.documentElement.requestFullscreen();
     }
     setIsFullscreen(!isFullscreen);
-  };
+  }, [isFullscreen]);
 
   const handleFileChange = async (e) => {
     const selected = Array.from(e.target.files);
@@ -381,7 +381,7 @@ function UploadPage() {
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, []);
+  }, [toggleDarkMode, toggleFullscreen]);
 
 
   return (
