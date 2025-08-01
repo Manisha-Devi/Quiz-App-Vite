@@ -161,16 +161,16 @@ const QuestionExtractorPage = () => {
 
   const parseQuestionsFromText = (text, fileIndex) => {
     const questions = [];
-    
+
     // Split text into lines and clean up
     const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
-    
+
     let currentQuestion = null;
     let questionCounter = 1;
-    
+
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
-      
+
       // Check if line starts with a number (question)
       const questionMatch = line.match(/^(\d+)\.\s*(.+)/);
       if (questionMatch) {
@@ -182,7 +182,7 @@ const QuestionExtractorPage = () => {
           }
           questions.push(currentQuestion);
         }
-        
+
         // Start new question
         currentQuestion = {
           id: `q${fileIndex}_${questionCounter++}`,
@@ -214,16 +214,16 @@ const QuestionExtractorPage = () => {
           currentQuestion.explanation = explanationMatch[1].trim();
         }
       }
-      // Check for level/difficulty with various formats
-      else if (currentQuestion && (line.toLowerCase().includes('level:') || line.toLowerCase().includes('difficulty:') || line.toLowerCase().includes('mah level'))) {
+      // Check for level/difficulty with various formats (optional field)
+      else if (currentQuestion && /level[\:\s]/i.test(line)) {
         // Try to extract numeric level first
-        const numericMatch = line.match(/(?:level|difficulty|mah\s*level):\s*(\d+)/i);
+        const numericMatch = line.match(/level[\:\s]*(\d+)/i);
         if (numericMatch) {
           const level = parseInt(numericMatch[1]);
           currentQuestion.level = Math.min(Math.max(level, 0), 2); // Ensure level is 0, 1, or 2
         } else {
           // Try to extract text-based level
-          const textMatch = line.match(/(?:level|difficulty|mah\s*level):\s*(easy|medium|hard|beginner|intermediate|advanced)/i);
+          const textMatch = line.match(/level[\:\s]*(easy|medium|meduim|hard|beginner|intermediate|advanced)/i);
           if (textMatch) {
             const levelText = textMatch[1].toLowerCase();
             switch (levelText) {
@@ -232,6 +232,7 @@ const QuestionExtractorPage = () => {
                 currentQuestion.level = 0;
                 break;
               case 'medium':
+              case 'meduim': // Handle misspelling
               case 'intermediate':
                 currentQuestion.level = 1;
                 break;
@@ -246,7 +247,7 @@ const QuestionExtractorPage = () => {
         }
       }
     }
-    
+
     // Add the last question if valid
     if (currentQuestion && currentQuestion.question && currentQuestion.options.length === 4) {
       // Set default level if not explicitly provided
@@ -255,7 +256,7 @@ const QuestionExtractorPage = () => {
       }
       questions.push(currentQuestion);
     }
-    
+
     return questions;
   };
 
@@ -314,7 +315,7 @@ const QuestionExtractorPage = () => {
 
       {/* Content */}
       <div className="extractor-content">
-        
+
 
         {/* Upload Section */}
         <section className="upload-section">
