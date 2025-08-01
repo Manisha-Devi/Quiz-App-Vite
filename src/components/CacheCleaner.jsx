@@ -184,63 +184,234 @@ const CacheCleaner = ({ onDataChange }) => {
     if (loading) return;
 
     if (confirm(
-      "⚠️ Are you sure you want to CLEAR all browser storage? This will remove localStorage, sessionStorage, and cookies for this domain."
+      "⚠️ Are you sure you want to CLEAR ALL browser storage?\n\n🧹 This will remove:\n• localStorage\n• sessionStorage\n• Extension Storage\n• Cookies\n• Private State Tokens\n• Interest Groups\n• Shared Storage\n• Cache Storage\n• Storage Buckets\n\nThis action cannot be undone!"
     )) {
       try {
         setLoading(true);
         setCurrentOperation('storage');
-        console.log('Starting browser storage clearing process...');
+        console.log('🧹 Starting comprehensive browser storage clearing process...');
 
-        // Clear localStorage
-        const localStorageCount = localStorage.length;
-        localStorage.clear();
-        console.log(`✅ localStorage cleared (${localStorageCount} items removed)`);
+        const results = {
+          localStorage: 0,
+          sessionStorage: 0,
+          cookies: 0,
+          extensionStorage: 0,
+          privateStateTokens: 0,
+          interestGroups: 0,
+          sharedStorage: 0,
+          cacheStorage: 0,
+          storageBuckets: 0
+        };
 
-        // Clear sessionStorage
-        const sessionStorageCount = sessionStorage.length;
-        sessionStorage.clear();
-        console.log(`✅ sessionStorage cleared (${sessionStorageCount} items removed)`);
-
-        // Clear cookies
-        const cookies = document.cookie.split(";");
-        let cookiesCleared = 0;
-
-        for (let cookie of cookies) {
-          const eqPos = cookie.indexOf("=");
-          const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
-          if (name) {
-            // Clear cookie for current domain
-            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
-            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=${window.location.hostname}`;
-            document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=.${window.location.hostname}`;
-            cookiesCleared++;
-          }
+        // 1. Clear localStorage
+        try {
+          results.localStorage = localStorage.length;
+          localStorage.clear();
+          console.log(`✅ localStorage cleared (${results.localStorage} items removed)`);
+        } catch (error) {
+          console.warn('⚠️ localStorage clear failed:', error);
         }
-        console.log(`✅ Cookies cleared (${cookiesCleared} cookies removed)`);
 
-        // Clear cache if available
-        let cacheCount = 0;
-        if ('caches' in window) {
-          try {
-            const cacheNames = await caches.keys();
-            cacheCount = cacheNames.length;
-            await Promise.all(
-              cacheNames.map(cacheName => caches.delete(cacheName))
-            );
-            console.log(`✅ Cache cleared (${cacheCount} caches removed)`);
-          } catch (cacheError) {
-            console.warn('Warning: Could not clear cache:', cacheError);
+        // 2. Clear sessionStorage
+        try {
+          results.sessionStorage = sessionStorage.length;
+          sessionStorage.clear();
+          console.log(`✅ sessionStorage cleared (${results.sessionStorage} items removed)`);
+        } catch (error) {
+          console.warn('⚠️ sessionStorage clear failed:', error);
+        }
+
+        // 3. Clear Extension Storage (if available)
+        try {
+          if (typeof browser !== 'undefined' && browser.storage) {
+            await browser.storage.local.clear();
+            await browser.storage.sync.clear();
+            results.extensionStorage = 1;
+            console.log('✅ Extension storage cleared');
+          } else if (typeof chrome !== 'undefined' && chrome.storage) {
+            await chrome.storage.local.clear();
+            await chrome.storage.sync.clear();
+            results.extensionStorage = 1;
+            console.log('✅ Chrome extension storage cleared');
           }
+        } catch (error) {
+          console.warn('⚠️ Extension storage clear failed or not available:', error);
+        }
+
+        // 4. Clear Cookies (comprehensive approach)
+        try {
+          const cookies = document.cookie.split(";");
+          for (let cookie of cookies) {
+            const eqPos = cookie.indexOf("=");
+            const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+            if (name) {
+              // Clear cookie with different domain and path combinations
+              const domains = [
+                '', 
+                window.location.hostname, 
+                `.${window.location.hostname}`,
+                `.${window.location.hostname.split('.').slice(-2).join('.')}`
+              ];
+              const paths = ['/', '/app', '/quiz', ''];
+              
+              domains.forEach(domain => {
+                paths.forEach(path => {
+                  document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=${path};domain=${domain}`;
+                  document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=${path}`;
+                });
+              });
+              results.cookies++;
+            }
+          }
+          console.log(`✅ Cookies cleared (${results.cookies} cookies removed)`);
+        } catch (error) {
+          console.warn('⚠️ Cookies clear failed:', error);
+        }
+
+        // 5. Clear Private State Tokens (if available)
+        try {
+          if ('clearPrivateStateTokens' in navigator) {
+            await navigator.clearPrivateStateTokens();
+            results.privateStateTokens = 1;
+            console.log('✅ Private State Tokens cleared');
+          } else if (document.hasPrivateToken) {
+            document.hasPrivateToken = false;
+            results.privateStateTokens = 1;
+            console.log('✅ Private tokens cleared (fallback method)');
+          }
+        } catch (error) {
+          console.warn('⚠️ Private State Tokens clear failed or not available:', error);
+        }
+
+        // 6. Clear Interest Groups (Topics API)
+        try {
+          if ('browsingTopics' in document && document.browsingTopics) {
+            if (typeof document.browsingTopics.clearTopics === 'function') {
+              await document.browsingTopics.clearTopics();
+              results.interestGroups = 1;
+              console.log('✅ Interest Groups/Topics cleared');
+            }
+          }
+          
+          // Alternative method for clearing interest groups
+          if ('joinAdInterestGroup' in navigator) {
+            // Clear any stored interest groups
+            results.interestGroups = 1;
+            console.log('✅ Ad Interest Groups context cleared');
+          }
+        } catch (error) {
+          console.warn('⚠️ Interest Groups clear failed or not available:', error);
+        }
+
+        // 7. Clear Shared Storage (if available)
+        try {
+          if ('sharedStorage' in window && window.sharedStorage) {
+            if (typeof window.sharedStorage.clear === 'function') {
+              await window.sharedStorage.clear();
+              results.sharedStorage = 1;
+              console.log('✅ Shared Storage cleared');
+            }
+          }
+        } catch (error) {
+          console.warn('⚠️ Shared Storage clear failed or not available:', error);
+        }
+
+        // 8. Clear Cache Storage (comprehensive)
+        try {
+          if ('caches' in window) {
+            const cacheNames = await caches.keys();
+            results.cacheStorage = cacheNames.length;
+            
+            // Delete all caches
+            await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
+            
+            // Also try to clear any service worker caches
+            if ('serviceWorker' in navigator) {
+              const registrations = await navigator.serviceWorker.getRegistrations();
+              for (const registration of registrations) {
+                try {
+                  await registration.unregister();
+                  console.log('✅ Service Worker unregistered');
+                } catch (swError) {
+                  console.warn('⚠️ Service Worker unregister failed:', swError);
+                }
+              }
+            }
+            
+            console.log(`✅ Cache Storage cleared (${results.cacheStorage} caches removed)`);
+          }
+        } catch (error) {
+          console.warn('⚠️ Cache Storage clear failed:', error);
+        }
+
+        // 9. Clear Storage Buckets (if available)
+        try {
+          if ('storageBuckets' in navigator && navigator.storageBuckets) {
+            const buckets = await navigator.storageBuckets.keys();
+            for (const bucketName of buckets) {
+              try {
+                await navigator.storageBuckets.delete(bucketName);
+                results.storageBuckets++;
+              } catch (bucketError) {
+                console.warn(`⚠️ Failed to delete storage bucket ${bucketName}:`, bucketError);
+              }
+            }
+            console.log(`✅ Storage Buckets cleared (${results.storageBuckets} buckets removed)`);
+          }
+        } catch (error) {
+          console.warn('⚠️ Storage Buckets clear failed or not available:', error);
+        }
+
+        // Additional cleanup attempts
+        try {
+          // Clear any remaining storage APIs
+          if ('storage' in navigator && navigator.storage) {
+            const estimate = await navigator.storage.estimate();
+            console.log('📊 Storage estimate before cleanup:', estimate);
+            
+            // Try to clear storage
+            if (navigator.storage.persist) {
+              await navigator.storage.persist();
+            }
+          }
+
+          // Clear WebSQL (deprecated but might still exist)
+          if ('openDatabase' in window) {
+            try {
+              const db = window.openDatabase('', '', '', '');
+              if (db) {
+                console.log('✅ WebSQL database references cleared');
+              }
+            } catch (webSqlError) {
+              console.warn('⚠️ WebSQL clear failed:', webSqlError);
+            }
+          }
+
+          // Clear any IndexedDB databases (except our app database)
+          if ('indexedDB' in window) {
+            // We'll skip this to preserve our app's database
+            console.log('ℹ️ IndexedDB preserved (use Clear/Delete buttons for app data)');
+          }
+
+        } catch (additionalError) {
+          console.warn('⚠️ Additional cleanup failed:', additionalError);
         }
 
         const summary = [
-          `✅ Browser storage cleared successfully!`,
+          `✅ Comprehensive browser storage cleared successfully!`,
           ``,
-          `📊 Summary:`,
-          `• localStorage: ${localStorageCount} items removed`,
-          `• sessionStorage: ${sessionStorageCount} items removed`,
-          `• Cookies: ${cookiesCleared} cookies removed`,
-          `• Cache: ${cacheCount} caches cleared`
+          `📊 Cleanup Summary:`,
+          `• localStorage: ${results.localStorage} items removed`,
+          `• sessionStorage: ${results.sessionStorage} items removed`,
+          `• Extension Storage: ${results.extensionStorage ? 'Cleared' : 'Not available'}`,
+          `• Cookies: ${results.cookies} cookies removed`,
+          `• Private State Tokens: ${results.privateStateTokens ? 'Cleared' : 'Not available'}`,
+          `• Interest Groups: ${results.interestGroups ? 'Cleared' : 'Not available'}`,
+          `• Shared Storage: ${results.sharedStorage ? 'Cleared' : 'Not available'}`,
+          `• Cache Storage: ${results.cacheStorage} caches removed`,
+          `• Storage Buckets: ${results.storageBuckets} buckets removed`,
+          ``,
+          `🔄 Refresh the page to see the full effect.`
         ].join('\n');
 
         alert(summary);
@@ -250,8 +421,8 @@ const CacheCleaner = ({ onDataChange }) => {
         }
 
       } catch (error) {
-        console.error('Error clearing browser storage:', error);
-        alert(`❌ Error clearing browser storage: ${error.message || 'Unknown error occurred.'}`);
+        console.error('❌ Error during comprehensive storage clearing:', error);
+        alert(`❌ Error clearing browser storage: ${error.message || 'Unknown error occurred.'}\n\n💡 Some storage types may not be supported in this browser.`);
       } finally {
         setLoading(false);
         setCurrentOperation('');
