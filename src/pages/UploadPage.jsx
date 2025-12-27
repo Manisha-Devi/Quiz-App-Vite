@@ -272,14 +272,14 @@ function UploadPage() {
               `Question ${index + 1}: Missing or invalid question text`,
             );
           }
-          if (!Array.isArray(q.options) || q.options.length !== 4) {
+          if (!Array.isArray(q.options) || q.options.length < 2 || q.options.length > 6) {
             invalidQuestions.push(
-              `Question ${index + 1}: Must have exactly 4 options`,
+              `Question ${index + 1}: Must have 2-6 options`,
             );
           }
-          if (typeof q.answer === "undefined" || q.answer < 0 || q.answer > 3) {
+          if (typeof q.answer === "undefined" || q.answer < 0 || q.answer >= q.options.length) {
             invalidQuestions.push(
-              `Question ${index + 1}: Invalid answer (must be 0-3)`,
+              `Question ${index + 1}: Invalid answer (must be 0-${q.options.length - 1})`,
             );
           }
           if (typeof q.level === "undefined" || ![0, 1, 2].includes(q.level)) {

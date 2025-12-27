@@ -71,7 +71,7 @@ const QuestionViewer = React.memo(function QuestionViewer({
   }, [showAnswer]);
 
   const handleFiftyFifty = useCallback(() => {
-    if (isFiftyFiftyUsed || !question.options || question.options.length !== 4 || !onFiftyFiftyUse) return;
+    if (isFiftyFiftyUsed || !question.options || question.options.length < 3 || !onFiftyFiftyUse) return;
 
     const correctAnswer = question.answer;
     const incorrectOptions = [];
@@ -83,9 +83,12 @@ const QuestionViewer = React.memo(function QuestionViewer({
       }
     });
 
-    // Randomly select 2 incorrect options to hide
+    // Calculate how many options to hide (leave 2 options: 1 correct + 1 wrong)
+    const optionsToHideCount = Math.min(incorrectOptions.length - 1, Math.floor(question.options.length / 2));
+    
+    // Randomly select options to hide
     const shuffled = [...incorrectOptions].sort(() => Math.random() - 0.5);
-    const optionsToHide = shuffled.slice(0, 2);
+    const optionsToHide = shuffled.slice(0, optionsToHideCount);
 
     // Check if user's current answer will be hidden by 50/50
     if (answer !== undefined && optionsToHide.includes(answer)) {
