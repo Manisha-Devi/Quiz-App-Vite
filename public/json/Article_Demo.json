@@ -1,31 +1,31 @@
 [
     {
         "id": 1,
-        "question": "She is ___ honest woman.",
-        "options": ["a", "an", "the", "no article", "either a or an"],
+        "question": "She is ___ honest woman. (2 options)",
+        "options": ["a", "an"],
         "answer": 1,
         "level": 0,
         "explanation": "We use 'an' before words that begin with a vowel sound. 'Honest' starts with a silent 'h', so it has a vowel sound at the beginning."
     },
     {
         "id": 2,
-        "question": "___ sun rises in the east.",
-        "options": ["A", "An", "The", "No article", "Either A or The"],
+        "question": "___ sun rises in the east. (3 options)",
+        "options": ["A", "An", "The"],
         "answer": 2,
         "level": 0,
         "explanation": "We use 'The' before unique objects like the sun, the moon, the earth, etc., as there is only one of them."
     },
     {
         "id": 3,
-        "question": "He is ___ European tourist.",
-        "options": ["a", "an", "the", "no article", "either a or an"],
+        "question": "He is ___ European tourist. (4 options)",
+        "options": ["a", "an", "the", "no article"],
         "answer": 0,
         "level": 0,
         "explanation": "We use 'a' before words that begin with a consonant sound. 'European' starts with a 'yu' sound (consonant sound), not a vowel sound."
     },
     {
         "id": 4,
-        "question": "I saw ___ one-eyed man on the street.",
+        "question": "I saw ___ one-eyed man on the street. (5 options)",
         "options": ["a", "an", "the", "no article", "either a or the"],
         "answer": 0,
         "level": 0,
@@ -33,39 +33,39 @@
     },
     {
         "id": 5,
-        "question": "___ Himalayas are the highest mountain range in the world.",
-        "options": ["A", "An", "The", "No article", "Either A or An"],
+        "question": "___ Himalayas are the highest mountain range in the world. (6 options)",
+        "options": ["A", "An", "The", "No article", "Either A or An", "Either The or No article"],
         "answer": 2,
         "level": 0,
         "explanation": "We use 'The' before the names of mountain ranges, island groups, and plural geographical names."
     },
     {
         "id": 6,
-        "question": "She plays ___ piano very well.",
-        "options": ["a", "an", "the", "no article", "either a or an"],
-        "answer": 2,
+        "question": "She plays ___ piano very well. (2 options)",
+        "options": ["a", "the"],
+        "answer": 1,
         "level": 0,
         "explanation": "We use 'the' before musical instruments when talking about playing them."
     },
     {
         "id": 7,
-        "question": "___ gold is a precious metal.",
-        "options": ["A", "An", "The", "No article", "Either A or The"],
-        "answer": 3,
+        "question": "___ gold is a precious metal. (3 options)",
+        "options": ["A", "The", "No article"],
+        "answer": 2,
         "level": 0,
         "explanation": "No article is used before uncountable nouns when speaking in general terms. 'Gold' here refers to gold in general."
     },
     {
         "id": 8,
-        "question": "He is ___ M.A. in English.",
-        "options": ["a", "an", "the", "no article", "either a or an"],
+        "question": "He is ___ M.A. in English. (4 options)",
+        "options": ["a", "an", "the", "no article"],
         "answer": 1,
         "level": 0,
         "explanation": "'M.A.' is pronounced starting with 'em', which has a vowel sound. Therefore, we use 'an'."
     },
     {
         "id": 9,
-        "question": "I met ___ boy who helped me yesterday.",
+        "question": "I met ___ boy who helped me yesterday. (5 options)",
         "options": ["a", "an", "the", "no article", "either a or the"],
         "answer": 2,
         "level": 0,
@@ -73,24 +73,24 @@
     },
     {
         "id": 10,
-        "question": "___ honesty is the best policy.",
-        "options": ["A", "An", "The", "No article", "Either A or An"],
+        "question": "___ honesty is the best policy. (6 options)",
+        "options": ["A", "An", "The", "No article", "Either A or An", "Either The or No article"],
         "answer": 3,
         "level": 0,
         "explanation": "No article is used before abstract nouns like honesty, truth, wisdom when used in a general sense."
     },
     {
         "id": 11,
-        "question": "He bought ___ umbrella for his sister.",
-        "options": ["a", "an", "the", "no article", "either a or an"],
+        "question": "He bought ___ umbrella for his sister. (2 options)",
+        "options": ["a", "an"],
         "answer": 1,
         "level": 0,
         "explanation": "'Umbrella' starts with a vowel sound 'uh', so we use 'an' before it."
     },
     {
         "id": 12,
-        "question": "___ rich should help ___ poor.",
-        "options": ["The, the", "A, a", "An, an", "No article, no article", "The, a"],
+        "question": "___ rich should help ___ poor. (3 options)",
+        "options": ["The, the", "A, a", "No article, no article"],
         "answer": 0,
         "level": 0,
         "explanation": "We use 'the' before adjectives to refer to a group of people as a whole. 'The rich' means rich people in general."
