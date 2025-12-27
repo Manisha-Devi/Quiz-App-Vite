@@ -5,10 +5,9 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   server: {
-    allowedHosts: [
-      "74d32585-c90a-4cfa-8fac-9de0fa2d36d8-00-2l6773x25cwxc.sisko.replit.dev",
-      // Add any other hosts you want to allow here
-    ],
+    host: "0.0.0.0",
+    port: 5000,
+    allowedHosts: true,
   },
   publicDir: "public",
   assetsInclude: ["**/*.json", "json/**/*", "**/*.png", "**/*.jpg", "**/*.jpeg", "**/*.gif", "**/*.webp", "**/*.svg"],
