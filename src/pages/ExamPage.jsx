@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MathJaxContext } from 'better-react-mathjax';
 import { useSwipeable } from 'react-swipeable';
+import ServerDataNavLink from '../components/ServerDataNavLink';
 import QuestionViewer from '../components/QuestionViewer';
 import QuestionNavigator from '../components/QuestionNavigator';
 import DrawingOverlay from '../components/DrawingOverlay';
@@ -838,6 +839,7 @@ function ExamPage() {
                 <span className="title-text">{practiceMode ? 'Practice' : 'Exam'}</span>
               </div>
               <div className="header-controls">
+                <ServerDataNavLink />
                 <div className={`timer-box ${getTimerColorClass()}`}>
                   {practiceMode ? '∞' : formatTime(timeLeft)}
                 </div>

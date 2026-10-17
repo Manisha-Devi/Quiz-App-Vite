@@ -1,13 +1,37 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAllImagesForJSONFile } from '../utils/indexedDB';
+import ServerDataNavLink from '../components/ServerDataNavLink';
 import dataManager from '../utils/dataManager';
 import '../styles/SectionSetupPage.css';
+
+const getFileQuestionCount = (file) =>
+  Number.isInteger(file?.questionCount)
+    ? file.questionCount
+    : Array.isArray(file?.questions)
+      ? file.questions.length
+      : 0;
+
+const getFileLevelCounts = (file) => {
+  if (file?.levelCounts) return file.levelCounts;
+
+  return (file?.questions || []).reduce(
+    (counts, question) => {
+      if ([0, 1, 2].includes(question?.level)) {
+        counts[question.level] += 1;
+      }
+      return counts;
+    },
+    { 0: 0, 1: 0, 2: 0 },
+  );
+};
 
 function SectionSetupPage() {
   const [quizData, setQuizData] = useState([]);
   const [questionCounts, setQuestionCounts] = useState({});
   const [fileImageMap, setFileImageMap] = useState({});
+  const [isServerQuiz, setIsServerQuiz] = useState(false);
+  const [isStartingExam, setIsStartingExam] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalImages, setModalImages] = useState([]);
   const [modalIndex, setModalIndex] = useState(0);
@@ -79,49 +103,62 @@ function SectionSetupPage() {
           return;
         }
 
-        setQuizData(data);
-        console.log('Quiz data set successfully:', data.length, 'files loaded');
+        const serverSourceFlags = data.map((file) => file.serverSource === true);
+        if (serverSourceFlags.some(Boolean) && !serverSourceFlags.every(Boolean)) {
+          throw new Error('Local and server question files cannot be mixed in one quiz.');
+        }
+        const serverSource = serverSourceFlags.every(Boolean);
 
-      // Load images from IndexedDB for each JSON file
-        const imageMap = {};
         for (const file of data) {
-          try {
-            console.log(`Loading images for ${file.name}...`);
-            const images = await getAllImagesForJSONFile(file.name);
-            if (images && images.length > 0) {
-              imageMap[`${file.name}.json`] = images.map(img => ({
-                name: img.imageName,
-                data: img.data
-              }));
-              console.log(`Loaded ${images.length} images for ${file.name}`);
-            }
-          } catch (error) {
-            console.log(`No images found for ${file.name}:`, error);
+          if (
+            !file.name ||
+            getFileQuestionCount(file) < 1 ||
+            (!serverSource &&
+              (!Array.isArray(file.questions) || file.questions.length === 0))
+          ) {
+            throw new Error(`Invalid question data for ${file.name || 'a selected file'}.`);
           }
         }
 
-        setFileImageMap(imageMap);
-        console.log('Image map loaded:', Object.keys(imageMap).length, 'files with images');
+        setIsServerQuiz(serverSource);
+        setQuizData(data);
+        console.log('Quiz setup files loaded:', data.length);
 
-      // Initialize settings for each file
+        if (serverSource) {
+          // Server setup stores only small summaries here, never the full bank.
+          setFileImageMap({});
+        } else {
+          const imageMap = {};
+          for (const file of data) {
+            try {
+              const images = await getAllImagesForJSONFile(file.name);
+              if (images && images.length > 0) {
+                imageMap[`${file.name}.json`] = images.map(img => ({
+                  name: img.imageName,
+                  data: img.data
+                }));
+              }
+            } catch (error) {
+              console.log(`No images found for ${file.name}:`, error);
+            }
+          }
+          setFileImageMap(imageMap);
+        }
+
         const initialCounts = {};
         const initialRanges = {};
         const initialShuffleSettings = {};
 
         data.forEach((file, index) => {
-          if (!file.questions || !Array.isArray(file.questions)) {
-            console.error(`Invalid questions data for file ${file.name}:`, file.questions);
-            return;
-          }
-
+          const questionCount = getFileQuestionCount(file);
           initialCounts[index] = { 0: 0, 1: 0, 2: 0 };
-          initialRanges[index] = { 
-            startIndex: 1, 
-            endIndex: file.questions.length,
-            maxQuestions: file.questions.length
+          initialRanges[index] = {
+            startIndex: 1,
+            endIndex: questionCount,
+            maxQuestions: questionCount
           };
           initialShuffleSettings[index] = false; // Default: shuffle enabled (false means no-shuffle is off)
-          console.log(`Initialized settings for ${file.name}: ${file.questions.length} questions`);
+          console.log(`Initialized settings for ${file.name}: ${questionCount} questions`);
         });
 
         setQuestionCounts(initialCounts);
@@ -156,7 +193,7 @@ function SectionSetupPage() {
 
   const handleInputChange = (fileIndex, level, value) => {
     const updated = { ...questionCounts };
-    const max = quizData[fileIndex].questions.filter(q => q.level === level).length;
+    const max = getFileLevelCounts(quizData[fileIndex])[level] || 0;
     updated[fileIndex][level] = Math.min(parseInt(value) || 0, max);
     setQuestionCounts(updated);
 
@@ -176,7 +213,7 @@ function SectionSetupPage() {
 
   const handleRangeChange = (fileIndex, type, value) => {
     const updated = { ...questionRanges };
-    const maxQuestions = quizData[fileIndex].questions.length;
+    const maxQuestions = getFileQuestionCount(quizData[fileIndex]);
 
     if (type === 'start') {
       const newStart = Math.max(1, Math.min(parseInt(value) || 1, updated[fileIndex].endIndex));
@@ -230,63 +267,93 @@ function SectionSetupPage() {
   };
 
   const handleStartExam = async () => {
-    const selectedQuestions = [];
+    setIsStartingExam(true);
+    try {
+      let selectedQuestions = [];
 
-    quizData.forEach((file, fileIndex) => {
-      const isNoShuffle = sectionShuffleSettings[fileIndex] || false;
+      if (isServerQuiz) {
+        const files = quizData.map((file, fileIndex) => {
+          if (sectionShuffleSettings[fileIndex]) {
+            const range = questionRanges[fileIndex];
+            return {
+              filename: file.name,
+              mode: 'range',
+              startIndex: range?.startIndex,
+              endIndex: range?.endIndex
+            };
+          }
 
-      if (isNoShuffle) {
-        // No shuffle mode for this section - select questions by range in original order
-        const range = questionRanges[fileIndex];
-        if (range && range.startIndex && range.endIndex) {
-          const startIdx = range.startIndex - 1; // Convert to 0-based index
-          const endIdx = range.endIndex - 1;     // Convert to 0-based index
-
-          const rangeQuestions = file.questions
-            .slice(startIdx, endIdx + 1)
-            .map(q => ({ ...q, section: file.name }));
-
-          selectedQuestions.push(...rangeQuestions);
-        }
-      } else {
-        // Shuffle mode for this section
-        const sectionQuestions = [];
-
-        [0, 1, 2].forEach(level => {
-          const count = questionCounts[fileIndex][level] || 0;
-          const filtered = file.questions.filter(q => q.level === level);
-          shuffleArray(filtered);
-          const picked = filtered.slice(0, count).map(q => ({ ...q, section: file.name }));
-          sectionQuestions.push(...picked);
+          return {
+            filename: file.name,
+            mode: 'difficulty',
+            counts: questionCounts[fileIndex] || { 0: 0, 1: 0, 2: 0 }
+          };
         });
 
-        // Shuffle within section only
-        shuffleArray(sectionQuestions);
-        selectedQuestions.push(...sectionQuestions);
+        const response = await fetch('/api/question-bank/select', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ files })
+        });
+        const result = await response.json();
+        if (!response.ok) {
+          throw new Error(result.error || 'Could not fetch selected questions from the server.');
+        }
+
+        selectedQuestions = result.questions || [];
+        const imagesSaved = await dataManager.setFileImageMap(result.fileImageMap || {});
+        if (!imagesSaved) {
+          throw new Error('Could not save the selected quiz images in this browser.');
+        }
+      } else {
+        quizData.forEach((file, fileIndex) => {
+          const isNoShuffle = sectionShuffleSettings[fileIndex] || false;
+
+          if (isNoShuffle) {
+            const range = questionRanges[fileIndex];
+            if (range && range.startIndex && range.endIndex) {
+              const startIdx = range.startIndex - 1;
+              const endIdx = range.endIndex - 1;
+              const rangeQuestions = file.questions
+                .slice(startIdx, endIdx + 1)
+                .map(q => ({ ...q, section: file.name }));
+              selectedQuestions.push(...rangeQuestions);
+            }
+          } else {
+            const sectionQuestions = [];
+            [0, 1, 2].forEach(level => {
+              const count = questionCounts[fileIndex]?.[level] || 0;
+              const filtered = file.questions.filter(q => q.level === level);
+              shuffleArray(filtered);
+              const picked = filtered.slice(0, count).map(q => ({ ...q, section: file.name }));
+              sectionQuestions.push(...picked);
+            });
+            shuffleArray(sectionQuestions);
+            selectedQuestions.push(...sectionQuestions);
+          }
+        });
       }
-    });
 
-    if (selectedQuestions.length === 0) {
-      alert("⚠️ Please select at least one question before starting the exam.");
-      return;
+      if (selectedQuestions.length === 0) {
+        alert("⚠️ Please select at least one question before starting the exam.");
+        return;
+      }
+
+      const validQuizTime = Math.max(1, parseInt(quizTime) || 60);
+      await dataManager.setUserSetting('quizTime', validQuizTime);
+      await dataManager.setUserSetting('practiceMode', practiceMode);
+      await dataManager.setUserSetting('enableDrawing', enableDrawing);
+      await dataManager.setUserSetting('retryMode', retryMode);
+
+      const saved = await dataManager.setExamData('finalQuiz', selectedQuestions);
+      if (!saved) throw new Error('Could not save the selected quiz in this browser.');
+      navigate('/exam');
+    } catch (error) {
+      console.error('Could not start quiz:', error);
+      alert(`⚠️ Could not start the quiz: ${error.message}`);
+    } finally {
+      setIsStartingExam(false);
     }
-
-    // Save quiz settings with validation
-    const validQuizTime = Math.max(1, parseInt(quizTime) || 60); // Ensure at least 1 minute
-    await dataManager.setUserSetting('quizTime', validQuizTime);
-    await dataManager.setUserSetting('practiceMode', practiceMode);
-    await dataManager.setUserSetting('enableDrawing', enableDrawing);
-    await dataManager.setUserSetting('retryMode', retryMode);
-
-    console.log('Quiz settings saved:', {
-      quizTime: validQuizTime,
-      practiceMode,
-      enableDrawing,
-      retryMode
-    });
-
-    await dataManager.setExamData('finalQuiz', selectedQuestions);
-    navigate('/exam');
   };
 
   const openImageModal = (images) => {
@@ -316,7 +383,7 @@ function SectionSetupPage() {
   };
 
   const getTotalAvailable = () => {
-    return quizData.reduce((total, file) => total + file.questions.length, 0);
+    return quizData.reduce((total, file) => total + getFileQuestionCount(file), 0);
   };
 
   useEffect(() => {
@@ -374,6 +441,7 @@ function SectionSetupPage() {
           <span className="title-text">Setup</span>
         </div>
         <div className="header-controls">
+          <ServerDataNavLink />
           <div className="selection-summary">
             <span className="summary-text">{getTotalSelected()}/{getTotalAvailable()}</span>
             <span className="summary-label">Questions</span>
@@ -388,33 +456,36 @@ function SectionSetupPage() {
         {/* Sections Grid */}
         <div className="sections-grid">
           {quizData.map((file, fileIndex) => {
-            const levelCounts = { 0: 0, 1: 0, 2: 0 };
-            file.questions.forEach(q => levelCounts[q.level]++);
+            const levelCounts = getFileLevelCounts(file);
+            const totalQuestions = getFileQuestionCount(file);
 
             const selectedTotal = sectionShuffleSettings[fileIndex] 
               ? (questionRanges[fileIndex] ? questionRanges[fileIndex].endIndex - questionRanges[fileIndex].startIndex + 1 : 0)
               : Object.values(questionCounts[fileIndex] || {}).reduce((a, b) => a + b, 0);
             const fileName = `${file.name}.json`;
             const images = fileImageMap[fileName] || [];
+            const imageCount = isServerQuiz ? file.imageCount || 0 : images.length;
 
             return (
               <div key={fileIndex} className="section-card">
                 <div className="section-card-header">
                   <div className="section-name-row">
                     <h3 className="section-name">{file.name}</h3>
-                    {images.length > 0 && (
+                    {imageCount > 0 && (isServerQuiz ? (
+                      <span className="preview-images-btn">🖼️ {imageCount}</span>
+                    ) : (
                       <button
                         className="preview-images-btn"
                         onClick={() => openImageModal(images)}
                       >
-                        🖼️ {images.length}
+                        🖼️ {imageCount}
                       </button>
-                    )}
+                    ))}
                   </div>
 
                   <div className="section-controls-row">
                     <div className="section-stats">
-                      <span className="total-questions">{file.questions.length} Total</span>
+                      <span className="total-questions">{totalQuestions} Total</span>
                       <span className="selected-count">{selectedTotal} Selected</span>
                     </div>
 
@@ -488,8 +559,8 @@ function SectionSetupPage() {
                         <div className="range-info">
                           <span className="range-name">Question Range</span>
                           <span className="range-counter">
-                            Q{questionRanges[fileIndex]?.startIndex || 1} - Q{questionRanges[fileIndex]?.endIndex || file.questions.length}
-                            ({(questionRanges[fileIndex]?.endIndex || file.questions.length) - (questionRanges[fileIndex]?.startIndex || 1) + 1} questions)
+                            Q{questionRanges[fileIndex]?.startIndex || 1} - Q{questionRanges[fileIndex]?.endIndex || totalQuestions}
+                            ({(questionRanges[fileIndex]?.endIndex || totalQuestions) - (questionRanges[fileIndex]?.startIndex || 1) + 1} questions)
                           </span>
                         </div>
                       </div>
@@ -509,7 +580,7 @@ function SectionSetupPage() {
                             <input
                               type="range"
                               min="1"
-                              max={questionRanges[fileIndex]?.endIndex || file.questions.length}
+                              max={questionRanges[fileIndex]?.endIndex || totalQuestions}
                               value={questionRanges[fileIndex]?.startIndex || 1}
                               onChange={(e) => handleRangeChange(fileIndex, 'start', e.target.value)}
                               className="question-slider"
@@ -517,7 +588,7 @@ function SectionSetupPage() {
                             <button 
                               className="control-button"
                               onClick={() => handleRangeChange(fileIndex, 'start', (questionRanges[fileIndex]?.startIndex || 1) + 1)}
-                              disabled={(questionRanges[fileIndex]?.startIndex || 1) >= (questionRanges[fileIndex]?.endIndex || file.questions.length)}
+                              disabled={(questionRanges[fileIndex]?.startIndex || 1) >= (questionRanges[fileIndex]?.endIndex || totalQuestions)}
                               title="Increase Start"
                             >
                               +
@@ -531,8 +602,8 @@ function SectionSetupPage() {
                           <div className="slider-container">
                             <button 
                               className="control-button"
-                              onClick={() => handleRangeChange(fileIndex, 'end', (questionRanges[fileIndex]?.endIndex || file.questions.length) - 1)}
-                              disabled={(questionRanges[fileIndex]?.endIndex || file.questions.length) <= (questionRanges[fileIndex]?.startIndex || 1)}
+                              onClick={() => handleRangeChange(fileIndex, 'end', (questionRanges[fileIndex]?.endIndex || totalQuestions) - 1)}
+                              disabled={(questionRanges[fileIndex]?.endIndex || totalQuestions) <= (questionRanges[fileIndex]?.startIndex || 1)}
                               title="Decrease End"
                             >
                               −
@@ -540,21 +611,21 @@ function SectionSetupPage() {
                             <input
                               type="range"
                               min={questionRanges[fileIndex]?.startIndex || 1}
-                              max={file.questions.length}
-                              value={questionRanges[fileIndex]?.endIndex || file.questions.length}
+                              max={totalQuestions}
+                              value={questionRanges[fileIndex]?.endIndex || totalQuestions}
                               onChange={(e) => handleRangeChange(fileIndex, 'end', e.target.value)}
                               className="question-slider"
                             />
                             <button 
                               className="control-button"
-                              onClick={() => handleRangeChange(fileIndex, 'end', (questionRanges[fileIndex]?.endIndex || file.questions.length) + 1)}
-                              disabled={(questionRanges[fileIndex]?.endIndex || file.questions.length) >= file.questions.length}
+                              onClick={() => handleRangeChange(fileIndex, 'end', (questionRanges[fileIndex]?.endIndex || totalQuestions) + 1)}
+                              disabled={(questionRanges[fileIndex]?.endIndex || totalQuestions) >= totalQuestions}
                               title="Increase End"
                             >
                               +
                             </button>
                           </div>
-                          <span className="range-value">Q{questionRanges[fileIndex]?.endIndex || file.questions.length}</span>
+                          <span className="range-value">Q{questionRanges[fileIndex]?.endIndex || totalQuestions}</span>
                         </div>
                       </div>
                     </div>
@@ -632,9 +703,11 @@ function SectionSetupPage() {
           <button
             className="start-exam-btn"
             onClick={handleStartExam}
-            disabled={getTotalSelected() === 0}
+            disabled={getTotalSelected() === 0 || isStartingExam}
           >
-            <span className="btn-text">Start Quiz</span>
+            <span className="btn-text">
+              {isStartingExam ? 'Loading selected questions…' : 'Start Quiz'}
+            </span>
             <span className="btn-icon">🚀</span>
           </button>
         </div>

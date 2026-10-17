@@ -6,6 +6,7 @@ import SectionSetupPage from './pages/SectionSetupPage';
 import ExamPage from './pages/ExamPage';
 import ResultPage from './pages/ResultPage';
 import QuestionExtractorPage from './pages/QuestionExtractorPage';
+import ServerDataPage from './pages/ServerDataPage';
 import dataManager from './utils/dataManager';
 import './App.css';
 
@@ -49,6 +50,7 @@ function App() {
           <Route path="/exam" element={<ExamPage />} />
           <Route path="/result" element={<ResultPage />} />
           <Route path="/extract" element={<QuestionExtractorPage />} />
+          <Route path="/server-data" element={<ServerDataPage />} />
         </Routes>
       </div>
     </Router>

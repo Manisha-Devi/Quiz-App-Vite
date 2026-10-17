@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import ServerDataNavLink from '../components/ServerDataNavLink';
 import '../styles/QuestionExtractorPage.css';
 import useOfflineStorage from '../hooks/useOfflineStorage';
 import QuestionCard from '../components/QuestionCard';
@@ -289,6 +290,7 @@ const QuestionExtractorPage = () => {
         </div>
 
         <div className="header-controls">
+          <ServerDataNavLink />
           <button
             className="theme-toggle-btn"
             onClick={toggleDarkMode}
