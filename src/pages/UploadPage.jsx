@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { storeImage } from "../utils/indexedDB";
 import useOfflineStorage from "../hooks/useOfflineStorage";
 import LocalJSONLibrary from "../components/LocalJSONLibrary";
@@ -14,7 +14,10 @@ import {
 } from "../utils/indexedDB";
 
 function UploadPage() {
-  const [showLocalJSON, setShowLocalJSON] = useState(true);
+  const location = useLocation();
+  const [showLocalJSON, setShowLocalJSON] = useState(
+    () => new URLSearchParams(location.search).get("mode") !== "upload",
+  );
   const [files, setFiles] = useState([]);
   const [fileImageMap, setFileImageMap] = useState({});
   const [quizTime, setQuizTime] = useState(0);
@@ -457,10 +460,10 @@ function UploadPage() {
         isOnline={isOnline}
         isDarkMode={isDarkMode}
         onToggleDarkMode={toggleDarkMode}
-        onLibraryAction={() => setShowLocalJSON((current) => !current)}
-        libraryIcon={showLocalJSON ? "📁" : "📤"}
-        libraryTitle="Toggle Upload Mode"
-        libraryActive={showLocalJSON}
+        onLibraryAction={() => navigate("/server-data")}
+        libraryIcon="🗄️"
+        libraryTitle="Open Server Data"
+        libraryActive={false}
       />
 
       <div className="upload-content">

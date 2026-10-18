@@ -255,9 +255,9 @@ function ServerDataPage() {
         isOnline={isOnline}
         isDarkMode={isDarkMode}
         onToggleDarkMode={toggleDarkMode}
-        onLibraryAction={() => navigate("/")}
-        libraryIcon="📁"
-        libraryTitle="Open Upload / Local"
+        onLibraryAction={() => navigate("/?mode=upload")}
+        libraryIcon="📤"
+        libraryTitle="Open Upload Files"
       />
       <header className="server-data-header">
         <div>
