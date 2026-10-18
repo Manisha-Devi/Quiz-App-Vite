@@ -4,7 +4,7 @@ import { storeImage } from "../utils/indexedDB";
 import useOfflineStorage from "../hooks/useOfflineStorage";
 import LocalJSONLibrary from "../components/LocalJSONLibrary";
 import CacheCleaner from "../components/CacheCleaner";
-import ServerDataNavLink from "../components/ServerDataNavLink";
+import PageNavigation from "../components/PageNavigation";
 import dataManager from "../utils/dataManager";
 import "../styles/UploadPage.css";
 import {
@@ -459,7 +459,7 @@ function UploadPage() {
           <span className="title-text">Upload</span>
         </div>
         <div className="header-controls">
-          <ServerDataNavLink />
+          <PageNavigation />
           <div className="connection-indicator">
             <div
               className={`status-dot ${isOnline ? "online" : "offline"}`}
