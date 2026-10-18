@@ -460,9 +460,18 @@ function UploadPage() {
         isOnline={isOnline}
         isDarkMode={isDarkMode}
         onToggleDarkMode={toggleDarkMode}
-        onLibraryAction={() => navigate("/server-data")}
-        libraryIcon="🗄️"
-        libraryTitle="Open Server Data"
+        onLibraryAction={() => {
+          if (showLocalJSON) {
+            navigate("/server-data");
+          } else {
+            setShowLocalJSON(true);
+            navigate("/", { replace: true });
+          }
+        }}
+        libraryIcon={showLocalJSON ? "🗄️" : "📁"}
+        libraryTitle={
+          showLocalJSON ? "Open Server Data" : "Open Local File List"
+        }
         libraryActive={false}
       />
 
