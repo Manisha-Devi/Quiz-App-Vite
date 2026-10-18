@@ -1,16 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AppHeader from "../components/AppHeader";
+import { FileCardWithImages } from "../components/LocalJSONLibrary";
 import useOfflineStorage from "../hooks/useOfflineStorage";
 import dataManager from "../utils/dataManager";
 import { openDb } from "../utils/indexedDB";
 import "../styles/ServerDataPage.css";
-
-const questionLevels = [
-  { key: 0, label: "Easy" },
-  { key: 1, label: "Medium" },
-  { key: 2, label: "Hard" },
-];
 
 async function clearObjectStore(db, storeName) {
   if (!db.objectStoreNames.contains(storeName)) return;
@@ -27,6 +22,9 @@ async function clearObjectStore(db, storeName) {
 function ServerDataPage() {
   const [files, setFiles] = useState([]);
   const [selectedNames, setSelectedNames] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [viewMode, setViewMode] = useState("grid");
+  const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -35,6 +33,7 @@ function ServerDataPage() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const { isOnline } = useOfflineStorage();
+  const itemsPerPage = 10;
 
   const loadFiles = useCallback(async () => {
     setLoading(true);
@@ -188,6 +187,24 @@ function ServerDataPage() {
     );
   };
 
+  const filteredFiles = files
+    .filter((file) =>
+      file.filename.toLowerCase().includes(searchTerm.trim().toLowerCase()),
+    )
+    .sort((first, second) => first.filename.localeCompare(second.filename));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredFiles.length / itemsPerPage),
+  );
+  const page = Math.min(currentPage, totalPages);
+  const currentFiles = filteredFiles.slice(
+    (page - 1) * itemsPerPage,
+    page * itemsPerPage,
+  );
+  const selectedFiles = files.filter((file) =>
+    selectedNames.includes(file.filename),
+  );
+
   const continueToSetup = async () => {
     const selectedFiles = files
       .filter((file) => selectedNames.includes(file.filename))
@@ -243,11 +260,6 @@ function ServerDataPage() {
       setError(clearError.message || "Could not clear the old browser cache.");
     }
   };
-
-  const totalQuestions = files.reduce(
-    (total, file) => total + file.questionCount,
-    0,
-  );
 
   return (
     <main className={`server-data-page${isDarkMode ? " dark-mode" : ""}`}>
@@ -314,72 +326,216 @@ function ServerDataPage() {
           </pre>
         )}
 
-        <div className="server-bank-heading">
-          <div>
-            <h2>Server question bank</h2>
-            <p>
-              {files.length} file(s) · {totalQuestions} question(s)
-            </p>
+        <div className="local-json-library server-file-library">
+          <div className="library-header">
+            <h2>📁 Select Quiz Files</h2>
+            <p>Choose from available JSON files to start your quiz</p>
           </div>
-          <button
-            type="button"
-            className="server-refresh-button"
-            onClick={loadFiles}
-            disabled={loading || syncing || uploading}
-          >
-            Refresh
-          </button>
-        </div>
 
-        {loading ? (
-          <p className="server-empty-state">Loading server file list…</p>
-        ) : files.length === 0 ? (
-          <div className="server-empty-state">
-            No files are stored on the server yet. Sync <code>public/json</code>{" "}
-            or upload a JSON file to begin.
-          </div>
-        ) : (
-          <div className="server-file-list">
-            {files.map((file) => (
-              <label className="server-file-row" key={file.filename}>
+          <div className="controls-section">
+            <div className="search-row">
+              <div className="search-input-container">
+                <span className="search-icon">🔍</span>
                 <input
-                  type="checkbox"
-                  checked={selectedNames.includes(file.filename)}
-                  onChange={() => toggleFile(file.filename)}
+                  type="text"
+                  placeholder="Search files by name..."
+                  aria-label="Search server files by name"
+                  value={searchTerm}
+                  onChange={(event) => {
+                    setSearchTerm(event.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="search-input"
                 />
-                <span className="server-file-details">
-                  <strong>{file.filename}</strong>
-                  <span>
-                    {file.questionCount}{" "}
-                    {file.questionCount === 1 ? "question" : "questions"}
-                    {file.imageCount ? ` · ${file.imageCount} images` : ""}
-                  </span>
-                </span>
-                <span className="server-level-counts">
-                  {questionLevels.map(({ key, label }) => (
-                    <span key={key} title={label}>
-                      {label[0]} {file.levelCounts?.[key] || 0}
-                    </span>
-                  ))}
-                </span>
-              </label>
-            ))}
-          </div>
-        )}
+                {searchTerm && (
+                  <button
+                    type="button"
+                    className="clear-search"
+                    title="Clear search"
+                    aria-label="Clear search"
+                    onClick={() => {
+                      setSearchTerm("");
+                      setCurrentPage(1);
+                    }}
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+            </div>
 
-        <div className="server-data-footer">
-          <p>
-            The current quiz and needed images are saved in IndexedDB after
-            question selection.
+            <div className="filters-row">
+              <div className="filter-group">
+                <label className="filter-label">View:</label>
+                <div className="view-toggle">
+                  <button
+                    type="button"
+                    className={`view-btn ${viewMode === "grid" ? "active" : ""}`}
+                    aria-label="Grid view"
+                    aria-pressed={viewMode === "grid"}
+                    onClick={() => setViewMode("grid")}
+                  >
+                    ⊞
+                  </button>
+                  <button
+                    type="button"
+                    className={`view-btn ${viewMode === "list" ? "active" : ""}`}
+                    aria-label="List view"
+                    aria-pressed={viewMode === "list"}
+                    onClick={() => setViewMode("list")}
+                  >
+                    ☰
+                  </button>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="refresh-btn"
+                onClick={loadFiles}
+                disabled={loading || syncing || uploading}
+              >
+                ↻ Refresh
+              </button>
+            </div>
+          </div>
+
+          {selectedFiles.length > 0 && (
+            <div className="selected-files-section">
+              <div className="selected-header">
+                <h3>✅ Selected Files ({selectedFiles.length})</h3>
+                <button
+                  type="button"
+                  className="clear-selection-btn"
+                  onClick={() => setSelectedNames([])}
+                >
+                  Clear All
+                </button>
+              </div>
+              <div className="selected-files-grid">
+                {selectedFiles.map((file) => (
+                  <FileCardWithImages
+                    key={file.filename}
+                    file={file}
+                    isSelected={true}
+                    questionCount={file.questionCount}
+                    imageCountOverride={file.imageCount || 0}
+                    viewMode="grid"
+                    onToggle={(selectedFile) =>
+                      toggleFile(selectedFile.filename)
+                    }
+                    showRemoveIcon={true}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {loading ? (
+            <div className="loading-state">
+              <div className="loading-spinner" />
+              <p>Loading server files...</p>
+            </div>
+          ) : files.length === 0 ? (
+            <div className="empty-state">
+              <div className="empty-icon">📂</div>
+              <h3>No Server Files Found</h3>
+              <p>Sync public/json or upload JSON files to see them here</p>
+            </div>
+          ) : (
+            <>
+              {filteredFiles.length > 0 && (
+                <div className="library-stats">
+                  <span className="total-files">
+                    📊 Total: {filteredFiles.length} files | Page {page} of{" "}
+                    {totalPages}
+                  </span>
+                </div>
+              )}
+
+              <div className={`files-container ${viewMode} files-grid-2-col`}>
+                {currentFiles.length === 0 ? (
+                  <div className="no-results">
+                    <div className="no-results-icon">🔍</div>
+                    <h3>No files match your search</h3>
+                    <p>Try another file name</p>
+                  </div>
+                ) : (
+                  currentFiles.map((file) => (
+                    <FileCardWithImages
+                      key={file.filename}
+                      file={file}
+                      isSelected={selectedNames.includes(file.filename)}
+                      questionCount={file.questionCount}
+                      imageCountOverride={file.imageCount || 0}
+                      viewMode={viewMode}
+                      onToggle={(selectedFile) =>
+                        toggleFile(selectedFile.filename)
+                      }
+                    />
+                  ))
+                )}
+              </div>
+
+              {totalPages > 1 && (
+                <div className="pagination-controls">
+                  <button
+                    type="button"
+                    className="pagination-btn"
+                    onClick={() => setCurrentPage((current) => current - 1)}
+                    disabled={page === 1}
+                  >
+                    ← Previous
+                  </button>
+                  <div className="pagination-pages">
+                    {Array.from({ length: totalPages }, (_, index) => index + 1).map(
+                      (pageNumber) => (
+                        <button
+                          type="button"
+                          key={pageNumber}
+                          className={`pagination-page ${
+                            page === pageNumber ? "active" : ""
+                          }`}
+                          onClick={() => setCurrentPage(pageNumber)}
+                        >
+                          {pageNumber}
+                        </button>
+                      ),
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    className="pagination-btn"
+                    onClick={() => setCurrentPage((current) => current + 1)}
+                    disabled={page === totalPages}
+                  >
+                    Next →
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+
+          <div className="action-section">
+            <button
+              type="button"
+              className={`continue-btn ${
+                selectedNames.length === 0 ? "disabled" : ""
+              }`}
+              onClick={continueToSetup}
+              disabled={selectedNames.length === 0 || loading}
+            >
+              <span>
+                Continue with {selectedNames.length} file
+                {selectedNames.length === 1 ? "" : "s"}
+              </span>
+              <span className="btn-icon">➡️</span>
+            </button>
+          </div>
+
+          <p className="server-selection-note">
+            The selected quiz and its required images are saved in this browser
+            after you continue.
           </p>
-          <button
-            type="button"
-            className="server-primary-button"
-            onClick={continueToSetup}
-            disabled={selectedNames.length === 0 || loading}
-          >
-            Set up selected quiz
-          </button>
         </div>
 
         <div className="browser-cache-card">

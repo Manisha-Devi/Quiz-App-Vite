@@ -4,11 +4,25 @@ import '../components/styles/LocalJSONLibrary.css';
 import dataManager from '../utils/dataManager';
 
 // Component to handle individual file card with image loading
-function FileCardWithImages({ file, isSelected, questionCount, viewMode, onToggle, showRemoveIcon = false }) {
-  const [imageCount, setImageCount] = useState(0);
-  const [loading, setLoading] = useState(true);
+function FileCardWithImages({
+  file,
+  isSelected,
+  questionCount,
+  viewMode,
+  onToggle,
+  showRemoveIcon = false,
+  imageCountOverride,
+}) {
+  const [imageCount, setImageCount] = useState(imageCountOverride || 0);
+  const [loading, setLoading] = useState(imageCountOverride === undefined);
 
   useEffect(() => {
+    if (imageCountOverride !== undefined) {
+      setImageCount(imageCountOverride);
+      setLoading(false);
+      return;
+    }
+
     const loadImageCount = async () => {
       try {
         const images = await dataManager.getAllImagesForJSONFile(file.filename);
@@ -22,12 +36,21 @@ function FileCardWithImages({ file, isSelected, questionCount, viewMode, onToggl
     };
 
     loadImageCount();
-  }, [file.filename]);
+  }, [file.filename, imageCountOverride]);
 
   return (
     <div 
       className={`file-card ${isSelected ? 'selected' : ''} ${viewMode} ${showRemoveIcon ? 'selected-file-card' : ''}`}
       onClick={() => onToggle(file)}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          onToggle(file);
+        }
+      }}
+      role="button"
+      tabIndex={0}
+      aria-pressed={isSelected}
     >
       <div className="file-content">
         <div className="file-info">
@@ -544,4 +567,5 @@ function LocalJSONLibrary({ onFileSelect, refreshTrigger = 0 }) {
   );
 }
 
+export { FileCardWithImages };
 export default LocalJSONLibrary;
