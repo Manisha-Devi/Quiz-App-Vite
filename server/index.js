@@ -73,29 +73,10 @@ app.use((error, _request, response, next) => {
 });
 
 const port = Number(process.env.PORT) || 5000;
-const isProduction = process.env.NODE_ENV === "production";
 
-if (isProduction) {
-  const distDirectory = path.join(projectRoot, "dist");
-  app.use(express.static(distDirectory));
-  app.use((request, response, next) => {
-    if (request.method !== "GET" || request.path.startsWith("/api/")) {
-      next();
-      return;
-    }
-    response.sendFile(path.join(distDirectory, "index.html"));
-  });
-} else {
-  const { createServer: createViteServer } = await import("vite");
-  const vite = await createViteServer({
-    server: { middlewareMode: true },
-    appType: "spa",
-  });
-  app.use(vite.middlewares);
-}
 
 app.listen(port, "0.0.0.0", () => {
   console.log(
-    `Quiz app and Lowdb API listening on port ${port} (${isProduction ? "production" : "development"})`,
+    `Quiz backend API listening on port ${port}`,
   );
 });

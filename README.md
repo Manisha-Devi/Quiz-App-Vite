@@ -1,12 +1,23 @@
-# React + Vite
+# Quiz App — Server Branch
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This branch contains the Express question-bank API. The frontend lives on the
+`main` branch. The server uses the bundled question files in `public/json/` and
+stores imported question-bank data in `data/question-bank.json` by default.
 
-Currently, two official plugins are available:
+## Run
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+```sh
+npm install
+npm run dev
+```
 
-## Expanding the ESLint configuration
+The API listens on port `5000` by default. Set `PORT` to use a different port,
+or `LOWDB_FILE` to choose a different database file.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## API
+
+- `GET /api/health`
+- `GET /api/question-bank`
+- `POST /api/question-bank/import-bundled`
+- `POST /api/question-bank/import`
+- `POST /api/question-bank/select`
