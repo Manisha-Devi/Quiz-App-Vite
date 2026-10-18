@@ -1,2 +1,0 @@
-- [Question-bank storage durability](question-bank-storage.md) — Lowdb is an explicit user choice; published file data may reset on redeploy.
-- [Vite dependency installs](vite-dependency-install.md) — Avoid unused Create React App packages; their vulnerable transitive dependency blocked installation.
