@@ -1,5 +1,4 @@
 import React from "react";
-import ServerDataNavLink from "./ServerDataNavLink";
 import "./styles/AppHeader.css";
 
 function AppHeader({
@@ -22,7 +21,6 @@ function AppHeader({
       </div>
 
       <div className="app-header-controls">
-        <ServerDataNavLink />
         <div
           className="app-header-connection"
           aria-label={isOnline ? "Online" : "Offline"}
