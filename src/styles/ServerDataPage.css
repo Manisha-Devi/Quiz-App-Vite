@@ -47,6 +47,67 @@
   background: #f4f6fa;
 }
 
+.server-data-header .storage-mode-cycle-button {
+  border: 1px solid #d0d7e2;
+  background: #fff;
+  color: #344054;
+}
+
+.storage-mode-cycle-button {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 13px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.13);
+  color: inherit;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 150ms ease, transform 150ms ease;
+}
+
+.storage-mode-cycle-button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.24);
+  transform: translateY(-1px);
+}
+
+.storage-mode-cycle-button:disabled {
+  cursor: wait;
+  opacity: 0.8;
+}
+
+.storage-mode-cycle-button svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.upload-header .storage-mode-cycle-button {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.upload-header .storage-mode-cycle-button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.upload-page.dark-mode .storage-mode-cycle-button {
+  border-color: #555;
+  background: #404040;
+  color: #e0e0e0;
+}
+
 .server-data-intro {
   max-width: 680px;
   margin: 8px 0 0;

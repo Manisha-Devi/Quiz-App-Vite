@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import ServerDataNavLink from "../components/ServerDataNavLink";
+import { useLocation, useNavigate } from "react-router-dom";
+import StorageModeCycleButton from "../components/StorageModeCycleButton";
 import dataManager from "../utils/dataManager";
 import { openDb } from "../utils/indexedDB";
 import "../styles/ServerDataPage.css";
@@ -32,6 +32,7 @@ function ServerDataPage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
 
   const loadFiles = useCallback(async () => {
     setLoading(true);
@@ -55,6 +56,15 @@ function ServerDataPage() {
   useEffect(() => {
     loadFiles();
   }, [loadFiles]);
+
+  useEffect(() => {
+    const notice = location.state?.storageUpload;
+    if (!notice) return;
+
+    setMessage(notice.message || "");
+    setError(notice.error || "");
+    navigate(location.pathname, { replace: true, state: null });
+  }, [location.pathname, location.state, navigate]);
 
   const importBundledFiles = async () => {
     setSyncing(true);
@@ -106,6 +116,7 @@ function ServerDataPage() {
     try {
       const validFiles = [];
       const clientErrors = [];
+      let totalBytes = 0;
 
       for (const file of chosenFiles) {
         if (!file.name.toLowerCase().endsWith(".json")) {
@@ -115,6 +126,11 @@ function ServerDataPage() {
         if (file.size > 2 * 1024 * 1024) {
           clientErrors.push(`${file.name}: maximum file size is 2 MB.`);
           continue;
+        }
+        totalBytes += file.size;
+        if (totalBytes > 5 * 1024 * 1024) {
+          clientErrors.push("Keep the total upload size under 5 MB.");
+          break;
         }
 
         try {
@@ -238,7 +254,7 @@ function ServerDataPage() {
             quiz are saved in this browser.
           </p>
         </div>
-        <ServerDataNavLink />
+        <StorageModeCycleButton />
       </header>
 
       <section className="server-data-panel">
