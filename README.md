@@ -1,12 +1,18 @@
-# React + Vite
+# Quiz App — Frontend (`main`)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This branch contains the React/Vite quiz interface. The Express question-bank
+API is kept separately on the `server` branch.
 
-Currently, two official plugins are available:
+## Run
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+```sh
+npm install
+npm run dev
+```
 
-## Expanding the ESLint configuration
+The frontend runs on port `5000`. To create a production build, use
+`npm run build`; use `npm run preview` to preview that build.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+The frontend uses same-origin `/api` routes for server-backed question-bank
+features. Those features need the backend from the `server` branch to be
+available through the same origin or a development proxy.
