@@ -4,6 +4,7 @@ node_modules/
 # Ignore build directories
 /build
 /dist
+/.server-worktree/
 
 # Ignore environment files
 .env

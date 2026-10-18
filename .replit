@@ -20,6 +20,10 @@ localPort = 5173
 externalPort = 3000
 
 [[ports]]
+localPort = 8000
+externalPort = 8000
+
+[[ports]]
 localPort = 24678
 externalPort = 3002
 
@@ -38,6 +42,10 @@ author = "agent"
 task = "workflow.run"
 args = "Start application"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Backend API"
+
 [[workflows.workflow]]
 name = "Start application"
 author = "agent"
@@ -49,3 +57,15 @@ waitForPort = 5000
 
 [workflows.workflow.metadata]
 outputType = "webview"
+
+[[workflows.workflow]]
+name = "Backend API"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd .server-worktree && PORT=8000 npm run dev"
+waitForPort = 8000
+
+[workflows.workflow.metadata]
+outputType = "console"

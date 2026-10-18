@@ -1,1 +1,2 @@
 - [Node dependency installation](node-dependency-installation.md) — Replit's package installer may refresh manifests and lockfiles when installing existing version ranges.
+- [Frontend/backend branch split](frontend-backend-branches.md) — Keep quiz frontend on `main` and backend on `server`, connected in Replit by separate workflows and an `/api` proxy.
