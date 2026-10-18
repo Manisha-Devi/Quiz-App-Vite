@@ -3,8 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { storeImage } from "../utils/indexedDB";
 import useOfflineStorage from "../hooks/useOfflineStorage";
 import LocalJSONLibrary from "../components/LocalJSONLibrary";
+import ServerQuestionBankLibrary from "../components/ServerQuestionBankLibrary";
+import ServerQuestionBankUpload from "../components/ServerQuestionBankUpload";
+import StorageModeCycleButton from "../components/StorageModeCycleButton";
+import { useStorageMode } from "../components/StorageModeContext";
 import CacheCleaner from "../components/CacheCleaner";
-import ServerDataNavLink from "../components/ServerDataNavLink";
 import dataManager from "../utils/dataManager";
 import "../styles/UploadPage.css";
 import {
@@ -14,7 +17,8 @@ import {
 } from "../utils/indexedDB";
 
 function UploadPage() {
-  const [showLocalJSON, setShowLocalJSON] = useState(true);
+  const { mode, setMode } = useStorageMode();
+  const [useBrowserUpload, setUseBrowserUpload] = useState(false);
   const [files, setFiles] = useState([]);
   const [fileImageMap, setFileImageMap] = useState({});
   const [quizTime, setQuizTime] = useState(0);
@@ -435,7 +439,7 @@ function UploadPage() {
   useEffect(() => {
     const handleKeyPress = (e) => {
       if (e.key.toLowerCase() === 'u') {
-        setShowLocalJSON(prev => !prev);
+        setMode((current) => current === "server" ? "local" : current === "local" ? "upload" : "server");
       }
       if (e.key.toLowerCase() === 'm') {
         toggleDarkMode();
@@ -447,7 +451,11 @@ function UploadPage() {
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [toggleDarkMode]);
+  }, [toggleDarkMode, setMode]);
+
+  useEffect(() => {
+    if (mode !== "upload") setUseBrowserUpload(false);
+  }, [mode]);
 
 
   return (
@@ -459,7 +467,6 @@ function UploadPage() {
           <span className="title-text">Upload</span>
         </div>
         <div className="header-controls">
-          <ServerDataNavLink />
           <div className="connection-indicator">
             <div
               className={`status-dot ${isOnline ? "online" : "offline"}`}
@@ -475,20 +482,33 @@ function UploadPage() {
           >
             {isDarkMode ? "☀️" : "🌙"}
           </button>
-          <button
-            className={`library-toggle-btn ${showLocalJSON ? "active" : ""}`}
-            onClick={() => setShowLocalJSON(!showLocalJSON)}
-            title="Toggle Upload Mode"
-          >
-            {showLocalJSON ? "📁" : "📤"}
-          </button>
+          <StorageModeCycleButton />
         </div>
       </header>
 
       <div className="upload-content">
-        {showLocalJSON ? (
+        {mode === "server" ? (
+          <div className="library-section">
+            <ServerQuestionBankLibrary refreshTrigger={refreshTrigger} />
+          </div>
+        ) : mode === "local" ? (
           <div className="library-section">
             <LocalJSONLibrary onFileSelect={handleLocalJSONSelect} refreshTrigger={refreshTrigger}/>
+          </div>
+        ) : !useBrowserUpload ? (
+          <div className="server-upload-mode">
+            <ServerQuestionBankUpload onSuccess={() => {
+              setMode("server");
+              setRefreshTrigger((previous) => previous + 1);
+              setUseBrowserUpload(false);
+            }} />
+            <button
+              type="button"
+              className="server-data-nav-link browser-upload-switch"
+              onClick={() => setUseBrowserUpload(true)}
+            >
+              Use browser-only upload instead
+            </button>
           </div>
         ) : (
           <div className="upload-section">
@@ -626,6 +646,16 @@ function UploadPage() {
 
             {/* Action Button */}
             <div className="action-section">
+              <button
+                type="button"
+                className="server-data-nav-link browser-upload-switch"
+                onClick={() => {
+                  setUseBrowserUpload(false);
+                  setMode("server");
+                }}
+              >
+                Back to server files
+              </button>
               <button
                 className={`next-btn ${loading ? "loading" : ""}`}
                 onClick={handleNext}

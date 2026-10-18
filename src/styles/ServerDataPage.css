@@ -341,3 +341,134 @@
     padding-left: 32px;
   }
 }
+
+/* The server library is embedded in Upload and inherits LocalJSONLibrary cards. */
+.server-library .library-header {
+  margin-top: 0;
+}
+
+.server-library-tools {
+  margin-bottom: 18px;
+}
+
+.server-library .server-data-actions {
+  align-items: center;
+}
+
+.server-library .server-data-actions p {
+  max-width: 620px;
+}
+
+.server-library .server-data-buttons {
+  flex-direction: row;
+}
+
+.server-library .server-refresh-button {
+  white-space: nowrap;
+}
+
+.server-library .server-file-list {
+  margin-top: 12px;
+}
+
+.server-library .server-card-levels {
+  justify-content: flex-start;
+  gap: 12px;
+  padding-top: 2px;
+}
+
+.server-library .server-card-levels span {
+  padding: 3px 7px;
+  border-radius: 10px;
+  background: #f1f3f8;
+  color: #596579;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.upload-page.dark-mode .server-library .server-data-actions h2,
+.upload-page.dark-mode .server-library .browser-cache-card h3 {
+  color: #e0e0e0;
+}
+
+.upload-page.dark-mode .server-library .server-data-actions p,
+.upload-page.dark-mode .server-library .browser-cache-card p {
+  color: #a0a0a0;
+}
+
+.upload-page.dark-mode .server-library .server-card-levels span {
+  background: #383842;
+  color: #d0d0d8;
+}
+
+.server-library .server-selection-action {
+  margin-bottom: 22px;
+}
+
+.server-library .browser-cache-card {
+  margin-top: 0;
+}
+
+.server-upload-panel {
+  width: 100%;
+  padding: clamp(18px, 3vw, 30px);
+  border: 1px solid #e1e7f0;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 16px 40px rgba(31, 46, 78, 0.08);
+  box-sizing: border-box;
+}
+
+.server-upload-panel .server-data-actions {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.server-upload-panel .server-data-actions p {
+  margin: 7px 0 0;
+  color: #667085;
+  line-height: 1.5;
+}
+
+.server-upload-panel .server-upload-note {
+  margin: 18px 0 0;
+  color: #667085;
+  font-size: 0.9rem;
+}
+
+.upload-page.dark-mode .server-upload-panel {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(26, 26, 46, 0.92);
+}
+
+.upload-page.dark-mode .server-upload-panel h2,
+.upload-page.dark-mode .server-upload-panel .server-upload-note {
+  color: #e0e0e0;
+}
+
+.upload-page.dark-mode .server-upload-panel .server-data-actions p {
+  color: #a0a0a0;
+}
+
+@media (max-width: 700px) {
+  .server-library .server-data-actions,
+  .server-library .server-data-buttons,
+  .server-library .browser-cache-card,
+  .server-upload-panel .server-data-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .server-library .server-data-buttons {
+    width: 100%;
+  }
+
+  .server-library .browser-cache-card {
+    gap: 12px;
+  }
+
+  .server-library .server-card-levels {
+    width: 100%;
+    padding-left: 0;
+  }
+}

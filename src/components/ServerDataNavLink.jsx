@@ -1,16 +1,20 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useStorageMode } from "./StorageModeContext";
 
 function ServerDataNavLink() {
+  const navigate = useNavigate();
+  const { setMode } = useStorageMode();
+
+  const openQuestionBank = () => {
+    setMode("server");
+    navigate("/");
+  };
+
   return (
-    <NavLink
-      to="/server-data"
-      className={({ isActive }) =>
-        `server-data-nav-link${isActive ? " active" : ""}`
-      }
-    >
-      Server Data
-    </NavLink>
+    <button type="button" className="server-data-nav-link" onClick={openQuestionBank}>
+      Question bank
+    </button>
   );
 }
 

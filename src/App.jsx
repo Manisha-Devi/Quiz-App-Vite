@@ -1,13 +1,13 @@
 
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import UploadPage from './pages/UploadPage';
 import SectionSetupPage from './pages/SectionSetupPage';
 import ExamPage from './pages/ExamPage';
 import ResultPage from './pages/ResultPage';
 import QuestionExtractorPage from './pages/QuestionExtractorPage';
-import ServerDataPage from './pages/ServerDataPage';
 import dataManager from './utils/dataManager';
+import { StorageModeProvider } from './components/StorageModeContext';
 import './App.css';
 
 function App() {
@@ -44,14 +44,16 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <Routes>
-          <Route path="/" element={<UploadPage />} />
-          <Route path="/sections" element={<SectionSetupPage />} />
-          <Route path="/exam" element={<ExamPage />} />
-          <Route path="/result" element={<ResultPage />} />
-          <Route path="/extract" element={<QuestionExtractorPage />} />
-          <Route path="/server-data" element={<ServerDataPage />} />
-        </Routes>
+        <StorageModeProvider>
+          <Routes>
+            <Route path="/" element={<UploadPage />} />
+            <Route path="/sections" element={<SectionSetupPage />} />
+            <Route path="/exam" element={<ExamPage />} />
+            <Route path="/result" element={<ResultPage />} />
+            <Route path="/extract" element={<QuestionExtractorPage />} />
+            <Route path="/server-data" element={<Navigate to="/" replace />} />
+          </Routes>
+        </StorageModeProvider>
       </div>
     </Router>
   );
