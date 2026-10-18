@@ -1,0 +1,1 @@
+- [Node dependency installation](node-dependency-installation.md) — Replit's package installer may refresh manifests and lockfiles when installing existing version ranges.
