@@ -4,7 +4,7 @@ import { storeImage } from "../utils/indexedDB";
 import useOfflineStorage from "../hooks/useOfflineStorage";
 import LocalJSONLibrary from "../components/LocalJSONLibrary";
 import CacheCleaner from "../components/CacheCleaner";
-import PageNavigation from "../components/PageNavigation";
+import AppHeader from "../components/AppHeader";
 import dataManager from "../utils/dataManager";
 import "../styles/UploadPage.css";
 import {
@@ -453,37 +453,15 @@ function UploadPage() {
   return (
     <div className={`upload-page ${isDarkMode ? "dark-mode" : ""}`}>
       {/* Header similar to exam page */}
-      <header className="upload-header">
-        <div className="page-title">
-          <span className="title-icon">📂</span>
-          <span className="title-text">Upload</span>
-        </div>
-        <div className="header-controls">
-          <PageNavigation />
-          <div className="connection-indicator">
-            <div
-              className={`status-dot ${isOnline ? "online" : "offline"}`}
-            ></div>
-            <span className="status-text">
-              {isOnline ? "Online" : "Offline"}
-            </span>
-          </div>
-          <button
-            className="theme-toggle-btn"
-            onClick={toggleDarkMode}
-            title="Toggle Dark Mode"
-          >
-            {isDarkMode ? "☀️" : "🌙"}
-          </button>
-          <button
-            className={`library-toggle-btn ${showLocalJSON ? "active" : ""}`}
-            onClick={() => setShowLocalJSON(!showLocalJSON)}
-            title="Toggle Upload Mode"
-          >
-            {showLocalJSON ? "📁" : "📤"}
-          </button>
-        </div>
-      </header>
+      <AppHeader
+        isOnline={isOnline}
+        isDarkMode={isDarkMode}
+        onToggleDarkMode={toggleDarkMode}
+        onLibraryAction={() => setShowLocalJSON((current) => !current)}
+        libraryIcon={showLocalJSON ? "📁" : "📤"}
+        libraryTitle="Toggle Upload Mode"
+        libraryActive={showLocalJSON}
+      />
 
       <div className="upload-content">
         {showLocalJSON ? (

@@ -1,0 +1,221 @@
+.app-header {
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  display: flex;
+  width: 100%;
+  height: 8vh;
+  min-height: 60px;
+  max-height: 80px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 12px 24px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  box-sizing: border-box;
+  background: linear-gradient(110deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  scrollbar-width: none;
+}
+
+.upload-page.dark-mode .app-header,
+.server-data-page.dark-mode .app-header {
+  background: rgba(26, 26, 46, 0.94);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.app-header::-webkit-scrollbar {
+  display: none;
+}
+
+.app-header-title {
+  display: flex;
+  min-width: max-content;
+  flex: 1;
+  align-items: center;
+  gap: 12px;
+  color: #fff;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.app-header-title-icon {
+  font-size: 28px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.app-header-title-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-header-controls {
+  display: flex;
+  min-width: max-content;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 16px;
+}
+
+.app-header .server-data-nav-link {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 20px;
+  border: 2px solid rgba(255, 255, 255, 0.58);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.07);
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.app-header .server-data-nav-link:hover,
+.app-header .server-data-nav-link.active {
+  border-color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.13);
+  color: #fff;
+}
+
+.app-header .server-data-nav-link:focus-visible,
+.app-header-button:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+.app-header-connection {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 13px;
+  border: 1px solid rgba(76, 175, 80, 0.3);
+  border-radius: 999px;
+  background: rgba(76, 175, 80, 0.16);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.app-header-status-dot {
+  width: 10px;
+  height: 10px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  animation: app-header-pulse 2s infinite;
+}
+
+.app-header-status-dot.online {
+  background: #4caf50;
+}
+
+.app-header-status-dot.offline {
+  background: #ff5722;
+}
+
+@keyframes app-header-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.app-header-button {
+  display: grid;
+  width: 58px;
+  height: 50px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 17px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 24px;
+  transition: transform 150ms ease, background 150ms ease;
+}
+
+.app-header-button:hover {
+  transform: translateY(-1px);
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.app-header-theme-button {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.app-header-library-button {
+  background: #5576ed;
+  box-shadow: 0 4px 16px rgba(54, 77, 191, 0.28);
+}
+
+.app-header-library-button.active {
+  background: #5576ed;
+}
+
+@media (max-width: 768px) {
+  .app-header {
+    gap: 8px;
+    min-height: 54px;
+    padding: 10px 14px;
+  }
+
+  .app-header-title {
+    gap: 6px;
+    font-size: 16px;
+  }
+
+  .app-header-title-icon {
+    font-size: 20px;
+  }
+
+  .app-header-controls {
+    gap: 5px;
+  }
+
+  .app-header .server-data-nav-link {
+    min-height: 38px;
+    padding: 5px 8px;
+    border-radius: 12px;
+    font-size: 0.82rem;
+  }
+
+  .app-header-connection {
+    min-height: 32px;
+    gap: 5px;
+    padding: 4px 7px;
+    font-size: 0.72rem;
+  }
+
+  .app-header-button {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    font-size: 19px;
+  }
+}
+
+@media (max-width: 360px) {
+  .app-header {
+    padding-right: 9px;
+    padding-left: 9px;
+  }
+
+  .app-header-title {
+    font-size: 15px;
+  }
+
+  .app-header-connection > span:last-child {
+    display: none;
+  }
+}

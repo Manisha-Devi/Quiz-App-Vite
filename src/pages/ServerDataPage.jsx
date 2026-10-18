@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import PageNavigation from "../components/PageNavigation";
+import AppHeader from "../components/AppHeader";
+import useOfflineStorage from "../hooks/useOfflineStorage";
 import dataManager from "../utils/dataManager";
 import { openDb } from "../utils/indexedDB";
 import "../styles/ServerDataPage.css";
@@ -29,15 +30,11 @@ function ServerDataPage() {
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterBy, setFilterBy] = useState("all");
-  const [sortBy, setSortBy] = useState("name");
-  const [viewMode, setViewMode] = useState("grid");
-  const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
-  const itemsPerPage = 12;
+  const { isOnline } = useOfflineStorage();
 
   const loadFiles = useCallback(async () => {
     setLoading(true);
@@ -61,6 +58,25 @@ function ServerDataPage() {
   useEffect(() => {
     loadFiles();
   }, [loadFiles]);
+
+  useEffect(() => {
+    const loadTheme = async () => {
+      const savedDarkMode = await dataManager.getUserSetting("darkMode", false);
+      setIsDarkMode(savedDarkMode);
+    };
+    loadTheme();
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark-mode", isDarkMode);
+    document.body.classList.toggle("dark-mode", isDarkMode);
+  }, [isDarkMode]);
+
+  const toggleDarkMode = async () => {
+    const nextDarkMode = !isDarkMode;
+    setIsDarkMode(nextDarkMode);
+    await dataManager.setUserSetting("darkMode", nextDarkMode);
+  };
 
   const importBundledFiles = async () => {
     setSyncing(true);
@@ -172,41 +188,6 @@ function ServerDataPage() {
     );
   };
 
-  const clearSelection = () => setSelectedNames([]);
-
-  const filteredFiles = files
-    .filter((file) => {
-      const matchesSearch = file.filename
-        .toLowerCase()
-        .includes(searchTerm.trim().toLowerCase());
-      const questionCount = file.questionCount || 0;
-      const isSelected = selectedNames.includes(file.filename);
-
-      if (!matchesSearch) return false;
-      if (filterBy === "selected") return isSelected;
-      if (filterBy === "unselected") return !isSelected;
-      if (filterBy === "small") return questionCount <= 20;
-      if (filterBy === "medium")
-        return questionCount > 20 && questionCount <= 50;
-      if (filterBy === "large") return questionCount > 50;
-      return true;
-    })
-    .sort((first, second) => {
-      if (sortBy === "questions") {
-        return second.questionCount - first.questionCount;
-      }
-      return first.filename.localeCompare(second.filename);
-    });
-  const totalPages = Math.max(1, Math.ceil(filteredFiles.length / itemsPerPage));
-  const page = Math.min(currentPage, totalPages);
-  const visibleFiles = filteredFiles.slice(
-    (page - 1) * itemsPerPage,
-    page * itemsPerPage,
-  );
-  const selectedFiles = files.filter((file) =>
-    selectedNames.includes(file.filename),
-  );
-
   const continueToSetup = async () => {
     const selectedFiles = files
       .filter((file) => selectedNames.includes(file.filename))
@@ -269,12 +250,15 @@ function ServerDataPage() {
   );
 
   return (
-    <main className="server-data-page">
-      <header className="server-data-navbar">
-        <div className="server-data-brand">📂 Quiz Files</div>
-        <PageNavigation />
-      </header>
-
+    <main className={`server-data-page${isDarkMode ? " dark-mode" : ""}`}>
+      <AppHeader
+        isOnline={isOnline}
+        isDarkMode={isDarkMode}
+        onToggleDarkMode={toggleDarkMode}
+        onLibraryAction={() => navigate("/")}
+        libraryIcon="📁"
+        libraryTitle="Open Upload / Local"
+      />
       <header className="server-data-header">
         <div>
           <p className="server-data-eyebrow">Question bank</p>
@@ -334,8 +318,7 @@ function ServerDataPage() {
           <div>
             <h2>Server question bank</h2>
             <p>
-              {files.length} file(s) · {totalQuestions} question(s) ·{" "}
-              {selectedNames.length} selected
+              {files.length} file(s) · {totalQuestions} question(s)
             </p>
           </div>
           <button
@@ -348,95 +331,6 @@ function ServerDataPage() {
           </button>
         </div>
 
-        {files.length > 0 && (
-          <div className="server-file-controls">
-            <label className="server-search">
-              <span aria-hidden="true">🔍</span>
-              <input
-                type="search"
-                value={searchTerm}
-                placeholder="Search files by name..."
-                aria-label="Search server files by name"
-                onChange={(event) => {
-                  setSearchTerm(event.target.value);
-                  setCurrentPage(1);
-                }}
-              />
-            </label>
-            <label className="server-control-select">
-              <span>Filter</span>
-              <select
-                value={filterBy}
-                onChange={(event) => {
-                  setFilterBy(event.target.value);
-                  setCurrentPage(1);
-                }}
-              >
-                <option value="all">All files</option>
-                <option value="selected">Selected</option>
-                <option value="unselected">Not selected</option>
-                <option value="small">Small (up to 20 questions)</option>
-                <option value="medium">Medium (21–50 questions)</option>
-                <option value="large">Large (over 50 questions)</option>
-              </select>
-            </label>
-            <label className="server-control-select">
-              <span>Sort</span>
-              <select
-                value={sortBy}
-                onChange={(event) => setSortBy(event.target.value)}
-              >
-                <option value="name">Name</option>
-                <option value="questions">Most questions</option>
-              </select>
-            </label>
-            <div className="server-view-toggle" role="group" aria-label="File display">
-              <button
-                type="button"
-                className={viewMode === "grid" ? "active" : ""}
-                aria-pressed={viewMode === "grid"}
-                onClick={() => setViewMode("grid")}
-                title="Grid view"
-              >
-                ⊞
-              </button>
-              <button
-                type="button"
-                className={viewMode === "list" ? "active" : ""}
-                aria-pressed={viewMode === "list"}
-                onClick={() => setViewMode("list")}
-                title="List view"
-              >
-                ☰
-              </button>
-            </div>
-          </div>
-        )}
-
-        {selectedFiles.length > 0 && (
-          <section className="server-selected-section" aria-label="Selected files">
-            <div className="server-selected-heading">
-              <h3>✓ Selected files ({selectedFiles.length})</h3>
-              <button type="button" onClick={clearSelection}>
-                Clear all
-              </button>
-            </div>
-            <div className="server-selected-list">
-              {selectedFiles.map((file) => (
-                <button
-                  type="button"
-                  key={file.filename}
-                  className="server-selected-chip"
-                  onClick={() => toggleFile(file.filename)}
-                  aria-label={`Remove ${file.filename} from selection`}
-                >
-                  {file.filename} <span aria-hidden="true">×</span>
-                </button>
-              ))}
-            </div>
-          </section>
-        )}
-
         {loading ? (
           <p className="server-empty-state">Loading server file list…</p>
         ) : files.length === 0 ? (
@@ -444,89 +338,33 @@ function ServerDataPage() {
             No files are stored on the server yet. Sync <code>public/json</code>{" "}
             or upload a JSON file to begin.
           </div>
-        ) : filteredFiles.length === 0 ? (
-          <div className="server-empty-state">
-            No files match these search and filter settings.
-          </div>
         ) : (
-          <>
-            <p className="server-file-results">
-              Showing {(page - 1) * itemsPerPage + 1}–
-              {Math.min(page * itemsPerPage, filteredFiles.length)} of{" "}
-              {filteredFiles.length} files
-            </p>
-            <div className={`server-file-list ${viewMode}`}>
-              {visibleFiles.map((file) => {
-                const selected = selectedNames.includes(file.filename);
-                const questionCount = file.questionCount || 0;
-                const sizeLabel =
-                  questionCount <= 20
-                    ? "Small"
-                    : questionCount <= 50
-                      ? "Medium"
-                      : "Large";
-
-                return (
-                  <button
-                    type="button"
-                    className={`server-file-card ${viewMode}${
-                      selected ? " selected" : ""
-                    }`}
-                    key={file.filename}
-                    onClick={() => toggleFile(file.filename)}
-                    aria-pressed={selected}
-                  >
-                    <span className="server-card-title">
-                      <span aria-hidden="true">📄</span>
-                      <strong title={file.filename}>{file.filename}</strong>
-                    </span>
-                    <span className="server-card-meta">
-                      <span>{questionCount} questions</span>
-                      {file.imageCount > 0 && (
-                        <span>🖼️ {file.imageCount} images</span>
-                      )}
-                      <span className={`server-size-tag ${sizeLabel.toLowerCase()}`}>
-                        {sizeLabel}
-                      </span>
-                    </span>
-                    <span className="server-level-counts">
-                      {questionLevels.map(({ key, label }) => (
-                        <span key={key} title={label}>
-                          {label[0]} {file.levelCounts?.[key] || 0}
-                        </span>
-                      ))}
-                    </span>
-                    {selected && (
-                      <span className="server-selected-indicator" aria-hidden="true">
-                        ✓
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-            {totalPages > 1 && (
-              <div className="server-pagination">
-                <button
-                  type="button"
-                  onClick={() => setCurrentPage((current) => current - 1)}
-                  disabled={page === 1}
-                >
-                  ← Previous
-                </button>
-                <span>
-                  Page {page} of {totalPages}
+          <div className="server-file-list">
+            {files.map((file) => (
+              <label className="server-file-row" key={file.filename}>
+                <input
+                  type="checkbox"
+                  checked={selectedNames.includes(file.filename)}
+                  onChange={() => toggleFile(file.filename)}
+                />
+                <span className="server-file-details">
+                  <strong>{file.filename}</strong>
+                  <span>
+                    {file.questionCount}{" "}
+                    {file.questionCount === 1 ? "question" : "questions"}
+                    {file.imageCount ? ` · ${file.imageCount} images` : ""}
+                  </span>
                 </span>
-                <button
-                  type="button"
-                  onClick={() => setCurrentPage((current) => current + 1)}
-                  disabled={page === totalPages}
-                >
-                  Next →
-                </button>
-              </div>
-            )}
-          </>
+                <span className="server-level-counts">
+                  {questionLevels.map(({ key, label }) => (
+                    <span key={key} title={label}>
+                      {label[0]} {file.levelCounts?.[key] || 0}
+                    </span>
+                  ))}
+                </span>
+              </label>
+            ))}
+          </div>
         )}
 
         <div className="server-data-footer">
