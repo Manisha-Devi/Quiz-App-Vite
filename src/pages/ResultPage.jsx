@@ -2,7 +2,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSwipeable } from 'react-swipeable';
-import ServerDataNavLink from '../components/ServerDataNavLink';
 import QuestionCard from '../components/QuestionCard';
 import dataManager from '../utils/dataManager';
 import '../styles/ResultPage.css';
@@ -469,7 +468,6 @@ function ResultPage() {
           <span className="title-text">Result</span>
         </div>
         <div className="header-controls">
-          <ServerDataNavLink />
           <div className="score-box">
             <span className="score-percentage">{stats.percentage}%</span>
             <span className="score-text">Score</span>

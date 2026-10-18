@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAllImagesForJSONFile } from '../utils/indexedDB';
-import ServerDataNavLink from '../components/ServerDataNavLink';
 import dataManager from '../utils/dataManager';
 import '../styles/SectionSetupPage.css';
 
@@ -441,7 +440,6 @@ function SectionSetupPage() {
           <span className="title-text">Setup</span>
         </div>
         <div className="header-controls">
-          <ServerDataNavLink />
           <div className="selection-summary">
             <span className="summary-text">{getTotalSelected()}/{getTotalAvailable()}</span>
             <span className="summary-label">Questions</span>
